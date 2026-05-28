@@ -161,7 +161,7 @@
                         <!-- Left: Interactive Emoticon reactions buttons group -->
                         <div class="flex items-center gap-1.5">
                             @auth
-                                <div class="relative group/react flex items-center">
+                                <div class="relative group/react flex items-center" onclick="handleReactContainerClick(event, this)">
                                     @php
                                         $userReact = $post->reacts()->where('user_id', Auth::id())->first();
                                         $activeType = $userReact ? $userReact->type : null;
@@ -184,14 +184,14 @@
                                         <span class="font-bold">{{ $label }}</span>
                                     </button>
 
-                                    <!-- Floating Reactions selector tray (XenForo/FB Style popup) -->
-                                    <div class="absolute bottom-full left-0 mb-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-full shadow-2xl p-1.5 hidden group-hover/react:flex items-center gap-2 z-40 animate-soft-pulse transition-all">
-                                        <button onclick="toggleReaction('{{ $post->id }}', 'like')" class="hover:scale-120 transition-transform cursor-pointer text-xs" title="Like">👍</button>
-                                        <button onclick="toggleReaction('{{ $post->id }}', 'love')" class="hover:scale-120 transition-transform cursor-pointer text-xs" title="Love">❤️</button>
-                                        <button onclick="toggleReaction('{{ $post->id }}', 'haha')" class="hover:scale-120 transition-transform cursor-pointer text-xs" title="Haha">😆</button>
-                                        <button onclick="toggleReaction('{{ $post->id }}', 'wow')" class="hover:scale-120 transition-transform cursor-pointer text-xs" title="Wow">😮</button>
-                                        <button onclick="toggleReaction('{{ $post->id }}', 'sad')" class="hover:scale-120 transition-transform cursor-pointer text-xs" title="Sad">😢</button>
-                                        <button onclick="toggleReaction('{{ $post->id }}', 'angry')" class="hover:scale-120 transition-transform cursor-pointer text-xs" title="Angry">😡</button>
+                                    <!-- Floating Reactions selector tray (Spring-Elastic premium styling) -->
+                                    <div class="reaction-tray">
+                                        <button onclick="toggleReaction('{{ $post->id }}', 'like')" class="reaction-emoji" title="Like">👍</button>
+                                        <button onclick="toggleReaction('{{ $post->id }}', 'love')" class="reaction-emoji" title="Love">❤️</button>
+                                        <button onclick="toggleReaction('{{ $post->id }}', 'haha')" class="reaction-emoji" title="Haha">😆</button>
+                                        <button onclick="toggleReaction('{{ $post->id }}', 'wow')" class="reaction-emoji" title="Wow">😮</button>
+                                        <button onclick="toggleReaction('{{ $post->id }}', 'sad')" class="reaction-emoji" title="Sad">😢</button>
+                                        <button onclick="toggleReaction('{{ $post->id }}', 'angry')" class="reaction-emoji" title="Angry">😡</button>
                                     </div>
                                 </div>
                             @else
@@ -599,6 +599,32 @@
         document.getElementById('live-reply-preview-box').classList.add('hidden');
     }
 
+    // Handle tap-to-toggle reaction tray on mobile interfaces
+    function handleReactContainerClick(e, container) {
+        // Only run on mobile/touch interfaces (screen widths <= 768px)
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            // Prevent instantly Liked action if the reactions tray is closed
+            if (!container.classList.contains('active')) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Close any other open reaction trays on the page
+                document.querySelectorAll('.group\\/react').forEach(c => {
+                    if (c !== container) c.classList.remove('active');
+                });
+                
+                container.classList.add('active');
+            }
+        }
+    }
+
+    // Dismiss active mobile reaction trays when clicking anywhere else
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.group\\/react')) {
+            document.querySelectorAll('.group\\/react').forEach(c => c.classList.remove('active'));
+        }
+    });
+
     // High-End Multi-Reaction System AJAX Controller
     function toggleReaction(postId, reactionType) {
         const btn = document.getElementById(`react-btn-${postId}`);
@@ -623,6 +649,9 @@
         })
         .then(data => {
             btn.disabled = false;
+            
+            // Close active mobile reaction trays
+            document.querySelectorAll('.group\\/react').forEach(c => c.classList.remove('active'));
             
             // 1. Re-render button visual states dynamically
             let iconText = 'thumb_up';

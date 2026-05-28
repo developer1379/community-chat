@@ -13,6 +13,9 @@
     
     <!-- Tailwind CSS for utility grids -->
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+        @custom-variant dark (&:where(.dark, .dark *));
+    </style>
     
     <!-- Quill Rich Text Editor CDN -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />

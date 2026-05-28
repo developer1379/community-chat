@@ -156,3 +156,125 @@ body {
 .animate-soft-pulse {
     animation: soft-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* High-End Spring-Elastic Reaction Selector Tray (Facebook/XenForo Style) */
+.reaction-tray {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    margin-bottom: 8px;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 9999px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8.5px;
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px) scale(0.9);
+    transition: opacity 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Hover Bridge: Transparent element linking button to tray to prevent hover-out state breaks */
+.reaction-tray::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 12px;
+    background: transparent;
+}
+
+/* Trigger opening transition on container hover or active focus classes */
+.group\/react:hover .reaction-tray,
+.group\/react.active .reaction-tray {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+/* Individual Emoticons Micro-interactions */
+.reaction-emoji {
+    font-size: 16px !important;
+    cursor: pointer !important;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    display: inline-block !important;
+    background: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    outline: none !important;
+}
+
+.reaction-emoji:hover {
+    transform: scale(1.4) translateY(-3px) !important;
+}
+
+/* High-End Dynamic Leaderboard Mesh Drifts & Float Animations */
+@keyframes meshDrift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+.animated-mesh-banner {
+    background-size: 200% 200%;
+    animation: meshDrift 12s ease-in-out infinite;
+}
+
+/* Floating animation for Leaderboard Top Medals */
+@keyframes floatMedal {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-5px) scale(1.03); }
+}
+.animate-float-gold {
+    animation: floatMedal 3s ease-in-out infinite;
+    box-shadow: 0 8px 16px -2px rgba(245, 158, 11, 0.35), 0 0 10px rgba(245, 158, 11, 0.2);
+}
+.animate-float-silver {
+    animation: floatMedal 3.2s ease-in-out infinite;
+    box-shadow: 0 8px 16px -2px rgba(148, 163, 184, 0.25), 0 0 10px rgba(148, 163, 184, 0.15);
+}
+.animate-float-bronze {
+    animation: floatMedal 3.4s ease-in-out infinite;
+    box-shadow: 0 8px 16px -2px rgba(249, 115, 22, 0.25), 0 0 10px rgba(249, 115, 22, 0.15);
+}
+
+/* Beautiful Interactive Row Sliders */
+.leaderboard-row {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.leaderboard-row:hover {
+    transform: translateX(8px);
+    background-color: rgba(59, 130, 246, 0.04) !important;
+}
+
+/* Lightning crackle animation for Super Saiyan bolt */
+@keyframes boltCrackle {
+    0%, 100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 1px #d97706); }
+    50% { opacity: 0.75; transform: scale(1.2); filter: drop-shadow(0 0 5px #fbbf24); }
+}
+.animate-bolt {
+    animation: boltCrackle 0.8s ease-in-out infinite;
+}
+
+/* Shimmer pulse for high tier badges */
+@keyframes shimmerPulse {
+    0%, 100% { filter: brightness(1) saturate(1); }
+    50% { filter: brightness(1.25) saturate(1.15); }
+}
+.animate-shimmer {
+    animation: shimmerPulse 3s ease-in-out infinite;
+}
+
+/* Leaf spin animation for ninja */
+@keyframes leafSpin {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(15deg) scale(1.1); }
+}
+.animate-leaf {
+    animation: leafSpin 2.5s ease-in-out infinite;
+}

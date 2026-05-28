@@ -153,5 +153,11 @@
         <a href="{{ route('members.index') }}" class="hover:text-blue-600 flex items-center gap-1.5 transition-colors">
             <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Members Directory
         </a>
+        <a href="{{ route('rankings.index') }}" class="hover:text-blue-600 flex items-center gap-1.5 transition-colors">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Leaderboard & Rankings
+        </a>
+        <a href="{{ route('rules') }}" class="hover:text-blue-600 flex items-center gap-1.5 transition-colors">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Rules & Guides
+        </a>
     </div>
 </div>

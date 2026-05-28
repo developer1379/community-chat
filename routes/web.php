@@ -58,3 +58,10 @@ Route::get('/profile/{user:name}', [AuthController::class, 'profile'])->name('pr
 // Public members list directory
 Route::get('/members', [\App\Http\Controllers\FollowController::class, 'index'])->name('members.index');
 
+// User Rankings & Leaderboard
+Route::get('/rankings', [\App\Http\Controllers\RankingController::class, 'index'])->name('rankings.index');
+
+// Rules & Guide Page
+Route::view('/rules', 'forum.rules')->name('rules');
+
+

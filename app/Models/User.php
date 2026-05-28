@@ -126,4 +126,39 @@ class User extends Authenticatable
             ->where('is_read', false)
             ->count();
     }
+
+    /**
+     * Get dynamic Otaku activity points based on threads, replies, and reactions.
+     */
+    public function getActivityPointsAttribute(): int
+    {
+        $threadsCount = $this->threads()->count();
+        $postsCount = $this->posts()->count();
+        
+        // Sum reactions received on posts created by this user
+        $postIds = $this->posts()->pluck('id');
+        $reactionsCount = \App\Models\React::whereIn('post_id', $postIds)->count();
+        
+        return ($threadsCount * 10) + ($postsCount * 5) + ($reactionsCount * 2);
+    }
+
+    /**
+     * Get computed Anime/Otaku Rank Tier based on activity points.
+     */
+    public function getComputedAnimeTierAttribute(): array
+    {
+        $pts = $this->activity_points;
+
+        if ($pts >= 1000) {
+            return ['name' => 'Pirate King 🏴‍☠️', 'color' => '#e11d48', 'badge' => 'Legendary'];
+        } elseif ($pts >= 500) {
+            return ['name' => 'Soul Reaper 💀', 'color' => '#7c3aed', 'badge' => 'Epic'];
+        } elseif ($pts >= 200) {
+            return ['name' => 'Super Saiyan ⚡', 'color' => '#d97706', 'badge' => 'Elite'];
+        } elseif ($pts >= 50) {
+            return ['name' => 'Guild Adventurer 🛡️', 'color' => '#2563eb', 'badge' => 'Active'];
+        }
+
+        return ['name' => 'Wandering Ninja 🍃', 'color' => '#16a34a', 'badge' => 'Beginner'];
+    }
 }
