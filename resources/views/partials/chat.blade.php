@@ -1,0 +1,657 @@
+@auth
+    <!-- sliding chat panel drawer -->
+    <div id="chat-drawer-container" class="chat-drawer translate-x-full fixed bottom-0 right-0 w-full h-full sm:bottom-6 sm:right-6 sm:w-96 sm:h-[500px] z-50 bg-white border border-slate-200 sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden pointer-events-auto">
+        
+        <!-- Header area -->
+        <div class="px-4 py-3 bg-blue-600 text-white flex items-center justify-between shadow-sm flex-shrink-0">
+            <div class="flex items-center gap-2">
+                <!-- Back Button (shown only when in active conversation view) -->
+                <button id="chat-back-btn" onclick="showConversationsList()" class="hidden hover:bg-white/10 rounded-lg p-1 transition-colors cursor-pointer">
+                    <span class="material-symbols-outlined text-base">arrow_back</span>
+                </button>
+                <div class="leading-tight">
+                    <h3 id="chat-title" class="font-bold text-xs">Direct Messages</h3>
+                    <p id="chat-subtitle" class="text-[9px] text-blue-100 font-medium">Conversations</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <button onclick="toggleChatDrawer()" class="hover:bg-white/10 rounded-lg p-1 transition-colors cursor-pointer" title="Close Panel">
+                    <span class="material-symbols-outlined text-base">close</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Conversations List View -->
+        <div id="chat-conversations-view" class="flex-grow flex flex-col overflow-hidden relative">
+            <!-- Search bar to start new conversation -->
+            <div class="p-3 border-b border-slate-100 bg-slate-50 flex flex-col gap-2 flex-shrink-0 relative">
+                <div class="flex items-center gap-2">
+                    <div class="relative flex-grow">
+                        <input type="text" id="chat-search-input" oninput="handleSearchInputChange(this)" class="w-full bg-white border border-slate-250 rounded-lg pl-8 pr-3 py-1.5 text-[11px] text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-slate-400 font-medium" placeholder="Search user by name..." autocomplete="off">
+                        <span class="material-symbols-outlined absolute left-2.5 top-2 text-slate-400 text-xs">search</span>
+                    </div>
+                </div>
+                <!-- Suggestions Dropdown results panel -->
+                <div id="chat-search-suggestions" class="hidden absolute left-3 right-3 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-30 divide-y divide-slate-100 overflow-y-auto max-h-48 custom-scrollbar">
+                    <!-- Suggested entries go here dynamically -->
+                </div>
+            </div>
+
+            <!-- List of existing conversations -->
+            <div id="chat-conversations-list" class="flex-grow overflow-y-auto divide-y divide-slate-100 custom-scrollbar p-1">
+                <!-- Loaded dynamically by JS -->
+                <div class="py-12 text-center text-xs text-slate-400 font-medium">
+                    <span class="animate-pulse">Loading conversations...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thread Messages View (Hidden initially) -->
+        <div id="chat-messages-view" class="hidden flex-grow flex flex-col overflow-hidden bg-slate-50/50">
+            <!-- Loading Indicator -->
+            <div id="chat-messages-loading" class="hidden absolute inset-0 bg-white/80 z-10 flex items-center justify-center">
+                <span class="animate-pulse text-xs font-bold text-blue-600">Retrieving messages...</span>
+            </div>
+
+            <!-- Messages list -->
+            <div id="chat-messages-list" class="flex-grow overflow-y-auto p-4 space-y-3.5 custom-scrollbar">
+                <!-- Loaded dynamically by JS -->
+            </div>
+
+            <!-- Input reply container -->
+            <div class="p-3 border-t border-slate-200/80 bg-white">
+                <form id="chat-send-form" onsubmit="handleSendSubmit(event)" class="flex items-center gap-2">
+                    <!-- Hidden file input for images/GIFs -->
+                    <input type="file" id="chat-file-input" class="hidden" accept="image/*" onchange="handleChatFileSelect(this)">
+                    <button type="button" onclick="document.getElementById('chat-file-input').click()" class="w-8.5 h-8.5 rounded-xl bg-slate-50 border border-slate-200/60 hover:bg-slate-100 hover:border-slate-350 text-slate-500 flex items-center justify-center cursor-pointer transition-all active:scale-95 flex-shrink-0" title="Attach Image or GIF">
+                        <span class="material-symbols-outlined text-base">image</span>
+                    </button>
+
+                    <input type="text" id="chat-message-input" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-slate-400 font-medium" placeholder="Type a message..." autocomplete="off">
+                    <button type="submit" class="w-8.5 h-8.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center cursor-pointer shadow-md shadow-blue-500/10 transition-transform active:scale-95 flex-shrink-0">
+                        <span class="material-symbols-outlined text-sm">send</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Chat Engine Controller Script -->
+    <script>
+        let chatOpen = false;
+        let activeConversationId = null;
+        let activeConversationPartner = null;
+        let chatPollingInterval = null;
+        let badgePollingInterval = null;
+
+        // Toggle visibility of the chat drawer
+        function toggleChatDrawer() {
+            const drawer = document.getElementById('chat-drawer-container');
+            if (!drawer) return;
+
+            chatOpen = !chatOpen;
+            if (chatOpen) {
+                drawer.classList.remove('translate-x-full');
+                loadConversations();
+                startChatPolling();
+            } else {
+                drawer.classList.add('translate-x-full');
+                stopChatPolling();
+            }
+        }
+
+        // Poll global unread count and populate notification dropdown
+        function checkUnreadBadge() {
+            fetch('/chat/unread-count')
+                .then(r => r.json())
+                .then(data => {
+                    const badge = document.getElementById('global-chat-badge');
+                    const notifyBadge = document.getElementById('global-notifications-badge');
+                    const chatCount = data.unread_count || 0;
+
+                    // 1. Update primary chat quick icon badge
+                    if (badge) {
+                        if (chatCount > 0) {
+                            badge.innerText = chatCount;
+                            badge.classList.remove('hidden');
+                        } else {
+                            badge.classList.add('hidden');
+                        }
+                    }
+
+                    // 2. Update Combined Notification Badge (Standard 3 forum notifications + direct chat unreads!)
+                    if (notifyBadge) {
+                        const totalNotifications = 3 + chatCount;
+                        notifyBadge.innerText = totalNotifications;
+                    }
+
+                    // 3. Populate direct chat alert activities in the notifications list dynamically
+                    fetch('/chat/conversations')
+                        .then(res => res.json())
+                        .then(conversations => {
+                            const list = document.getElementById('notifications-dropdown-list');
+                            if (!list) return;
+
+                            // Extract only unread conversations
+                            const unreads = conversations.filter(c => c.unread_count > 0);
+                            
+                            let html = '<div class="space-y-1 divide-y divide-slate-100">';
+                            
+                            // Insert direct message triggers
+                            unreads.forEach(c => {
+                                let bodyPreview = 'Sent a message';
+                                if (c.last_message) {
+                                    const isImg = /^https?:\/\/[^\s]+?\.(jpe?g|png|gif|webp|bmp)(?:\?[^\s]*)?$/i.test(c.last_message.body.trim()) || 
+                                                  c.last_message.body.trim().startsWith('https://i.ibb.co/');
+                                    bodyPreview = isImg ? '📷 Image attachment' : c.last_message.body;
+                                }
+
+                                html += `
+                                    <div onclick="toggleDropdown('notify-dropdown'); startDirectChat('${c.other_user.name}')" class="block p-2 rounded-lg bg-blue-50/60 hover:bg-blue-50 transition-all text-xs cursor-pointer border-l-2 border-blue-500">
+                                        <div class="flex items-center justify-between">
+                                            <p class="font-bold text-slate-800 flex items-center gap-1">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-soft-pulse"></span>
+                                                New Message from ${c.other_user.name}
+                                            </p>
+                                            <span class="text-[7.5px] font-bold text-blue-600 bg-blue-100/70 px-1 rounded uppercase tracking-wider">Chat</span>
+                                        </div>
+                                        <p class="text-[10px] text-slate-650 truncate mt-0.5">${escapeHtml(bodyPreview)}</p>
+                                        <p class="text-[8px] text-slate-450 font-bold mt-0.5">${c.last_message ? c.last_message.created_at : ''}</p>
+                                    </div>
+                                `;
+                            });
+
+                            // Add fallback/static forum announcements at bottom
+                            html += `
+                                <a href="#" class="block p-2 rounded-lg hover:bg-slate-50 transition-all text-xs pt-2">
+                                    <p class="font-bold text-slate-800">Welcome to XenProfessional!</p>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">Customize your forum signature under quick settings.</p>
+                                </a>
+                                <a href="#" class="block p-2 rounded-lg hover:bg-slate-50 transition-all text-xs pt-2">
+                                    <p class="font-bold text-slate-800">Admin Replied</p>
+                                    <p class="text-[10px] text-slate-500 mt-0.5">Founder admin replied in General Discussion.</p>
+                                </a>
+                            </div>`;
+
+                            list.innerHTML = html;
+                        })
+                        .catch(err => console.error('Error listing notifications:', err));
+                })
+                .catch(e => console.error('Error fetching chat count:', e));
+        }
+
+        // Clear all direct chat unread alerts locally/remotely
+        function clearAllNotificationsLocal(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            fetch('/chat/conversations')
+                .then(r => r.json())
+                .then(conversations => {
+                    const unreads = conversations.filter(c => c.unread_count > 0);
+                    if (unreads.length === 0) return;
+
+                    const promises = unreads.map(c => {
+                        return fetch(`/chat/conversations/${c.id}/read`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            }
+                        });
+                    });
+
+                    Promise.all(promises)
+                        .then(() => {
+                            checkUnreadBadge();
+                            if (chatOpen) loadConversations();
+                        })
+                        .catch(err => console.error('Error clearing conversations:', err));
+                });
+        }
+
+        // View All Notifications (Toggles open chat drawer to review conversations)
+        function openAllNotificationsPage(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            toggleDropdown('notify-dropdown');
+            if (!chatOpen) toggleChatDrawer();
+        }
+
+        // Initialize unread check and set recurring schedule
+        document.addEventListener('DOMContentLoaded', () => {
+            checkUnreadBadge();
+            badgePollingInterval = setInterval(checkUnreadBadge, 10000); // Check count badge every 10 seconds
+        });
+
+        // Load list of conversations
+        function loadConversations() {
+            const listContainer = document.getElementById('chat-conversations-list');
+            if (!listContainer) return;
+
+            fetch('/chat/conversations')
+                .then(r => r.json())
+                .then(conversations => {
+                    if (conversations.length === 0) {
+                        listContainer.innerHTML = `
+                            <div class="py-16 text-center text-xs text-slate-400 font-semibold p-4">
+                                <span class="material-symbols-outlined text-3xl opacity-40 mb-1.5">chat_bubble</span>
+                                <p>No direct messages yet.</p>
+                                <p class="text-[10px] text-slate-350 mt-1">Start chatting by searching a user name above or clicking "Send Message" on their profile!</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    let html = '';
+                    conversations.forEach(conv => {
+                        const hasUnread = conv.unread_count > 0;
+                        const activeClass = activeConversationId === conv.id ? 'bg-slate-50 border-l-2 border-blue-600' : '';
+                        
+                        let bodyPreview = 'Conversation started';
+                        if (conv.last_message) {
+                            const isImg = /^https?:\/\/[^\s]+?\.(jpe?g|png|gif|webp|bmp)(?:\?[^\s]*)?$/i.test(conv.last_message.body.trim()) || 
+                                          conv.last_message.body.trim().startsWith('https://i.ibb.co/');
+                            bodyPreview = isImg ? '📷 Image attachment' : conv.last_message.body;
+                        }
+
+                        html += `
+                            <div onclick="openConversation('${conv.id}', '${conv.other_user.name}')" class="p-3 hover:bg-slate-50/80 transition-colors cursor-pointer flex items-center justify-between gap-3 ${activeClass}">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-9 h-9 rounded-xl overflow-hidden border border-slate-200 flex-shrink-0">
+                                        <img src="${conv.other_user.avatar_url}" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="min-w-0 leading-tight">
+                                        <h4 class="font-bold text-slate-800 text-[11px] truncate flex items-center gap-1.5">
+                                            ${conv.other_user.name}
+                                            <span class="text-[7px] px-1 bg-slate-100 text-slate-500 rounded uppercase tracking-wider">${conv.other_user.title_badge || 'Member'}</span>
+                                        </h4>
+                                        <p class="text-[10px] text-slate-450 truncate mt-0.5 ${hasUnread ? 'font-extrabold text-slate-800' : ''}">
+                                            ${escapeHtml(bodyPreview)}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end gap-1.5 flex-shrink-0 text-right leading-none">
+                                    <span class="text-[8px] text-slate-400 font-bold">${conv.last_message ? conv.last_message.created_at : ''}</span>
+                                    ${hasUnread ? `<span class="w-2 h-2 rounded-full bg-blue-600 animate-soft-pulse"></span>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    listContainer.innerHTML = html;
+                })
+                .catch(e => {
+                    listContainer.innerHTML = `<div class="py-8 text-center text-xs text-rose-500 font-medium">Failed to retrieve conversations.</div>`;
+                    console.error('Conversations list error:', e);
+                });
+        }
+
+        // Open a specific conversation thread
+        function openConversation(convId, partnerName) {
+            activeConversationId = convId;
+            activeConversationPartner = partnerName;
+
+            // Show and hide correct panels
+            document.getElementById('chat-conversations-view').classList.add('hidden');
+            document.getElementById('chat-messages-view').classList.remove('hidden');
+            document.getElementById('chat-back-btn').classList.remove('hidden');
+
+            // Set Header details
+            document.getElementById('chat-title').innerText = partnerName;
+            document.getElementById('chat-subtitle').innerText = 'Online Chat';
+
+            loadMessages(true);
+            
+            // Highlight active in list loader behind the scenes
+            loadConversations();
+        }
+
+        // Close thread back to conversations list
+        function showConversationsList() {
+            activeConversationId = null;
+            activeConversationPartner = null;
+
+            document.getElementById('chat-messages-view').classList.add('hidden');
+            document.getElementById('chat-conversations-view').classList.remove('hidden');
+            document.getElementById('chat-back-btn').classList.add('hidden');
+
+            document.getElementById('chat-title').innerText = 'Direct Messages';
+            document.getElementById('chat-subtitle').innerText = 'Conversations';
+
+            loadConversations();
+            checkUnreadBadge();
+        }
+
+        // Load messages for the active conversation
+        function loadMessages(isInitial = false) {
+            if (!activeConversationId) return;
+
+            const loader = document.getElementById('chat-messages-loading');
+            const listContainer = document.getElementById('chat-messages-list');
+            if (isInitial && loader) loader.classList.remove('hidden');
+
+            fetch(`/chat/conversations/${activeConversationId}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (isInitial && loader) loader.classList.add('hidden');
+
+                    const messages = data.messages || [];
+                    if (messages.length === 0) {
+                        listContainer.innerHTML = `
+                            <div class="py-16 text-center text-xs text-slate-400 font-semibold">
+                                <span class="material-symbols-outlined text-2xl opacity-40 mb-1">chat</span>
+                                <p>Send a message to start conversation!</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    // Check if scrolled near bottom to keep scroll
+                    const isAtBottom = listContainer.scrollHeight - listContainer.clientHeight - listContainer.scrollTop < 60;
+
+                    let html = '';
+                    messages.forEach(msg => {
+                        const bubbleClass = msg.is_own 
+                            ? 'bg-blue-600 text-white rounded-t-xl rounded-l-xl self-end' 
+                            : 'bg-white text-slate-800 border border-slate-200/80 rounded-t-xl rounded-r-xl self-start';
+                        const alignmentClass = msg.is_own ? 'flex flex-col items-end' : 'flex flex-col items-start';
+
+                        const isImage = /^https?:\/\/[^\s]+?\.(jpe?g|png|gif|webp|bmp)(?:\?[^\s]*)?$/i.test(msg.body.trim()) || 
+                                        msg.body.trim().startsWith('https://i.ibb.co/');
+
+                        let bubbleContent = '';
+                        if (isImage) {
+                            bubbleContent = `
+                                <a href="${msg.body.trim()}" target="_blank" class="block rounded-lg overflow-hidden border border-slate-200 bg-slate-100 max-w-[180px] sm:max-w-[220px] hover:opacity-90 transition-opacity">
+                                    <img src="${msg.body.trim()}" class="w-full h-auto object-cover max-h-[140px]" alt="Image attachment" loading="lazy">
+                                </a>
+                            `;
+                        } else {
+                            bubbleContent = escapeHtml(msg.body);
+                        }
+
+                        html += `
+                            <div class="${alignmentClass} max-w-[80%] ${msg.is_own ? 'ml-auto' : 'mr-auto'} leading-snug">
+                                <div class="px-3.5 py-2 text-xs font-medium shadow-sm leading-normal break-words ${bubbleClass}">
+                                    ${bubbleContent}
+                                </div>
+                                <span class="text-[8px] text-slate-400 font-bold mt-1 px-1">${msg.created_at}</span>
+                            </div>
+                        `;
+                    });
+
+                    listContainer.innerHTML = html;
+
+                    if (isInitial || isAtBottom) {
+                        listContainer.scrollTop = listContainer.scrollHeight;
+                    }
+                })
+                .catch(e => {
+                    if (loader) loader.classList.add('hidden');
+                    console.error('Messages list fetch error:', e);
+                });
+        }
+
+        // Send new message submit handler
+        function handleSendSubmit(e) {
+            e.preventDefault();
+            if (!activeConversationId) return;
+
+            const input = document.getElementById('chat-message-input');
+            const body = input.value.trim();
+            if (!body) return;
+
+            // Clear input instantly for UI responsiveness
+            input.value = '';
+
+            fetch(`/chat/conversations/${activeConversationId}/send`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ body: body })
+            })
+            .then(r => r.json())
+            .then(message => {
+                // Instantly append message and scroll
+                loadMessages(false);
+            })
+            .catch(e => {
+                console.error('Error sending message:', e);
+                alert('Could not deliver message. Please try again.');
+            });
+        }
+
+        // Handle direct image file selection and upload
+        function handleChatFileSelect(input) {
+            if (!activeConversationId) return;
+            if (!input.files || input.files.length === 0) return;
+
+            const file = input.files[0];
+            
+            // Basic validation
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image or GIF file.');
+                input.value = '';
+                return;
+            }
+
+            if (file.size > 8 * 1024 * 1024) {
+                alert('File size exceeds the 8MB limit.');
+                input.value = '';
+                return;
+            }
+
+            // Create temporary uploading bubble block
+            const listContainer = document.getElementById('chat-messages-list');
+            const tempId = 'upload-temp-' + Date.now();
+            if (listContainer) {
+                const tempBubble = `
+                    <div id="${tempId}" class="flex flex-col items-end max-w-[80%] ml-auto leading-snug">
+                        <div class="px-3.5 py-2 text-xs font-semibold shadow-sm bg-blue-500/80 text-white rounded-t-xl rounded-l-xl flex items-center gap-2">
+                            <svg class="animate-spin h-3.5 w-3.5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>Sending to ImgBB...</span>
+                        </div>
+                        <span class="text-[8px] text-slate-400 font-bold mt-1 px-1">Uploading...</span>
+                    </div>
+                `;
+                listContainer.insertAdjacentHTML('beforeend', tempBubble);
+                listContainer.scrollTop = listContainer.scrollHeight;
+            }
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            // Clear file input immediately so same file can be selected again
+            input.value = '';
+
+            fetch(`/chat/conversations/${activeConversationId}/send`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: formData
+            })
+            .then(r => {
+                if (!r.ok) {
+                    return r.json().then(err => { throw new Error(err.error || 'Upload failed') });
+                }
+                return r.json();
+            })
+            .then(message => {
+                document.getElementById(tempId)?.remove();
+                loadMessages(false);
+            })
+            .catch(e => {
+                document.getElementById(tempId)?.remove();
+                console.error('Error uploading message attachment:', e);
+                alert(e.message || 'Could not upload image. Please try again.');
+            });
+        }
+
+        // Start chat with user directly
+        function startDirectChat(username) {
+            // Open drawer
+            if (!chatOpen) toggleChatDrawer();
+
+            fetch(`/chat/start/${encodeURIComponent(username)}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(r => {
+                if (!r.ok) throw new Error('Could not start conversation');
+                return r.json();
+            })
+            .then(data => {
+                openConversation(data.conversation_id, username);
+            })
+            .catch(e => {
+                console.error('Error starting conversation:', e);
+                alert('Failed to initiate conversation with this member.');
+            });
+        }
+
+        // Debounce helper for AJAX searches
+        let searchTimeout = null;
+
+        function handleSearchInputChange(inputElement) {
+            const query = inputElement.value.trim();
+            const suggestionsPanel = document.getElementById('chat-search-suggestions');
+            if (!suggestionsPanel) return;
+
+            clearTimeout(searchTimeout);
+
+            if (query.length < 1) {
+                suggestionsPanel.innerHTML = '';
+                suggestionsPanel.classList.add('hidden');
+                return;
+            }
+
+            searchTimeout = setTimeout(() => {
+                fetch(`/chat/search-users?q=${encodeURIComponent(query)}`)
+                    .then(res => res.json())
+                    .then(users => {
+                        if (users.length === 0) {
+                            suggestionsPanel.innerHTML = '<div class="p-3 text-[10px] text-slate-400 text-center font-medium">No members found matching "' + escapeHtml(query) + '"</div>';
+                            suggestionsPanel.classList.remove('hidden');
+                            return;
+                        }
+
+                        let html = '';
+                        users.forEach(user => {
+                            html += `
+                                <div onclick="selectSearchUser('${user.name}')" class="p-2.5 hover:bg-slate-50 transition-colors flex items-center gap-2 cursor-pointer text-left">
+                                    <div class="w-6.5 h-6.5 rounded-lg overflow-hidden border border-slate-200 flex-shrink-0">
+                                        <img src="${user.avatar_url}" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="leading-tight truncate flex-grow">
+                                        <p class="font-bold text-slate-800 text-[10.5px] truncate">${user.name}</p>
+                                        <span class="text-[6.5px] px-1 bg-slate-100 text-slate-450 rounded uppercase font-bold tracking-wide">${user.title_badge || 'Member'}</span>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        suggestionsPanel.innerHTML = html;
+                        suggestionsPanel.classList.remove('hidden');
+                    })
+                    .catch(err => {
+                        console.error('AJAX autocomplete error:', err);
+                    });
+            }, 300); // 300ms debounce
+        }
+
+        // Selection handler for dynamic search list
+        function selectSearchUser(username) {
+            const suggestionsPanel = document.getElementById('chat-search-suggestions');
+            const searchInput = document.getElementById('chat-search-input');
+            
+            if (suggestionsPanel) {
+                suggestionsPanel.innerHTML = '';
+                suggestionsPanel.classList.add('hidden');
+            }
+            if (searchInput) {
+                searchInput.value = '';
+            }
+
+            startDirectChat(username);
+        }
+
+        // Hide suggestions panel on clicking outside search areas
+        window.addEventListener('click', function(e) {
+            const suggestionsPanel = document.getElementById('chat-search-suggestions');
+            const searchInput = document.getElementById('chat-search-input');
+            if (suggestionsPanel && !e.target.closest('#chat-search-suggestions') && e.target !== searchInput) {
+                suggestionsPanel.classList.add('hidden');
+            }
+        });
+
+        // Search trigger manually
+        function triggerSearchUser() {
+            const input = document.getElementById('chat-search-input');
+            const val = input.value.trim();
+            if (!val) return;
+
+            startDirectChat(val);
+            input.value = '';
+            const suggestionsPanel = document.getElementById('chat-search-suggestions');
+            if (suggestionsPanel) suggestionsPanel.classList.add('hidden');
+        }
+
+        // Register enter search triggers
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('chat-search-input');
+            if (searchInput) {
+                searchInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        triggerSearchUser();
+                    }
+                });
+            }
+        });
+
+        // Toggle recurring message pollers
+        function startChatPolling() {
+            stopChatPolling();
+            chatPollingInterval = setInterval(() => {
+                if (activeConversationId) {
+                    loadMessages(false);
+                } else {
+                    loadConversations();
+                }
+            }, 5000); // Poll conversations or active message stream every 5 seconds
+        }
+
+        function stopChatPolling() {
+            if (chatPollingInterval) {
+                clearInterval(chatPollingInterval);
+                chatPollingInterval = null;
+            }
+        }
+
+        // Simple HTML Escaper
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+@endauth
