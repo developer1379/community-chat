@@ -55,6 +55,24 @@ class ForumController extends Controller
         return view('forum.home', compact('categories', 'stats', 'activeThreads', 'onlineUsers'));
     }
 
+    public function search(Request $request)
+    {
+        $query = $request->input('q');
+        
+        $threads = collect();
+        if ($query) {
+            $threads = Thread::where('title', 'like', "%{$query}%")
+                ->orWhereHas('posts', function($q) use ($query) {
+                    $q->where('content', 'like', "%{$query}%");
+                })
+                ->with(['user', 'category', 'lastPost.user'])
+                ->latest()
+                ->paginate(15);
+        }
+
+        return view('forum.search', compact('threads', 'query'));
+    }
+
     public function category(string $slug)
     {
         $category = $this->categoryRepo->findBySlug($slug);

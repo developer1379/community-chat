@@ -1,21 +1,25 @@
-<!-- Modern Search Bar Modal -->
-<div id="search-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/20 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
-    <div class="w-full max-w-xl mui-card p-5 bg-white border border-slate-200">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xs font-extrabold text-slate-900 uppercase tracking-widest flex items-center gap-2"><span class="material-symbols-outlined text-blue-600">search</span> Search Discussions</h3>
-            <button onclick="closeSearchModal()" class="w-8.5 h-8.5 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-500 cursor-pointer"><span class="material-symbols-outlined">close</span></button>
-        </div>
-        <!-- Input Field -->
-        <div class="relative">
-            <input type="text" id="modal-search-input" onkeyup="filterSearch()" class="w-full bg-slate-50 border border-slate-355 rounded-xl pl-10 pr-4 py-3 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Search threads, posts or media...">
-            <span class="material-symbols-outlined absolute left-3.5 top-3.5 text-slate-400 text-sm">search</span>
-        </div>
-        <div class="mt-4 space-y-2 max-h-56 overflow-y-auto" id="search-results-list">
-            <p class="text-[8px] font-bold text-slate-400 uppercase tracking-widest px-1">Suggested Boards</p>
-            <a href="{{ route('categories.show', 'images-and-gifs') }}" class="block p-2 rounded-xl hover:bg-slate-50 text-xs transition-colors">
-                <p class="font-bold text-slate-800">🖼️ Images & GIF showroom</p>
-                <p class="text-[9px] text-slate-500">Explore custom WebP animations uploads.</p>
-            </a>
+<!-- Professional Search Modal -->
+<div id="search-modal" class="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] p-4 bg-slate-950/40 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="w-full max-w-2xl bg-white rounded-[2rem] shadow-2xl border border-white/20 overflow-hidden transform transition-all duration-300" id="search-modal-content">
+        <!-- Input Form -->
+        <form action="{{ route('search') }}" method="GET" class="relative flex items-center p-4 border-b border-slate-100">
+            <span class="material-symbols-outlined absolute left-6 text-blue-600 text-2xl font-bold">search</span>
+            <input type="text" name="q" id="modal-search-input" class="w-full bg-transparent pl-14 pr-12 py-4 text-lg text-slate-800 placeholder-slate-400 focus:outline-none font-medium" placeholder="Search threads, posts, or media..." autocomplete="off">
+            <button type="button" onclick="closeSearchModal()" class="absolute right-4 w-10 h-10 rounded-xl hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer transition-colors">
+                <span class="material-symbols-outlined text-xl">close</span>
+            </button>
+        </form>
+        
+        <!-- Suggestions Area -->
+        <div class="p-6 bg-slate-50/50">
+            <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[14px]">local_fire_department</span> Trending Searches
+            </h4>
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('search', ['q' => 'laravel']) }}" class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-600 hover:border-blue-300 hover:text-blue-600 transition-colors shadow-sm">laravel</a>
+                <a href="{{ route('search', ['q' => 'tailwind css']) }}" class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-600 hover:border-blue-300 hover:text-blue-600 transition-colors shadow-sm">tailwind css</a>
+                <a href="{{ route('search', ['q' => 'api authentication']) }}" class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-600 hover:border-blue-300 hover:text-blue-600 transition-colors shadow-sm">api authentication</a>
+            </div>
         </div>
     </div>
 </div>

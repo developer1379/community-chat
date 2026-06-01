@@ -21,6 +21,23 @@
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
     
+    <!-- Global Mobile Responsive Overrides -->
+    <style>
+        /* Force Quill toolbar to wrap gracefully on mobile devices */
+        .ql-toolbar.ql-snow {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            padding: 8px;
+        }
+        .ql-formats {
+            display: inline-flex;
+            flex-wrap: wrap;
+            margin-right: 8px !important;
+            margin-bottom: 4px;
+        }
+    </style>
+
     <!-- Modularized Custom Corporate stylesheet -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
@@ -141,21 +158,7 @@
             }
         });
 
-        function filterSearch() {
-            const val = document.getElementById('modal-search-input').value.toLowerCase();
-            const list = document.getElementById('search-results-list');
-            if (!list) return;
-            const items = list.querySelectorAll('a');
-            
-            items.forEach(item => {
-                const text = item.innerText.toLowerCase();
-                if (text.includes(val)) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
+
 
         // Dynamic XenForo Hover Card Controller
         let hoverTimeout = null;

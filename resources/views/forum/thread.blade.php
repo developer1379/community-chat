@@ -36,8 +36,8 @@
     <div class="space-y-4">
         @foreach($posts as $post)
             <div id="post-{{ $post->id }}" class="glass-panel rounded-2xl overflow-hidden border border-slate-300/40 dark:border-slate-800/80 shadow-md flex flex-col md:flex-row">
-                <!-- User Left Sidebar Info Card (XenForo Style) -->
-                <div class="w-full md:w-48 bg-slate-100/60 dark:bg-slate-900/60 p-4 sm:p-5 flex flex-col items-center border-b md:border-b-0 md:border-r border-slate-300/40 dark:border-slate-800/60 text-center flex-shrink-0">
+                <!-- User Info Panel -->
+                <div class="w-full md:w-48 bg-slate-100/60 dark:bg-slate-900/60 p-3 sm:p-5 flex flex-row md:flex-col items-center gap-3 md:gap-0 border-b md:border-b-0 md:border-r border-slate-300/40 dark:border-slate-800/60 text-left md:text-center flex-shrink-0">
                     <!-- User Avatar -->
                     <a href="{{ route('profile.show', $post->user->name) }}" 
                        data-user-hover="true" 
@@ -50,8 +50,8 @@
                        data-user-avatar="{{ $post->user->avatar_path ? (str_starts_with($post->user->avatar_path, 'http') ? $post->user->avatar_path : asset('storage/' . $post->user->avatar_path)) : '' }}" 
                        data-user-banner="{{ $post->user->banner_color }}"
                        data-user-banner-path="{{ $post->user->banner_path }}"
-                       class="relative group mb-2 block">
-                        <div class="w-16 h-16 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 group-hover:border-indigo-500 transition-all duration-300 shadow-sm">
+                       class="relative group block flex-shrink-0 md:mb-2">
+                        <div class="w-12 h-12 md:w-16 md:h-16 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 group-hover:border-indigo-500 transition-all duration-300 shadow-sm">
                             @if($post->user->avatar_path)
                                 <img src="{{ str_starts_with($post->user->avatar_path, 'http') ? $post->user->avatar_path : asset('storage/' . $post->user->avatar_path) }}" class="w-full h-full object-cover" alt="avatar">
                             @else
@@ -60,42 +60,42 @@
                                 </div>
                             @endif
                         </div>
-                        <span class="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-950"></span>
+                        <span class="absolute bottom-0 md:bottom-0.5 right-0 md:right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-950"></span>
                     </a>
 
-                    <!-- User Name -->
-                    <h3 class="font-bold text-slate-800 dark:text-slate-200 text-xs hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                        <a href="{{ route('profile.show', $post->user->name) }}"
-                           data-user-hover="true" 
-                           data-user-name="{{ $post->user->name }}" 
-                           data-user-badge="{{ $post->user->title_badge }}" 
-                           data-user-joined="{{ $post->user->created_at->format('M d, Y') }}" 
-                           data-user-threads="{{ $post->user->threads()->count() }}" 
-                           data-user-posts="{{ $post->user->posts()->count() }}" 
-                           data-user-uploads="{{ $post->user->attachments()->count() }}" 
-                           data-user-avatar="{{ $post->user->avatar_path ? (str_starts_with($post->user->avatar_path, 'http') ? $post->user->avatar_path : asset('storage/' . $post->user->avatar_path)) : '' }}" 
-                           data-user-banner="{{ $post->user->banner_color }}"
-                           data-user-banner-path="{{ $post->user->banner_path }}">{{ $post->user->name }}</a>
-                    </h3>
-                    
-                    <!-- Dynamic Banner Badge -->
-                    <span class="text-[8px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider text-slate-200 mt-1 border border-slate-700/40 shadow-sm" style="background: {{ $post->user->banner_color }}">
-                        {{ $post->user->title_badge }}
-                    </span>
-
-                    <!-- Join Date / Statistics Block -->
-                    <div class="mt-3 w-full pt-3 border-t border-slate-300/40 dark:border-slate-800/40 text-[9px] text-slate-500 dark:text-slate-400 space-y-1 text-left">
-                        <div class="flex justify-between">
-                            <span>Joined:</span>
-                            <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $post->user->created_at->format('M Y') }}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>Threads:</span>
-                            <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $post->user->threads()->count() }}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>Messages:</span>
-                            <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $post->user->posts()->count() }}</span>
+                    <!-- Mobile Info Stack -->
+                    <div class="flex-grow md:w-full flex flex-col md:items-center">
+                        <h3 class="font-bold text-slate-800 dark:text-slate-200 text-sm md:text-xs hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                            <a href="{{ route('profile.show', $post->user->name) }}"
+                               data-user-hover="true" 
+                               data-user-name="{{ $post->user->name }}" 
+                               data-user-badge="{{ $post->user->title_badge }}" 
+                               data-user-joined="{{ $post->user->created_at->format('M d, Y') }}" 
+                               data-user-threads="{{ $post->user->threads()->count() }}" 
+                               data-user-posts="{{ $post->user->posts()->count() }}" 
+                               data-user-uploads="{{ $post->user->attachments()->count() }}" 
+                               data-user-avatar="{{ $post->user->avatar_path ? (str_starts_with($post->user->avatar_path, 'http') ? $post->user->avatar_path : asset('storage/' . $post->user->avatar_path)) : '' }}" 
+                               data-user-banner="{{ $post->user->banner_color }}"
+                               data-user-banner-path="{{ $post->user->banner_path }}">{{ $post->user->name }}</a>
+                        </h3>
+                        <span class="text-[8px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider text-slate-200 mt-1 border border-slate-700/40 shadow-sm w-max md:w-auto" style="background: {{ $post->user->banner_color }}">
+                            {{ $post->user->title_badge }}
+                        </span>
+                        
+                        <!-- Desktop Statistics Block -->
+                        <div class="hidden md:block mt-3 w-full pt-3 border-t border-slate-300/40 dark:border-slate-800/40 text-[9px] text-slate-500 dark:text-slate-400 space-y-1 text-left">
+                            <div class="flex justify-between">
+                                <span>Joined:</span>
+                                <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $post->user->created_at->format('M Y') }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Threads:</span>
+                                <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $post->user->threads()->count() }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Messages:</span>
+                                <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $post->user->posts()->count() }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -157,9 +157,9 @@
                     </div>
 
                     <!-- High-End Multi-Reaction System Bar -->
-                    <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/40 flex flex-wrap items-center justify-between gap-3">
+                    <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                         <!-- Left: Interactive Emoticon reactions buttons group -->
-                        <div class="flex items-center gap-1.5">
+                        <div class="flex items-center gap-1.5 flex-wrap">
                             @auth
                                 <div class="relative group/react flex items-center" onclick="handleReactContainerClick(event, this)">
                                     @php
@@ -179,12 +179,12 @@
                                     @endphp
                                     
                                     <!-- Primary trigger button -->
-                                    <button id="react-btn-{{ $post->id }}" onclick="toggleReaction('{{ $post->id }}', 'like')" class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 text-[10px] font-bold transition-all cursor-pointer shadow-sm border border-slate-200 dark:border-slate-800 {{ $colorClass }}">
-                                        <span class="material-symbols-outlined text-xs">{{ $icon }}</span>
+                                    <button id="react-btn-{{ $post->id }}" onclick="toggleReaction('{{ $post->id }}', 'like')" class="flex items-center justify-center w-full sm:w-auto gap-1 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 text-xs font-bold transition-all cursor-pointer shadow-sm border border-slate-200 dark:border-slate-800 {{ $colorClass }}">
+                                        <span class="material-symbols-outlined text-sm">{{ $icon }}</span>
                                         <span class="font-bold">{{ $label }}</span>
                                     </button>
 
-                                    <!-- Floating Reactions selector tray (Spring-Elastic premium styling) -->
+                                    <!-- Floating Reactions selector tray -->
                                     <div class="reaction-tray">
                                         <button onclick="toggleReaction('{{ $post->id }}', 'like')" class="reaction-emoji" title="Like">👍</button>
                                         <button onclick="toggleReaction('{{ $post->id }}', 'love')" class="reaction-emoji" title="Love">❤️</button>
@@ -195,8 +195,8 @@
                                     </div>
                                 </div>
                             @else
-                                <a href="{{ route('login') }}" class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-[10px] text-slate-500 font-bold border border-slate-200 dark:border-slate-800 transition-all shadow-sm">
-                                    <span class="material-symbols-outlined text-xs">thumb_up</span>
+                                <a href="{{ route('login') }}" class="flex items-center justify-center w-full sm:w-auto gap-1 px-3 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs text-slate-500 font-bold border border-slate-200 dark:border-slate-800 transition-all shadow-sm">
+                                    <span class="material-symbols-outlined text-sm">thumb_up</span>
                                     <span>React</span>
                                 </a>
                             @endauth
@@ -214,8 +214,8 @@
                             @endphp
                             
                             @if($totalReactsCount > 0)
-                                <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-900 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-800 shadow-sm leading-none">
-                                    <div class="flex items-center gap-0.5">
+                                <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded-full border border-slate-200 dark:border-slate-800 shadow-sm leading-none">
+                                    <div class="flex items-center gap-0.5 text-base">
                                         @if(isset($reactStats['like'])) 👍 @endif
                                         @if(isset($reactStats['love'])) ❤️ @endif
                                         @if(isset($reactStats['haha'])) 😆 @endif
@@ -223,7 +223,7 @@
                                         @if(isset($reactStats['sad'])) 😢 @endif
                                         @if(isset($reactStats['angry'])) 😡 @endif
                                     </div>
-                                    <span class="text-[9px] font-extrabold text-slate-600 dark:text-slate-300">{{ $totalReactsCount }} reactions</span>
+                                    <span class="text-xs font-extrabold text-slate-600 dark:text-slate-300 ml-1">{{ $totalReactsCount }}</span>
                                 </div>
                             @endif
                         </div>
@@ -288,11 +288,11 @@
                     </div>
 
                     <!-- Submit action button -->
-                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-                        <button type="button" onclick="showLiveReplyPreview()" class="px-4 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs cursor-pointer transition-all flex items-center gap-1 shadow-sm">
-                            <span class="material-symbols-outlined text-sm">visibility</span> Preview Reply
+                    <div class="flex flex-col sm:flex-row items-center sm:justify-end gap-3 pt-4 border-t border-slate-100">
+                        <button type="button" onclick="showLiveReplyPreview()" class="w-full sm:w-auto px-6 py-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm cursor-pointer transition-all flex items-center justify-center gap-2 shadow-sm">
+                            <span class="material-symbols-outlined text-lg">visibility</span> Preview Reply
                         </button>
-                        <button type="submit" class="xen-button text-xs font-bold text-white px-5 py-2 rounded-xl shadow-md cursor-pointer">
+                        <button type="submit" class="w-full sm:w-auto xen-button text-sm font-bold text-white px-8 py-3 rounded-xl shadow-lg cursor-pointer">
                             Submit Reply
                         </button>
                     </div>

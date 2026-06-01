@@ -5,8 +5,9 @@ use App\Http\Controllers\ForumController;
 use App\Http\Controllers\ThreadController;
 use Illuminate\Support\Facades\Route;
 
-// Forum Homepage
+// Forum Homepage & Search
 Route::get('/', [ForumController::class, 'home'])->name('home');
+Route::get('/search', [ForumController::class, 'search'])->name('search');
 
 // Authentication Routes
 Route::middleware('guest')->group(function () {

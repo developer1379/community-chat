@@ -1,31 +1,34 @@
 <!-- Professional Enterprise App Bar -->
 <header class="w-full bg-white border-b border-slate-200 py-3 px-4 sm:px-6 lg:px-8 shadow-sm flex-shrink-0">
-    <div class="max-w-7xl mx-auto flex flex-wrap sm:flex-nowrap items-center justify-between gap-3">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
         <!-- Brand Logo -->
         <a href="{{ route('home') }}" class="flex items-center gap-2 group flex-shrink-0">
-            <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/10 group-hover:scale-102 transition-transform">
+            <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/10 group-hover:scale-105 transition-transform">
                 <span class="material-symbols-outlined text-white text-base">forum</span>
             </div>
             <div>
-                <h1 class="text-xs font-extrabold tracking-tight text-slate-900 flex items-center gap-1">
+                <h1 class="text-xs sm:text-sm font-extrabold tracking-tight text-slate-900 hidden sm:flex items-center gap-1">
                     XEN<span class="text-blue-600">PROFESSIONAL</span>
+                </h1>
+                <h1 class="text-sm font-extrabold tracking-tight text-slate-900 flex sm:hidden items-center gap-1">
+                    XEN<span class="text-blue-600">PRO</span>
                 </h1>
             </div>
         </a>
 
         <!-- Search, Notify, Create and User Profile Actions -->
-        <div class="flex items-center gap-2.5 sm:gap-4 flex-wrap sm:flex-nowrap">
+        <div class="flex items-center gap-1.5 sm:gap-3">
             <!-- Search Button (HTML Material Style) -->
-            <button onclick="openSearchModal()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-slate-700 font-bold text-[10px] transition-all cursor-pointer">
-                <span class="material-symbols-outlined text-xs">search</span>
-                <span class="hidden xs:inline">Search</span>
+            <button onclick="openSearchModal()" class="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-slate-700 font-bold text-xs transition-all cursor-pointer">
+                <span class="material-symbols-outlined text-[18px]">search</span>
+                <span class="hidden sm:inline">Search</span>
             </button>
 
             @auth
                 <!-- Chat Quick Toggle -->
                 <div class="relative flex items-center">
-                    <button onclick="toggleChatDrawer()" class="w-8.5 h-8.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center cursor-pointer">
-                        <span class="material-symbols-outlined text-sm">chat</span>
+                    <button onclick="toggleChatDrawer()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center cursor-pointer">
+                        <span class="material-symbols-outlined text-[18px]">chat</span>
                     </button>
                     <!-- Global Chat Unread Badge -->
                     <span id="global-chat-badge" class="hidden absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-blue-600 text-white font-extrabold text-[7px] flex items-center justify-center border border-white">0</span>
@@ -33,8 +36,8 @@
 
                 <!-- Notifications -->
                 <div class="relative flex items-center">
-                    <button onclick="toggleDropdown('notify-dropdown')" class="w-8.5 h-8.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center cursor-pointer">
-                        <span class="material-symbols-outlined text-sm">notifications</span>
+                    <button onclick="toggleDropdown('notify-dropdown')" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center cursor-pointer">
+                        <span class="material-symbols-outlined text-[18px]">notifications</span>
                     </button>
                     <!-- Notifications Badge -->
                     <span id="global-notifications-badge" class="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-red-600 text-white font-extrabold text-[7px] flex items-center justify-center border border-white">3</span>
@@ -65,9 +68,9 @@
 
                 <!-- Create Quick Thread (HTML Material Style) -->
                 <div class="relative">
-                    <button onclick="toggleDropdown('create-dropdown')" class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-all shadow-md shadow-blue-500/10 cursor-pointer">
-                        <span class="material-symbols-outlined text-sm">add</span>
-                        Create
+                    <button onclick="toggleDropdown('create-dropdown')" class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-all shadow-md shadow-blue-500/10 cursor-pointer">
+                        <span class="material-symbols-outlined text-[18px]">add</span>
+                        <span class="hidden sm:inline">Create</span>
                     </button>
                     <!-- Create Dropdown Menu -->
                     <div id="create-dropdown" class="dropdown-menu absolute right-0 mt-2 w-48 mui-card py-1 z-50 text-left bg-white border border-slate-200">
@@ -83,7 +86,7 @@
                 <!-- User Profile Dropdown -->
                 <div class="relative">
                     <button onclick="toggleDropdown('profile-dropdown')" class="flex items-center gap-2 p-0.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer">
-                        <div class="w-7 h-7 rounded-full overflow-hidden border border-blue-600/30">
+                        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border border-blue-600/30">
                             @if(Auth::user()->avatar_path)
                                 <img src="{{ str_starts_with(Auth::user()->avatar_path, 'http') ? Auth::user()->avatar_path : asset('storage/' . Auth::user()->avatar_path) }}" class="w-full h-full object-cover" alt="avatar">
                             @else
@@ -142,22 +145,29 @@
 </header>
 
 <!-- Submenu Navigation -->
-<div class="w-full bg-[#f8fafc] border-b border-slate-200 py-2.5 shadow-sm overflow-x-auto custom-scrollbar flex-shrink-0">
-    <div class="max-w-7xl mx-auto px-4 flex gap-6 text-[10px] sm:text-xs font-semibold text-slate-600 min-w-max">
-        <a href="{{ route('home') }}" class="hover:text-blue-600 flex items-center gap-1.5 transition-colors">
-            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Discussions Home
-        </a>
-        <a href="{{ route('categories.show', 'images-and-gifs') }}" class="hover:text-blue-600 flex items-center gap-1.5 transition-colors">
-            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> GIFs & Images Showroom
-        </a>
-        <a href="{{ route('members.index') }}" class="hover:text-blue-600 flex items-center gap-1.5 transition-colors">
-            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Members Directory
-        </a>
-        <a href="{{ route('rankings.index') }}" class="hover:text-blue-600 flex items-center gap-1.5 transition-colors">
-            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Leaderboard & Rankings
-        </a>
-        <a href="{{ route('rules') }}" class="hover:text-blue-600 flex items-center gap-1.5 transition-colors">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Rules & Guides
-        </a>
+<div class="w-full bg-white border-b border-slate-200 shadow-sm flex-shrink-0 relative z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex gap-5 sm:gap-8 overflow-x-auto hide-scrollbar whitespace-nowrap items-center w-full pb-0">
+            <a href="{{ route('home') }}" class="group flex items-center py-3 border-b-2 border-transparent hover:border-blue-600 text-xs sm:text-[13px] font-semibold text-slate-500 hover:text-slate-900 transition-colors flex-shrink-0">
+                <span class="material-symbols-outlined text-[18px] mr-1.5 text-slate-400 group-hover:text-blue-600 transition-colors">forum</span>
+                Discussions
+            </a>
+            <a href="{{ route('categories.show', 'images-and-gifs') }}" class="group flex items-center py-3 border-b-2 border-transparent hover:border-blue-600 text-xs sm:text-[13px] font-semibold text-slate-500 hover:text-slate-900 transition-colors flex-shrink-0">
+                <span class="material-symbols-outlined text-[18px] mr-1.5 text-slate-400 group-hover:text-blue-600 transition-colors">image</span>
+                Media Showroom
+            </a>
+            <a href="{{ route('members.index') }}" class="group flex items-center py-3 border-b-2 border-transparent hover:border-blue-600 text-xs sm:text-[13px] font-semibold text-slate-500 hover:text-slate-900 transition-colors flex-shrink-0">
+                <span class="material-symbols-outlined text-[18px] mr-1.5 text-slate-400 group-hover:text-blue-600 transition-colors">groups</span>
+                Members
+            </a>
+            <a href="{{ route('rankings.index') }}" class="group flex items-center py-3 border-b-2 border-transparent hover:border-blue-600 text-xs sm:text-[13px] font-semibold text-slate-500 hover:text-slate-900 transition-colors flex-shrink-0">
+                <span class="material-symbols-outlined text-[18px] mr-1.5 text-slate-400 group-hover:text-blue-600 transition-colors">leaderboard</span>
+                Leaderboard
+            </a>
+            <a href="{{ route('rules') }}" class="group flex items-center py-3 border-b-2 border-transparent hover:border-blue-600 text-xs sm:text-[13px] font-semibold text-slate-500 hover:text-slate-900 transition-colors flex-shrink-0">
+                <span class="material-symbols-outlined text-[18px] mr-1.5 text-slate-400 group-hover:text-blue-600 transition-colors">gavel</span>
+                Rules & Guides
+            </a>
+        </div>
     </div>
 </div>

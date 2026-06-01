@@ -20,7 +20,7 @@
         <div class="bg-slate-50/80 px-6 py-4 border-b border-slate-200">
             <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">✍️ Thread Details</span>
         </div>
-        <form id="thread-form" action="{{ route('threads.store') }}" method="POST" enctype="multipart/form-data" class="p-6 sm:p-8 space-y-6">
+        <form id="thread-form" action="{{ route('threads.store') }}" method="POST" enctype="multipart/form-data" class="p-4 sm:p-8 space-y-6">
             @csrf
             
             <!-- Hidden Category Selector -->
@@ -68,14 +68,14 @@
             </div>
 
             <!-- Action buttons -->
-            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-                <a href="{{ route('categories.show', $category->slug) }}" class="bg-slate-100 hover:bg-slate-200/80 text-xs font-bold text-slate-700 px-5 py-2.5 rounded-xl transition-all">
+            <div class="flex flex-col sm:flex-row items-center sm:justify-end gap-3 pt-6 border-t border-slate-100">
+                <a href="{{ route('categories.show', $category->slug) }}" class="w-full sm:w-auto text-center bg-slate-100 hover:bg-slate-200/80 text-sm font-bold text-slate-700 px-6 py-3 rounded-xl transition-all">
                     Cancel
                 </a>
-                <button type="button" onclick="showLivePreview()" class="px-5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs cursor-pointer transition-all flex items-center gap-1.5 shadow-sm">
-                    <span class="material-symbols-outlined text-sm">visibility</span> Preview Thread
+                <button type="button" onclick="showLivePreview()" class="w-full sm:w-auto px-6 py-3 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm cursor-pointer transition-all flex items-center justify-center gap-2 shadow-sm">
+                    <span class="material-symbols-outlined text-lg">visibility</span> Preview Thread
                 </button>
-                <button type="submit" class="xen-button text-xs font-bold text-white px-6 py-2.5 rounded-xl shadow-lg cursor-pointer">
+                <button type="submit" class="w-full sm:w-auto xen-button text-sm font-bold text-white px-8 py-3 rounded-xl shadow-lg cursor-pointer">
                     Create Thread
                 </button>
             </div>
