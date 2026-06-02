@@ -25,6 +25,12 @@
             </button>
 
             @auth
+                <!-- Shimmering Wallet Currency Badge -->
+                <a href="{{ route('wallet.index') }}" class="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 font-extrabold text-xs transition-all cursor-pointer border border-amber-200 shadow-sm" title="My Coins Wallet">
+                    <span class="material-symbols-outlined text-[18px] text-amber-500 animate-pulse">monetization_on</span>
+                    <span>{{ auth()->user()->coins }} <span class="hidden sm:inline">Coins</span></span>
+                </a>
+
                 <!-- Chat Quick Toggle -->
                 <div class="relative flex items-center">
                     <button onclick="toggleChatDrawer()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center cursor-pointer">
@@ -104,6 +110,9 @@
                         <div class="py-1">
                             <a href="{{ route('profile.show', Auth::user()->name) }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 transition-all font-semibold">
                                 <span class="material-symbols-outlined text-sm text-slate-500">person</span> View Profile
+                            </a>
+                            <a href="{{ route('wallet.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-700 hover:bg-slate-50 transition-all font-semibold">
+                                <span class="material-symbols-outlined text-sm text-slate-500">account_balance_wallet</span> My Wallet
                             </a>
                             <button onclick="openSignatureModal()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-xs text-slate-700 hover:bg-slate-50 transition-all cursor-pointer font-semibold font-sans">
                                 <span class="material-symbols-outlined text-sm text-slate-500">settings</span> Profile Settings

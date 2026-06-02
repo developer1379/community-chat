@@ -31,6 +31,7 @@ class User extends Authenticatable
         'title_badge',
         'signature',
         'is_private',
+        'coins',
     ];
 
     /**
@@ -182,5 +183,32 @@ class User extends Authenticatable
         $seed = $animeSeeds[abs($hash) % count($animeSeeds)];
         
         return "https://api.dicebear.com/7.x/adventurer/svg?seed=" . $seed;
+    }
+
+    /**
+     * Get all coin transactions for this user.
+     */
+    public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(CoinTransaction::class)->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Safely add/deduct coins and record a transaction audit.
+     */
+    public function addCoins(int $amount, string $type, string $description): bool
+    {
+        $this->coins += $amount;
+        $saved = $this->save();
+
+        if ($saved) {
+            $this->transactions()->create([
+                'amount' => $amount,
+                'type' => $type,
+                'description' => $description,
+            ]);
+        }
+
+        return $saved;
     }
 }

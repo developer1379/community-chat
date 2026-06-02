@@ -64,6 +64,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/dms/unread-count', [\App\Http\Controllers\ChatController::class, 'unreadCount']);
     Route::get('/dms/search-users', [\App\Http\Controllers\ChatController::class, 'searchUsers']);
     Route::post('/posts/{post}/react', [\App\Http\Controllers\ReactController::class, 'react']);
+    
+    // Wallet Routes
+    Route::get('/wallet', [\App\Http\Controllers\WalletController::class, 'index'])->name('wallet.index');
 });
 
 // Public profile page

@@ -33,6 +33,11 @@ class ReactController extends Controller
                 // Remove reaction if clicked the exact same type (toggle off)
                 $existingReact->delete();
                 $reacted = false;
+
+                // Deduct 2 coins from post owner (if not self)
+                if ($post->user_id !== $userId) {
+                    $post->user->addCoins(-2, 'reaction_removed', "Reaction removed on post in: " . $post->thread->title);
+                }
             } else {
                 // Update reaction type if clicked a different one
                 $existingReact->update(['type' => $type]);
@@ -46,6 +51,11 @@ class ReactController extends Controller
                 'type' => $type,
             ]);
             $reacted = true;
+
+            // Reward 2 coins to post owner (if not self)
+            if ($post->user_id !== $userId) {
+                $post->user->addCoins(2, 'reaction_received', "Received reaction on post in: " . $post->thread->title);
+            }
         }
 
         // Get updated statistics for reactions on this post

@@ -78,8 +78,9 @@ class ThreadController extends Controller
                         'file_type' => $file->getMimeType(),
                     ]);
                 }
-            }
-        }
+
+        // Reward user with 15 coins for creating a thread
+        Auth::user()->addCoins(15, 'thread_created', "Created thread: " . $thread->title);
 
         return redirect()->route('threads.show', $thread->slug)->with('success', 'Your thread has been created successfully!');
     }

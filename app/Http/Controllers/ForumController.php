@@ -129,6 +129,9 @@ class ForumController extends Controller
 
         $thread->touch();
 
+        // Reward user with 5 coins for posting a reply
+        Auth::user()->addCoins(5, 'reply_posted', "Replied to thread: " . $thread->title);
+
         return back()->with('success', 'Your reply has been posted successfully!');
     }
 
