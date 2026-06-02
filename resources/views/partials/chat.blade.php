@@ -1,6 +1,6 @@
 @auth
     <!-- sliding chat panel drawer -->
-    <div id="chat-drawer-container" class="chat-drawer translate-x-full fixed bottom-0 right-0 w-full h-full sm:bottom-6 sm:right-6 sm:w-96 sm:h-[500px] z-50 bg-white border border-slate-200 sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden pointer-events-auto">
+    <div id="chat-drawer-container" class="chat-drawer translate-x-full fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-96 sm:h-[500px] z-50 bg-white border border-slate-200 sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden pointer-events-auto">
         
         <!-- Header area -->
         <div class="px-4 py-3 bg-blue-600 text-white flex items-center justify-between shadow-sm flex-shrink-0">
