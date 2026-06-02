@@ -39,6 +39,79 @@
         </div>
     </div>
 
+    @if(count($users) >= 3)
+        <!-- Visual 3D Glassmorphic Champion Podium Showcase -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end justify-center py-6 px-4 bg-gradient-to-b from-slate-900/5 via-transparent to-transparent rounded-3xl border border-slate-200/40">
+            <!-- 2nd Place (Silver) Podium - Left -->
+            @if(isset($users[1]))
+                @php $secondUser = $users[1]; @endphp
+                <div class="flex flex-col items-center group">
+                    <a href="{{ route('profile.show', $secondUser->name) }}" class="relative block shrink-0" data-user-hover="true" data-user-name="{{ $secondUser->name }}" data-user-badge="{{ $secondUser->title_badge }}" data-user-joined="{{ $secondUser->created_at->format('M d, Y') }}" data-user-threads="{{ $secondUser->threads()->count() }}" data-user-posts="{{ $secondUser->posts()->count() }}" data-user-uploads="{{ $secondUser->attachments()->count() }}" data-user-avatar="{{ $secondUser->avatar_url }}" data-user-banner="{{ $secondUser->banner_color }}" data-user-banner-path="{{ $secondUser->banner_path }}">
+                        <!-- Silver Ring Glow -->
+                        <div class="absolute inset-0 rounded-full bg-slate-400 opacity-20 blur-md animate-pulse"></div>
+                        <div class="w-20 h-20 rounded-full overflow-hidden border-4 border-slate-300 shadow-md relative z-10 transition-transform group-hover:scale-105">
+                            <img src="{{ $secondUser->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
+                        </div>
+                        <span class="absolute -bottom-2 -right-2 bg-slate-400 text-white font-black text-xs w-6 h-6 rounded-full flex items-center justify-center border-2 border-white z-20">2</span>
+                    </a>
+                    <h3 class="font-extrabold text-slate-800 text-sm mt-4 truncate max-w-[150px]">{{ $secondUser->name }}</h3>
+                    <span class="text-[9px] font-black uppercase tracking-wider text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200 mt-1">{{ $secondUser->title_badge }}</span>
+                    <!-- The Silver Podium block -->
+                    <div class="w-48 bg-gradient-to-t from-slate-100 to-slate-200 border-t border-slate-300 h-20 mt-4 rounded-t-2xl shadow-inner flex flex-col items-center justify-center">
+                        <span class="text-xs font-black text-slate-500">🥈 SILVER</span>
+                        <span class="text-[10px] font-bold text-slate-450 mt-1">{{ number_format($secondUser->calculated_points) }} pts</span>
+                    </div>
+                </div>
+            @endif
+
+            <!-- 1st Place (Gold) Podium - Center (Highest!) -->
+            @if(isset($users[0]))
+                @php $firstUser = $users[0]; @endphp
+                <div class="flex flex-col items-center group -mt-6 z-20">
+                    <!-- Floating Crown -->
+                    <span class="text-3xl animate-bounce mb-1">👑</span>
+                    <a href="{{ route('profile.show', $firstUser->name) }}" class="relative block shrink-0" data-user-hover="true" data-user-name="{{ $firstUser->name }}" data-user-badge="{{ $firstUser->title_badge }}" data-user-joined="{{ $firstUser->created_at->format('M d, Y') }}" data-user-threads="{{ $firstUser->threads()->count() }}" data-user-posts="{{ $firstUser->posts()->count() }}" data-user-uploads="{{ $firstUser->attachments()->count() }}" data-user-avatar="{{ $firstUser->avatar_url }}" data-user-banner="{{ $firstUser->banner_color }}" data-user-banner-path="{{ $firstUser->banner_path }}">
+                        <!-- Golden Ring Glow -->
+                        <div class="absolute inset-0 rounded-full bg-amber-500 opacity-30 blur-lg animate-pulse"></div>
+                        <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-amber-400 shadow-xl relative z-10 transition-transform group-hover:scale-105">
+                            <img src="{{ $firstUser->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
+                        </div>
+                        <span class="absolute -bottom-2 -right-2 bg-amber-500 text-white font-black text-xs w-7 h-7 rounded-full flex items-center justify-center border-2 border-white z-20">1</span>
+                    </a>
+                    <h3 class="font-extrabold text-slate-900 text-base mt-4 truncate max-w-[150px]">{{ $firstUser->name }}</h3>
+                    <span class="text-[9px] font-black uppercase tracking-wider text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200 mt-1">{{ $firstUser->title_badge }}</span>
+                    <!-- The Gold Podium block -->
+                    <div class="w-52 bg-gradient-to-t from-amber-100/85 via-yellow-50 to-amber-200/50 border-t border-amber-300 h-28 mt-4 rounded-t-3xl shadow-inner flex flex-col items-center justify-center">
+                        <span class="text-xs font-black text-amber-600">🥇 CHAMPION</span>
+                        <span class="text-xs font-black text-amber-700 mt-1">{{ number_format($firstUser->calculated_points) }} pts</span>
+                    </div>
+                </div>
+            @endif
+
+            <!-- 3rd Place (Bronze) Podium - Right -->
+            @if(isset($users[2]))
+                @php $thirdUser = $users[2]; @endphp
+                <div class="flex flex-col items-center group">
+                    <a href="{{ route('profile.show', $thirdUser->name) }}" class="relative block shrink-0" data-user-hover="true" data-user-name="{{ $thirdUser->name }}" data-user-badge="{{ $thirdUser->title_badge }}" data-user-joined="{{ $thirdUser->created_at->format('M d, Y') }}" data-user-threads="{{ $thirdUser->threads()->count() }}" data-user-posts="{{ $thirdUser->posts()->count() }}" data-user-uploads="{{ $thirdUser->attachments()->count() }}" data-user-avatar="{{ $thirdUser->avatar_url }}" data-user-banner="{{ $thirdUser->banner_color }}" data-user-banner-path="{{ $thirdUser->banner_path }}">
+                        <!-- Bronze Ring Glow -->
+                        <div class="absolute inset-0 rounded-full bg-amber-700 opacity-20 blur-md animate-pulse"></div>
+                        <div class="w-20 h-20 rounded-full overflow-hidden border-4 border-amber-600 shadow-md relative z-10 transition-transform group-hover:scale-105">
+                            <img src="{{ $thirdUser->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
+                        </div>
+                        <span class="absolute -bottom-2 -right-2 bg-amber-700 text-white font-black text-xs w-6 h-6 rounded-full flex items-center justify-center border-2 border-white z-20">3</span>
+                    </a>
+                    <h3 class="font-extrabold text-slate-800 text-sm mt-4 truncate max-w-[150px]">{{ $thirdUser->name }}</h3>
+                    <span class="text-[9px] font-black uppercase tracking-wider text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-250 mt-1">{{ $thirdUser->title_badge }}</span>
+                    <!-- The Bronze Podium block -->
+                    <div class="w-48 bg-gradient-to-t from-amber-50 to-amber-100 border-t border-amber-250 h-16 mt-4 rounded-t-2xl shadow-inner flex flex-col items-center justify-center">
+                        <span class="text-xs font-black text-amber-700">🥉 BRONZE</span>
+                        <span class="text-[10px] font-bold text-slate-450 mt-1">{{ number_format($thirdUser->calculated_points) }} pts</span>
+                    </div>
+                </div>
+            @endif
+        </div>
+    @endif
+
     <!-- Desktop List Layout (Visible on Desktop & Tablet, rounded-none) -->
     <div class="hidden md:block space-y-4">
         @forelse($users as $user)
