@@ -90,17 +90,11 @@
                        data-user-threads="{{ $user->threads()->count() }}" 
                        data-user-posts="{{ $user->posts()->count() }}" 
                        data-user-uploads="{{ $user->attachments()->count() }}" 
-                       data-user-avatar="{{ $user->avatar_path ? (str_starts_with($user->avatar_path, 'http') ? $user->avatar_path : asset('storage/' . $user->avatar_path)) : '' }}" 
+                       data-user-avatar="{{ $user->avatar_url }}" 
                        data-user-banner="{{ $user->banner_color }}"
                        data-user-banner-path="{{ $user->banner_path }}"
                        class="w-20 h-20 rounded-full overflow-hidden border-4 border-white bg-slate-100 shadow-sm -mt-10 mb-3 relative block shrink-0 transition-transform group-hover:scale-105 duration-300">
-                        @if($user->avatar_path)
-                            <img src="{{ str_starts_with($user->avatar_path, 'http') ? $user->avatar_path : asset('storage/' . $user->avatar_path) }}" class="w-full h-full object-cover">
-                        @else
-                            <div class="w-full h-full flex items-center justify-center text-xl font-bold text-slate-400">
-                                {{ strtoupper(substr($user->name, 0, 2)) }}
-                            </div>
-                        @endif
+                        <img src="{{ $user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                     </a>
 
                     <!-- Name and Badge -->
@@ -113,7 +107,7 @@
                            data-user-threads="{{ $user->threads()->count() }}" 
                            data-user-posts="{{ $user->posts()->count() }}" 
                            data-user-uploads="{{ $user->attachments()->count() }}" 
-                           data-user-avatar="{{ $user->avatar_path ? (str_starts_with($user->avatar_path, 'http') ? $user->avatar_path : asset('storage/' . $user->avatar_path)) : '' }}" 
+                           data-user-avatar="{{ $user->avatar_url }}" 
                            data-user-banner="{{ $user->banner_color }}"
                            data-user-banner-path="{{ $user->banner_path }}">{{ $user->name }}</a>
                     </h3>

@@ -74,13 +74,7 @@
                                 <!-- Uploader info -->
                                 <div class="flex items-center gap-1.5 min-w-0">
                                     <div class="w-5 h-5 rounded-full overflow-hidden border border-slate-200 flex-shrink-0 bg-slate-50">
-                                        @if($attach->user->avatar_path)
-                                            <img src="{{ str_starts_with($attach->user->avatar_path, 'http') ? $attach->user->avatar_path : asset('storage/' . $attach->user->avatar_path) }}" class="w-full h-full object-cover" alt="avatar">
-                                        @else
-                                            <div class="w-full h-full bg-slate-100 flex items-center justify-center text-[7px] font-bold text-slate-500">
-                                                {{ strtoupper(substr($attach->user->name, 0, 1)) }}
-                                            </div>
-                                        @endif
+                                        <img src="{{ $attach->user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                                     </div>
                                     <a href="{{ route('profile.show', $attach->user->name) }}" class="text-[10px] font-black text-slate-700 hover:text-indigo-650 transition-colors truncate">{{ $attach->user->name }}</a>
                                 </div>

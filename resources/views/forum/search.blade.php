@@ -62,17 +62,11 @@
                            data-user-threads="{{ $thread->user->threads()->count() }}" 
                            data-user-posts="{{ $thread->user->posts()->count() }}" 
                            data-user-uploads="{{ $thread->user->attachments()->count() }}" 
-                           data-user-avatar="{{ $thread->user->avatar_path ? (str_starts_with($thread->user->avatar_path, 'http') ? $thread->user->avatar_path : asset('storage/' . $thread->user->avatar_path)) : '' }}" 
+                           data-user-avatar="{{ $thread->user->avatar_url }}" 
                            data-user-banner="{{ $thread->user->banner_color }}"
                            data-user-banner-path="{{ $thread->user->banner_path }}"
                            class="w-12 h-12 rounded-full overflow-hidden border border-slate-200 shadow-sm mt-1 flex-shrink-0 block relative group hover:border-blue-500 transition-colors">
-                            @if($thread->user->avatar_path)
-                                <img src="{{ str_starts_with($thread->user->avatar_path, 'http') ? $thread->user->avatar_path : asset('storage/' . $thread->user->avatar_path) }}" class="w-full h-full object-cover" alt="avatar">
-                            @else
-                                <div class="w-full h-full bg-slate-100 flex items-center justify-center text-sm font-bold text-slate-500">
-                                    {{ strtoupper(substr($thread->user->name, 0, 2)) }}
-                                </div>
-                            @endif
+                            <img src="{{ $thread->user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                         </a>
 
                         <!-- Thread details -->
@@ -113,13 +107,7 @@
                             @if($thread->lastPost)
                                 <div class="flex items-center md:justify-end gap-1.5 truncate mb-0.5">
                                     <a href="{{ route('profile.show', $thread->lastPost->user->name) }}" class="w-5 h-5 rounded-full overflow-hidden flex-shrink-0 block bg-slate-100 border border-slate-200">
-                                        @if($thread->lastPost->user->avatar_path)
-                                            <img src="{{ str_starts_with($thread->lastPost->user->avatar_path, 'http') ? $thread->lastPost->user->avatar_path : asset('storage/' . $thread->lastPost->user->avatar_path) }}" class="w-full h-full object-cover">
-                                        @else
-                                            <div class="w-full h-full flex items-center justify-center text-[8px] font-bold text-slate-500">
-                                                {{ strtoupper(substr($thread->lastPost->user->name, 0, 2)) }}
-                                            </div>
-                                        @endif
+                                        <img src="{{ $thread->lastPost->user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                                     </a>
                                     <span class="truncate">
                                         <a href="{{ route('profile.show', $thread->lastPost->user->name) }}" class="font-bold text-slate-700 hover:text-blue-600 transition-colors">

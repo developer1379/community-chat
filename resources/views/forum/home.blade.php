@@ -226,17 +226,11 @@
                                        data-user-threads="{{ $thread->user->threads()->count() }}" 
                                        data-user-posts="{{ $thread->user->posts()->count() }}" 
                                        data-user-uploads="{{ $thread->user->attachments()->count() }}" 
-                                       data-user-avatar="{{ $thread->user->avatar_path ? (str_starts_with($thread->user->avatar_path, 'http') ? $thread->user->avatar_path : asset('storage/' . $thread->user->avatar_path)) : '' }}" 
+                                       data-user-avatar="{{ $thread->user->avatar_url }}" 
                                        data-user-banner="{{ $thread->user->banner_color }}"
                                        data-user-banner-path="{{ $thread->user->banner_path }}"
                                        class="w-10 h-10 rounded-full overflow-hidden border border-slate-200 mt-0.5 flex-shrink-0 block shadow-sm hover:shadow transition-shadow">
-                                        @if($thread->user->avatar_path)
-                                            <img src="{{ str_starts_with($thread->user->avatar_path, 'http') ? $thread->user->avatar_path : asset('storage/' . $thread->user->avatar_path) }}" class="w-full h-full object-cover" alt="avatar">
-                                        @else
-                                            <div class="w-full h-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-550 rounded-none">
-                                                {{ strtoupper(substr($thread->user->name, 0, 2)) }}
-                                            </div>
-                                        @endif
+                                        <img src="{{ $thread->user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                                     </a>
                                     <div class="space-y-0.5 min-w-0 text-left">
                                         <h4 class="font-bold text-slate-800 text-sm hover:text-blue-600 transition-colors truncate">
@@ -253,7 +247,7 @@
                                                    data-user-threads="{{ $thread->user->threads()->count() }}" 
                                                    data-user-posts="{{ $thread->user->posts()->count() }}" 
                                                    data-user-uploads="{{ $thread->user->attachments()->count() }}" 
-                                                   data-user-avatar="{{ $thread->user->avatar_path ? (str_starts_with($thread->user->avatar_path, 'http') ? $thread->user->avatar_path : asset('storage/' . $thread->user->avatar_path)) : '' }}" 
+                                                   data-user-avatar="{{ $thread->user->avatar_url }}" 
                                                    data-user-banner="{{ $thread->user->banner_color }}"
                                                    data-user-banner-path="{{ $thread->user->banner_path }}"
                                                    class="hover:underline text-slate-650 font-extrabold">{{ $thread->user->name }}</a>
@@ -302,13 +296,7 @@
                                 <div class="flex items-start gap-3">
                                     <a href="{{ route('profile.show', $thread->user->name) }}" 
                                        class="w-10 h-10 rounded-full overflow-hidden border border-slate-200 mt-0.5 flex-shrink-0 block shadow-sm">
-                                        @if($thread->user->avatar_path)
-                                            <img src="{{ str_starts_with($thread->user->avatar_path, 'http') ? $thread->user->avatar_path : asset('storage/' . $thread->user->avatar_path) }}" class="w-full h-full object-cover" alt="avatar">
-                                        @else
-                                            <div class="w-full h-full bg-slate-100 flex items-center justify-center text-sm font-bold text-slate-500 rounded-full">
-                                                {{ strtoupper(substr($thread->user->name, 0, 2)) }}
-                                            </div>
-                                        @endif
+                                        <img src="{{ $thread->user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                                     </a>
                                     <div class="space-y-0.5 min-w-0">
                                         <h4 class="font-bold text-slate-800 text-sm hover:text-blue-600 transition-colors break-words">
@@ -421,7 +409,7 @@
                        data-user-threads="{{ $stats['latest_user']->threads()->count() }}" 
                        data-user-posts="{{ $stats['latest_user']->posts()->count() }}" 
                        data-user-uploads="{{ $stats['latest_user']->attachments()->count() }}" 
-                       data-user-avatar="{{ $stats['latest_user']->avatar_path ? (str_starts_with($stats['latest_user']->avatar_path, 'http') ? $stats['latest_user']->avatar_path : asset('storage/' . $stats['latest_user']->avatar_path)) : '' }}" 
+                       data-user-avatar="{{ $stats['latest_user']->avatar_url }}" 
                        data-user-banner="{{ $stats['latest_user']->banner_color }}"
                        data-user-banner-path="{{ $stats['latest_user']->banner_path }}"
                        class="font-bold text-blue-600 hover:underline flex items-center gap-1">
@@ -447,18 +435,12 @@
                            data-user-threads="{{ $user->threads()->count() }}" 
                            data-user-posts="{{ $user->posts()->count() }}" 
                            data-user-uploads="{{ $user->attachments()->count() }}" 
-                           data-user-avatar="{{ $user->avatar_path ? (str_starts_with($user->avatar_path, 'http') ? $user->avatar_path : asset('storage/' . $user->avatar_path)) : '' }}" 
+                           data-user-avatar="{{ $user->avatar_url }}" 
                            data-user-banner="{{ $user->banner_color }}"
                            data-user-banner-path="{{ $user->banner_path }}"
                            class="flex items-center gap-1.5 p-1.5 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-200 transition-all group">
                             <div class="relative w-6 h-6 rounded-2xl overflow-hidden border border-slate-200 flex-shrink-0">
-                                @if($user->avatar_path)
-                                    <img src="{{ str_starts_with($user->avatar_path, 'http') ? $user->avatar_path : asset('storage/' . $user->avatar_path) }}" class="w-full h-full object-cover" alt="avatar">
-                                @else
-                                    <div class="w-full h-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-550 rounded-2xl">
-                                        {{ strtoupper(substr($user->name, 0, 2)) }}
-                                    </div>
-                                @endif
+                                <img src="{{ $user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                                 <span class="absolute bottom-0 right-0 w-2 h-2 rounded-2xl bg-emerald-500 border border-white"></span>
                             </div>
                             <div class="truncate leading-tight text-left">

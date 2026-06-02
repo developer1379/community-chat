@@ -74,18 +74,12 @@
                        data-user-threads="{{ $post->user->threads()->count() }}" 
                        data-user-posts="{{ $post->user->posts()->count() }}" 
                        data-user-uploads="{{ $post->user->attachments()->count() }}" 
-                       data-user-avatar="{{ $post->user->avatar_path ? (str_starts_with($post->user->avatar_path, 'http') ? $post->user->avatar_path : asset('storage/' . $post->user->avatar_path)) : '' }}" 
+                       data-user-avatar="{{ $post->user->avatar_url }}" 
                        data-user-banner="{{ $post->user->banner_color }}"
                        data-user-banner-path="{{ $post->user->banner_path }}"
                        class="relative group block flex-shrink-0 md:mb-2">
                         <div class="w-12 h-12 md:w-16 md:h-16 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 group-hover:border-indigo-500 transition-all duration-300 shadow-sm">
-                            @if($post->user->avatar_path)
-                                <img src="{{ str_starts_with($post->user->avatar_path, 'http') ? $post->user->avatar_path : asset('storage/' . $post->user->avatar_path) }}" class="w-full h-full object-cover" alt="avatar">
-                            @else
-                                <div class="w-full h-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-lg font-bold text-slate-500 dark:text-slate-300">
-                                    {{ strtoupper(substr(Auth::user() ? Auth::user()->name : $post->user->name, 0, 2)) }}
-                                </div>
-                            @endif
+                            <img src="{{ $post->user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                         </div>
                         <span class="absolute bottom-0 md:bottom-0.5 right-0 md:right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-950"></span>
                     </a>
@@ -101,7 +95,7 @@
                                data-user-threads="{{ $post->user->threads()->count() }}" 
                                data-user-posts="{{ $post->user->posts()->count() }}" 
                                data-user-uploads="{{ $post->user->attachments()->count() }}" 
-                               data-user-avatar="{{ $post->user->avatar_path ? (str_starts_with($post->user->avatar_path, 'http') ? $post->user->avatar_path : asset('storage/' . $post->user->avatar_path)) : '' }}" 
+                               data-user-avatar="{{ $post->user->avatar_url }}" 
                                data-user-banner="{{ $post->user->banner_color }}"
                                data-user-banner-path="{{ $post->user->banner_path }}">{{ $post->user->name }}</a>
                         </h3>
@@ -339,11 +333,7 @@
                     <!-- User Left Sidebar Mockup -->
                     <div class="w-full md:w-48 bg-slate-50 p-4 flex flex-col items-center border-b md:border-b-0 md:border-r border-slate-200 text-center flex-shrink-0">
                         <div class="w-16 h-16 rounded-xl overflow-hidden border border-slate-300 shadow-sm mb-2 bg-blue-50 flex items-center justify-center font-bold text-blue-600 text-lg">
-                            @if(Auth::user()->avatar_path)
-                                <img src="{{ str_starts_with(Auth::user()->avatar_path, 'http') ? Auth::user()->avatar_path : asset('storage/' . Auth::user()->avatar_path) }}" class="w-full h-full object-cover">
-                            @else
-                                {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
-                            @endif
+                            <img src="{{ Auth::user()->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                         </div>
                         <h3 class="font-bold text-slate-800 text-xs">{{ Auth::user()->name }}</h3>
                         <span class="text-[8px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider text-white mt-1 border border-slate-350 shadow-sm" style="background: {{ Auth::user()->banner_color ?? '#2563eb' }}">

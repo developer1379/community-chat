@@ -67,17 +67,11 @@
                        data-user-threads="{{ $user->threads()->count() }}"
                        data-user-posts="{{ $user->posts()->count() }}"
                        data-user-uploads="{{ $user->attachments()->count() }}"
-                       data-user-avatar="{{ $user->avatar_path ? (str_starts_with($user->avatar_path, 'http') ? $user->avatar_path : asset('storage/' . $user->avatar_path)) : '' }}"
+                       data-user-avatar="{{ $user->avatar_url }}"
                        data-user-banner="{{ $user->banner_color }}"
                        data-user-banner-path="{{ $user->banner_path }}"
                        class="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow flex-shrink-0 block hover:border-blue-500 transition-colors bg-slate-100">
-                        @if($user->avatar_path)
-                            <img src="{{ str_starts_with($user->avatar_path, 'http') ? $user->avatar_path : asset('storage/' . $user->avatar_path) }}" class="w-full h-full object-cover">
-                        @else
-                            <div class="w-full h-full bg-slate-100 flex items-center justify-center text-sm font-bold text-slate-400">
-                                {{ strtoupper(substr($user->name, 0, 2)) }}
-                            </div>
-                        @endif
+                        <img src="{{ $user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                     </a>
 
                     <!-- Username -->
@@ -90,7 +84,7 @@
                            data-user-threads="{{ $user->threads()->count() }}"
                            data-user-posts="{{ $user->posts()->count() }}"
                            data-user-uploads="{{ $user->attachments()->count() }}"
-                           data-user-avatar="{{ $user->avatar_path ? (str_starts_with($user->avatar_path, 'http') ? $user->avatar_path : asset('storage/' . $user->avatar_path)) : '' }}"
+                           data-user-avatar="{{ $user->avatar_url }}"
                            data-user-banner="{{ $user->banner_color }}"
                            data-user-banner-path="{{ $user->banner_path }}"
                            class="font-bold text-slate-900 hover:text-blue-600 text-base truncate block transition-colors">{{ $user->name }}</a>
@@ -178,13 +172,7 @@
 
                         <!-- Avatar -->
                         <a href="{{ route('profile.show', $user->name) }}" class="w-10 h-10 rounded-full overflow-hidden border border-slate-200 shadow flex-shrink-0 block bg-slate-100">
-                            @if($user->avatar_path)
-                                <img src="{{ str_starts_with($user->avatar_path, 'http') ? $user->avatar_path : asset('storage/' . $user->avatar_path) }}" class="w-full h-full object-cover">
-                            @else
-                                <div class="w-full h-full flex items-center justify-center text-xs font-bold text-slate-400">
-                                    {{ strtoupper(substr($user->name, 0, 2)) }}
-                                </div>
-                            @endif
+                            <img src="{{ $user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                         </a>
 
                         <!-- Username -->

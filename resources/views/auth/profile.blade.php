@@ -24,14 +24,7 @@
             <div class="flex flex-col sm:flex-row items-center sm:items-end gap-5 -mt-20 sm:-mt-24 z-10 text-center sm:text-left">
                 <!-- Large Avatar frame -->
                 <div class="w-32 h-32 rounded-3xl overflow-hidden border-4 border-white bg-slate-50 shadow-lg relative group/avatar">
-                    @if($user->avatar_path)
-                        <img id="profile-avatar-img" src="{{ str_starts_with($user->avatar_path, 'http') ? $user->avatar_path : asset('storage/' . $user->avatar_path) }}" class="w-full h-full object-cover" alt="avatar">
-                    @else
-                        <div id="profile-avatar-placeholder" class="w-full h-full bg-slate-100 flex items-center justify-center text-3xl font-extrabold text-slate-500">
-                            {{ strtoupper(substr($user->name, 0, 2)) }}
-                        </div>
-                        <img id="profile-avatar-img" class="w-full h-full object-cover hidden" alt="avatar">
-                    @endif
+                    <img id="profile-avatar-img" src="{{ $user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
 
                     @auth
                         @if(Auth::id() === $user->id)

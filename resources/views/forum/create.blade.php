@@ -173,11 +173,7 @@
             <!-- Left Info Panel Mockup -->
             <div class="w-full md:w-48 bg-slate-50 p-6 flex flex-col items-center border-b md:border-b-0 md:border-r border-slate-200 text-center flex-shrink-0">
                 <div class="w-16 h-16 rounded-2xl overflow-hidden border border-slate-300 shadow-inner mb-3 bg-blue-50 flex items-center justify-center font-bold text-blue-600 text-lg">
-                    @if(Auth::user()->avatar_path)
-                        <img src="{{ str_starts_with(Auth::user()->avatar_path, 'http') ? Auth::user()->avatar_path : asset('storage/' . Auth::user()->avatar_path) }}" class="w-full h-full object-cover">
-                    @else
-                        {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
-                    @endif
+                    <img src="{{ Auth::user()->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                 </div>
                 <h3 class="font-extrabold text-slate-800 text-xs truncate max-w-full">{{ Auth::user()->name }}</h3>
                 <span class="text-[8px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider text-white mt-1.5 border border-slate-350 shadow-sm" style="background: {{ Auth::user()->banner_color ?? '#2563eb' }}">
