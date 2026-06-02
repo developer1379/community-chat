@@ -251,29 +251,36 @@ class ChatController extends Controller
         $currentUserId = Auth::id();
         $isFollowing = $currentUserId ? $user->followers()->where('follower_id', $currentUserId)->exists() : false;
         
-        // Consistent real-time simulated presence details
+        // Query the real sessions table for authentic online presence!
+        $activeSession = \Illuminate\Support\Facades\DB::table('sessions')
+            ->where('user_id', $user->id)
+            ->where('last_activity', '>=', time() - 300) // Active in last 5 minutes
+            ->orderBy('last_activity', 'desc')
+            ->first();
+
         $isOnline = false;
         $lastActive = 'Offline';
-        
+
         if ($currentUserId === $user->id) {
             // The currently logged-in user is ALWAYS online
             $isOnline = true;
             $lastActive = 'Online now';
-        } elseif (strtolower($user->name) === 'admin' || strtolower($user->name) === 'founder') {
+        } elseif ($activeSession) {
             $isOnline = true;
             $lastActive = 'Online now';
         } else {
-            $hash = crc32($user->name);
-            $mod = $hash % 10;
-            if ($mod < 3) {
-                $isOnline = true;
-                $lastActive = 'Online now';
-            } elseif ($mod < 6) {
-                $minutes = ($hash % 45) + 2;
-                $lastActive = 'Active ' . $minutes . 'm ago';
+            // Get the last activity from any old session, or fall back to their last updated_at time!
+            $lastSession = \Illuminate\Support\Facades\DB::table('sessions')
+                ->where('user_id', $user->id)
+                ->orderBy('last_activity', 'desc')
+                ->first();
+
+            if ($lastSession) {
+                $lastActiveTime = \Carbon\Carbon::createFromTimestamp($lastSession->last_activity);
+                $lastActive = 'Active ' . $lastActiveTime->diffForHumans();
             } else {
-                $hours = ($hash % 18) + 1;
-                $lastActive = 'Active ' . $hours . 'h ago';
+                // Fallback to their user updated_at time
+                $lastActive = 'Active ' . $user->updated_at->diffForHumans();
             }
         }
 
