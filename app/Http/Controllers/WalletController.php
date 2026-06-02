@@ -18,38 +18,39 @@ class WalletController extends Controller
         $transactions = $user->transactions()
             ->paginate(15);
 
-        // Calculate custom milestone tier progress
-        $coins = $user->coins;
-        if ($coins >= 5000) {
-            $currentTier = 'Pirate King 🏴‍☠️';
-            $nextTier = 'Supreme Deity 👑';
-            $target = 10000;
-            $percent = 100;
-        } elseif ($coins >= 1000) {
-            $currentTier = 'Soul Reaper 💀';
-            $nextTier = 'Pirate King 🏴‍☠️';
-            $target = 5000;
-            $percent = min(100, (int)(($coins - 1000) / (4000) * 100));
-        } elseif ($coins >= 500) {
-            $currentTier = 'Super Saiyan ⚡';
-            $nextTier = 'Soul Reaper 💀';
-            $target = 1000;
-            $percent = min(100, (int)(($coins - 500) / (500) * 100));
-        } elseif ($coins >= 100) {
-            $currentTier = 'Guild Adventurer 🛡️';
-            $nextTier = 'Super Saiyan ⚡';
-            $target = 500;
-            $percent = min(100, (int)(($coins - 100) / (400) * 100));
-        } else {
-            $currentTier = 'Wandering Ninja 🍃';
-            $nextTier = 'Guild Adventurer 🛡️';
-            $target = 100;
-            $percent = min(100, (int)($coins / 100 * 100));
+        // Fetch rank milestones dynamically from the database (20 stages!)
+        $milestones = \App\Models\RankMilestone::orderBy('level', 'asc')->get();
+        
+        $currentMilestone = $milestones->first();
+        $nextMilestone = null;
+        
+        foreach ($milestones as $ms) {
+            if ($coins >= $ms->coins_required) {
+                $currentMilestone = $ms;
+            } else {
+                $nextMilestone = $ms;
+                break;
+            }
         }
+        
+        if (!$nextMilestone) {
+            $nextMilestone = $currentMilestone;
+            $percent = 100;
+            $target = $currentMilestone->coins_required;
+        } else {
+            $prevReq = $currentMilestone->coins_required;
+            $nextReq = $nextMilestone->coins_required;
+            $denom = $nextReq - $prevReq;
+            $percent = $denom > 0 ? min(100, (int)(($coins - $prevReq) / $denom * 100)) : 100;
+            $target = $nextMilestone->coins_required;
+        }
+
+        $currentTier = $currentMilestone->name . ' ' . $currentMilestone->icon;
+        $nextTier = $nextMilestone->name . ' ' . $nextMilestone->icon;
 
         // Fetch coin rules dynamically from the database
         $rules = \App\Models\CoinRule::all();
 
-        return view('auth.wallet', compact('user', 'transactions', 'currentTier', 'nextTier', 'target', 'percent', 'rules'));
+        return view('auth.wallet', compact('user', 'transactions', 'currentTier', 'nextTier', 'target', 'percent', 'rules', 'milestones', 'currentMilestone'));
     }
 }

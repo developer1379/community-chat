@@ -58,111 +58,79 @@
                 </div>
             </div>
 
-            <!-- Rank Milestone Progression Journey Roadmap -->
+            <!-- Rank Milestone Progression Journey Roadmap (TryHackMe Style!) -->
             <div class="mui-card p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-6">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
                     <div>
                         <h3 class="text-sm font-extrabold text-slate-800 flex items-center gap-1.5">
-                            <span class="material-symbols-outlined text-blue-600 text-base">map</span> Otaku Rank Journey Roadmap
+                            <span class="material-symbols-outlined text-blue-600 text-base animate-spin-slow">map</span> Otaku Learning Path Roadmap
                         </h3>
-                        <p class="text-[10px] font-medium text-slate-450 mt-0.5">Explore your roadmap progression, unlock tiers, and build community clout.</p>
+                        <p class="text-[10px] font-medium text-slate-450 mt-0.5">Explore your journey, complete all 20 stages, and conquer the leaderboard!</p>
                     </div>
-                    <span class="text-xs font-extrabold text-indigo-600 bg-indigo-50 border border-indigo-150 px-2.5 py-1 rounded-lg w-fit">{{ number_format($user->coins) }} Coins Active</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-black text-slate-500">Current Level:</span>
+                        <span class="text-xs font-black text-blue-600 bg-blue-50 border border-blue-150 px-2.5 py-1 rounded-lg">Lvl {{ $currentMilestone->level }}</span>
+                    </div>
                 </div>
 
-                <!-- Horizontal Timeline Roadmap Journey Map -->
-                <div class="relative py-4 overflow-x-auto hide-scrollbar">
-                    <!-- Connector Track Line Background -->
-                    <div class="absolute top-1/2 left-4 right-4 h-1.5 bg-slate-100 border border-slate-200/60 -translate-y-6 rounded-full"></div>
-                    <!-- Active filled track line -->
+                <!-- Horizontal Timeline Roadmap Journey Map (TryHackMe style, multi-node scroll) -->
+                <div class="relative py-8 overflow-x-auto hide-scrollbar select-none">
+                    <!-- Base Connection Path Track Line -->
+                    <div class="absolute top-[62px] left-8 right-8 h-1 bg-slate-100 border border-slate-200/50 rounded-full"></div>
+                    
+                    <!-- Dynamic Progress Line with tryhackme glowing track color -->
                     @php
-                        // Dynamically calculate filled line width based on active progress
-                        $lineWidth = match(true) {
-                            $user->coins >= 5000 => 100,
-                            $user->coins >= 1000 => 75 + (($user->coins - 1000) / 4000 * 25),
-                            $user->coins >= 500 => 50 + (($user->coins - 500) / 500 * 25),
-                            $user->coins >= 100 => 25 + (($user->coins - 100) / 400 * 25),
-                            default => ($user->coins / 100 * 25)
-                        };
+                        // Calculate total roadmap completion percent across all 20 levels
+                        $totalMilestones = count($milestones);
+                        $activeLevelsCount = $milestones->filter(fn($ms) => $user->coins >= $ms->coins_required)->count();
+                        $totalPercent = ($activeLevelsCount / $totalMilestones) * 100;
                     @endphp
-                    <div class="absolute top-1/2 left-4 h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-amber-500 -translate-y-6 rounded-full shadow-sm transition-all duration-1000 ease-out" style="width: calc({{ $lineWidth }}% - 2rem)"></div>
+                    <div class="absolute top-[62px] left-8 h-1 bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500 rounded-full shadow-sm transition-all duration-1000 ease-out" style="width: calc({{ $totalPercent }}% - 2rem)"></div>
 
-                    <!-- Nodes Grid Wrapper -->
-                    <div class="relative flex justify-between items-start min-w-[620px] px-2">
-                        <!-- Node 1 -->
-                        <div class="flex flex-col items-center text-center space-y-2.5 w-28 group">
-                            <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-black bg-gradient-to-br from-emerald-400 to-teal-500 text-white shadow-lg shadow-emerald-200 ring-4 ring-emerald-50 z-10 transition-transform group-hover:scale-110">
-                                🍃
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-black text-slate-800 leading-tight">Wandering Ninja</p>
-                                <span class="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100 mt-1 inline-block">Active</span>
-                            </div>
-                        </div>
+                    <!-- Nodes Journey Wrapper -->
+                    <div class="relative flex gap-12 px-4" style="width: max-content;">
+                        @foreach($milestones as $ms)
+                            @php
+                                $unlocked = $user->coins >= $ms->coins_required;
+                                $isCurrent = $currentMilestone->level === $ms->level;
+                                
+                                // Color definitions
+                                $glowStyle = $unlocked ? "box-shadow: 0 10px 20px -5px {$ms->color}80, 0 4px 6px -2px {$ms->color}30; border-color: {$ms->color}; background: linear-gradient(135deg, white, {$ms->color}10);" : "";
+                                $gradientSphere = $unlocked 
+                                    ? "background: {$ms->color};"
+                                    : "background: linear-gradient(135deg, #f3f4f6, #e5e7eb);";
+                            @endphp
+                            <div class="flex flex-col items-center text-center space-y-3 w-28 shrink-0 relative group">
+                                <!-- Node Level Indicator -->
+                                <span class="text-[9px] font-black tracking-wider uppercase leading-none {{ $isCurrent ? 'text-blue-600 animate-bounce' : ($unlocked ? 'text-emerald-600' : 'text-slate-400') }}">
+                                    @if($isCurrent)
+                                        🔥 Active
+                                    @elseif($unlocked)
+                                        ✓ Unlocked
+                                    @else
+                                        Lvl {{ $ms->level }}
+                                    @endif
+                                </span>
 
-                        <!-- Node 2 -->
-                        @php $unlocked2 = $user->coins >= 100; @endphp
-                        <div class="flex flex-col items-center text-center space-y-2.5 w-28 group">
-                            <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-black z-10 transition-all duration-300 group-hover:scale-110 {{ $unlocked2 ? 'bg-gradient-to-br from-blue-400 to-indigo-500 text-white shadow-lg shadow-blue-200 ring-4 ring-blue-50' : 'bg-slate-100 text-slate-400 border border-slate-200 ring-4 ring-transparent' }}">
-                                🛡️
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-black leading-tight {{ $unlocked2 ? 'text-slate-800' : 'text-slate-400' }}">Guild Adventurer</p>
-                                @if($unlocked2)
-                                    <span class="text-[9px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100 mt-1 inline-block">Unlocked</span>
-                                @else
-                                    <span class="text-[9px] font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 mt-1 inline-block">100 Coins</span>
-                                @endif
-                            </div>
-                        </div>
+                                <!-- 3D tryhackme style node circle -->
+                                <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-lg z-10 transition-all duration-300 transform group-hover:scale-108 group-hover:rotate-6 border border-slate-200/80 bg-white" style="{{ $glowStyle }}">
+                                    <!-- Inner sphere -->
+                                    <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-black text-white shadow-inner" style="{{ $gradientSphere }}">
+                                        {{ $ms->icon }}
+                                    </div>
+                                </div>
 
-                        <!-- Node 3 -->
-                        @php $unlocked3 = $user->coins >= 500; @endphp
-                        <div class="flex flex-col items-center text-center space-y-2.5 w-28 group">
-                            <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-black z-10 transition-all duration-300 group-hover:scale-110 {{ $unlocked3 ? 'bg-gradient-to-br from-amber-400 to-amber-500 text-white shadow-lg shadow-amber-200 ring-4 ring-amber-50' : 'bg-slate-100 text-slate-400 border border-slate-200 ring-4 ring-transparent' }}">
-                                ⚡
+                                <!-- Meta text details -->
+                                <div class="space-y-0.5">
+                                    <p class="text-[10px] font-black leading-tight {{ $unlocked ? 'text-slate-800' : 'text-slate-400' }} group-hover:text-blue-600 transition-colors">{{ $ms->name }}</p>
+                                    @if($unlocked)
+                                        <span class="text-[8px] font-black uppercase tracking-wider text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100 mt-1 inline-block">{{ $ms->badge }}</span>
+                                    @else
+                                        <span class="text-[8px] font-black uppercase tracking-wider text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 mt-1 inline-block">{{ number_format($ms->coins_required) }} 🪙</span>
+                                    @endif
+                                </div>
                             </div>
-                            <div>
-                                <p class="text-[10px] font-black leading-tight {{ $unlocked3 ? 'text-slate-800' : 'text-slate-400' }}">Super Saiyan</p>
-                                @if($unlocked3)
-                                    <span class="text-[9px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-100 mt-1 inline-block">Unlocked</span>
-                                @else
-                                    <span class="text-[9px] font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 mt-1 inline-block">500 Coins</span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <!-- Node 4 -->
-                        @php $unlocked4 = $user->coins >= 1000; @endphp
-                        <div class="flex flex-col items-center text-center space-y-2.5 w-28 group">
-                            <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-black z-10 transition-all duration-300 group-hover:scale-110 {{ $unlocked4 ? 'bg-gradient-to-br from-purple-400 to-violet-500 text-white shadow-lg shadow-purple-200 ring-4 ring-purple-50' : 'bg-slate-100 text-slate-400 border border-slate-200 ring-4 ring-transparent' }}">
-                                💀
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-black leading-tight {{ $unlocked4 ? 'text-slate-800' : 'text-slate-400' }}">Soul Reaper</p>
-                                @if($unlocked4)
-                                    <span class="text-[9px] font-bold text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-100 mt-1 inline-block">Unlocked</span>
-                                @else
-                                    <span class="text-[9px] font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 mt-1 inline-block">1k Coins</span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <!-- Node 5 -->
-                        @php $unlocked5 = $user->coins >= 5000; @endphp
-                        <div class="flex flex-col items-center text-center space-y-2.5 w-28 group">
-                            <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-black z-10 transition-all duration-300 group-hover:scale-110 {{ $unlocked5 ? 'bg-gradient-to-br from-rose-400 to-pink-500 text-white shadow-lg shadow-rose-200 ring-4 ring-rose-50' : 'bg-slate-100 text-slate-400 border border-slate-200 ring-4 ring-transparent' }}">
-                                🏴‍☠️
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-black leading-tight {{ $unlocked5 ? 'text-slate-800' : 'text-slate-400' }}">Pirate King</p>
-                                @if($unlocked5)
-                                    <span class="text-[9px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-100 mt-1 inline-block">Legendary</span>
-                                @else
-                                    <span class="text-[9px] font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 mt-1 inline-block">5k Coins</span>
-                                @endif
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
