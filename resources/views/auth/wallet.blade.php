@@ -58,7 +58,7 @@
                 </div>
             </div>
 
-            <!-- Rank Milestone Progression Journey Roadmap (TryHackMe Style!) -->
+            <!-- Rank Milestone Progression Journey Roadmap (Vertical Zig-Zag TryHackMe Style!) -->
             <div class="mui-card p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-6">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
                     <div>
@@ -73,62 +73,73 @@
                     </div>
                 </div>
 
-                <!-- Horizontal Timeline Roadmap Journey Map (TryHackMe style, multi-node scroll) -->
-                <div class="relative py-8 overflow-x-auto hide-scrollbar select-none">
-                    <!-- Base Connection Path Track Line -->
-                    <div class="absolute top-[62px] left-8 right-8 h-1 bg-slate-100 border border-slate-200/50 rounded-full"></div>
+                <!-- Vertical Timeline Roadmap Journey Map (TryHackMe zig-zag style, super responsive) -->
+                <div class="relative py-8 select-none">
+                    <!-- Central Connected Track Line (centered on desktop, left-aligned on mobile) -->
+                    <div class="absolute left-6 md:left-1/2 top-4 bottom-4 w-1 bg-slate-100 border border-slate-200/50 rounded-full transform md:-translate-x-1/2"></div>
                     
-                    <!-- Dynamic Progress Line with tryhackme glowing track color -->
+                    <!-- Dynamic Progress Line -->
                     @php
-                        // Calculate total roadmap completion percent across all 20 levels
                         $totalMilestones = count($milestones);
                         $activeLevelsCount = $milestones->filter(fn($ms) => $user->coins >= $ms->coins_required)->count();
                         $totalPercent = ($activeLevelsCount / $totalMilestones) * 100;
                     @endphp
-                    <div class="absolute top-[62px] left-8 h-1 bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500 rounded-full shadow-sm transition-all duration-1000 ease-out" style="width: calc({{ $totalPercent }}% - 2rem)"></div>
+                    <div class="absolute left-6 md:left-1/2 top-4 w-1 bg-gradient-to-b from-emerald-500 via-blue-500 to-purple-600 rounded-full shadow-sm transition-all duration-1000 ease-out transform md:-translate-x-1/2" style="height: calc({{ $totalPercent }}% - 2rem)"></div>
 
-                    <!-- Nodes Journey Wrapper -->
-                    <div class="relative flex gap-12 px-4" style="width: max-content;">
-                        @foreach($milestones as $ms)
+                    <!-- Nodes Grid Wrapper (Vertical stacking) -->
+                    <div class="space-y-8 relative">
+                        @foreach($milestones as $index => $ms)
                             @php
                                 $unlocked = $user->coins >= $ms->coins_required;
                                 $isCurrent = $currentMilestone->level === $ms->level;
+                                $isLeft = $index % 2 === 0;
                                 
                                 // Color definitions
-                                $glowStyle = $unlocked ? "box-shadow: 0 10px 20px -5px {$ms->color}80, 0 4px 6px -2px {$ms->color}30; border-color: {$ms->color}; background: linear-gradient(135deg, white, {$ms->color}10);" : "";
+                                $glowStyle = $unlocked ? "box-shadow: 0 8px 16px -4px {$ms->color}50; border-color: {$ms->color}; background: {$ms->color}08;" : "";
                                 $gradientSphere = $unlocked 
-                                    ? "background: {$ms->color};"
+                                    ? "background: {$ms->color}; shadow: 0 4px 6px {$ms->color}40;"
                                     : "background: linear-gradient(135deg, #f3f4f6, #e5e7eb);";
                             @endphp
-                            <div class="flex flex-col items-center text-center space-y-3 w-28 shrink-0 relative group">
-                                <!-- Node Level Indicator -->
-                                <span class="text-[9px] font-black tracking-wider uppercase leading-none {{ $isCurrent ? 'text-blue-600 animate-bounce' : ($unlocked ? 'text-emerald-600' : 'text-slate-400') }}">
-                                    @if($isCurrent)
-                                        🔥 Active
-                                    @elseif($unlocked)
-                                        ✓ Unlocked
-                                    @else
-                                        Lvl {{ $ms->level }}
-                                    @endif
-                                </span>
-
-                                <!-- 3D tryhackme style node circle -->
-                                <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-lg z-10 transition-all duration-300 transform group-hover:scale-108 group-hover:rotate-6 border border-slate-200/80 bg-white" style="{{ $glowStyle }}">
-                                    <!-- Inner sphere -->
-                                    <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-black text-white shadow-inner" style="{{ $gradientSphere }}">
-                                        {{ $ms->icon }}
+                            <!-- Zig-Zag Row (Alternates left/right on md, remains left-aligned on mobile) -->
+                            <div class="flex items-center w-full relative {{ $isLeft ? 'md:flex-row' : 'md:flex-row-reverse' }} flex-row pl-3 md:pl-0">
+                                
+                                <!-- Left side spacer on desktop / Right side content card -->
+                                <div class="w-full md:w-1/2 flex {{ $isLeft ? 'justify-end md:pr-12' : 'justify-start md:pl-12' }} justify-start pl-8 md:pl-0">
+                                    <!-- Journey Card (Glassmorphic Material UI Card) -->
+                                    <div class="mui-card p-4 rounded-2xl border border-slate-200 bg-white w-full max-w-sm hover:shadow-md hover:border-slate-300 transition-all duration-300 transform hover:-translate-y-0.5 group/card relative overflow-hidden">
+                                        <!-- Colorful glow bar on the edge -->
+                                        <div class="absolute top-0 bottom-0 left-0 w-1 bg-slate-300 group-hover/card:scale-y-105 transition-transform" style="background-color: {{ $unlocked ? $ms->color : '#e2e8f0' }}"></div>
+                                        
+                                        <div class="flex items-center gap-3">
+                                            <!-- Mini material sphere icon inside card -->
+                                            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-base font-black text-white shadow-md transform group-hover/card:rotate-6 transition-transform" style="{{ $gradientSphere }}">
+                                                {{ $ms->icon }}
+                                            </div>
+                                            <div class="min-w-0 leading-tight">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="text-[9px] font-black uppercase tracking-wider text-slate-400">Level {{ $ms->level }}</span>
+                                                    @if($isCurrent)
+                                                        <span class="text-[8px] font-black uppercase tracking-wider text-blue-600 bg-blue-50 px-1.5 py-0.2 rounded border border-blue-150 animate-pulse">Active Focus</span>
+                                                    @endif
+                                                </div>
+                                                <h4 class="text-xs font-black text-slate-800 truncate mt-0.5">{{ $ms->name }}</h4>
+                                                @if($unlocked)
+                                                    <span class="text-[8px] font-extrabold uppercase tracking-wider text-emerald-600 mt-1 inline-block bg-emerald-50/50 px-2 py-0.5 rounded border border-emerald-100">Unlocked ✓</span>
+                                                @else
+                                                    <span class="text-[8px] font-extrabold uppercase tracking-wider text-slate-400 mt-1 inline-block bg-slate-50 px-2 py-0.5 rounded border border-slate-200">{{ number_format($ms->coins_required) }} Coins</span>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- Meta text details -->
-                                <div class="space-y-0.5">
-                                    <p class="text-[10px] font-black leading-tight {{ $unlocked ? 'text-slate-800' : 'text-slate-400' }} group-hover:text-blue-600 transition-colors">{{ $ms->name }}</p>
-                                    @if($unlocked)
-                                        <span class="text-[8px] font-black uppercase tracking-wider text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100 mt-1 inline-block">{{ $ms->badge }}</span>
-                                    @else
-                                        <span class="text-[8px] font-black uppercase tracking-wider text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-200 mt-1 inline-block">{{ number_format($ms->coins_required) }} 🪙</span>
-                                    @endif
+                                <!-- Center Connector Circle Node -->
+                                <div class="absolute left-6 md:left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full border-2 bg-white flex items-center justify-center z-15 shadow-sm transition-all duration-300" style="{{ $unlocked ? "border-color: {$ms->color}; box-shadow: 0 0 12px {$ms->color}60;" : 'border-color: #cbd5e1;' }}">
+                                    <div class="w-2.5 h-2.5 rounded-full transition-all duration-300" style="{{ $unlocked ? "background-color: {$ms->color}; animate-pulse" : 'background-color: #94a3b8;' }}"></div>
                                 </div>
+
+                                <!-- Right side spacer on desktop -->
+                                <div class="w-full md:w-1/2 hidden md:block"></div>
                             </div>
                         @endforeach
                     </div>
