@@ -18,6 +18,8 @@ class WalletController extends Controller
         $transactions = $user->transactions()
             ->paginate(15);
 
+        $coins = $user->coins;
+
         // Fetch rank milestones dynamically from the database (20 stages!)
         $milestones = \App\Models\RankMilestone::orderBy('level', 'asc')->get();
         
