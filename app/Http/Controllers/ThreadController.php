@@ -73,11 +73,13 @@ class ThreadController extends Controller
                         'post_id' => $post->id,
                         'thread_id' => $thread->id,
                         'user_id' => Auth::id(),
-                        'file_path' => $imageUrl, // save ImgBB absolute url
+                        'file_path' => $imageUrl,
                         'file_name' => $file->getClientOriginalName(),
                         'file_type' => $file->getMimeType(),
                     ]);
                 }
+            }
+        }
 
         // Reward user with 15 coins for creating a thread
         Auth::user()->addCoins(15, 'thread_created', "Created thread: " . $thread->title);
