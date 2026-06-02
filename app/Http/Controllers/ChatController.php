@@ -39,12 +39,19 @@ class ChatController extends Controller
             $otherUser = $conv->otherUser($userId);
             $lastMessage = $conv->messages->first();
 
+            $avatarUrl = null;
+            if ($otherUser->avatar_path) {
+                $avatarUrl = str_starts_with($otherUser->avatar_path, 'http') ? $otherUser->avatar_path : asset('storage/' . $otherUser->avatar_path);
+            } else {
+                $avatarUrl = 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($otherUser->email))) . '?d=mp';
+            }
+
             return [
                 'id' => $conv->id,
                 'other_user' => [
                     'id' => $otherUser->id,
                     'name' => $otherUser->name,
-                    'avatar_url' => $otherUser->avatar_path ? asset('storage/' . $otherUser->avatar_path) : 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($otherUser->email))) . '?d=mp',
+                    'avatar_url' => $avatarUrl,
                     'title_badge' => $otherUser->title_badge,
                 ],
                 'last_message' => $lastMessage ? [

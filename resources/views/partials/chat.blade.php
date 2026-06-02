@@ -309,12 +309,12 @@
             document.getElementById('chat-messages-view').classList.remove('hidden');
             document.getElementById('chat-back-btn').classList.remove('hidden');
 
-            // Set Header details
-            document.getElementById('chat-title').innerText = partnerName;
+        // Helper to query and update the active conversation partner's presence
+        function updateChatHeaderPresence(partnerName) {
+            if (!partnerName) return;
             const subtitle = document.getElementById('chat-subtitle');
-            subtitle.innerHTML = `<span class="animate-pulse opacity-70">Connecting...</span>`;
-
-            // Query dynamic presence details dynamically
+            if (!subtitle) return;
+            
             fetch(`/dms/user-card/${encodeURIComponent(partnerName)}`)
                 .then(r => r.json())
                 .then(data => {
@@ -327,6 +327,25 @@
                 .catch(() => {
                     subtitle.innerText = 'Offline';
                 });
+        }
+
+        // Open a specific conversation thread
+        function openConversation(convId, partnerName) {
+            activeConversationId = convId;
+            activeConversationPartner = partnerName;
+
+            // Show and hide correct panels
+            document.getElementById('chat-conversations-view').classList.add('hidden');
+            document.getElementById('chat-messages-view').classList.remove('hidden');
+            document.getElementById('chat-back-btn').classList.remove('hidden');
+
+            // Set Header details
+            document.getElementById('chat-title').innerText = partnerName;
+            const subtitle = document.getElementById('chat-subtitle');
+            subtitle.innerHTML = `<span class="animate-pulse opacity-70">Connecting...</span>`;
+
+            // Instantly query presence details
+            updateChatHeaderPresence(partnerName);
 
             loadMessages(true);
             
@@ -698,12 +717,15 @@
             }
         });
 
+        let chatPollCycleCount = 0;
+
         // Toggle recurring message pollers
         function startChatPolling() {
             stopChatPolling();
             
             // Determine dynamic interval: fast 3s for active thread, slower 10s for conversation overview listing
             const interval = activeConversationId ? 3000 : 10000;
+            chatPollCycleCount = 0;
             
             chatPollingInterval = setInterval(() => {
                 // OPTIMIZATION: Only poll if the tab/page is currently in active focus
@@ -711,6 +733,13 @@
 
                 if (activeConversationId) {
                     loadMessages(false);
+                    
+                    // Periodically update active chat partner presence status (every 5 cycles = 15 seconds)
+                    chatPollCycleCount++;
+                    if (chatPollCycleCount >= 5) {
+                        chatPollCycleCount = 0;
+                        updateChatHeaderPresence(activeConversationPartner);
+                    }
                 } else {
                     loadConversations();
                 }
