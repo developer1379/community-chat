@@ -115,37 +115,58 @@
 <!-- Reusable XenProfessional Live Hover Card (XenForo Style popover) -->
 <div id="user-hover-card" class="absolute z-50 w-72 bg-white rounded-xl border border-slate-200 shadow-2xl opacity-0 pointer-events-none transition-all duration-200 scale-95" style="transform-origin: top center;">
     <div id="hover-card-header" class="h-14 rounded-t-xl" style="background: var(--color-primary, #3b82f6);"></div>
-    <div class="p-4 flex gap-3.5 bg-white rounded-t-xl">
-        <!-- Avatar -->
-        <div class="w-14 h-14 rounded-full overflow-hidden border border-slate-200 bg-slate-100 flex-shrink-0">
-            <img id="hover-card-avatar" class="w-full h-full object-cover hidden">
-            <div id="hover-card-avatar-placeholder" class="w-full h-full flex items-center justify-center font-bold text-slate-500 text-base"></div>
+    <div class="p-4 flex gap-3 bg-white rounded-t-xl">
+        <!-- Avatar Wrapper -->
+        <div class="relative flex-shrink-0">
+            <div class="w-14 h-14 rounded-full overflow-hidden border border-slate-200 bg-slate-100">
+                <img id="hover-card-avatar" class="w-full h-full object-cover hidden">
+                <div id="hover-card-avatar-placeholder" class="w-full h-full flex items-center justify-center font-bold text-slate-500 text-base"></div>
+            </div>
+            <!-- Dynamic Presence Dot -->
+            <span id="hover-card-presence-dot" class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white bg-slate-400"></span>
         </div>
         <!-- User Core Details -->
-        <div class="space-y-1 truncate text-left">
-            <h4 class="font-extrabold text-slate-800 text-xs hover:text-blue-600 truncate leading-tight">
-                <a id="hover-card-name" href="#"></a>
-            </h4>
+        <div class="space-y-1.5 truncate text-left min-w-0 flex-1">
+            <div class="flex items-center gap-1.5">
+                <h4 class="font-extrabold text-slate-800 text-xs hover:text-blue-600 truncate leading-tight">
+                    <a id="hover-card-name" href="#"></a>
+                </h4>
+                <span id="hover-card-presence-badge" class="text-[7.5px] px-1.5 py-0.5 rounded-full font-bold bg-slate-100 text-slate-500 flex items-center gap-1 flex-shrink-0">
+                    <span class="w-1 h-1 rounded-full bg-slate-400" id="hover-card-presence-inner-dot"></span>
+                    <span id="hover-card-presence-text">Offline</span>
+                </span>
+            </div>
             <div class="flex flex-wrap gap-1">
                 <span id="hover-card-badge" class="text-[7.5px] px-1.5 py-0.5 rounded font-extrabold uppercase tracking-wider text-white shadow-sm leading-none"></span>
             </div>
-            <p class="text-[9px] text-slate-450 font-bold mt-1">Joined: <span id="hover-card-joined" class="text-slate-700 font-bold"></span></p>
+            <p class="text-[9px] text-slate-450 font-bold">Joined: <span id="hover-card-joined" class="text-slate-700 font-bold"></span></p>
         </div>
     </div>
     <!-- Stats Row -->
-    <div class="grid grid-cols-3 border-t border-slate-100 bg-slate-50/50 rounded-b-xl text-center divide-x divide-slate-100">
-        <div class="py-2">
+    <div class="grid grid-cols-3 border-t border-slate-100 bg-slate-50/50 text-center divide-x divide-slate-100">
+        <div class="py-1.5">
             <span class="block text-[11px] font-extrabold text-slate-850" id="hover-card-threads"></span>
             <span class="text-[7px] font-bold text-slate-400 uppercase tracking-widest leading-none">Threads</span>
         </div>
-        <div class="py-2">
+        <div class="py-1.5">
             <span class="block text-[11px] font-extrabold text-slate-850" id="hover-card-posts"></span>
             <span class="text-[7px] font-bold text-slate-400 uppercase tracking-widest leading-none">Replies</span>
         </div>
-        <div class="py-2">
+        <div class="py-1.5">
             <span class="block text-[11px] font-extrabold text-slate-850" id="hover-card-uploads"></span>
             <span class="text-[7px] font-bold text-slate-400 uppercase tracking-widest leading-none">Uploads</span>
         </div>
+    </div>
+    <!-- Actions Row -->
+    <div id="hover-card-actions" class="flex border-t border-slate-100 bg-white rounded-b-xl overflow-hidden divide-x divide-slate-100 text-center text-[10px] font-extrabold">
+        <button id="hover-card-follow-btn" onclick="handleHoverFollow()" class="flex-1 py-2 text-blue-600 hover:bg-slate-50/30 transition-colors cursor-pointer flex items-center justify-center gap-1 font-bold">
+            <span class="material-symbols-outlined text-xs">person_add</span>
+            <span id="hover-card-follow-text">Follow</span>
+        </button>
+        <button id="hover-card-message-btn" onclick="handleHoverMessage()" class="flex-1 py-2 text-slate-650 hover:bg-slate-50/30 transition-colors cursor-pointer flex items-center justify-center gap-1 font-bold">
+            <span class="material-symbols-outlined text-xs">mail</span>
+            <span>Message</span>
+        </button>
     </div>
 </div>
 

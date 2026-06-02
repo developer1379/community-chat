@@ -92,7 +92,7 @@
                                     <a href="{{ route('threads.show', $thread->slug) }}">{{ $thread->title }}</a>
                                 </h2>
                             </div>
-                            <div class="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                            <div class="flex items-center gap-2 text-xs text-slate-500 font-medium flex-wrap">
                                 <span>By</span>
                                 <a href="{{ route('profile.show', $thread->user->name) }}" 
                                    data-user-hover="true" 
@@ -108,6 +108,16 @@
                                    class="font-bold text-slate-700 hover:text-blue-600 transition-colors">{{ $thread->user->name }}</a>
                                 <span class="text-slate-300">•</span>
                                 <span>{{ $thread->created_at->diffForHumans() }}</span>
+                                @if($thread->tags)
+                                    <span class="text-slate-300">•</span>
+                                    <span class="flex items-center gap-1 flex-wrap">
+                                        @foreach(explode(',', $thread->tags) as $tag)
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-600 border border-indigo-100 shadow-sm leading-none">
+                                                #{{ trim($tag) }}
+                                            </span>
+                                        @endforeach
+                                    </span>
+                                @endif
                             </div>
                         </div>
                     </div>

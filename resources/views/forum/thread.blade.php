@@ -20,7 +20,16 @@
             @endif
             {{ $thread->title }}
         </h1>
-        <div class="flex items-center gap-3 text-[10px] text-slate-500 dark:text-slate-400 mt-1">
+        @if($thread->tags)
+            <div class="flex flex-wrap gap-1.5 mt-2">
+                @foreach(explode(',', $thread->tags) as $tag)
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[9px] font-extrabold uppercase tracking-wider bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900/60 shadow-sm shadow-indigo-500/5">
+                        #{{ trim($tag) }}
+                    </span>
+                @endforeach
+            </div>
+        @endif
+        <div class="flex items-center gap-3 text-[10px] text-slate-500 dark:text-slate-400 mt-1.5 flex-wrap">
             <div class="flex items-center gap-1">
                 <span>By</span>
                 <a href="{{ route('profile.show', $thread->user->name) }}" class="font-bold text-slate-700 dark:text-slate-355 hover:underline">{{ $thread->user->name }}</a>
@@ -29,6 +38,24 @@
             <span>Created {{ $thread->created_at->format('M d, Y') }}</span>
             <span>•</span>
             <span>{{ $thread->views_count }} views</span>
+            @auth
+                @if(Auth::id() === $thread->user_id)
+                    <span>•</span>
+                    <a href="{{ route('threads.edit', $thread->slug) }}" class="text-blue-650 dark:text-blue-400 hover:underline inline-flex items-center gap-0.5 font-bold">
+                        <span class="material-symbols-outlined text-[12px] font-bold">edit</span>
+                        <span>Edit</span>
+                    </a>
+                    <span>•</span>
+                    <button onclick="confirmDeleteThread()" class="text-rose-600 dark:text-rose-450 hover:underline inline-flex items-center gap-0.5 bg-transparent border-0 p-0 cursor-pointer font-sans text-[10px] font-bold">
+                        <span class="material-symbols-outlined text-[12px] font-bold">delete</span>
+                        <span>Delete</span>
+                    </button>
+                    <form id="delete-thread-form" action="{{ route('threads.destroy', $thread->id) }}" method="POST" class="hidden">
+                        @csrf
+                        @method('DELETE')
+                    </form>
+                @endif
+            @endauth
         </div>
     </div>
 
@@ -417,7 +444,12 @@
                     // If content is empty or only whitespace HTML, fail gracefully
                     const textOnly = replyQuill.getText().trim();
                     if (textOnly.length === 0) {
-                        alert('Please enter some content for your reply.');
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Empty Reply',
+                            text: 'Please enter some content for your reply.',
+                            confirmButtonColor: '#1e293b'
+                        });
                         e.preventDefault();
                     }
                 });
@@ -437,7 +469,12 @@
             if (/^image\//.test(file.type)) {
                 uploadReplyImageToImgBB(file);
             } else {
-                alert('Only image files (JPEG, PNG, JPG, GIF) are allowed.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid File',
+                    text: 'Only image files (JPEG, PNG, JPG, GIF) are allowed.',
+                    confirmButtonColor: '#1e293b'
+                });
             }
         };
     }
@@ -469,13 +506,23 @@
                 replyQuill.insertEmbed(range.index, 'image', data.url);
                 replyQuill.setSelection(range.index + 1);
             } else {
-                alert('Failed to obtain image URL from ImgBB service.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Upload Failed',
+                    text: 'Failed to obtain image URL from ImgBB service.',
+                    confirmButtonColor: '#1e293b'
+                });
             }
         })
         .catch(error => {
             replyQuill.deleteText(range.index, 1);
             console.error('Reply Quill Image Upload Error:', error);
-            alert('An error occurred during image upload to ImgBB. Please try again.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Upload Error',
+                text: 'An error occurred during image upload to ImgBB. Please try again.',
+                confirmButtonColor: '#1e293b'
+            });
         });
     }
 
@@ -582,7 +629,12 @@
         const contentVal = replyQuill.root.innerHTML.trim();
 
         if (contentVal === '<p><br></p>' || !contentVal) {
-            alert('Please write your reply message first to view a preview.');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Empty Preview',
+                text: 'Please write your reply message first to view a preview.',
+                confirmButtonColor: '#1e293b'
+            });
             return;
         }
 
@@ -700,8 +752,34 @@
         .catch(err => {
             btn.disabled = false;
             console.error('Reaction error:', err);
-            alert('Could not record reaction. Please try again.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Could not record reaction. Please try again.',
+                confirmButtonColor: '#1e293b'
+            });
         });
     }
+
+    @auth
+        @if(Auth::id() === $thread->user_id)
+            function confirmDeleteThread() {
+                Swal.fire({
+                    title: 'Delete Discussion?',
+                    text: "Are you sure you want to delete this thread? This will record the deletion inside the database logs and soft delete it from the public view.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#e11d48',
+                    cancelButtonColor: '#0f172a',
+                    confirmButtonText: 'Yes, Delete It',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('delete-thread-form').submit();
+                    }
+                });
+            }
+        @endif
+    @endauth
 </script>
 @endsection

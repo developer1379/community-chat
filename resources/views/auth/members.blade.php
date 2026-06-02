@@ -251,7 +251,12 @@
             .catch(error => {
                 btn.disabled = false;
                 console.error('Follow Error:', error);
-                alert('Could not toggle follow status. Please try again.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Action Failed',
+                    text: 'Could not toggle follow status. Please try again.',
+                    confirmButtonColor: '#0f172a'
+                });
             });
         }
     </script>

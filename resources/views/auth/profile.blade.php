@@ -112,157 +112,208 @@
     </div>
 
     <!-- Main Content Panels -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <!-- Left Section: Threads & Customization Forms (8 Cols) -->
-        <div class="lg:col-span-8 space-y-8">
-            
-            <!-- Customization Panel (Shown only to the owner) -->
-            @auth
-                @if(Auth::id() === $user->id)
-                    <div class="mui-card overflow-hidden bg-white border border-slate-200 shadow-lg rounded-2xl">
-                        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
-                            <h3 class="font-bold text-slate-700 text-xs flex items-center gap-2">
-                                <span class="material-symbols-outlined text-blue-600 text-sm">settings</span>
-                                Customize Profile Card
-                            </h3>
-                        </div>
-                        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-5 bg-white">
-                            @csrf
-                            
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <!-- Avatar Upload -->
-                                <div class="space-y-1.5">
-                                    <label for="avatar" class="text-xs font-bold text-slate-700 uppercase tracking-wider">Upload New Avatar</label>
-                                    <input type="file" id="avatar" name="avatar" class="block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all cursor-pointer">
-                                </div>
-
-                                <!-- Banner Upload -->
-                                <div class="space-y-1.5">
-                                    <label for="banner" class="text-xs font-bold text-slate-700 uppercase tracking-wider">Upload Cover Photo</label>
-                                    <input type="file" id="banner" name="banner" class="block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all cursor-pointer">
-                                </div>
-
-                                <!-- Custom title badge -->
-                                <div class="space-y-1.5">
-                                    <label for="title_badge" class="text-xs font-bold text-slate-700 uppercase tracking-wider">Custom Title Badge</label>
-                                    <input type="text" id="title_badge" name="title_badge" value="{{ old('title_badge', $user->title_badge) }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="New Member, Staff, Guru...">
-                                </div>
-                            </div>
-
-                            <!-- Custom Banner Color (Gradients Preset) -->
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Choose Profile Theme Gradient</label>
-                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                    <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all">
-                                        <input type="radio" name="banner_color" value="linear-gradient(135deg, #6366f1, #a855f7)" {{ $user->banner_color === 'linear-gradient(135deg, #6366f1, #a855f7)' ? 'checked' : '' }} class="mr-2 text-blue-600 focus:ring-blue-500">
-                                        <span class="w-6 h-6 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 shadow-inner"></span>
-                                    </label>
-
-                                    <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all">
-                                        <input type="radio" name="banner_color" value="linear-gradient(135deg, #ec4899, #8b5cf6)" {{ $user->banner_color === 'linear-gradient(135deg, #ec4899, #8b5cf6)' ? 'checked' : '' }} class="mr-2 text-pink-600 focus:ring-pink-500">
-                                        <span class="w-6 h-6 rounded-lg bg-gradient-to-r from-pink-500 to-violet-500 shadow-inner"></span>
-                                    </label>
-
-                                    <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all">
-                                        <input type="radio" name="banner_color" value="linear-gradient(135deg, #f97316, #ef4444)" {{ $user->banner_color === 'linear-gradient(135deg, #f97316, #ef4444)' ? 'checked' : '' }} class="mr-2 text-orange-600 focus:ring-orange-500">
-                                        <span class="w-6 h-6 rounded-lg bg-gradient-to-r from-orange-500 to-red-500 shadow-inner"></span>
-                                    </label>
-
-                                    <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all">
-                                        <input type="radio" name="banner_color" value="linear-gradient(135deg, #06b6d4, #3b82f6)" {{ $user->banner_color === 'linear-gradient(135deg, #06b6d4, #3b82f6)' ? 'checked' : '' }} class="mr-2 text-cyan-600 focus:ring-cyan-500">
-                                        <span class="w-6 h-6 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 shadow-inner"></span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Custom Signature -->
-                            <div class="space-y-1.5">
-                                <label for="signature" class="text-xs font-bold text-slate-700 uppercase tracking-wider">Forum Signature Quote</label>
-                                <textarea id="signature" name="signature" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-400" placeholder="Write a short custom signature to display at the footer of all your posts...">{{ old('signature', $user->signature) }}</textarea>
-                            </div>
-
-                            <!-- Save changes -->
-                            <div class="text-right pt-3 border-t border-slate-100">
-                                <button type="submit" class="xen-button text-xs font-bold text-white px-5 py-2 rounded-xl shadow-md cursor-pointer">
-                                    Save Profile Card
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                @endif
-            @endauth
-
-            <!-- Recent Discussions list by this user -->
-            <div class="mui-card overflow-hidden shadow-lg border border-slate-200 bg-white rounded-2xl">
-                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
-                    <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">📝 Recent Discussions</h3>
-                </div>
-                <div class="divide-y divide-slate-100">
-                    @forelse($threads as $thread)
-                        <div class="px-6 py-4 flex items-center justify-between gap-4 hover:bg-slate-50/50 transition-colors">
-                            <div class="space-y-0.5">
-                                <h4 class="font-bold text-slate-800 text-xs hover:text-blue-600 transition-colors">
-                                    <a href="{{ route('threads.show', $thread->slug) }}">{{ $thread->title }}</a>
-                                </h4>
-                                <div class="flex items-center gap-2 text-[10px] text-slate-450">
-                                    <span class="font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-100">{{ $thread->category->name }}</span>
-                                    <span>•</span>
-                                    <span>Created {{ $thread->created_at->diffForHumans() }}</span>
-                                </div>
-                            </div>
-                            <div class="text-xs font-bold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 flex-shrink-0">
-                                {{ $thread->views_count }} views
-                            </div>
-                        </div>
-                    @empty
-                        <div class="px-6 py-8 text-center text-xs text-slate-400">
-                            No threads have been posted by this member yet.
-                        </div>
-                    @endforelse
-                </div>
+    @if($isProfilePrivate)
+        <div class="max-w-xl mx-auto my-12 bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden p-8 sm:p-12 text-center space-y-6">
+            <div class="w-20 h-20 mx-auto bg-slate-100 text-slate-400 rounded-3xl flex items-center justify-center shadow-inner">
+                <span class="material-symbols-outlined text-4xl">lock</span>
+            </div>
+            <div class="space-y-2">
+                <h3 class="text-xl font-extrabold text-slate-900 tracking-tight">This Profile is Private</h3>
+                <p class="text-xs text-slate-500 max-w-sm mx-auto font-bold leading-relaxed">
+                    {{ $user->name }} has chosen to keep their profile activity private.
+                </p>
+            </div>
+            <div class="pt-2">
+                <a href="{{ route('home') }}" class="xen-button text-xs font-bold text-white px-6 py-2.5 rounded-xl shadow-md cursor-pointer inline-flex items-center gap-1.5 hover:opacity-90">
+                    <span class="material-symbols-outlined text-sm">home</span>
+                    <span>Return to Discussions</span>
+                </a>
             </div>
         </div>
-
-        <!-- Right Section: Media Gallery Grid (4 Cols) -->
-        <div class="lg:col-span-4 space-y-6">
-            <!-- Media Upload Gallery grid -->
-            <div class="mui-card p-6 border border-slate-200 bg-white shadow-lg rounded-2xl">
-                <h3 class="text-xs font-bold tracking-wider text-slate-500 uppercase mb-4 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-pink-500 text-sm">photo_library</span>
-                    Media Showroom
-                </h3>
+    @else
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Left Section: Threads & Customization Forms (8 Cols) -->
+            <div class="lg:col-span-8 space-y-8">
                 
-                @if($attachments->count() > 0)
-                    <div class="grid grid-cols-2 gap-3">
-                        @foreach($attachments as $attach)
-                            <div class="relative group rounded-xl overflow-hidden bg-slate-50 border border-slate-200 shadow-sm">
-                                <button onclick="openLightbox('{{ str_starts_with($attach->file_path, 'http') ? $attach->file_path : asset('storage/' . $attach->file_path) }}', '{{ $attach->file_name }}')" class="block w-full h-24 overflow-hidden cursor-zoom-in text-left p-0 border-0 outline-none w-full">
-                                    <img src="{{ str_starts_with($attach->file_path, 'http') ? $attach->file_path : asset('storage/' . $attach->file_path) }}" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-200" alt="uploaded media">
-                                </button>
-                                <!-- Check if GIF -->
-                                @if(str_contains($attach->file_name, '.gif') || str_contains($attach->file_type, 'gif'))
-                                    <span class="absolute top-1.5 right-1.5 px-1 py-0.5 rounded text-[7px] font-bold bg-pink-500 text-white uppercase tracking-widest">
-                                        GIF
-                                    </span>
-                                @endif
-                                <div class="bg-slate-100/80 p-1.5 text-[8px] text-slate-500 border-t border-slate-200 flex items-center justify-between">
-                                    <span class="truncate pr-2 font-medium">{{ $attach->file_name }}</span>
-                                    <a href="{{ route('threads.show', $attach->thread->slug) }}" class="hover:text-blue-600 transition-colors font-bold">
-                                        🔗
-                                    </a>
+                <!-- Customization Panel (Shown only to the owner) -->
+                @auth
+                    @if(Auth::id() === $user->id)
+                        <div class="mui-card overflow-hidden bg-white border border-slate-200 shadow-lg rounded-2xl">
+                            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                                <h3 class="font-bold text-slate-700 text-xs flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-blue-600 text-sm">settings</span>
+                                    Customize Profile Card
+                                </h3>
+                            </div>
+                            <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-5 bg-white">
+                                @csrf
+                                
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <!-- Avatar Upload -->
+                                    <div class="space-y-1.5">
+                                        <label for="avatar" class="text-xs font-bold text-slate-700 uppercase tracking-wider">Upload New Avatar</label>
+                                        <input type="file" id="avatar" name="avatar" class="block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all cursor-pointer">
+                                    </div>
+
+                                    <!-- Banner Upload -->
+                                    <div class="space-y-1.5">
+                                        <label for="banner" class="text-xs font-bold text-slate-700 uppercase tracking-wider">Upload Cover Photo</label>
+                                        <input type="file" id="banner" name="banner" class="block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all cursor-pointer">
+                                    </div>
+
+                                    <!-- Custom title badge -->
+                                    <div class="space-y-1.5">
+                                        <label for="title_badge" class="text-xs font-bold text-slate-700 uppercase tracking-wider">Custom Title Badge</label>
+                                        <input type="text" id="title_badge" name="title_badge" value="{{ old('title_badge', $user->title_badge) }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="New Member, Staff, Guru...">
+                                    </div>
+                                </div>
+
+                                <!-- Custom Banner Color (Gradients Preset) -->
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Choose Profile Theme Gradient</label>
+                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                        <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all">
+                                            <input type="radio" name="banner_color" value="linear-gradient(135deg, #6366f1, #a855f7)" {{ $user->banner_color === 'linear-gradient(135deg, #6366f1, #a855f7)' ? 'checked' : '' }} class="mr-2 text-blue-600 focus:ring-blue-500">
+                                            <span class="w-6 h-6 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 shadow-inner"></span>
+                                        </label>
+
+                                        <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all">
+                                            <input type="radio" name="banner_color" value="linear-gradient(135deg, #ec4899, #8b5cf6)" {{ $user->banner_color === 'linear-gradient(135deg, #ec4899, #8b5cf6)' ? 'checked' : '' }} class="mr-2 text-pink-600 focus:ring-pink-500">
+                                            <span class="w-6 h-6 rounded-lg bg-gradient-to-r from-pink-500 to-violet-500 shadow-inner"></span>
+                                        </label>
+
+                                        <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all">
+                                            <input type="radio" name="banner_color" value="linear-gradient(135deg, #f97316, #ef4444)" {{ $user->banner_color === 'linear-gradient(135deg, #f97316, #ef4444)' ? 'checked' : '' }} class="mr-2 text-orange-600 focus:ring-orange-500">
+                                            <span class="w-6 h-6 rounded-lg bg-gradient-to-r from-orange-500 to-red-500 shadow-inner"></span>
+                                        </label>
+
+                                        <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all">
+                                            <input type="radio" name="banner_color" value="linear-gradient(135deg, #06b6d4, #3b82f6)" {{ $user->banner_color === 'linear-gradient(135deg, #06b6d4, #3b82f6)' ? 'checked' : '' }} class="mr-2 text-cyan-600 focus:ring-cyan-500">
+                                            <span class="w-6 h-6 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 shadow-inner"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Profile Privacy Setting -->
+                                <div class="space-y-1.5 p-4 rounded-2xl border border-slate-100 bg-slate-50/50">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1">
+                                                <span class="material-symbols-outlined text-xs text-blue-600">visibility</span>
+                                                Profile Privacy
+                                            </h4>
+                                            <p class="text-[10px] font-medium text-slate-550">When private, other community members won't be able to see your discussions, uploads, and signature.</p>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer select-none">
+                                            <input type="checkbox" name="is_private" value="1" {{ $user->is_private ? 'checked' : '' }} class="sr-only peer">
+                                            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Custom Signature -->
+                                <div class="space-y-1.5">
+                                    <label for="signature" class="text-xs font-bold text-slate-700 uppercase tracking-wider">Forum Signature Quote</label>
+                                    <textarea id="signature" name="signature" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-400" placeholder="Write a short custom signature to display at the footer of all your posts...">{{ old('signature', $user->signature) }}</textarea>
+                                </div>
+
+                                <!-- Save changes -->
+                                <div class="text-right pt-3 border-t border-slate-100">
+                                    <button type="submit" class="xen-button text-xs font-bold text-white px-5 py-2 rounded-xl shadow-md cursor-pointer">
+                                        Save Profile Card
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    @endif
+                @endauth
+
+                <!-- Recent Discussions list by this user -->
+                <div class="mui-card overflow-hidden shadow-lg border border-slate-200 bg-white rounded-2xl">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                        <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">📝 Recent Discussions</h3>
+                    </div>
+                    <div class="divide-y divide-slate-100">
+                        @forelse($threads as $thread)
+                            <div class="px-6 py-4 flex items-center justify-between gap-4 hover:bg-slate-50/50 transition-colors">
+                                <div class="space-y-0.5">
+                                    <h4 class="font-bold text-slate-800 text-xs hover:text-blue-600 transition-colors">
+                                        <a href="{{ route('threads.show', $thread->slug) }}">{{ $thread->title }}</a>
+                                    </h4>
+                                    <div class="flex items-center gap-2 text-[10px] text-slate-450">
+                                        <span class="font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-100">{{ $thread->category->name }}</span>
+                                        <span>•</span>
+                                        <span>Created {{ $thread->created_at->diffForHumans() }}</span>
+                                    </div>
+                                </div>
+                                <div class="text-xs font-bold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 flex-shrink-0">
+                                    {{ $thread->views_count }} views
                                 </div>
                             </div>
-                        @endforeach
+                        @empty
+                            <div class="px-6 py-8 text-center text-xs text-slate-400">
+                                No threads have been posted by this member yet.
+                            </div>
+                        @endforelse
                     </div>
-                @else
-                    <div class="text-center py-12 border-2 border-slate-200 border-dashed rounded-xl">
-                        <span class="text-2xl block mb-2 opacity-50">🖼️</span>
-                        <p class="text-xs text-slate-450 max-w-[200px] mx-auto font-medium">No custom images or GIFs uploaded by this member yet.</p>
-                    </div>
-                @endif
+                </div>
+            </div>
+
+            <!-- Right Section: Media Gallery Grid (4 Cols) -->
+            <div class="lg:col-span-4 space-y-6">
+                <!-- Media Upload Gallery grid -->
+                <div class="mui-card p-6 border border-slate-200 bg-white shadow-lg rounded-2xl">
+                    <h3 class="text-xs font-bold tracking-wider text-slate-500 uppercase mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-pink-500 text-sm">photo_library</span>
+                        Media Showroom
+                    </h3>
+                    
+                    @if(count($attachments) > 0)
+                        <div class="grid grid-cols-2 gap-3">
+                            @foreach($attachments as $attach)
+                                <div class="relative group rounded-xl overflow-hidden bg-slate-50 border border-slate-200 shadow-sm">
+                                    <!-- Padlock Toggle for Owner -->
+                                    @auth
+                                        @if(Auth::id() === $user->id)
+                                            <button onclick="toggleAttachmentPrivacy('{{ $attach->id }}')" 
+                                                    id="privacy-btn-{{ $attach->id }}"
+                                                    class="absolute top-1.5 left-1.5 w-6 h-6 rounded-lg bg-slate-900/60 hover:bg-slate-900/80 text-white flex items-center justify-center transition-all backdrop-blur-sm border border-white/10 cursor-pointer z-10" 
+                                                    title="{{ $attach->is_private ? 'Make Public' : 'Make Private' }}">
+                                                <span class="material-symbols-outlined text-[13px] font-bold" id="privacy-icon-{{ $attach->id }}">
+                                                    {{ $attach->is_private ? 'lock' : 'lock_open' }}
+                                                </span>
+                                            </button>
+                                        @endif
+                                    @endauth
+
+                                    <button onclick="openLightbox('{{ str_starts_with($attach->file_path, 'http') ? $attach->file_path : asset('storage/' . $attach->file_path) }}', '{{ $attach->file_name }}')" class="block w-full h-24 overflow-hidden cursor-zoom-in text-left p-0 border-0 outline-none w-full">
+                                        <img src="{{ str_starts_with($attach->file_path, 'http') ? $attach->file_path : asset('storage/' . $attach->file_path) }}" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-200" alt="uploaded media">
+                                    </button>
+                                    <!-- Check if GIF -->
+                                    @if(str_contains($attach->file_name, '.gif') || str_contains($attach->file_type, 'gif'))
+                                        <span class="absolute top-1.5 right-1.5 px-1 py-0.5 rounded text-[7px] font-bold bg-pink-500 text-white uppercase tracking-widest">
+                                            GIF
+                                        </span>
+                                    @endif
+                                    <div class="bg-slate-100/80 p-1.5 text-[8px] text-slate-500 border-t border-slate-200 flex items-center justify-between">
+                                        <span class="truncate pr-2 font-medium">{{ $attach->file_name }}</span>
+                                        <a href="{{ route('threads.show', $attach->thread->slug) }}" class="hover:text-blue-600 transition-colors font-bold">
+                                            🔗
+                                        </a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-center py-12 border-2 border-slate-200 border-dashed rounded-xl">
+                            <span class="text-2xl block mb-2 opacity-50">🖼️</span>
+                            <p class="text-xs text-slate-450 max-w-[200px] mx-auto font-medium">No custom images or GIFs uploaded by this member yet.</p>
+                        </div>
+                    @endif
+                </div>
             </div>
         </div>
-    </div>
+    @endif
 </div>
 
 @auth
@@ -318,6 +369,69 @@
                     });
                 }
             });
+
+            function toggleAttachmentPrivacy(attachmentId) {
+                const btn = document.getElementById(`privacy-btn-${attachmentId}`);
+                const icon = document.getElementById(`privacy-icon-${attachmentId}`);
+                if (!btn || !icon) return;
+
+                btn.disabled = true;
+
+                fetch(`/media/${attachmentId}/toggle-privacy`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Toggle privacy failed.');
+                    return response.json();
+                })
+                .then(data => {
+                    btn.disabled = false;
+                    if (data.success) {
+                        if (data.is_private) {
+                            icon.innerText = 'lock';
+                            btn.title = 'Make Public';
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Privacy Updated',
+                                text: 'This image is now Private and visible only to you.',
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true
+                            });
+                        } else {
+                            icon.innerText = 'lock_open';
+                            btn.title = 'Make Private';
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Privacy Updated',
+                                text: 'This image is now Public and visible to all community members.',
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true
+                            });
+                        }
+                    }
+                })
+                .catch(error => {
+                    btn.disabled = false;
+                    console.error('Privacy Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Action Failed',
+                        text: 'Could not change media privacy. Please try again.',
+                        confirmButtonColor: '#0f172a'
+                    });
+                });
+            }
         </script>
     @endif
 @endauth
@@ -367,7 +481,12 @@
                 .catch(error => {
                     btn.disabled = false;
                     console.error('Follow Error:', error);
-                    alert('Could not toggle follow status. Please try again.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Action Failed',
+                        text: 'Could not toggle follow status. Please try again.',
+                        confirmButtonColor: '#0f172a'
+                    });
                 });
             }
         </script>

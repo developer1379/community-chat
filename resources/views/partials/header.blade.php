@@ -152,7 +152,7 @@
                 <span class="material-symbols-outlined text-[18px] mr-1.5 text-slate-400 group-hover:text-blue-600 transition-colors">forum</span>
                 Discussions
             </a>
-            <a href="{{ route('categories.show', 'images-and-gifs') }}" class="group flex items-center py-3 border-b-2 border-transparent hover:border-blue-600 text-xs sm:text-[13px] font-semibold text-slate-500 hover:text-slate-900 transition-colors flex-shrink-0">
+            <a href="{{ route('media.index') }}" class="group flex items-center py-3 border-b-2 border-transparent hover:border-blue-600 text-xs sm:text-[13px] font-semibold text-slate-500 hover:text-slate-900 transition-colors flex-shrink-0">
                 <span class="material-symbols-outlined text-[18px] mr-1.5 text-slate-400 group-hover:text-blue-600 transition-colors">image</span>
                 Media Showroom
             </a>

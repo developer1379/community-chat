@@ -17,7 +17,15 @@ class Attachment extends Model
         'file_path',
         'file_name',
         'file_type',
+        'is_private',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_private' => 'boolean',
+        ];
+    }
 
     /**
      * Get the user who uploaded the attachment.

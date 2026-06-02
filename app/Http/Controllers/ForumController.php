@@ -147,4 +147,23 @@ class ForumController extends Controller
 
         return response()->json(['error' => 'Failed to upload image'], 400);
     }
+
+    public function mediaIndex(Request $request)
+    {
+        $search = $request->input('q');
+        
+        $query = \App\Models\Attachment::where('file_type', 'like', 'image/%')
+            ->where('is_private', false)
+            ->whereHas('user', function($q) {
+                $q->where('is_private', false);
+            });
+
+        if ($search) {
+            $query->where('file_name', 'like', "%{$search}%");
+        }
+
+        $media = $query->with(['thread', 'user'])->latest()->paginate(24);
+
+        return view('forum.media', compact('media', 'search'));
+    }
 }

@@ -32,7 +32,8 @@ class ThreadController extends Controller
     public function create(string $slug)
     {
         $category = $this->categoryRepo->findBySlug($slug);
-        return view('forum.create', compact('category'));
+        $categories = $this->categoryRepo->getAllWithStats();
+        return view('forum.create', compact('category', 'categories'));
     }
 
     public function store(Request $request)
@@ -41,6 +42,7 @@ class ThreadController extends Controller
             'category_id' => ['required', 'exists:categories,id'],
             'title' => ['required', 'string', 'min:5', 'max:255'],
             'content' => ['required', 'string', 'min:10'],
+            'tags' => ['nullable', 'string', 'max:255'],
             'attachments.*' => ['nullable', 'file', 'mimes:jpeg,png,jpg,gif', 'max:5120'],
         ]);
 
@@ -51,6 +53,7 @@ class ThreadController extends Controller
             'user_id' => Auth::id(),
             'title' => $request->title,
             'slug' => $slug,
+            'tags' => $request->tags,
         ]);
 
         $post = $this->postRepo->createPost([
@@ -79,5 +82,81 @@ class ThreadController extends Controller
         }
 
         return redirect()->route('threads.show', $thread->slug)->with('success', 'Your thread has been created successfully!');
+    }
+
+    public function edit(string $slug)
+    {
+        $thread = $this->threadRepo->findBySlug($slug);
+        abort_if(Auth::id() !== $thread->user_id, 403);
+        $categories = $this->categoryRepo->getAllWithStats();
+        
+        return view('forum.edit', compact('thread', 'categories'));
+    }
+
+    public function update(Request $request, \App\Models\Thread $thread)
+    {
+        abort_if(Auth::id() !== $thread->user_id, 403);
+
+        $request->validate([
+            'category_id' => ['required', 'exists:categories,id'],
+            'title' => ['required', 'string', 'min:5', 'max:255'],
+            'content' => ['required', 'string', 'min:10'],
+            'tags' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $oldData = [
+            'title' => $thread->title,
+            'category_id' => $thread->category_id,
+            'tags' => $thread->tags,
+            'content' => $thread->firstPost?->content,
+        ];
+
+        $thread->update([
+            'title' => $request->title,
+            'category_id' => $request->category_id,
+            'tags' => $request->tags,
+        ]);
+
+        $thread->firstPost?->update([
+            'content' => $request->content,
+        ]);
+
+        $newData = [
+            'title' => $request->title,
+            'category_id' => $request->category_id,
+            'tags' => $request->tags,
+            'content' => $request->content,
+        ];
+
+        \App\Models\ThreadLog::create([
+            'thread_id' => $thread->id,
+            'user_id' => Auth::id(),
+            'action' => 'edit',
+            'changes' => [
+                'before' => $oldData,
+                'after' => $newData,
+            ],
+        ]);
+
+        return redirect()->route('threads.show', $thread->slug)->with('success', 'Your thread has been updated successfully!');
+    }
+
+    public function destroy(\App\Models\Thread $thread)
+    {
+        abort_if(Auth::id() !== $thread->user_id, 403);
+
+        \App\Models\ThreadLog::create([
+            'thread_id' => $thread->id,
+            'user_id' => Auth::id(),
+            'action' => 'delete',
+            'changes' => [
+                'title' => $thread->title,
+                'slug' => $thread->slug,
+            ],
+        ]);
+
+        $thread->delete();
+
+        return redirect()->route('home')->with('success', 'Your thread has been deleted.');
     }
 }

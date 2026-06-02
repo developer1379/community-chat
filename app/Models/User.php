@@ -24,11 +24,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'google_id',
         'avatar_path',
         'banner_color',
         'banner_path',
         'title_badge',
         'signature',
+        'is_private',
     ];
 
     /**
@@ -51,6 +53,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_private' => 'boolean',
         ];
     }
 

@@ -79,9 +79,11 @@
 
     <!-- Chat Engine Controller Script -->
     <script>
+        const currentUserId = '{{ Auth::id() }}';
         let chatOpen = false;
         let activeConversationId = null;
         let activeConversationPartner = null;
+        let activeChatChannel = null;
         let chatPollingInterval = null;
         let badgePollingInterval = null;
 
@@ -103,7 +105,7 @@
 
         // Poll global unread count and populate notification dropdown
         function checkUnreadBadge() {
-            fetch('/chat/unread-count')
+            fetch('/dms/unread-count')
                 .then(r => r.json())
                 .then(data => {
                     const badge = document.getElementById('global-chat-badge');
@@ -127,7 +129,7 @@
                     }
 
                     // 3. Populate direct chat alert activities in the notifications list dynamically
-                    fetch('/chat/conversations')
+                    fetch('/dms/conversations')
                         .then(res => res.json())
                         .then(conversations => {
                             const list = document.getElementById('notifications-dropdown-list');
@@ -188,14 +190,14 @@
                 e.stopPropagation();
             }
             
-            fetch('/chat/conversations')
+            fetch('/dms/conversations')
                 .then(r => r.json())
                 .then(conversations => {
                     const unreads = conversations.filter(c => c.unread_count > 0);
                     if (unreads.length === 0) return;
 
                     const promises = unreads.map(c => {
-                        return fetch(`/chat/conversations/${c.id}/read`, {
+                        return fetch(`/dms/conversations/${c.id}/read`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -227,7 +229,21 @@
         // Initialize unread check and set recurring schedule
         document.addEventListener('DOMContentLoaded', () => {
             checkUnreadBadge();
-            badgePollingInterval = setInterval(checkUnreadBadge, 10000); // Check count badge every 10 seconds
+            
+            // Still keep polling as a safe fallback but increase interval since we have real-time sockets!
+            badgePollingInterval = setInterval(checkUnreadBadge, 30000); 
+
+            // Subscribe to User's private notification channel
+            if (window.Echo && currentUserId) {
+                window.Echo.private(`user.${currentUserId}`)
+                    .listen('NotificationReceived', (e) => {
+                        console.log('Real-time notification received:', e);
+                        checkUnreadBadge();
+                        if (chatOpen) {
+                            loadConversations();
+                        }
+                    });
+            }
         });
 
         // Load list of conversations
@@ -235,7 +251,7 @@
             const listContainer = document.getElementById('chat-conversations-list');
             if (!listContainer) return;
 
-            fetch('/chat/conversations')
+            fetch('/dms/conversations')
                 .then(r => r.json())
                 .then(conversations => {
                     if (conversations.length === 0) {
@@ -294,6 +310,12 @@
 
         // Open a specific conversation thread
         function openConversation(convId, partnerName) {
+            // Unsubscribe from previous channel if active
+            if (activeChatChannel) {
+                window.Echo.leave(`chat.${activeConversationId}`);
+                activeChatChannel = null;
+            }
+
             activeConversationId = convId;
             activeConversationPartner = partnerName;
 
@@ -310,10 +332,38 @@
             
             // Highlight active in list loader behind the scenes
             loadConversations();
+
+            // Subscribe to active chat channel via Echo
+            if (window.Echo) {
+                activeChatChannel = window.Echo.private(`chat.${convId}`)
+                    .listen('MessageSent', (e) => {
+                        console.log('Real-time message received:', e);
+                        if (activeConversationId === e.conversation_id) {
+                            // Load messages (append real-time bubble safely)
+                            loadMessages(false);
+                            
+                            // Send read confirmation
+                            fetch(`/dms/conversations/${e.conversation_id}/read`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                }
+                            });
+                        }
+                    });
+            }
         }
 
         // Close thread back to conversations list
         function showConversationsList() {
+            // Unsubscribe from previous channel if active
+            if (activeChatChannel) {
+                window.Echo.leave(`chat.${activeConversationId}`);
+                activeChatChannel = null;
+            }
+
             activeConversationId = null;
             activeConversationPartner = null;
 
@@ -336,7 +386,7 @@
             const listContainer = document.getElementById('chat-messages-list');
             if (isInitial && loader) loader.classList.remove('hidden');
 
-            fetch(`/chat/conversations/${activeConversationId}`)
+            fetch(`/dms/conversations/${activeConversationId}`)
                 .then(r => r.json())
                 .then(data => {
                     if (isInitial && loader) loader.classList.add('hidden');
@@ -410,7 +460,7 @@
             // Clear input instantly for UI responsiveness
             input.value = '';
 
-            fetch(`/chat/conversations/${activeConversationId}/send`, {
+            fetch(`/dms/conversations/${activeConversationId}/send`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -426,7 +476,12 @@
             })
             .catch(e => {
                 console.error('Error sending message:', e);
-                alert('Could not deliver message. Please try again.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Message Delivery Failed',
+                    text: 'Could not deliver message. Please try again.',
+                    confirmButtonColor: '#2563eb'
+                });
             });
         }
 
@@ -439,13 +494,23 @@
             
             // Basic validation
             if (!file.type.startsWith('image/')) {
-                alert('Please select an image or GIF file.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Invalid File',
+                    text: 'Please select an image or GIF file.',
+                    confirmButtonColor: '#2563eb'
+                });
                 input.value = '';
                 return;
             }
 
             if (file.size > 8 * 1024 * 1024) {
-                alert('File size exceeds the 8MB limit.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'File Too Large',
+                    text: 'File size exceeds the 8MB limit.',
+                    confirmButtonColor: '#2563eb'
+                });
                 input.value = '';
                 return;
             }
@@ -476,7 +541,7 @@
             // Clear file input immediately so same file can be selected again
             input.value = '';
 
-            fetch(`/chat/conversations/${activeConversationId}/send`, {
+            fetch(`/dms/conversations/${activeConversationId}/send`, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -497,7 +562,12 @@
             .catch(e => {
                 document.getElementById(tempId)?.remove();
                 console.error('Error uploading message attachment:', e);
-                alert(e.message || 'Could not upload image. Please try again.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Upload Failed',
+                    text: e.message || 'Could not upload image. Please try again.',
+                    confirmButtonColor: '#2563eb'
+                });
             });
         }
 
@@ -506,7 +576,7 @@
             // Open drawer
             if (!chatOpen) toggleChatDrawer();
 
-            fetch(`/chat/start/${encodeURIComponent(username)}`, {
+            fetch(`/dms/start/${encodeURIComponent(username)}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -523,7 +593,12 @@
             })
             .catch(e => {
                 console.error('Error starting conversation:', e);
-                alert('Failed to initiate conversation with this member.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Conversation Failed',
+                    text: 'Failed to initiate conversation with this member.',
+                    confirmButtonColor: '#2563eb'
+                });
             });
         }
 
@@ -544,7 +619,7 @@
             }
 
             searchTimeout = setTimeout(() => {
-                fetch(`/chat/search-users?q=${encodeURIComponent(query)}`)
+                fetch(`/dms/search-users?q=${encodeURIComponent(query)}`)
                     .then(res => res.json())
                     .then(users => {
                         if (users.length === 0) {

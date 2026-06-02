@@ -38,6 +38,9 @@
         }
     </style>
 
+    <!-- SweetAlert2 library for premium corporate dialogs -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Modularized Custom Corporate stylesheet -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
@@ -65,6 +68,25 @@
 
     <!-- Modular Modals & Popovers -->
     @include('partials.modals')
+
+    @auth
+    <!-- Pusher and Laravel Echo CDNs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pusher/8.3.0/pusher.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.16.1/dist/echo.iife.js"></script>
+    <script>
+        window.Pusher = Pusher;
+        window.Echo = new Echo({
+            broadcaster: 'reverb',
+            key: '{{ env("REVERB_APP_KEY") }}',
+            wsHost: '{{ env("REVERB_HOST", "127.0.0.1") }}',
+            wsPort: {{ env("REVERB_PORT", 8080) }},
+            wssPort: {{ env("REVERB_PORT", 8080) }},
+            forceTLS: false,
+            enabledTransports: ['ws', 'wss'],
+        });
+    </script>
+    @endauth
+
     @include('partials.chat')
 
     <!-- Reusable Javascript Controllers & Dynamic Engines -->
@@ -163,6 +185,7 @@
         // Dynamic XenForo Hover Card Controller
         let hoverTimeout = null;
         let leaveTimeout = null;
+        let activeHoveredUser = null;
         const hoverCard = document.getElementById('user-hover-card');
 
         function setupHoverCardListeners() {
@@ -180,90 +203,131 @@
             clearTimeout(hoverTimeout);
             
             const trigger = e.currentTarget;
+            const name = trigger.getAttribute('data-user-name');
+            if (!name) return;
             
             hoverTimeout = setTimeout(() => {
-                const name = trigger.getAttribute('data-user-name');
-                const badge = trigger.getAttribute('data-user-badge') || 'Member';
-                const joined = trigger.getAttribute('data-user-joined') || 'N/A';
-                const threads = trigger.getAttribute('data-user-threads') || '0';
-                const posts = trigger.getAttribute('data-user-posts') || '0';
-                const uploads = trigger.getAttribute('data-user-uploads') || '0';
-                const avatar = trigger.getAttribute('data-user-avatar');
-                const banner = trigger.getAttribute('data-user-banner') || '#2563eb';
-                const bannerPath = trigger.getAttribute('data-user-banner-path');
+                // Fetch dynamic, real-time details from backend endpoint
+                fetch(`/dms/user-card/${encodeURIComponent(name)}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.error) return;
+                        activeHoveredUser = data;
 
-                // Populate Popover Elements
-                const hoverCardName = document.getElementById('hover-card-name');
-                const hoverCardBadge = document.getElementById('hover-card-badge');
-                const hoverCardJoined = document.getElementById('hover-card-joined');
-                const hoverCardThreads = document.getElementById('hover-card-threads');
-                const hoverCardPosts = document.getElementById('hover-card-posts');
-                const hoverCardUploads = document.getElementById('hover-card-uploads');
-                const hoverCardHeader = document.getElementById('hover-card-header');
+                        // Populate Popover Elements
+                        const hoverCardName = document.getElementById('hover-card-name');
+                        const hoverCardBadge = document.getElementById('hover-card-badge');
+                        const hoverCardJoined = document.getElementById('hover-card-joined');
+                        const hoverCardThreads = document.getElementById('hover-card-threads');
+                        const hoverCardPosts = document.getElementById('hover-card-posts');
+                        const hoverCardUploads = document.getElementById('hover-card-uploads');
+                        const hoverCardHeader = document.getElementById('hover-card-header');
+                        const hoverCardActions = document.getElementById('hover-card-actions');
 
-                if (hoverCardName) {
-                    hoverCardName.innerText = name;
-                    hoverCardName.href = `/profile/` + name;
-                }
-                if (hoverCardBadge) {
-                    hoverCardBadge.innerText = badge;
-                    hoverCardBadge.style.background = banner;
-                }
-                if (hoverCardJoined) hoverCardJoined.innerText = joined;
-                if (hoverCardThreads) hoverCardThreads.innerText = threads;
-                if (hoverCardPosts) hoverCardPosts.innerText = posts;
-                if (hoverCardUploads) hoverCardUploads.innerText = uploads;
+                        if (hoverCardName) {
+                            hoverCardName.innerText = data.name;
+                            hoverCardName.href = `/profile/` + data.name;
+                        }
+                        if (hoverCardBadge) {
+                            hoverCardBadge.innerText = data.title_badge;
+                            hoverCardBadge.style.background = data.banner_color;
+                        }
+                        if (hoverCardJoined) hoverCardJoined.innerText = data.joined;
+                        if (hoverCardThreads) hoverCardThreads.innerText = data.threads_count;
+                        if (hoverCardPosts) hoverCardPosts.innerText = data.posts_count;
+                        if (hoverCardUploads) hoverCardUploads.innerText = data.uploads_count;
 
-                // Set avatar image or placeholder
-                const img = document.getElementById('hover-card-avatar');
-                const placeholder = document.getElementById('hover-card-avatar-placeholder');
-                if (img && placeholder) {
-                    if (avatar) {
-                        img.src = avatar;
-                        img.classList.remove('hidden');
-                        placeholder.classList.add('hidden');
-                    } else {
-                        img.classList.add('hidden');
-                        placeholder.innerText = name.substring(0, 2).toUpperCase();
-                        placeholder.classList.remove('hidden');
-                    }
-                }
+                        // Online / Presence Indicators
+                        const presenceDot = document.getElementById('hover-card-presence-dot');
+                        const innerDot = document.getElementById('hover-card-presence-inner-dot');
+                        const presenceText = document.getElementById('hover-card-presence-text');
+                        
+                        if (data.is_online) {
+                            if (presenceDot) presenceDot.className = "absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white bg-emerald-500 animate-pulse";
+                            if (innerDot) innerDot.className = "w-1 h-1 rounded-full bg-emerald-500";
+                            if (presenceText) presenceText.innerText = "Online";
+                        } else {
+                            if (presenceDot) presenceDot.className = "absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white bg-slate-400";
+                            if (innerDot) innerDot.className = "w-1 h-1 rounded-full bg-slate-400";
+                            if (presenceText) presenceText.innerText = data.last_active;
+                        }
 
-                // Apply header background banner style
-                if (hoverCardHeader) {
-                    if (bannerPath) {
-                        hoverCardHeader.style.background = `url('${bannerPath}')`;
-                        hoverCardHeader.style.backgroundSize = 'cover';
-                        hoverCardHeader.style.backgroundPosition = 'center';
-                    } else {
-                        hoverCardHeader.style.background = banner;
-                    }
-                }
+                        // Avatar image or placeholder
+                        const img = document.getElementById('hover-card-avatar');
+                        const placeholder = document.getElementById('hover-card-avatar-placeholder');
+                        if (img && placeholder) {
+                            if (data.avatar_url) {
+                                img.src = data.avatar_url;
+                                img.classList.remove('hidden');
+                                placeholder.classList.add('hidden');
+                            } else {
+                                img.classList.add('hidden');
+                                placeholder.innerText = data.name.substring(0, 2).toUpperCase();
+                                placeholder.classList.remove('hidden');
+                            }
+                        }
 
-                // Position Popover dynamically
-                const rect = trigger.getBoundingClientRect();
-                const cardWidth = 288; // w-72
-                const cardHeight = 135; 
-                
-                let top = rect.bottom + window.scrollY + 8;
-                let left = rect.left + window.scrollX + (rect.width / 2) - (cardWidth / 2);
-                
-                // Viewport checks
-                if (left < 10) left = 10;
-                if (left + cardWidth > window.innerWidth - 10) {
-                    left = window.innerWidth - cardWidth - 10;
-                }
-                
-                if (rect.bottom + cardHeight > window.innerHeight) {
-                    top = rect.top + window.scrollY - cardHeight - 8;
-                }
+                        // Header Banner Color/Path
+                        if (hoverCardHeader) {
+                            if (data.banner_path) {
+                                hoverCardHeader.style.background = `url('${data.banner_path}')`;
+                                hoverCardHeader.style.backgroundSize = 'cover';
+                                hoverCardHeader.style.backgroundPosition = 'center';
+                            } else {
+                                hoverCardHeader.style.background = data.banner_color;
+                            }
+                        }
 
-                if (hoverCard) {
-                    hoverCard.style.top = `${top}px`;
-                    hoverCard.style.left = `${left}px`;
-                    hoverCard.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
-                    hoverCard.classList.add('scale-100');
-                }
+                        // Hide follow/message controls if user is hovering over their own card
+                        if (hoverCardActions) {
+                            if (data.is_self) {
+                                hoverCardActions.classList.add('hidden');
+                            } else {
+                                hoverCardActions.classList.remove('hidden');
+                                
+                                // Setup initial follow button state
+                                const followBtn = document.getElementById('hover-card-follow-btn');
+                                const followText = document.getElementById('hover-card-follow-text');
+                                if (followBtn && followText) {
+                                    if (data.is_following) {
+                                        followText.innerText = 'Unfollow';
+                                        followBtn.querySelector('.material-symbols-outlined').innerText = 'person_remove';
+                                        followBtn.className = "flex-1 py-2 text-rose-600 hover:bg-rose-50/20 transition-colors cursor-pointer flex items-center justify-center gap-1 font-bold";
+                                    } else {
+                                        followText.innerText = 'Follow';
+                                        followBtn.querySelector('.material-symbols-outlined').innerText = 'person_add';
+                                        followBtn.className = "flex-1 py-2 text-blue-600 hover:bg-blue-50/20 transition-colors cursor-pointer flex items-center justify-center gap-1 font-bold";
+                                    }
+                                }
+                            }
+                        }
+
+                        // Position Popover dynamically
+                        const rect = trigger.getBoundingClientRect();
+                        const cardWidth = 288; // w-72
+                        const cardHeight = 175; // dynamic adjusted height
+                        
+                        let top = rect.bottom + window.scrollY + 8;
+                        let left = rect.left + window.scrollX + (rect.width / 2) - (cardWidth / 2);
+                        
+                        // Viewport bounds checks
+                        if (left < 10) left = 10;
+                        if (left + cardWidth > window.innerWidth - 10) {
+                            left = window.innerWidth - cardWidth - 10;
+                        }
+                        
+                        if (rect.bottom + cardHeight > window.innerHeight) {
+                            top = rect.top + window.scrollY - cardHeight - 8;
+                        }
+
+                        if (hoverCard) {
+                            hoverCard.style.top = `${top}px`;
+                            hoverCard.style.left = `${left}px`;
+                            hoverCard.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+                            hoverCard.classList.add('scale-100');
+                        }
+                    })
+                    .catch(err => console.error('Error loading user card details:', err));
             }, 300); // 300ms hover delay threshold
         }
 
@@ -275,7 +339,7 @@
                     hoverCard.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
                     hoverCard.classList.remove('scale-100');
                 }
-            }, 250); // delay before hiding to allow mouse transitions
+            }, 250);
         }
 
         if (hoverCard) {
@@ -287,6 +351,113 @@
                 clearTimeout(leaveTimeout);
                 handleMouseLeave();
             });
+        }
+
+        // Live Follow/Unfollow toggle inside hover card
+        function handleHoverFollow() {
+            if (!activeHoveredUser) return;
+            
+            // Guest block check
+            if (!currentUserId || currentUserId === 'null' || currentUserId === '') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Authentication Required',
+                    text: 'Please register or log in to follow other members.',
+                    confirmButtonColor: '#2563eb'
+                });
+                return;
+            }
+
+            const followBtn = document.getElementById('hover-card-follow-btn');
+            const followText = document.getElementById('hover-card-follow-text');
+            if (!followBtn || !followText) return;
+
+            const wasFollowing = activeHoveredUser.is_following;
+            activeHoveredUser.is_following = !wasFollowing;
+
+            // Optimistic UI updates
+            if (activeHoveredUser.is_following) {
+                followText.innerText = 'Unfollow';
+                followBtn.querySelector('.material-symbols-outlined').innerText = 'person_remove';
+                followBtn.className = "flex-1 py-2 text-rose-600 hover:bg-rose-50/20 transition-colors cursor-pointer flex items-center justify-center gap-1 font-bold";
+            } else {
+                followText.innerText = 'Follow';
+                followBtn.querySelector('.material-symbols-outlined').innerText = 'person_add';
+                followBtn.className = "flex-1 py-2 text-blue-600 hover:bg-blue-50/20 transition-colors cursor-pointer flex items-center justify-center gap-1 font-bold";
+            }
+
+            // Sync with DB
+            fetch(`/members/${activeHoveredUser.name}/follow`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(r => r.json())
+            .then(res => {
+                const toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true
+                });
+                toast.fire({
+                    icon: 'success',
+                    title: res.status === 'followed' 
+                        ? `You are now following ${activeHoveredUser.name}` 
+                        : `You unfollowed ${activeHoveredUser.name}`
+                });
+            })
+            .catch(err => {
+                console.error('Follow request error:', err);
+                // Revert state on error
+                activeHoveredUser.is_following = wasFollowing;
+                if (wasFollowing) {
+                    followText.innerText = 'Unfollow';
+                    followBtn.querySelector('.material-symbols-outlined').innerText = 'person_remove';
+                    followBtn.className = "flex-1 py-2 text-rose-600 hover:bg-rose-50/20 transition-colors cursor-pointer flex items-center justify-center gap-1 font-bold";
+                } else {
+                    followText.innerText = 'Follow';
+                    followBtn.querySelector('.material-symbols-outlined').innerText = 'person_add';
+                    followBtn.className = "flex-1 py-2 text-blue-600 hover:bg-blue-50/20 transition-colors cursor-pointer flex items-center justify-center gap-1 font-bold";
+                }
+            });
+        }
+
+        // Live Chat direct messaging shortcut inside hover card
+        function handleHoverMessage() {
+            if (!activeHoveredUser) return;
+
+            if (!currentUserId || currentUserId === 'null' || currentUserId === '') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Authentication Required',
+                    text: 'Please register or log in to message other members.',
+                    confirmButtonColor: '#2563eb'
+                });
+                return;
+            }
+
+            // Gracefully close hover card popover
+            if (hoverCard) {
+                hoverCard.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                hoverCard.classList.remove('scale-100');
+            }
+
+            // Launch DM system and load conversation stream
+            if (typeof startDirectChat === 'function') {
+                startDirectChat(activeHoveredUser.name);
+            } else if (typeof toggleChatDrawer === 'function') {
+                toggleChatDrawer();
+                setTimeout(() => {
+                    if (typeof startDirectChat === 'function') {
+                        startDirectChat(activeHoveredUser.name);
+                    }
+                }, 200);
+            }
         }
 
         // Initialize on DOM load

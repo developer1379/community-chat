@@ -242,20 +242,31 @@
                                         <h4 class="font-bold text-slate-800 text-sm hover:text-blue-600 transition-colors truncate">
                                             <a href="{{ route('threads.show', $thread->slug) }}">{{ $thread->title }}</a>
                                         </h4>
-                                        <div class="flex items-center gap-1.5 text-xs text-slate-450 font-bold">
-                                            <span>By</span>
-                                            <a href="{{ route('profile.show', $thread->user->name) }}" 
-                                               data-user-hover="true" 
-                                               data-user-name="{{ $thread->user->name }}" 
-                                               data-user-badge="{{ $thread->user->title_badge }}" 
-                                               data-user-joined="{{ $thread->user->created_at->format('M d, Y') }}" 
-                                               data-user-threads="{{ $thread->user->threads()->count() }}" 
-                                               data-user-posts="{{ $thread->user->posts()->count() }}" 
-                                               data-user-uploads="{{ $thread->user->attachments()->count() }}" 
-                                               data-user-avatar="{{ $thread->user->avatar_path ? (str_starts_with($thread->user->avatar_path, 'http') ? $thread->user->avatar_path : asset('storage/' . $thread->user->avatar_path)) : '' }}" 
-                                               data-user-banner="{{ $thread->user->banner_color }}"
-                                               data-user-banner-path="{{ $thread->user->banner_path }}"
-                                               class="hover:underline text-slate-650 font-extrabold">{{ $thread->user->name }}</a>
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <div class="flex items-center gap-1.5 text-xs text-slate-450 font-bold">
+                                                <span>By</span>
+                                                <a href="{{ route('profile.show', $thread->user->name) }}" 
+                                                   data-user-hover="true" 
+                                                   data-user-name="{{ $thread->user->name }}" 
+                                                   data-user-badge="{{ $thread->user->title_badge }}" 
+                                                   data-user-joined="{{ $thread->user->created_at->format('M d, Y') }}" 
+                                                   data-user-threads="{{ $thread->user->threads()->count() }}" 
+                                                   data-user-posts="{{ $thread->user->posts()->count() }}" 
+                                                   data-user-uploads="{{ $thread->user->attachments()->count() }}" 
+                                                   data-user-avatar="{{ $thread->user->avatar_path ? (str_starts_with($thread->user->avatar_path, 'http') ? $thread->user->avatar_path : asset('storage/' . $thread->user->avatar_path)) : '' }}" 
+                                                   data-user-banner="{{ $thread->user->banner_color }}"
+                                                   data-user-banner-path="{{ $thread->user->banner_path }}"
+                                                   class="hover:underline text-slate-650 font-extrabold">{{ $thread->user->name }}</a>
+                                            </div>
+                                            @if($thread->tags)
+                                                <div class="flex items-center gap-1 flex-wrap">
+                                                    @foreach(explode(',', $thread->tags) as $tag)
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-600 border border-indigo-100 shadow-sm leading-none">
+                                                            #{{ trim($tag) }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>

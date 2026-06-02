@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -83,11 +85,24 @@ class AuthController extends Controller
     {
         $user = $this->userRepo->findByName($name);
         
+        $isOwner = Auth::check() && Auth::id() === $user->id;
+        $isProfilePrivate = $user->is_private && !$isOwner;
+
         // Get user's threads and images
-        $threads = $user->threads()->with(['category', 'firstPost'])->latest()->take(10)->get();
-        $attachments = $user->attachments()->where('file_type', 'like', 'image/%')->latest()->take(12)->get();
+        $threads = [];
+        $attachments = [];
+
+        if (!$isProfilePrivate) {
+            $threads = $user->threads()->with(['category', 'firstPost'])->latest()->take(10)->get();
+            
+            $attachmentsQuery = $user->attachments()->where('file_type', 'like', 'image/%');
+            if (!$isOwner) {
+                $attachmentsQuery->where('is_private', false);
+            }
+            $attachments = $attachmentsQuery->latest()->take(12)->get();
+        }
         
-        return view('auth.profile', compact('user', 'threads', 'attachments'));
+        return view('auth.profile', compact('user', 'threads', 'attachments', 'isProfilePrivate'));
     }
 
     public function updateProfile(Request $request)
@@ -106,6 +121,7 @@ class AuthController extends Controller
         $data = [
             'signature' => $request->signature,
             'banner_color' => $request->banner_color,
+            'is_private' => $request->has('is_private'),
         ];
 
         if ($request->filled('title_badge')) {
@@ -131,5 +147,76 @@ class AuthController extends Controller
         $this->userRepo->updateProfile($user, $data);
 
         return back()->with('success', 'Your profile card has been updated successfully!');
+    }
+
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        try {
+            $googleUser = Socialite::driver('google')->user();
+        } catch (\Exception $e) {
+            return redirect()->route('login')->withErrors([
+                'email' => 'Failed to authenticate with Google. Please try again.'
+            ]);
+        }
+
+        // Search for user by google_id or email
+        $user = User::where('google_id', $googleUser->getId())
+            ->orWhere('email', $googleUser->getEmail())
+            ->first();
+
+        if ($user) {
+            // Update google_id and avatar if not set
+            if (!$user->google_id) {
+                $user->update(['google_id' => $googleUser->getId()]);
+            }
+            if (!$user->avatar_path && $googleUser->getAvatar()) {
+                $user->update(['avatar_path' => $googleUser->getAvatar()]);
+            }
+        } else {
+            // Generate a unique name from Google name
+            $baseName = $googleUser->getName() ?: 'User';
+            $name = Str::slug($baseName);
+            // Ensure unique username
+            $counter = 1;
+            while (User::where('name', $name)->exists()) {
+                $name = Str::slug($baseName) . '-' . $counter;
+                $counter++;
+            }
+
+            // Create new user
+            $user = User::create([
+                'name' => $name,
+                'email' => $googleUser->getEmail(),
+                'google_id' => $googleUser->getId(),
+                'password' => Hash::make(Str::random(24)), // Random secure password
+                'avatar_path' => $googleUser->getAvatar(),
+                'title_badge' => 'New Member',
+            ]);
+        }
+
+        Auth::login($user, true);
+
+        return redirect()->route('home')->with('success', 'Logged in successfully with Google. Welcome!');
+    }
+
+    public function toggleMediaPrivacy(\App\Models\Attachment $attachment)
+    {
+        if (Auth::id() !== $attachment->user_id) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized action.'], 403);
+        }
+
+        $attachment->is_private = !$attachment->is_private;
+        $attachment->save();
+
+        return response()->json([
+            'success' => true,
+            'is_private' => $attachment->is_private,
+            'message' => $attachment->is_private ? 'Media is now Private.' : 'Media is now Public.'
+        ]);
     }
 }
