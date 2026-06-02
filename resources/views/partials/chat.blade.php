@@ -299,16 +299,6 @@
                 });
         }
 
-        // Open a specific conversation thread
-        function openConversation(convId, partnerName) {
-            activeConversationId = convId;
-            activeConversationPartner = partnerName;
-
-            // Show and hide correct panels
-            document.getElementById('chat-conversations-view').classList.add('hidden');
-            document.getElementById('chat-messages-view').classList.remove('hidden');
-            document.getElementById('chat-back-btn').classList.remove('hidden');
-
         // Helper to query and update the active conversation partner's presence
         function updateChatHeaderPresence(partnerName) {
             if (!partnerName) return;
