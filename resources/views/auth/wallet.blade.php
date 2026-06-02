@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="space-y-8 my-6 max-w-6xl mx-auto">
+<div class="space-y-8 my-6 max-w-6xl mx-auto px-4 sm:px-6">
     <!-- Breadcrumbs -->
     <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-1">
         <a href="{{ route('home') }}" class="hover:text-blue-600">Forums</a>
@@ -13,8 +13,9 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h1 class="text-3xl font-extrabold text-slate-950 tracking-tight flex items-center gap-3">
-                <span class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 border border-amber-200 shadow-sm">
-                    <span class="material-symbols-outlined text-xl">account_balance_wallet</span>
+                <span class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 border border-amber-200 shadow-sm relative overflow-hidden group">
+                    <span class="absolute inset-0 bg-gradient-to-tr from-amber-400 to-yellow-300 opacity-20 group-hover:scale-110 transition-transform"></span>
+                    <span class="material-symbols-outlined text-xl z-10 animate-bounce">account_balance_wallet</span>
                 </span>
                 My Coin Wallet
             </h1>
@@ -29,28 +30,29 @@
         <!-- Balance & Milestone Progress Panel -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Glassmorphic Metallic Gold Balance Card -->
-            <div class="relative overflow-hidden rounded-3xl border border-amber-250 bg-gradient-to-tr from-amber-500 via-yellow-400 to-amber-600 p-8 text-white shadow-xl shadow-amber-500/10 flex flex-col justify-between h-56 group">
-                <!-- Background decorative icons -->
-                <span class="material-symbols-outlined absolute -right-6 -bottom-6 text-[180px] text-white/10 select-none pointer-events-none group-hover:scale-105 transition-transform duration-500">monetization_on</span>
+            <div class="relative overflow-hidden rounded-3xl border border-amber-300 bg-gradient-to-tr from-amber-600 via-yellow-400 to-amber-700 p-8 text-white shadow-xl shadow-amber-500/20 flex flex-col justify-between h-60 group transition-all duration-300 hover:shadow-amber-500/30 hover:-translate-y-0.5">
+                <!-- 3D shimmering light effects -->
+                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
+                <span class="material-symbols-outlined absolute -right-6 -bottom-6 text-[200px] text-white/10 select-none pointer-events-none group-hover:rotate-12 transition-transform duration-500">monetization_on</span>
                 
                 <div class="flex justify-between items-start z-10">
                     <div>
-                        <span class="text-[10px] font-black uppercase tracking-widest text-amber-100 bg-white/15 px-3 py-1 rounded-full border border-white/20">XenCoins Gold</span>
-                        <h2 class="text-5xl font-black mt-4 flex items-center gap-2">
+                        <span class="text-[9px] font-black uppercase tracking-widest text-amber-900 bg-white/35 px-3.5 py-1.5 rounded-full border border-white/40 shadow-sm">XenCoins Gold</span>
+                        <h2 class="text-5xl font-black mt-5 flex items-center gap-2 drop-shadow-md">
                             <span>{{ number_format($user->coins) }}</span>
-                            <span class="text-2xl font-extrabold text-amber-100">🪙</span>
+                            <span class="text-2xl font-extrabold text-amber-100 animate-pulse">🪙</span>
                         </h2>
                     </div>
-                    <span class="text-xs font-black uppercase tracking-widest text-white/90 bg-slate-950/20 px-3 py-1 rounded-xl">Active Balance</span>
+                    <span class="text-xs font-black uppercase tracking-widest text-white bg-slate-950/20 px-3.5 py-1.5 rounded-xl backdrop-blur-sm border border-white/10">Active Balance</span>
                 </div>
 
-                <div class="flex justify-between items-end border-t border-white/10 pt-4 z-10">
+                <div class="flex justify-between items-end border-t border-white/20 pt-4 z-10">
                     <div>
-                        <p class="text-[10px] uppercase font-bold text-amber-150">Current Wallet Tier</p>
-                        <p class="text-sm font-black">{{ $currentTier }}</p>
+                        <p class="text-[9px] uppercase font-bold text-amber-900">Current Wallet Tier</p>
+                        <p class="text-sm font-black drop-shadow-sm">{{ $currentTier }}</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-[10px] uppercase font-bold text-amber-150">Owner Account</p>
+                        <p class="text-[9px] uppercase font-bold text-amber-900">Owner Account</p>
                         <p class="text-xs font-bold">{{ $user->name }}</p>
                     </div>
                 </div>
@@ -69,7 +71,7 @@
                 <!-- Progress gauge bar -->
                 <div class="space-y-2">
                     <div class="w-full h-3 rounded-full bg-slate-100 overflow-hidden border border-slate-150 shadow-inner">
-                        <div class="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full transition-all duration-500" style="width: {{ $percent }}%"></div>
+                        <div class="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-indigo-600 rounded-full transition-all duration-500 shadow-md" style="width: {{ $percent }}%"></div>
                     </div>
                     <div class="flex justify-between items-center text-[10px] font-bold text-slate-500">
                         <span>{{ $currentTier }}</span>
@@ -159,50 +161,51 @@
             </div>
         </div>
 
-        <!-- Sidebar Coin Earning Cheat Sheet Guide -->
+        <!-- Sidebar Dynamic Earning Rules & Milestone Tiers -->
         <div class="space-y-6">
+            <!-- Dynamic Earning Rules Card (Loading from DB!) -->
             <div class="mui-card p-5 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4 text-left">
                 <h3 class="text-sm font-extrabold tracking-wider text-slate-500 uppercase flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-blue-600 text-base">emoji_events</span> Coin Earning Rules
+                    <span class="material-symbols-outlined text-blue-600 text-base animate-pulse">emoji_events</span> Coin Earning Rules
                 </h3>
                 <p class="text-[10px] font-medium text-slate-450 leading-relaxed">
-                    Earn coins instantly as you interact. Accumulate balance to unlock community clout and upcoming premium rewards.
+                    Earn coins instantly as you interact. Earning details and settings are fetched dynamically from the database.
                 </p>
 
-                <!-- Rules list item rows -->
+                <!-- Dynamic Rules list item rows -->
                 <div class="space-y-3 pt-2">
-                    <div class="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 transition-colors">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xl">📚</span>
-                            <div>
-                                <p class="text-xs font-bold text-slate-800 leading-none">Start New Thread</p>
-                                <span class="text-[9px] text-slate-400 mt-0.5 inline-block">Post creative topics</span>
+                    @forelse($rules as $rule)
+                        @php
+                            // Match a colorful, custom 3D styled gradient & theme per rule dynamically
+                            $gradient = match($rule->id) {
+                                'thread_created' => 'from-indigo-400 to-purple-500 shadow-indigo-100',
+                                'reply_posted' => 'from-blue-400 to-sky-500 shadow-blue-100',
+                                'reaction_received' => 'from-emerald-400 to-teal-500 shadow-emerald-100',
+                                default => 'from-amber-400 to-orange-500 shadow-amber-100'
+                            };
+                            $textCol = match($rule->id) {
+                                'thread_created' => 'text-indigo-600 bg-indigo-50 border-indigo-150',
+                                'reply_posted' => 'text-blue-600 bg-blue-50 border-blue-150',
+                                'reaction_received' => 'text-emerald-600 bg-emerald-50 border-emerald-150',
+                                default => 'text-amber-600 bg-amber-50 border-amber-150'
+                            };
+                        @endphp
+                        <div class="flex items-center justify-between p-3 rounded-2xl border border-slate-100 bg-slate-50/40 hover:bg-slate-50 transition-all duration-200 hover:shadow-sm">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <!-- 3D-effect Material Colorful Icon Sphere -->
+                                <div class="w-9 h-9 rounded-xl flex items-center justify-center text-lg bg-gradient-to-br {{ $gradient }} text-white shadow-md transform hover:rotate-12 transition-transform select-none flex-shrink-0">
+                                    {{ $rule->icon }}
+                                </div>
+                                <div class="min-w-0 leading-tight">
+                                    <p class="text-xs font-extrabold text-slate-800 truncate">{{ $rule->label }}</p>
+                                    <span class="text-[9px] text-slate-450 mt-0.5 inline-block leading-none truncate max-w-[130px] sm:max-w-[160px]">{{ $rule->description }}</span>
+                                </div>
                             </div>
+                            <span class="text-xs font-black px-2.5 py-1.5 rounded-xl border {{ $textCol }} flex-shrink-0">+{{ $rule->amount }} 🪙</span>
                         </div>
-                        <span class="text-xs font-black text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-150">+15 🪙</span>
-                    </div>
-
-                    <div class="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 transition-colors">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xl">💬</span>
-                            <div>
-                                <p class="text-xs font-bold text-slate-800 leading-none">Post a Reply</p>
-                                <span class="text-[9px] text-slate-400 mt-0.5 inline-block">Helpful discussion responses</span>
-                            </div>
-                        </div>
-                        <span class="text-xs font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-150">+5 🪙</span>
-                    </div>
-
-                    <div class="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 transition-colors">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xl">💖</span>
-                            <div>
-                                <p class="text-xs font-bold text-slate-800 leading-none">Receive Reactions</p>
-                                <span class="text-[9px] text-slate-400 mt-0.5 inline-block">Earn when people like posts</span>
-                            </div>
-                        </div>
-                        <span class="text-xs font-black text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-150">+2 🪙</span>
-                    </div>
+                    @empty
+                        <p class="text-[10px] text-slate-400 text-center py-4">No custom rules configured inside database.</p>
+                    @endforelse
                 </div>
             </div>
 

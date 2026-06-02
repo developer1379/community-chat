@@ -47,6 +47,9 @@ class WalletController extends Controller
             $percent = min(100, (int)($coins / 100 * 100));
         }
 
-        return view('auth.wallet', compact('user', 'transactions', 'currentTier', 'nextTier', 'target', 'percent'));
+        // Fetch coin rules dynamically from the database
+        $rules = \App\Models\CoinRule::all();
+
+        return view('auth.wallet', compact('user', 'transactions', 'currentTier', 'nextTier', 'target', 'percent', 'rules'));
     }
 }
