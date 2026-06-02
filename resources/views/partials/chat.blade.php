@@ -94,10 +94,12 @@
             chatOpen = !chatOpen;
             if (chatOpen) {
                 drawer.classList.remove('translate-x-full');
+                drawer.classList.add('active');
                 loadConversations();
                 startChatPolling();
             } else {
                 drawer.classList.add('translate-x-full');
+                drawer.classList.remove('active');
                 stopChatPolling();
             }
         }

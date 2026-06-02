@@ -116,17 +116,14 @@ body {
 
 /* Premium Sliding Chat Drawer UI Custom Styles */
 .chat-drawer {
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateX(100%) !important;
+    opacity: 0 !important;
 }
 
-.chat-drawer.translate-x-full {
-    transform: translateX(100%);
-    opacity: 0;
-}
-
-.chat-drawer:not(.translate-x-full) {
-    transform: translateX(0);
-    opacity: 1;
+.chat-drawer.active {
+    transform: translateX(0) !important;
+    opacity: 1 !important;
 }
 
 /* Custom Scrollbars for Chat */

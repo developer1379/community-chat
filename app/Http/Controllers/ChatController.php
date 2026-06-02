@@ -39,19 +39,12 @@ class ChatController extends Controller
             $otherUser = $conv->otherUser($userId);
             $lastMessage = $conv->messages->first();
 
-            $avatarUrl = null;
-            if ($otherUser->avatar_path) {
-                $avatarUrl = str_starts_with($otherUser->avatar_path, 'http') ? $otherUser->avatar_path : asset('storage/' . $otherUser->avatar_path);
-            } else {
-                $avatarUrl = 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($otherUser->email))) . '?d=mp';
-            }
-
             return [
                 'id' => $conv->id,
                 'other_user' => [
                     'id' => $otherUser->id,
                     'name' => $otherUser->name,
-                    'avatar_url' => $avatarUrl,
+                    'avatar_url' => $otherUser->avatar_url,
                     'title_badge' => $otherUser->title_badge,
                 ],
                 'last_message' => $lastMessage ? [
@@ -238,7 +231,7 @@ class ChatController extends Controller
             return [
                 'name' => $u->name,
                 'title_badge' => $u->title_badge,
-                'avatar_url' => $u->avatar_path ? asset('storage/' . $u->avatar_path) : 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($u->email))) . '?d=mp',
+                'avatar_url' => $u->avatar_url,
             ];
         });
 
@@ -291,18 +284,10 @@ class ChatController extends Controller
             }
         }
 
-        // Format avatar URL (Google OAuth avatars vs standard storage vs Gravatar fallback)
-        $avatarUrl = null;
-        if ($user->avatar_path) {
-            $avatarUrl = str_starts_with($user->avatar_path, 'http') ? $user->avatar_path : asset('storage/' . $user->avatar_path);
-        } else {
-            $avatarUrl = 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($user->email))) . '?d=mp';
-        }
-
         return response()->json([
             'id' => $user->id,
             'name' => $user->name,
-            'avatar_url' => $avatarUrl,
+            'avatar_url' => $user->avatar_url,
             'title_badge' => $user->title_badge ?? 'Member',
             'joined' => $user->created_at->format('M Y'),
             'threads_count' => $user->threads()->count(),

@@ -87,26 +87,14 @@
                 <div class="relative">
                     <button onclick="toggleDropdown('profile-dropdown')" class="flex items-center gap-2 p-0.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer">
                         <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border border-blue-600/30">
-                            @if(Auth::user()->avatar_path)
-                                <img src="{{ str_starts_with(Auth::user()->avatar_path, 'http') ? Auth::user()->avatar_path : asset('storage/' . Auth::user()->avatar_path) }}" class="w-full h-full object-cover" alt="avatar">
-                            @else
-                                <div class="w-full h-full bg-blue-50 flex items-center justify-center text-[10px] font-bold text-blue-750">
-                                    {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
-                                </div>
-                            @endif
+                            <img src="{{ Auth::user()->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                         </div>
                     </button>
                     <!-- Profile Menu -->
                     <div id="profile-dropdown" class="dropdown-menu absolute right-0 mt-2 w-64 mui-card overflow-hidden py-1 z-50 text-left bg-white border border-slate-200">
                         <div class="p-4 border-b border-slate-100 flex items-center gap-3">
                             <div class="w-9 h-9 rounded-full overflow-hidden border border-blue-500/30">
-                                @if(Auth::user()->avatar_path)
-                                    <img src="{{ str_starts_with(Auth::user()->avatar_path, 'http') ? Auth::user()->avatar_path : asset('storage/' . Auth::user()->avatar_path) }}" class="w-full h-full object-cover" alt="avatar">
-                                @else
-                                    <div class="w-full h-full bg-blue-50 flex items-center justify-center text-xs font-bold text-blue-700">
-                                        {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
-                                    </div>
-                                @endif
+                                <img src="{{ Auth::user()->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                             </div>
                             <div class="truncate leading-tight">
                                 <h4 class="font-bold text-slate-900 truncate">{{ Auth::user()->name }}</h4>
