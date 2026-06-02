@@ -409,9 +409,9 @@
                         let bubbleContent = '';
                         if (isImage) {
                             bubbleContent = `
-                                <a href="${msg.body.trim()}" target="_blank" class="block rounded-lg overflow-hidden border border-slate-200 bg-slate-100 max-w-[180px] sm:max-w-[220px] hover:opacity-90 transition-opacity">
+                                <div onclick="openLightbox('${msg.body.trim()}', 'Image Attachment')" class="block rounded-lg overflow-hidden border border-slate-200 bg-slate-100 max-w-[180px] sm:max-w-[220px] hover:opacity-90 transition-opacity cursor-zoom-in">
                                     <img src="${msg.body.trim()}" class="w-full h-auto object-cover max-h-[140px]" alt="Image attachment" loading="lazy">
-                                </a>
+                                </div>
                             `;
                         } else {
                             bubbleContent = escapeHtml(msg.body);
