@@ -69,23 +69,7 @@
     <!-- Modular Modals & Popovers -->
     @include('partials.modals')
 
-    @auth
-    <!-- Pusher and Laravel Echo CDNs -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pusher/8.3.0/pusher.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.16.1/dist/echo.iife.js"></script>
-    <script>
-        window.Pusher = Pusher;
-        window.Echo = new Echo({
-            broadcaster: 'reverb',
-            key: '{{ env("REVERB_APP_KEY") }}',
-            wsHost: '{{ env("REVERB_HOST", "127.0.0.1") }}',
-            wsPort: {{ env("REVERB_PORT", 8080) }},
-            wssPort: {{ env("REVERB_PORT", 8080) }},
-            forceTLS: false,
-            enabledTransports: ['ws', 'wss'],
-        });
-    </script>
-    @endauth
+
 
     @include('partials.chat')
 

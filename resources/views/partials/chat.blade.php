@@ -83,7 +83,6 @@
         let chatOpen = false;
         let activeConversationId = null;
         let activeConversationPartner = null;
-        let activeChatChannel = null;
         let chatPollingInterval = null;
         let badgePollingInterval = null;
 
@@ -230,20 +229,12 @@
         document.addEventListener('DOMContentLoaded', () => {
             checkUnreadBadge();
             
-            // Still keep polling as a safe fallback but increase interval since we have real-time sockets!
-            badgePollingInterval = setInterval(checkUnreadBadge, 30000); 
-
-            // Subscribe to User's private notification channel
-            if (window.Echo && currentUserId) {
-                window.Echo.private(`user.${currentUserId}`)
-                    .listen('NotificationReceived', (e) => {
-                        console.log('Real-time notification received:', e);
-                        checkUnreadBadge();
-                        if (chatOpen) {
-                            loadConversations();
-                        }
-                    });
-            }
+            // Poll global badge every 10 seconds, but ONLY when tab is focused and active
+            badgePollingInterval = setInterval(() => {
+                if (document.visibilityState === 'visible') {
+                    checkUnreadBadge();
+                }
+            }, 10000);
         });
 
         // Load list of conversations
@@ -310,12 +301,6 @@
 
         // Open a specific conversation thread
         function openConversation(convId, partnerName) {
-            // Unsubscribe from previous channel if active
-            if (activeChatChannel) {
-                window.Echo.leave(`chat.${activeConversationId}`);
-                activeChatChannel = null;
-            }
-
             activeConversationId = convId;
             activeConversationPartner = partnerName;
 
@@ -333,37 +318,14 @@
             // Highlight active in list loader behind the scenes
             loadConversations();
 
-            // Subscribe to active chat channel via Echo
-            if (window.Echo) {
-                activeChatChannel = window.Echo.private(`chat.${convId}`)
-                    .listen('MessageSent', (e) => {
-                        console.log('Real-time message received:', e);
-                        if (activeConversationId === e.conversation_id) {
-                            // Load messages (append real-time bubble safely)
-                            loadMessages(false);
-                            
-                            // Send read confirmation
-                            fetch(`/dms/conversations/${e.conversation_id}/read`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Accept': 'application/json',
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                }
-                            });
-                        }
-                    });
+            // Restart poller with faster 3s interval for active messaging stream
+            if (chatOpen) {
+                startChatPolling();
             }
         }
 
         // Close thread back to conversations list
         function showConversationsList() {
-            // Unsubscribe from previous channel if active
-            if (activeChatChannel) {
-                window.Echo.leave(`chat.${activeConversationId}`);
-                activeChatChannel = null;
-            }
-
             activeConversationId = null;
             activeConversationPartner = null;
 
@@ -376,6 +338,11 @@
 
             loadConversations();
             checkUnreadBadge();
+
+            // Restart poller with slower 10s interval for conversation listing view
+            if (chatOpen) {
+                startChatPolling();
+            }
         }
 
         // Load messages for the active conversation
@@ -703,13 +670,20 @@
         // Toggle recurring message pollers
         function startChatPolling() {
             stopChatPolling();
+            
+            // Determine dynamic interval: fast 3s for active thread, slower 10s for conversation overview listing
+            const interval = activeConversationId ? 3000 : 10000;
+            
             chatPollingInterval = setInterval(() => {
+                // OPTIMIZATION: Only poll if the tab/page is currently in active focus
+                if (document.visibilityState !== 'visible') return;
+
                 if (activeConversationId) {
                     loadMessages(false);
                 } else {
                     loadConversations();
                 }
-            }, 5000); // Poll conversations or active message stream every 5 seconds
+            }, interval);
         }
 
         function stopChatPolling() {

@@ -254,7 +254,11 @@ class ChatController extends Controller
         $isOnline = false;
         $lastActive = 'Offline';
         
-        if ($user->name === 'Admin' || $user->name === 'founder') {
+        if ($currentUserId === $user->id) {
+            // The currently logged-in user is ALWAYS online
+            $isOnline = true;
+            $lastActive = 'Online now';
+        } elseif (strtolower($user->name) === 'admin' || strtolower($user->name) === 'founder') {
             $isOnline = true;
             $lastActive = 'Online now';
         } else {
@@ -272,10 +276,18 @@ class ChatController extends Controller
             }
         }
 
+        // Format avatar URL (Google OAuth avatars vs standard storage vs Gravatar fallback)
+        $avatarUrl = null;
+        if ($user->avatar_path) {
+            $avatarUrl = str_starts_with($user->avatar_path, 'http') ? $user->avatar_path : asset('storage/' . $user->avatar_path);
+        } else {
+            $avatarUrl = 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($user->email))) . '?d=mp';
+        }
+
         return response()->json([
             'id' => $user->id,
             'name' => $user->name,
-            'avatar_url' => $user->avatar_path ? asset('storage/' . $user->avatar_path) : 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($user->email))) . '?d=mp',
+            'avatar_url' => $avatarUrl,
             'title_badge' => $user->title_badge ?? 'Member',
             'joined' => $user->created_at->format('M Y'),
             'threads_count' => $user->threads()->count(),
