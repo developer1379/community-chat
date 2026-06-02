@@ -311,7 +311,22 @@
 
             // Set Header details
             document.getElementById('chat-title').innerText = partnerName;
-            document.getElementById('chat-subtitle').innerText = 'Online Chat';
+            const subtitle = document.getElementById('chat-subtitle');
+            subtitle.innerHTML = `<span class="animate-pulse opacity-70">Connecting...</span>`;
+
+            // Query dynamic presence details dynamically
+            fetch(`/dms/user-card/${encodeURIComponent(partnerName)}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.is_online) {
+                        subtitle.innerHTML = `<span class="flex items-center gap-1 text-[9px] text-emerald-500 font-bold"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Online</span>`;
+                    } else {
+                        subtitle.innerHTML = `<span class="flex items-center gap-1 text-[9px] text-slate-400 font-bold"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> ${data.last_active}</span>`;
+                    }
+                })
+                .catch(() => {
+                    subtitle.innerText = 'Offline';
+                });
 
             loadMessages(true);
             
@@ -394,11 +409,17 @@
                         }
 
                         html += `
-                            <div class="${alignmentClass} max-w-[80%] ${msg.is_own ? 'ml-auto' : 'mr-auto'} leading-snug">
+                            <div class="${alignmentClass} max-w-[80%] ${msg.is_own ? 'ml-auto' : 'mr-auto'} leading-snug animate-fade-in">
                                 <div class="px-3.5 py-2 text-xs font-medium shadow-sm leading-normal break-words ${bubbleClass}">
                                     ${bubbleContent}
                                 </div>
-                                <span class="text-[8px] text-slate-400 font-bold mt-1 px-1">${msg.created_at}</span>
+                                <span class="text-[8px] text-slate-400 font-bold mt-1 px-1 flex items-center gap-1 select-none">
+                                    ${msg.created_at}
+                                    ${msg.is_own ? (msg.is_read 
+                                        ? `<span class="material-symbols-outlined text-[10px] text-blue-500 font-extrabold" title="Seen">done_all</span>` 
+                                        : `<span class="material-symbols-outlined text-[10px] text-slate-400" title="Sent">done</span>`
+                                    ) : ''}
+                                </span>
                             </div>
                         `;
                     });
@@ -482,20 +503,30 @@
                 return;
             }
 
-            // Create temporary uploading bubble block
+            // Create temporary uploading bubble block with dynamic local image preview!
             const listContainer = document.getElementById('chat-messages-list');
             const tempId = 'upload-temp-' + Date.now();
+            
+            // Generate a local blob URL for instant client-side caching/preview
+            const localImageSrc = URL.createObjectURL(file);
+
             if (listContainer) {
                 const tempBubble = `
                     <div id="${tempId}" class="flex flex-col items-end max-w-[80%] ml-auto leading-snug">
-                        <div class="px-3.5 py-2 text-xs font-semibold shadow-sm bg-blue-500/80 text-white rounded-t-xl rounded-l-xl flex items-center gap-2">
-                            <svg class="animate-spin h-3.5 w-3.5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            <span>Sending to ImgBB...</span>
+                        <div class="px-1 py-1 text-xs font-semibold shadow-sm bg-blue-600 rounded-t-xl rounded-l-xl relative group overflow-hidden max-w-[180px] sm:max-w-[220px]">
+                            <!-- Local Image Preview -->
+                            <img src="${localImageSrc}" class="w-full h-auto object-cover max-h-[140px] rounded-lg opacity-70 blur-[1px]">
+                            
+                            <!-- Sleek Loading Overlay -->
+                            <div class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/40 gap-1.5 text-white">
+                                <svg class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span class="text-[9px] font-bold tracking-wider uppercase text-white/95">Uploading...</span>
+                            </div>
                         </div>
-                        <span class="text-[8px] text-slate-400 font-bold mt-1 px-1">Uploading...</span>
+                        <span class="text-[8px] text-slate-400 font-bold mt-1 px-1">Sending...</span>
                     </div>
                 `;
                 listContainer.insertAdjacentHTML('beforeend', tempBubble);

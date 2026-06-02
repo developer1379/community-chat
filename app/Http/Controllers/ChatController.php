@@ -86,6 +86,7 @@ class ChatController extends Controller
                 'sender_id' => $msg->sender_id,
                 'created_at' => $msg->created_at->diffForHumans(),
                 'is_own' => $msg->sender_id === Auth::id(),
+                'is_read' => $msg->is_read,
             ];
         });
 
