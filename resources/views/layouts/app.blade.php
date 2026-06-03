@@ -226,10 +226,160 @@
             document.querySelectorAll('[data-user-hover]').forEach(trigger => {
                 trigger.removeEventListener('mouseenter', handleMouseEnter);
                 trigger.removeEventListener('mouseleave', handleMouseLeave);
+                trigger.removeEventListener('click', handleTriggerClick);
                 
                 trigger.addEventListener('mouseenter', handleMouseEnter);
                 trigger.addEventListener('mouseleave', handleMouseLeave);
+                trigger.addEventListener('click', handleTriggerClick);
             });
+        }
+
+        function showCardForTrigger(trigger) {
+            const name = trigger.getAttribute('data-user-name');
+            if (!name) return;
+
+            // Fetch dynamic, real-time details from backend endpoint
+            fetch(`/dms/user-card/${encodeURIComponent(name)}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) return;
+                    activeHoveredUser = data;
+
+                    // Populate Popover Elements
+                    const hoverCardName = document.getElementById('hover-card-name');
+                    const hoverCardBadge = document.getElementById('hover-card-badge');
+                    const hoverCardJoined = document.getElementById('hover-card-joined');
+                    const hoverCardThreads = document.getElementById('hover-card-threads');
+                    const hoverCardPosts = document.getElementById('hover-card-posts');
+                    const hoverCardUploads = document.getElementById('hover-card-uploads');
+                    const hoverCardHeader = document.getElementById('hover-card-header');
+                    const hoverCardActions = document.getElementById('hover-card-actions');
+                    const hoverCardRankBadge = document.getElementById('hover-card-rank-badge');
+
+                    if (hoverCardName) {
+                        hoverCardName.innerText = data.name;
+                        hoverCardName.href = `/profile/` + data.name;
+                    }
+                    if (hoverCardBadge) {
+                        hoverCardBadge.innerText = data.title_badge;
+                        hoverCardBadge.style.background = data.banner_color;
+                    }
+                    if (hoverCardRankBadge) {
+                        hoverCardRankBadge.innerText = data.rank_name;
+                        hoverCardRankBadge.style.background = data.rank_color;
+                    }
+                    if (hoverCardJoined) hoverCardJoined.innerText = data.joined;
+                    if (hoverCardThreads) hoverCardThreads.innerText = data.threads_count;
+                    if (hoverCardPosts) hoverCardPosts.innerText = data.posts_count;
+                    if (hoverCardUploads) hoverCardUploads.innerText = data.uploads_count;
+
+                    // Online / Presence Indicators
+                    const presenceDot = document.getElementById('hover-card-presence-dot');
+                    const innerDot = document.getElementById('hover-card-presence-inner-dot');
+                    const presenceText = document.getElementById('hover-card-presence-text');
+                    
+                    if (data.is_online) {
+                        if (presenceDot) presenceDot.className = "absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white bg-emerald-500 animate-pulse";
+                        if (innerDot) innerDot.className = "w-1 h-1 rounded-full bg-emerald-500";
+                        if (presenceText) presenceText.innerText = "Online";
+                    } else {
+                        if (presenceDot) presenceDot.className = "absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white bg-slate-400";
+                        if (innerDot) innerDot.className = "w-1 h-1 rounded-full bg-slate-400";
+                        if (presenceText) presenceText.innerText = data.last_active;
+                    }
+
+                    // Avatar image or placeholder
+                    const img = document.getElementById('hover-card-avatar');
+                    const placeholder = document.getElementById('hover-card-avatar-placeholder');
+                    if (img && placeholder) {
+                        if (data.avatar_url) {
+                            img.src = data.avatar_url;
+                            img.classList.remove('hidden');
+                            placeholder.classList.add('hidden');
+                        } else {
+                            img.classList.add('hidden');
+                            placeholder.innerText = data.name.substring(0, 2).toUpperCase();
+                            placeholder.classList.remove('hidden');
+                        }
+                    }
+
+                    // Header Banner Color/Path
+                    if (hoverCardHeader) {
+                        if (data.banner_path) {
+                            hoverCardHeader.style.background = `url('${data.banner_path}')`;
+                            hoverCardHeader.style.backgroundSize = 'cover';
+                            hoverCardHeader.style.backgroundPosition = 'center';
+                        } else {
+                            hoverCardHeader.style.background = data.banner_color;
+                        }
+                    }
+
+                    // Hide follow/message controls if user is hovering over their own card
+                    if (hoverCardActions) {
+                        if (data.is_self) {
+                            hoverCardActions.classList.add('hidden');
+                        } else {
+                            hoverCardActions.classList.remove('hidden');
+                            
+                            // Setup initial follow button state
+                            const followBtn = document.getElementById('hover-card-follow-btn');
+                            const followText = document.getElementById('hover-card-follow-text');
+                            if (followBtn && followText) {
+                                if (data.is_following) {
+                                    followText.innerText = 'Unfollow';
+                                    followBtn.querySelector('.material-symbols-outlined').innerText = 'person_remove';
+                                    followBtn.className = "flex-1 py-2 text-rose-600 hover:bg-rose-50/20 transition-colors cursor-pointer flex items-center justify-center gap-1 font-bold";
+                                } else {
+                                    followText.innerText = 'Follow';
+                                    followBtn.querySelector('.material-symbols-outlined').innerText = 'person_add';
+                                    followBtn.className = "flex-1 py-2 text-blue-600 hover:bg-blue-50/20 transition-colors cursor-pointer flex items-center justify-center gap-1 font-bold";
+                                }
+                            }
+                        }
+                    }
+
+                    // Position Popover dynamically
+                    const rect = trigger.getBoundingClientRect();
+                    const cardWidth = 288; // w-72
+                    const cardHeight = 175; // dynamic adjusted height
+                    
+                    let top = rect.bottom + window.scrollY + 8;
+                    let left = rect.left + window.scrollX + (rect.width / 2) - (cardWidth / 2);
+                    
+                    // Viewport bounds checks
+                    if (left < 10) left = 10;
+                    if (left + cardWidth > window.innerWidth - 10) {
+                        left = window.innerWidth - cardWidth - 10;
+                    }
+                    
+                    if (rect.bottom + cardHeight > window.innerHeight) {
+                        top = rect.top + window.scrollY - cardHeight - 8;
+                    }
+
+                    if (hoverCard) {
+                        hoverCard.style.top = `${top}px`;
+                        hoverCard.style.left = `${left}px`;
+                        
+                        // Apply dynamic glowing border/shadow classes to the hover card depending on points rank
+                        hoverCard.className = "absolute z-50 w-72 bg-white rounded-xl border transition-all duration-200 scale-95 opacity-0 pointer-events-none";
+                        const pts = data.activity_points;
+                        if (pts >= 1000) {
+                            hoverCard.classList.add('border-rose-500/40', 'shadow-[0_0_25px_rgba(225,29,72,0.3)]', 'ring-2', 'ring-rose-500/10');
+                        } else if (pts >= 500) {
+                            hoverCard.classList.add('border-purple-500/40', 'shadow-[0_0_20px_rgba(124,58,237,0.25)]');
+                        } else if (pts >= 200) {
+                            hoverCard.classList.add('border-amber-500/40', 'shadow-[0_0_15px_rgba(217,119,6,0.18)]');
+                        } else if (pts >= 50) {
+                            hoverCard.classList.add('border-blue-500/30', 'shadow-lg');
+                        } else {
+                            hoverCard.classList.add('border-slate-200', 'shadow-2xl');
+                        }
+
+                        hoverCard.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+                        hoverCard.classList.add('scale-100');
+                    }
+                })
+                .catch(err => console.error('Error loading user card details:', err));
         }
 
         function handleMouseEnter(e) {
@@ -237,153 +387,27 @@
             clearTimeout(hoverTimeout);
             
             const trigger = e.currentTarget;
+            hoverTimeout = setTimeout(() => {
+                showCardForTrigger(trigger);
+            }, 300); // 300ms hover delay threshold
+        }
+
+        function handleTriggerClick(e) {
+            const trigger = e.currentTarget;
             const name = trigger.getAttribute('data-user-name');
             if (!name) return;
-            
-            hoverTimeout = setTimeout(() => {
-                // Fetch dynamic, real-time details from backend endpoint
-                fetch(`/dms/user-card/${encodeURIComponent(name)}`)
-                    .then(r => r.json())
-                    .then(data => {
-                        if (data.error) return;
-                        activeHoveredUser = data;
 
-                        // Populate Popover Elements
-                        const hoverCardName = document.getElementById('hover-card-name');
-                        const hoverCardBadge = document.getElementById('hover-card-badge');
-                        const hoverCardJoined = document.getElementById('hover-card-joined');
-                        const hoverCardThreads = document.getElementById('hover-card-threads');
-                        const hoverCardPosts = document.getElementById('hover-card-posts');
-                        const hoverCardUploads = document.getElementById('hover-card-uploads');
-                        const hoverCardHeader = document.getElementById('hover-card-header');
-                        const hoverCardActions = document.getElementById('hover-card-actions');
-                        const hoverCardRankBadge = document.getElementById('hover-card-rank-badge');
+            // If the card is already visible for this user, let the click navigate normally
+            if (hoverCard && !hoverCard.classList.contains('opacity-0') && activeHoveredUser && activeHoveredUser.name === name) {
+                return;
+            }
 
-                        if (hoverCardName) {
-                            hoverCardName.innerText = data.name;
-                            hoverCardName.href = `/profile/` + data.name;
-                        }
-                        if (hoverCardBadge) {
-                            hoverCardBadge.innerText = data.title_badge;
-                            hoverCardBadge.style.background = data.banner_color;
-                        }
-                        if (hoverCardRankBadge) {
-                            hoverCardRankBadge.innerText = data.rank_name;
-                            hoverCardRankBadge.style.background = data.rank_color;
-                        }
-                        if (hoverCardJoined) hoverCardJoined.innerText = data.joined;
-                        if (hoverCardThreads) hoverCardThreads.innerText = data.threads_count;
-                        if (hoverCardPosts) hoverCardPosts.innerText = data.posts_count;
-                        if (hoverCardUploads) hoverCardUploads.innerText = data.uploads_count;
-
-                        // Online / Presence Indicators
-                        const presenceDot = document.getElementById('hover-card-presence-dot');
-                        const innerDot = document.getElementById('hover-card-presence-inner-dot');
-                        const presenceText = document.getElementById('hover-card-presence-text');
-                        
-                        if (data.is_online) {
-                            if (presenceDot) presenceDot.className = "absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white bg-emerald-500 animate-pulse";
-                            if (innerDot) innerDot.className = "w-1 h-1 rounded-full bg-emerald-500";
-                            if (presenceText) presenceText.innerText = "Online";
-                        } else {
-                            if (presenceDot) presenceDot.className = "absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white bg-slate-400";
-                            if (innerDot) innerDot.className = "w-1 h-1 rounded-full bg-slate-400";
-                            if (presenceText) presenceText.innerText = data.last_active;
-                        }
-
-                        // Avatar image or placeholder
-                        const img = document.getElementById('hover-card-avatar');
-                        const placeholder = document.getElementById('hover-card-avatar-placeholder');
-                        if (img && placeholder) {
-                            if (data.avatar_url) {
-                                img.src = data.avatar_url;
-                                img.classList.remove('hidden');
-                                placeholder.classList.add('hidden');
-                            } else {
-                                img.classList.add('hidden');
-                                placeholder.innerText = data.name.substring(0, 2).toUpperCase();
-                                placeholder.classList.remove('hidden');
-                            }
-                        }
-
-                        // Header Banner Color/Path
-                        if (hoverCardHeader) {
-                            if (data.banner_path) {
-                                hoverCardHeader.style.background = `url('${data.banner_path}')`;
-                                hoverCardHeader.style.backgroundSize = 'cover';
-                                hoverCardHeader.style.backgroundPosition = 'center';
-                            } else {
-                                hoverCardHeader.style.background = data.banner_color;
-                            }
-                        }
-
-                        // Hide follow/message controls if user is hovering over their own card
-                        if (hoverCardActions) {
-                            if (data.is_self) {
-                                hoverCardActions.classList.add('hidden');
-                            } else {
-                                hoverCardActions.classList.remove('hidden');
-                                
-                                // Setup initial follow button state
-                                const followBtn = document.getElementById('hover-card-follow-btn');
-                                const followText = document.getElementById('hover-card-follow-text');
-                                if (followBtn && followText) {
-                                    if (data.is_following) {
-                                        followText.innerText = 'Unfollow';
-                                        followBtn.querySelector('.material-symbols-outlined').innerText = 'person_remove';
-                                        followBtn.className = "flex-1 py-2 text-rose-600 hover:bg-rose-50/20 transition-colors cursor-pointer flex items-center justify-center gap-1 font-bold";
-                                    } else {
-                                        followText.innerText = 'Follow';
-                                        followBtn.querySelector('.material-symbols-outlined').innerText = 'person_add';
-                                        followBtn.className = "flex-1 py-2 text-blue-600 hover:bg-blue-50/20 transition-colors cursor-pointer flex items-center justify-center gap-1 font-bold";
-                                    }
-                                }
-                            }
-                        }
-
-                        // Position Popover dynamically
-                        const rect = trigger.getBoundingClientRect();
-                        const cardWidth = 288; // w-72
-                        const cardHeight = 175; // dynamic adjusted height
-                        
-                        let top = rect.bottom + window.scrollY + 8;
-                        let left = rect.left + window.scrollX + (rect.width / 2) - (cardWidth / 2);
-                        
-                        // Viewport bounds checks
-                        if (left < 10) left = 10;
-                        if (left + cardWidth > window.innerWidth - 10) {
-                            left = window.innerWidth - cardWidth - 10;
-                        }
-                        
-                        if (rect.bottom + cardHeight > window.innerHeight) {
-                            top = rect.top + window.scrollY - cardHeight - 8;
-                        }
-
-                        if (hoverCard) {
-                            hoverCard.style.top = `${top}px`;
-                            hoverCard.style.left = `${left}px`;
-                            
-                            // Apply dynamic glowing border/shadow classes to the hover card depending on points rank
-                            hoverCard.className = "absolute z-50 w-72 bg-white rounded-xl border transition-all duration-200 scale-95 opacity-0 pointer-events-none";
-                            const pts = data.activity_points;
-                            if (pts >= 1000) {
-                                hoverCard.classList.add('border-rose-500/40', 'shadow-[0_0_25px_rgba(225,29,72,0.3)]', 'ring-2', 'ring-rose-500/10');
-                            } else if (pts >= 500) {
-                                hoverCard.classList.add('border-purple-500/40', 'shadow-[0_0_20px_rgba(124,58,237,0.25)]');
-                            } else if (pts >= 200) {
-                                hoverCard.classList.add('border-amber-500/40', 'shadow-[0_0_15px_rgba(217,119,6,0.18)]');
-                            } else if (pts >= 50) {
-                                hoverCard.classList.add('border-blue-500/30', 'shadow-lg');
-                            } else {
-                                hoverCard.classList.add('border-slate-200', 'shadow-2xl');
-                            }
-
-                            hoverCard.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
-                            hoverCard.classList.add('scale-100');
-                        }
-                    })
-                    .catch(err => console.error('Error loading user card details:', err));
-            }, 300); // 300ms hover delay threshold
+            // Otherwise, show the card and prevent default link navigation
+            e.preventDefault();
+            e.stopPropagation();
+            clearTimeout(hoverTimeout);
+            clearTimeout(leaveTimeout);
+            showCardForTrigger(trigger);
         }
 
         function handleMouseLeave() {
@@ -514,6 +538,16 @@
                 }, 200);
             }
         }
+
+        // Close hover card when clicking outside of it (crucial for mobile/tablet users)
+        document.addEventListener('click', function(e) {
+            if (hoverCard && !hoverCard.classList.contains('opacity-0')) {
+                if (!hoverCard.contains(e.target) && !e.target.closest('[data-user-hover]')) {
+                    hoverCard.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+                    hoverCard.classList.remove('scale-100');
+                }
+            }
+        });
 
         // Initialize on DOM load
         document.addEventListener('DOMContentLoaded', setupHoverCardListeners);
