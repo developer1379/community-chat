@@ -8,7 +8,7 @@
         <div class="absolute -left-16 -bottom-16 w-64 h-64 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
 
         <div class="relative z-10 space-y-3">
-            <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-rose-650/40 text-rose-200 border border-rose-500/30 uppercase tracking-widest leading-none">
+            <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-rose-600/40 text-rose-200 border border-rose-500/30 uppercase tracking-widest leading-none">
                 <span class="material-symbols-outlined text-xs">category</span> Content Management
             </span>
             <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight font-sans">
@@ -104,7 +104,7 @@
 
                                     <!-- Threads -->
                                     <td class="p-4 text-center">
-                                        <span class="px-2.5 py-1 text-xs font-bold rounded-lg bg-indigo-50 dark:bg-indigo-950/20 text-indigo-650 dark:text-indigo-400">
+                                        <span class="px-2.5 py-1 text-xs font-bold rounded-lg bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400">
                                             {{ $category->threads_count }}
                                         </span>
                                     </td>
@@ -215,7 +215,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" class="w-full px-6 py-3.5 rounded-2xl bg-indigo-650 hover:bg-indigo-700 text-white font-extrabold text-sm shadow-lg shadow-indigo-500/20 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2">
+                <button type="submit" class="w-full px-6 py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-sm shadow-lg shadow-indigo-500/20 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined text-base">save</span> Create Category
                 </button>
             </form>
@@ -289,7 +289,7 @@
                 <button type="button" onclick="closeEditModal()" class="px-5 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-350 dark:hover:bg-slate-700 text-sm font-extrabold transition-all cursor-pointer">
                     Cancel
                 </button>
-                <button type="submit" class="px-6 py-3 rounded-2xl bg-indigo-650 hover:bg-indigo-700 text-white text-sm font-extrabold shadow-lg shadow-indigo-500/20 transition-all cursor-pointer">
+                <button type="submit" class="px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-extrabold shadow-lg shadow-indigo-500/20 transition-all cursor-pointer">
                     Save Changes
                 </button>
             </div>
