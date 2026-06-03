@@ -93,6 +93,15 @@
                         </button>
                     @endif
                 @endauth
+
+                <!-- Share Profile Button -->
+                <button type="button" 
+                        onclick="copyProfileLink()" 
+                        class="w-full sm:w-44 text-xs font-bold py-1.5 px-3 rounded-xl transition-all cursor-pointer border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 active:scale-97 flex items-center justify-center gap-1.5 shadow-sm"
+                        title="Copy profile link to clipboard">
+                    <span class="material-symbols-outlined text-[14px]">share</span>
+                    <span class="font-bold">Share Profile</span>
+                </button>
             </div>
         </div>
 
@@ -485,4 +494,50 @@
         </script>
     @endif
 @endauth
+
+<!-- Profile Sharing Clipboard Script -->
+<script>
+    function copyProfileLink() {
+        const link = window.location.href;
+        navigator.clipboard.writeText(link).then(() => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Link Copied',
+                text: 'Profile link copied to clipboard!',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2500,
+                timerProgressBar: true
+            });
+        }).catch(err => {
+            console.error('Clipboard write failed, using fallback:', err);
+            const textarea = document.createElement('textarea');
+            textarea.value = link;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Link Copied',
+                    text: 'Profile link copied to clipboard!',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2500,
+                    timerProgressBar: true
+                });
+            } catch (e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Copy Failed',
+                    text: 'Could not copy link automatically. Please copy the URL from your address bar.',
+                    confirmButtonColor: '#0f172a'
+                });
+            }
+            document.body.removeChild(textarea);
+        });
+    }
+</script>
 @endsection
