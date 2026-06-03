@@ -257,6 +257,7 @@
                         const hoverCardUploads = document.getElementById('hover-card-uploads');
                         const hoverCardHeader = document.getElementById('hover-card-header');
                         const hoverCardActions = document.getElementById('hover-card-actions');
+                        const hoverCardRankBadge = document.getElementById('hover-card-rank-badge');
 
                         if (hoverCardName) {
                             hoverCardName.innerText = data.name;
@@ -265,6 +266,10 @@
                         if (hoverCardBadge) {
                             hoverCardBadge.innerText = data.title_badge;
                             hoverCardBadge.style.background = data.banner_color;
+                        }
+                        if (hoverCardRankBadge) {
+                            hoverCardRankBadge.innerText = data.rank_name;
+                            hoverCardRankBadge.style.background = data.rank_color;
                         }
                         if (hoverCardJoined) hoverCardJoined.innerText = data.joined;
                         if (hoverCardThreads) hoverCardThreads.innerText = data.threads_count;
@@ -357,6 +362,22 @@
                         if (hoverCard) {
                             hoverCard.style.top = `${top}px`;
                             hoverCard.style.left = `${left}px`;
+                            
+                            // Apply dynamic glowing border/shadow classes to the hover card depending on points rank
+                            hoverCard.className = "absolute z-50 w-72 bg-white rounded-xl border transition-all duration-200 scale-95 opacity-0 pointer-events-none";
+                            const pts = data.activity_points;
+                            if (pts >= 1000) {
+                                hoverCard.classList.add('border-rose-500/40', 'shadow-[0_0_25px_rgba(225,29,72,0.3)]', 'ring-2', 'ring-rose-500/10');
+                            } else if (pts >= 500) {
+                                hoverCard.classList.add('border-purple-500/40', 'shadow-[0_0_20px_rgba(124,58,237,0.25)]');
+                            } else if (pts >= 200) {
+                                hoverCard.classList.add('border-amber-500/40', 'shadow-[0_0_15px_rgba(217,119,6,0.18)]');
+                            } else if (pts >= 50) {
+                                hoverCard.classList.add('border-blue-500/30', 'shadow-lg');
+                            } else {
+                                hoverCard.classList.add('border-slate-200', 'shadow-2xl');
+                            }
+
                             hoverCard.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
                             hoverCard.classList.add('scale-100');
                         }

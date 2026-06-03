@@ -303,6 +303,10 @@ class ChatController extends Controller
             'is_online' => $isOnline,
             'last_active' => $lastActive,
             'is_self' => $currentUserId === $user->id,
+            'activity_points' => $user->activity_points,
+            'rank_name' => $user->computed_anime_tier['name'],
+            'rank_color' => $user->computed_anime_tier['color'],
+            'rank_badge' => $user->computed_anime_tier['badge'],
         ]);
     }
 

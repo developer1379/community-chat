@@ -136,8 +136,9 @@
                     <span id="hover-card-presence-text">Offline</span>
                 </span>
             </div>
-            <div class="flex flex-wrap gap-1">
+            <div class="flex flex-wrap items-center gap-1.5 mt-1">
                 <span id="hover-card-badge" class="text-[7.5px] px-1.5 py-0.5 rounded font-extrabold uppercase tracking-wider text-white shadow-sm leading-none"></span>
+                <span id="hover-card-rank-badge" class="text-[7.5px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider text-white shadow-sm leading-none flex items-center gap-0.5"></span>
             </div>
             <p class="text-[9px] text-slate-450 font-bold">Joined: <span id="hover-card-joined" class="text-slate-700 font-bold"></span></p>
         </div>
