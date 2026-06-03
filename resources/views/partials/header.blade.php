@@ -72,8 +72,8 @@
                     </div>
                 </div>
 
-                <!-- Create Quick Thread (Hidden on mobile) -->
-                <div class="relative hidden sm:block">
+                <!-- Create Quick Thread -->
+                <div class="relative">
                     <button onclick="toggleDropdown('create-dropdown')" class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-all shadow-md shadow-blue-500/10 cursor-pointer">
                         <span class="material-symbols-outlined text-[18px]">add</span>
                         <span class="hidden sm:inline">Create</span>
