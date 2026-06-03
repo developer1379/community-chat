@@ -1,9 +1,19 @@
 :root {
     --bg-main: #f8fafc;
+    --bg-card: #ffffff;
     --text-main: #0f172a;
     --text-muted: #64748b;
     --border-color: #e2e8f0;
     --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02);
+}
+
+.dark {
+    --bg-main: #0b0f19;
+    --bg-card: #151c2c;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border-color: #1e293b;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
 }
 
 body {
@@ -17,7 +27,7 @@ body {
 
 /* Clean Professional Card Class */
 .mui-card {
-    background-color: #ffffff;
+    background-color: var(--bg-card);
     border-radius: 12px;
     border: 1px solid var(--border-color);
     box-shadow: var(--card-shadow);
@@ -160,7 +170,7 @@ body {
     bottom: 100%;
     left: 0;
     margin-bottom: 8px;
-    background-color: #ffffff;
+    background-color: var(--bg-card);
     border: 1px solid #cbd5e1;
     border-radius: 9999px;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);

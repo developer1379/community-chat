@@ -63,6 +63,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/dms/conversations/{conversation}/read', [\App\Http\Controllers\ChatController::class, 'markRead']);
     Route::get('/dms/unread-count', [\App\Http\Controllers\ChatController::class, 'unreadCount']);
     Route::get('/dms/search-users', [\App\Http\Controllers\ChatController::class, 'searchUsers']);
+    Route::put('/dms/messages/{message}', [\App\Http\Controllers\ChatController::class, 'updateMessage']);
+    Route::delete('/dms/messages/{message}', [\App\Http\Controllers\ChatController::class, 'deleteMessage']);
     Route::post('/posts/{post}/react', [\App\Http\Controllers\ReactController::class, 'react']);
     
     // Wallet Routes

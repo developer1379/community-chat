@@ -1,6 +1,6 @@
 @auth
     <!-- sliding chat panel drawer -->
-    <div id="chat-drawer-container" class="chat-drawer translate-x-full fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-96 sm:h-[500px] z-50 bg-white border border-slate-200 sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden pointer-events-auto">
+    <div id="chat-drawer-container" class="chat-drawer translate-x-full fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-96 sm:h-[500px] z-50 bg-white border border-slate-200 sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden pointer-events-auto dark:bg-slate-900 dark:border-slate-800">
         
         <!-- Header area -->
         <div class="px-4 py-3 bg-blue-600 text-white flex items-center justify-between shadow-sm flex-shrink-0">
@@ -22,35 +22,35 @@
         </div>
 
         <!-- Conversations List View -->
-        <div id="chat-conversations-view" class="flex-grow flex flex-col overflow-hidden relative">
+        <div id="chat-conversations-view" class="flex-grow flex flex-col overflow-hidden relative dark:bg-slate-900">
             <!-- Search bar to start new conversation -->
-            <div class="p-3 border-b border-slate-100 bg-slate-50 flex flex-col gap-2 flex-shrink-0 relative">
+            <div class="p-3 border-b border-slate-100 bg-slate-50 flex flex-col gap-2 flex-shrink-0 relative dark:bg-slate-950/40 dark:border-slate-850">
                 <div class="flex items-center gap-2">
                     <div class="relative flex-grow">
-                        <input type="text" id="chat-search-input" oninput="handleSearchInputChange(this)" class="w-full bg-white border border-slate-250 rounded-lg pl-8 pr-3 py-1.5 text-[11px] text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-slate-400 font-medium" placeholder="Search user by name..." autocomplete="off">
-                        <span class="material-symbols-outlined absolute left-2.5 top-2 text-slate-400 text-xs">search</span>
+                        <input type="text" id="chat-search-input" oninput="handleSearchInputChange(this)" class="w-full bg-white border border-slate-250 rounded-lg pl-8 pr-3 py-1.5 text-[11px] text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-slate-400 font-medium dark:bg-slate-950 dark:border-slate-800 dark:text-slate-100 dark:focus:ring-blue-500" placeholder="Search user by name..." autocomplete="off">
+                        <span class="material-symbols-outlined absolute left-2.5 top-2 text-slate-400 text-xs dark:text-slate-500">search</span>
                     </div>
                 </div>
                 <!-- Suggestions Dropdown results panel -->
-                <div id="chat-search-suggestions" class="hidden absolute left-3 right-3 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-30 divide-y divide-slate-100 overflow-y-auto max-h-48 custom-scrollbar">
+                <div id="chat-search-suggestions" class="hidden absolute left-3 right-3 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-30 divide-y divide-slate-100 overflow-y-auto max-h-48 custom-scrollbar dark:bg-slate-900 dark:border-slate-800 dark:divide-slate-800">
                     <!-- Suggested entries go here dynamically -->
                 </div>
             </div>
 
             <!-- List of existing conversations -->
-            <div id="chat-conversations-list" class="flex-grow overflow-y-auto divide-y divide-slate-100 custom-scrollbar p-1">
+            <div id="chat-conversations-list" class="flex-grow overflow-y-auto divide-y divide-slate-100 custom-scrollbar p-1 dark:divide-slate-850">
                 <!-- Loaded dynamically by JS -->
-                <div class="py-12 text-center text-xs text-slate-400 font-medium">
+                <div class="py-12 text-center text-xs text-slate-400 font-medium dark:text-slate-500">
                     <span class="animate-pulse">Loading conversations...</span>
                 </div>
             </div>
         </div>
 
         <!-- Thread Messages View (Hidden initially) -->
-        <div id="chat-messages-view" class="hidden flex-grow flex flex-col overflow-hidden bg-slate-50/50">
+        <div id="chat-messages-view" class="hidden flex-grow flex flex-col overflow-hidden bg-slate-50/50 dark:bg-slate-950/20">
             <!-- Loading Indicator -->
-            <div id="chat-messages-loading" class="hidden absolute inset-0 bg-white/80 z-10 flex items-center justify-center">
-                <span class="animate-pulse text-xs font-bold text-blue-600">Retrieving messages...</span>
+            <div id="chat-messages-loading" class="hidden absolute inset-0 bg-white/80 z-10 flex items-center justify-center dark:bg-slate-900/80">
+                <span class="animate-pulse text-xs font-bold text-blue-600 dark:text-blue-400">Retrieving messages...</span>
             </div>
 
             <!-- Messages list -->
@@ -59,15 +59,15 @@
             </div>
 
             <!-- Input reply container -->
-            <div class="p-3 border-t border-slate-200/80 bg-white">
+            <div class="p-3 border-t border-slate-200/80 bg-white dark:border-slate-850 dark:bg-slate-900">
                 <form id="chat-send-form" onsubmit="handleSendSubmit(event)" class="flex items-center gap-2">
                     <!-- Hidden file input for images/GIFs -->
                     <input type="file" id="chat-file-input" class="hidden" accept="image/*" onchange="handleChatFileSelect(this)">
-                    <button type="button" onclick="document.getElementById('chat-file-input').click()" class="w-8.5 h-8.5 rounded-xl bg-slate-50 border border-slate-200/60 hover:bg-slate-100 hover:border-slate-350 text-slate-500 flex items-center justify-center cursor-pointer transition-all active:scale-95 flex-shrink-0" title="Attach Image or GIF">
+                    <button type="button" onclick="document.getElementById('chat-file-input').click()" class="w-8.5 h-8.5 rounded-xl bg-slate-50 border border-slate-200/60 hover:bg-slate-100 hover:border-slate-350 text-slate-500 flex items-center justify-center cursor-pointer transition-all active:scale-95 flex-shrink-0 dark:bg-slate-950 dark:border-slate-800 dark:hover:bg-slate-850 dark:text-slate-400" title="Attach Image or GIF">
                         <span class="material-symbols-outlined text-base">image</span>
                     </button>
 
-                    <input type="text" id="chat-message-input" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-slate-400 font-medium" placeholder="Type a message..." autocomplete="off">
+                    <input type="text" id="chat-message-input" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-slate-400 font-medium dark:bg-slate-950 dark:border-slate-800 dark:text-slate-100" placeholder="Type a message..." autocomplete="off">
                     <button type="submit" class="w-8.5 h-8.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center cursor-pointer shadow-md shadow-blue-500/10 transition-transform active:scale-95 flex-shrink-0">
                         <span class="material-symbols-outlined text-sm">send</span>
                     </button>
@@ -419,7 +419,7 @@
                     messages.forEach(msg => {
                         const bubbleClass = msg.is_own 
                             ? 'bg-blue-600 text-white rounded-t-xl rounded-l-xl self-end' 
-                            : 'bg-white text-slate-800 border border-slate-200/80 rounded-t-xl rounded-r-xl self-start';
+                            : 'bg-white text-slate-800 border border-slate-200/80 rounded-t-xl rounded-r-xl self-start dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700';
                         const alignmentClass = msg.is_own ? 'flex flex-col items-end' : 'flex flex-col items-start';
 
                         const isImage = /^https?:\/\/[^\s]+?\.(jpe?g|png|gif|webp|bmp)(?:\?[^\s]*)?$/i.test(msg.body.trim()) || 
@@ -428,7 +428,7 @@
                         let bubbleContent = '';
                         if (isImage) {
                             bubbleContent = `
-                                <div onclick="openLightbox('${msg.body.trim()}', 'Image Attachment')" class="block rounded-lg overflow-hidden border border-slate-200 bg-slate-100 max-w-[180px] sm:max-w-[220px] hover:opacity-90 transition-opacity cursor-zoom-in">
+                                <div onclick="openLightbox('${msg.body.trim()}', 'Image Attachment')" class="block rounded-lg overflow-hidden border border-slate-200 bg-slate-100 max-w-[180px] sm:max-w-[220px] hover:opacity-90 transition-opacity cursor-zoom-in dark:border-slate-700 dark:bg-slate-900">
                                     <img src="${msg.body.trim()}" class="w-full h-auto object-cover max-h-[140px]" alt="Image attachment" loading="lazy">
                                 </div>
                             `;
@@ -437,15 +437,32 @@
                         }
 
                         html += `
-                            <div class="${alignmentClass} max-w-[80%] ${msg.is_own ? 'ml-auto' : 'mr-auto'} leading-snug animate-fade-in">
-                                <div class="px-3.5 py-2 text-xs font-medium shadow-sm leading-normal break-words ${bubbleClass}">
-                                    ${bubbleContent}
+                            <div class="${alignmentClass} max-w-[85%] ${msg.is_own ? 'ml-auto' : 'mr-auto'} leading-snug animate-fade-in group" id="msg-${msg.id}" data-body="${escapeHtml(msg.body)}">
+                                <div class="flex items-center gap-1.5 w-full ${msg.is_own ? 'justify-end' : 'justify-start'}">
+                                    ${msg.is_own ? `
+                                        <div class="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 mr-1 flex-shrink-0">
+                                            ${msg.can_edit && !isImage ? `
+                                                <button onclick="startEditMsg('${msg.id}')" class="text-slate-400 hover:text-blue-500 dark:hover:text-blue-400 p-0.5 rounded transition-colors cursor-pointer" title="Edit Message">
+                                                    <span class="material-symbols-outlined text-[14px]">edit</span>
+                                                </button>
+                                            ` : ''}
+                                            ${msg.can_delete ? `
+                                                <button onclick="startDeleteMsg('${msg.id}')" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 p-0.5 rounded transition-colors cursor-pointer" title="Delete Message">
+                                                    <span class="material-symbols-outlined text-[14px]">delete</span>
+                                                </button>
+                                            ` : ''}
+                                        </div>
+                                    ` : ''}
+                                    <div class="px-3.5 py-2 text-xs font-medium shadow-sm leading-normal break-words ${bubbleClass}">
+                                        ${bubbleContent}
+                                    </div>
                                 </div>
                                 <span class="text-[8px] text-slate-400 font-bold mt-1 px-1 flex items-center gap-1 select-none">
                                     ${msg.created_at}
+                                    ${msg.is_edited ? '<span class="text-[8px] text-slate-400 font-normal italic dark:text-slate-500">(edited)</span>' : ''}
                                     ${msg.is_own ? (msg.is_read 
                                         ? `<span class="material-symbols-outlined text-[10px] text-blue-500 font-extrabold" title="Seen">done_all</span>` 
-                                        : `<span class="material-symbols-outlined text-[10px] text-slate-400" title="Sent">done</span>`
+                                        : `<span class="material-symbols-outlined text-[10px] text-slate-400 dark:text-slate-550" title="Sent">done</span>`
                                     ) : ''}
                                 </span>
                             </div>
@@ -760,6 +777,98 @@
                 clearInterval(chatPollingInterval);
                 chatPollingInterval = null;
             }
+        }
+
+        function startEditMsg(msgId) {
+            const msgEl = document.getElementById(`msg-${msgId}`);
+            if (!msgEl) return;
+            const currentBody = msgEl.getAttribute('data-body');
+
+            Swal.fire({
+                title: 'Edit Message',
+                input: 'textarea',
+                inputValue: currentBody,
+                inputAttributes: {
+                    maxlength: 1000,
+                    autocapitalize: 'off',
+                    autocorrect: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+                confirmButtonColor: '#2563eb',
+                cancelButtonColor: '#64748b',
+                preConfirm: (newBody) => {
+                    if (!newBody.trim()) {
+                        Swal.showValidationMessage('Message body cannot be empty.');
+                    }
+                    return newBody.trim();
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/dms/messages/${msgId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ body: result.value })
+                    })
+                    .then(r => {
+                        if (!r.ok) return r.json().then(e => { throw new Error(e.error || 'Failed to update message') });
+                        return r.json();
+                    })
+                    .then(data => {
+                        loadMessages(false);
+                    })
+                    .catch(err => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: err.message,
+                            confirmButtonColor: '#2563eb'
+                        });
+                    });
+                }
+            });
+        }
+
+        function startDeleteMsg(msgId) {
+            Swal.fire({
+                title: 'Delete Message',
+                text: 'Are you sure you want to delete this message? This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Delete',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/dms/messages/${msgId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(r => {
+                        if (!r.ok) return r.json().then(e => { throw new Error(e.error || 'Failed to delete message') });
+                        return r.json();
+                    })
+                    .then(data => {
+                        loadMessages(false);
+                    })
+                    .catch(err => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: err.message,
+                            confirmButtonColor: '#2563eb'
+                        });
+                    });
+                }
+            });
         }
 
         // Simple HTML Escaper

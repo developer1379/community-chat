@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Conversation;
 use App\Models\User;
+use App\Models\Message;
 use App\Repositories\ChatRepositoryInterface;
 use App\Repositories\UserRepositoryInterface;
 use App\Services\ImgBBService;
@@ -87,6 +88,9 @@ class ChatController extends Controller
                 'created_at' => $msg->created_at->diffForHumans(),
                 'is_own' => $msg->sender_id === Auth::id(),
                 'is_read' => $msg->is_read,
+                'is_edited' => (bool)$msg->is_edited,
+                'can_edit' => $msg->sender_id === Auth::id() && $msg->created_at->gte(now()->subMinutes(30)),
+                'can_delete' => $msg->sender_id === Auth::id(),
             ];
         });
 
@@ -300,5 +304,49 @@ class ChatController extends Controller
             'last_active' => $lastActive,
             'is_self' => $currentUserId === $user->id,
         ]);
+    }
+
+    /**
+     * Update a message.
+     */
+    public function updateMessage(Request $request, Message $message): JsonResponse
+    {
+        if ($message->sender_id !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if ($message->created_at->lt(now()->subMinutes(30))) {
+            return response()->json(['error' => 'Messages can only be edited within 30 minutes of sending.'], 403);
+        }
+
+        $request->validate([
+            'body' => 'required|string|max:1000',
+        ]);
+
+        $message->update([
+            'body' => $request->input('body'),
+            'is_edited' => true,
+        ]);
+
+        return response()->json([
+            'id' => $message->id,
+            'body' => $message->body,
+            'is_edited' => true,
+            'created_at' => $message->created_at->diffForHumans(),
+        ]);
+    }
+
+    /**
+     * Delete a message.
+     */
+    public function deleteMessage(Message $message): JsonResponse
+    {
+        if ($message->sender_id !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $message->delete();
+
+        return response()->json(['success' => true]);
     }
 }

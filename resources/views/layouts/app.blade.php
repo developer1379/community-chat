@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full">
 <head>
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'XenForo Professional Space' }}</title>
@@ -44,7 +51,7 @@
     <!-- Modularized Custom Corporate stylesheet -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
-<body class="min-h-screen flex flex-col antialiased pb-12 text-sm bg-slate-50/50">
+<body class="min-h-screen flex flex-col antialiased pb-12 text-sm bg-slate-50/50 dark:bg-slate-950 dark:text-slate-100">
 
     <!-- Modular Header Bar & Subnavigation -->
     @include('partials.header')
@@ -75,6 +82,30 @@
 
     <!-- Reusable Javascript Controllers & Dynamic Engines -->
     <script>
+        function updateThemeToggleIcon() {
+            const icon = document.getElementById('theme-toggle-icon');
+            if (!icon) return;
+            if (document.documentElement.classList.contains('dark')) {
+                icon.innerText = 'light_mode';
+            } else {
+                icon.innerText = 'dark_mode';
+            }
+        }
+
+        function toggleDarkMode() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+            updateThemeToggleIcon();
+        }
+
+        // Initialize icon on load
+        document.addEventListener('DOMContentLoaded', updateThemeToggleIcon);
+
         function toggleDropdown(id) {
             document.querySelectorAll('.dropdown-menu').forEach(menu => {
                 if (menu.id !== id) menu.classList.remove('show');
