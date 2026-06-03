@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Conversation;
 use App\Models\User;
 use App\Models\Message;
-use App\Repositories\ChatRepositoryInterface;
-use App\Repositories\UserRepositoryInterface;
+use App\Repositories\Interfaces\ChatRepositoryInterface;
+use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Services\ImgBBService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -309,8 +309,14 @@ class ChatController extends Controller
     /**
      * Update a message.
      */
-    public function updateMessage(Request $request, Message $message): JsonResponse
+    public function updateMessage(Request $request, string $messageId): JsonResponse
     {
+        $message = $this->chatRepository->getMessage($messageId);
+
+        if (!$message) {
+            return response()->json(['error' => 'Message not found.'], 404);
+        }
+
         if ($message->sender_id !== Auth::id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
@@ -323,29 +329,32 @@ class ChatController extends Controller
             'body' => 'required|string|max:1000',
         ]);
 
-        $message->update([
-            'body' => $request->input('body'),
-            'is_edited' => true,
-        ]);
+        $updated = $this->chatRepository->updateMessage($messageId, $request->input('body'));
 
         return response()->json([
-            'id' => $message->id,
-            'body' => $message->body,
+            'id' => $updated->id,
+            'body' => $updated->body,
             'is_edited' => true,
-            'created_at' => $message->created_at->diffForHumans(),
+            'created_at' => $updated->created_at->diffForHumans(),
         ]);
     }
 
     /**
      * Delete a message.
      */
-    public function deleteMessage(Message $message): JsonResponse
+    public function deleteMessage(string $messageId): JsonResponse
     {
+        $message = $this->chatRepository->getMessage($messageId);
+
+        if (!$message) {
+            return response()->json(['error' => 'Message not found.'], 404);
+        }
+
         if ($message->sender_id !== Auth::id()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $message->delete();
+        $this->chatRepository->deleteMessage($messageId);
 
         return response()->json(['success' => true]);
     }

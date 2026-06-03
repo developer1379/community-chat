@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Interfaces;
 
 use App\Models\Conversation;
 use App\Models\Message;
@@ -17,4 +17,7 @@ interface ChatRepositoryInterface
     public function getConversation(string $conversationId): ?Conversation;
     public function markAsRead(string $conversationId, string $userId): void;
     public function getUnreadCount(string $userId): int;
+    public function getMessage(string $messageId): ?Message;
+    public function updateMessage(string $messageId, string $body): Message;
+    public function deleteMessage(string $messageId): void;
 }

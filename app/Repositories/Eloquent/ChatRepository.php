@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Eloquent;
 
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\User;
+use App\Repositories\Interfaces\ChatRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 
@@ -87,5 +88,25 @@ class ChatRepository implements ChatRepositoryInterface
             ->where('sender_id', '!=', $userId)
             ->where('is_read', false)
             ->count();
+    }
+
+    public function getMessage(string $messageId): ?Message
+    {
+        return Message::find($messageId);
+    }
+
+    public function updateMessage(string $messageId, string $body): Message
+    {
+        $message = Message::findOrFail($messageId);
+        $message->update([
+            'body' => $body,
+            'is_edited' => true,
+        ]);
+        return $message;
+    }
+
+    public function deleteMessage(string $messageId): void
+    {
+        Message::destroy($messageId);
     }
 }

@@ -12,24 +12,24 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(
-            \App\Repositories\CategoryRepositoryInterface::class,
-            \App\Repositories\CategoryRepository::class
+            \App\Repositories\Interfaces\CategoryRepositoryInterface::class,
+            \App\Repositories\Eloquent\CategoryRepository::class
         );
         $this->app->bind(
-            \App\Repositories\ThreadRepositoryInterface::class,
-            \App\Repositories\ThreadRepository::class
+            \App\Repositories\Interfaces\ThreadRepositoryInterface::class,
+            \App\Repositories\Eloquent\ThreadRepository::class
         );
         $this->app->bind(
-            \App\Repositories\PostRepositoryInterface::class,
-            \App\Repositories\PostRepository::class
+            \App\Repositories\Interfaces\PostRepositoryInterface::class,
+            \App\Repositories\Eloquent\PostRepository::class
         );
         $this->app->bind(
-            \App\Repositories\UserRepositoryInterface::class,
-            \App\Repositories\UserRepository::class
+            \App\Repositories\Interfaces\UserRepositoryInterface::class,
+            \App\Repositories\Eloquent\UserRepository::class
         );
         $this->app->bind(
-            \App\Repositories\ChatRepositoryInterface::class,
-            \App\Repositories\ChatRepository::class
+            \App\Repositories\Interfaces\ChatRepositoryInterface::class,
+            \App\Repositories\Eloquent\ChatRepository::class
         );
     }
 

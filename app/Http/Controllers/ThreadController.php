@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\CategoryRepositoryInterface;
-use App\Repositories\ThreadRepositoryInterface;
-use App\Repositories\PostRepositoryInterface;
+use App\Repositories\Interfaces\CategoryRepositoryInterface;
+use App\Repositories\Interfaces\ThreadRepositoryInterface;
+use App\Repositories\Interfaces\PostRepositoryInterface;
 use App\Services\ImgBBService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
