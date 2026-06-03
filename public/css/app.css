@@ -370,3 +370,29 @@ body {
     --tw-gradient-to: var(--bg-card) !important;
 }
 
+/* Chat Panel Specific Dark Mode Overrides */
+.dark .chat-drawer,
+.dark #chat-messages-view,
+.dark #chat-conversations-view,
+.dark #chat-conversations-list {
+    background-color: var(--bg-main) !important;
+    color: var(--text-main) !important;
+}
+
+.dark #chat-messages-list {
+    background-color: #0b0f19 !important;
+}
+
+.dark #chat-send-form input,
+.dark #chat-message-input,
+.dark #chat-search-input {
+    background-color: #151c2c !important;
+    color: #f1f5f9 !important;
+    border-color: #1e293b !important;
+}
+
+.dark #chat-conversations-list > div:hover {
+    background-color: #151c2c !important;
+}
+
+
