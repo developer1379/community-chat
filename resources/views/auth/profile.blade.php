@@ -200,6 +200,7 @@ profile
             $denom = $nextReq - $prevReq;
             $percent = $denom > 0 ? min(100, (int)(($coins - $prevReq) / $denom * 100)) : 100;
             $target = $nextMilestone->coins_required;
+        }
     @endphp
     <!-- Premium Clickable Rank Progress Widget -->
     <div onclick="openRoadmapModal()" class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-md relative overflow-hidden text-left cursor-pointer hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-800 transition-all group">
