@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-4xl mx-auto space-y-6 px-3 sm:px-6">
+<div class="max-w-7xl mx-auto space-y-6">
     <!-- Header path info -->
     <div>
         <div class="flex items-center gap-2 text-[10px] sm:text-xs font-semibold text-slate-500 mb-2 flex-wrap">
@@ -42,7 +42,7 @@
                         <input type="hidden" id="category_id" name="category_id" value="{{ $category->id }}">
                         
                         <!-- Trigger Box -->
-                        <div id="category-dropdown-trigger" onclick="toggleCategoryDropdown()" class="w-full bg-slate-50/50 hover:bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 flex items-center justify-between text-slate-800 text-xs sm:text-sm font-semibold focus-within:ring-2 focus-within:ring-blue-550 transition-all cursor-pointer shadow-inner shadow-slate-100/50 select-none">
+                        <div id="category-dropdown-trigger" onclick="toggleCategoryDropdown()" class="w-full bg-slate-50/50 hover:bg-slate-50 border border-slate-200 rounded-2xl px-4 py-[11px] flex items-center justify-between text-slate-800 text-xs sm:text-sm font-semibold focus-within:ring-2 focus-within:ring-blue-550 transition-all cursor-pointer shadow-inner shadow-slate-100/50 select-none">
                             <div class="flex items-center gap-2.5 min-w-0" id="selected-category-display">
                                 <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 border border-slate-150 shadow-sm flex-shrink-0 overflow-hidden" id="selected-category-icon">
                                     @if(\Illuminate\Support\Str::startsWith($category->icon, ['http://', 'https://']) || \Illuminate\Support\Str::contains($category->icon, '/'))
