@@ -319,6 +319,7 @@ body {
     border-color: var(--border-color) !important;
 }
 
+.dark .text-slate-950,
 .dark .text-slate-900,
 .dark .text-slate-800,
 .dark .text-slate-700,
@@ -358,5 +359,14 @@ body {
 .dark .dropdown-menu {
     background-color: var(--bg-card) !important;
     border-color: var(--border-color) !important;
+}
+
+.dark .from-slate-50 {
+    --tw-gradient-from: var(--bg-card) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(21, 28, 44, 0)) !important;
+}
+
+.dark .to-white {
+    --tw-gradient-to: var(--bg-card) !important;
 }
 
