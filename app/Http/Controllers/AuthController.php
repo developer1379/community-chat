@@ -124,22 +124,41 @@ class AuthController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
+        $points = $user->activity_points;
 
         $request->validate([
             'signature' => ['nullable', 'string', 'max:500'],
             'banner_color' => ['required', 'string'],
             'title_badge' => ['nullable', 'string', 'max:50'],
+            'title_color' => ['nullable', 'string', 'max:7', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:4096'],
             'banner' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:8192'],
         ]);
 
         $data = [
             'signature' => $request->signature,
-            'banner_color' => $request->banner_color,
             'is_private' => $request->has('is_private'),
         ];
 
-        if ($request->filled('title_badge')) {
+        // Super Saiyan rank (level 2, points >= 200) required for custom banner color / background banner image
+        if ($points >= 200) {
+            $data['banner_color'] = $request->banner_color;
+            if ($request->hasFile('banner')) {
+                // Upload custom banner to ImgBB!
+                $bannerUrl = $this->imgBBService->upload($request->file('banner'));
+                if ($bannerUrl) {
+                    $data['banner_path'] = $bannerUrl; // save ImgBB URL
+                }
+            }
+        }
+
+        // Soul Reaper rank (level 3, points >= 500) required for custom title badge text color
+        if ($points >= 500 && $request->has('title_color')) {
+            $data['title_color'] = $request->title_color;
+        }
+
+        // Pirate King rank (level 4, points >= 1000) required for custom title badge text
+        if ($points >= 1000) {
             $data['title_badge'] = $request->title_badge;
         }
 
@@ -148,14 +167,6 @@ class AuthController extends Controller
             $avatarUrl = $this->imgBBService->upload($request->file('avatar'));
             if ($avatarUrl) {
                 $data['avatar_path'] = $avatarUrl; // save ImgBB URL directly
-            }
-        }
-
-        if ($request->hasFile('banner')) {
-            // Upload custom banner to ImgBB!
-            $bannerUrl = $this->imgBBService->upload($request->file('banner'));
-            if ($bannerUrl) {
-                $data['banner_path'] = $bannerUrl; // save ImgBB URL
             }
         }
 

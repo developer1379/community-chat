@@ -62,8 +62,7 @@ profile
                 <div class="space-y-1.5 pb-2">
                     <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
                         <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ $user->name }}</h2>
-                        <!-- Title Badge -->
-                        <span class="text-xs px-3 py-0.5 rounded-full font-bold uppercase tracking-wider text-white shadow-sm" style="background: {{ $user->banner_color }}">
+                        <span class="text-xs px-3 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-sm" style="color: {{ $user->title_color ?: '#ffffff' }}; background: {{ $user->banner_color }}">
                             {{ $user->title_badge }}
                         </span>
                     </div>
@@ -182,21 +181,52 @@ profile
 
                                     <!-- Banner Upload -->
                                     <div class="space-y-1.5">
-                                        <label for="banner" class="text-xs font-bold text-slate-700 uppercase tracking-wider">Upload Cover Photo</label>
-                                        <input type="file" id="banner" name="banner" class="block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all cursor-pointer">
+                                        <label for="banner" class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                                            Upload Cover Photo
+                                            @if($user->activity_points < 200)
+                                                <span class="text-[9px] text-amber-650 bg-amber-50 px-1.5 py-0.5 rounded font-black">🔒 Super Saiyan (200 pts)</span>
+                                            @endif
+                                        </label>
+                                        <input type="file" id="banner" name="banner" {{ $user->activity_points < 200 ? 'disabled' : '' }} class="block w-full text-xs text-slate-550 file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                     </div>
 
                                     <!-- Custom title badge -->
                                     <div class="space-y-1.5">
-                                        <label for="title_badge" class="text-xs font-bold text-slate-700 uppercase tracking-wider">Custom Title Badge</label>
-                                        <input type="text" id="title_badge" name="title_badge" value="{{ old('title_badge', $user->title_badge) }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="New Member, Staff, Guru...">
+                                        <label for="title_badge" class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                                            Custom Title Badge
+                                            @if($user->activity_points < 1000)
+                                                <span class="text-[9px] text-amber-655 bg-amber-50 px-1.5 py-0.5 rounded font-black">🔒 Pirate King (1000 pts)</span>
+                                            @endif
+                                        </label>
+                                        <input type="text" id="title_badge" name="title_badge" {{ $user->activity_points < 1000 ? 'disabled' : '' }} value="{{ old('title_badge', $user->title_badge) }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed" placeholder="{{ $user->activity_points < 1000 ? 'Locked' : 'New Member, Staff, Guru...' }}">
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <!-- Custom Title Badge Text Color -->
+                                    <div class="space-y-1.5 text-left">
+                                        <label for="title_color" class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                                            Title Badge Text Color
+                                            @if($user->activity_points < 500)
+                                                <span class="text-[9px] text-amber-655 bg-amber-50 px-1.5 py-0.5 rounded font-black">🔒 Soul Reaper (500 pts)</span>
+                                            @endif
+                                        </label>
+                                        <div class="flex items-center gap-2.5">
+                                            <input type="color" id="title_color" name="title_color" {{ $user->activity_points < 500 ? 'disabled' : '' }} value="{{ old('title_color', $user->title_color ?: '#ffffff') }}" class="w-10 h-10 border border-slate-200 rounded-xl p-1 bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <span class="text-xs text-slate-400 font-bold">Choose a highlight color for your badge text.</span>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <!-- Custom Banner Color (Gradients Preset) -->
                                 <div class="space-y-2">
-                                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Choose Profile Theme Gradient</label>
-                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                                        Choose Profile Theme Gradient
+                                        @if($user->activity_points < 200)
+                                            <span class="text-[9px] text-amber-655 bg-amber-50 px-1.5 py-0.5 rounded font-black">🔒 Super Saiyan (200 pts)</span>
+                                        @endif
+                                    </label>
+                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 {{ $user->activity_points < 200 ? 'opacity-50 pointer-events-none' : '' }}">
                                         <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all">
                                             <input type="radio" name="banner_color" value="linear-gradient(135deg, #6366f1, #a855f7)" {{ $user->banner_color === 'linear-gradient(135deg, #6366f1, #a855f7)' ? 'checked' : '' }} class="mr-2 text-blue-600 focus:ring-blue-500">
                                             <span class="w-6 h-6 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 shadow-inner"></span>

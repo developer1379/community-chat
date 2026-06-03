@@ -21,6 +21,7 @@ class Thread extends Model
         'views_count',
         'is_pinned',
         'is_locked',
+        'is_featured',
         'tags',
     ];
 

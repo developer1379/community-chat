@@ -29,6 +29,7 @@ class User extends Authenticatable
         'banner_color',
         'banner_path',
         'title_badge',
+        'title_color',
         'signature',
         'is_private',
         'coins',

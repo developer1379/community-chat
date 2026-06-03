@@ -38,6 +38,13 @@ class ForumController extends Controller
     {
         $categories = $this->categoryRepo->getAllWithStats();
 
+        // Fetch featured threads
+        $featuredThreads = Thread::where('is_featured', true)
+            ->with(['user', 'category'])
+            ->latest()
+            ->take(5)
+            ->get();
+
         // Sidebar stats
         $stats = [
             'users_count' => $this->userRepo->getTotalCount(),
@@ -52,7 +59,7 @@ class ForumController extends Controller
         // Online users
         $onlineUsers = $this->userRepo->getActiveUsers(6);
 
-        return view('forum.home', compact('categories', 'stats', 'activeThreads', 'onlineUsers'));
+        return view('forum.home', compact('categories', 'stats', 'activeThreads', 'onlineUsers', 'featuredThreads'));
     }
 
     public function search(Request $request)

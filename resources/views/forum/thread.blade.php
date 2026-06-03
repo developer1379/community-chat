@@ -90,6 +90,22 @@ article
                         <span class="material-symbols-outlined text-[12px] font-bold">delete</span>
                         <span>Delete</span>
                     </button>
+                    @if(!$thread->is_featured)
+                        <span>•</span>
+                        <form action="{{ route('threads.feature', $thread->id) }}" method="POST" class="inline" onsubmit="return confirm('Spend 50 coins to feature this thread on the homepage?');">
+                            @csrf
+                            <button type="submit" class="text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 hover:underline inline-flex items-center gap-0.5 bg-transparent border-0 p-0 cursor-pointer font-sans text-[10px] font-bold">
+                                <span class="material-symbols-outlined text-[12px] font-bold">star</span>
+                                <span>Feature (50 coins)</span>
+                            </button>
+                        </form>
+                    @else
+                        <span>•</span>
+                        <span class="text-amber-600 dark:text-amber-400 inline-flex items-center gap-0.5 font-sans text-[10px] font-bold" title="This thread is currently featured on the homepage">
+                            <span class="material-symbols-outlined text-[12px] font-bold animate-pulse">star</span>
+                            <span>Featured</span>
+                        </span>
+                    @endif
                     <form id="delete-thread-form" action="{{ route('threads.destroy', $thread->id) }}" method="POST" class="hidden">
                         @csrf
                         @method('DELETE')
@@ -139,7 +155,7 @@ article
                                data-user-banner="{{ $post->user->banner_color }}"
                                data-user-banner-path="{{ $post->user->banner_path }}">{{ $post->user->name }}</a>
                         </h3>
-                        <span class="text-[8px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider text-slate-200 mt-1 border border-slate-700/40 shadow-sm w-max md:w-auto" style="background: {{ $post->user->banner_color }}">
+                        <span class="text-[8px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider mt-1 border border-slate-700/40 shadow-sm w-max md:w-auto" style="color: {{ $post->user->title_color ?: '#e2e8f0' }}; background: {{ $post->user->banner_color }}">
                             {{ $post->user->title_badge }}
                         </span>
                         

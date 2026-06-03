@@ -41,6 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/threads/{thread:slug}/edit', [ThreadController::class, 'edit'])->name('threads.edit');
     Route::put('/threads/{thread:id}', [ThreadController::class, 'update'])->name('threads.update');
     Route::delete('/threads/{thread:id}', [ThreadController::class, 'destroy'])->name('threads.destroy');
+    Route::post('/threads/{thread:id}/feature', [ThreadController::class, 'feature'])->name('threads.feature');
     
     // Post replies
     Route::post('/threads/{thread:slug}/reply', [ForumController::class, 'reply'])->name('threads.reply');

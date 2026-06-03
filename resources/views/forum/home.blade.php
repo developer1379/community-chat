@@ -173,6 +173,33 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Forum Categories List (Left - 8 Cols) -->
         <div class="lg:col-span-8 space-y-6">
+            @if(isset($featuredThreads) && $featuredThreads->isNotEmpty())
+                <div class="bg-gradient-to-r from-amber-500/10 via-yellow-550/5 to-amber-500/10 border border-amber-250 dark:border-amber-900/30 rounded-[2rem] p-6 shadow-sm mb-6 text-left">
+                    <h3 class="text-xs font-black text-amber-600 dark:text-amber-400 uppercase tracking-[0.2em] flex items-center gap-2 mb-4">
+                        <span class="material-symbols-outlined text-sm text-amber-500">star</span> Featured Discussions
+                    </h3>
+                    <div class="grid grid-cols-1 gap-3">
+                        @foreach($featuredThreads as $thread)
+                            <a href="{{ route('threads.show', $thread->slug) }}" class="flex items-center justify-between gap-4 p-4 bg-white/80 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 rounded-2xl border border-amber-100 dark:border-amber-900/30 hover:border-amber-300 hover:shadow-md transition-all">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div class="w-8 h-8 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0">
+                                        <img src="{{ $thread->user->avatar_url }}" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="min-w-0 text-left">
+                                        <h4 class="font-extrabold text-slate-900 dark:text-white text-sm truncate flex items-center gap-1.5">
+                                            {{ $thread->title }}
+                                            <span class="px-2 py-0.5 text-[8px] font-black uppercase rounded bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-450 tracking-wider">FEATURED</span>
+                                        </h4>
+                                        <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-0.5">by {{ $thread->user->name }} • {{ $thread->category->name }} • {{ $thread->views_count }} views</p>
+                                    </div>
+                                </div>
+                                <span class="material-symbols-outlined text-slate-400 text-[18px]">arrow_forward</span>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             <h2 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2 mb-6">
                 <span class="w-8 h-px bg-slate-200"></span> Community Boards <span class="w-8 h-px bg-slate-200"></span>
             </h2>
