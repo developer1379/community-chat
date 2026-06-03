@@ -29,9 +29,9 @@
                 <span class="material-symbols-outlined text-[18px]" id="theme-toggle-icon">dark_mode</span>
             </button>
 
-            @auth
-                <!-- Shimmering Wallet Currency Badge -->
-                <a href="{{ route('wallet.index') }}" class="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 dark:bg-amber-950/20 dark:hover:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900/50 font-extrabold text-xs transition-all cursor-pointer border border-amber-200 shadow-sm" title="My Coins Wallet">
+             @auth
+                <!-- Shimmering Wallet Currency Badge (Hidden on mobile) -->
+                <a href="{{ route('wallet.index') }}" class="hidden sm:flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 dark:bg-amber-950/20 dark:hover:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900/50 font-extrabold text-xs transition-all cursor-pointer border border-amber-200 shadow-sm" title="My Coins Wallet">
                     <span class="material-symbols-outlined text-[18px] text-amber-500 animate-pulse">monetization_on</span>
                     <span>{{ auth()->user()->coins }} <span class="hidden sm:inline">Coins</span></span>
                 </a>
@@ -72,8 +72,8 @@
                     </div>
                 </div>
 
-                <!-- Create Quick Thread (HTML Material Style) -->
-                <div class="relative">
+                <!-- Create Quick Thread (Hidden on mobile) -->
+                <div class="relative hidden sm:block">
                     <button onclick="toggleDropdown('create-dropdown')" class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-all shadow-md shadow-blue-500/10 cursor-pointer">
                         <span class="material-symbols-outlined text-[18px]">add</span>
                         <span class="hidden sm:inline">Create</span>
