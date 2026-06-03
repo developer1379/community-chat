@@ -401,6 +401,7 @@
                 </div>
                 <div class="mt-4 pt-3.5 border-t border-slate-100 text-sm text-slate-600 flex justify-between items-center font-semibold">
                     <span>Newest Member:</span>
+                    @if($stats['latest_user'])
                     <a href="{{ route('profile.show', $stats['latest_user']->name) }}" 
                        data-user-hover="true" 
                        data-user-name="{{ $stats['latest_user']->name }}" 
@@ -416,6 +417,9 @@
                         {{ $stats['latest_user']->name }}
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
                     </a>
+                    @else
+                    <span class="text-slate-400 text-xs">None yet</span>
+                    @endif
                 </div>
             </div>
 

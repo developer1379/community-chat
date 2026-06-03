@@ -111,4 +111,7 @@ Route::view('/rules', 'forum.rules')->name('rules');
 Route::get('/attachments/{attachment}', [\App\Http\Controllers\MediaProxyController::class, 'proxyAttachment'])->name('media.proxy.attachment');
 Route::get('/avatars/{user}', [\App\Http\Controllers\MediaProxyController::class, 'proxyAvatar'])->name('media.proxy.avatar');
 
+// Dynamic XML Sitemap
+Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+
 

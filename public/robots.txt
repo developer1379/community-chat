@@ -1,2 +1,10 @@
 User-agent: *
-Disallow:
+Disallow: /admin/
+Disallow: /dms/
+Disallow: /profile/update
+Disallow: /media/upload
+Disallow: /notifications/
+Disallow: /login
+Disallow: /register
+
+Sitemap: /sitemap.xml

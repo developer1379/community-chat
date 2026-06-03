@@ -1,6 +1,21 @@
 @extends('layouts.app')
 
+@section('title', $user->name . '\'s Member Profile | XenForo Professional')
+@section('meta_description', $user->name . ' - Joined community on ' . $user->created_at->format('M d, Y') . '. Check out their recent discussions, uploads, and updates.')
+@section('meta_keywords', $user->name . ', member profile, forum user, conversations, posts')
+@section('og_type', 'profile')
+
 @section('content')
+<!-- JSON-LD Structured Schema for User Profile -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "{{ e($user->name) }}",
+  "url": "{{ url()->current() }}",
+  "image": "{{ $user->avatar_url }}"
+}
+</script>
 <div class="space-y-8">
     <!-- Premium Profile Hero Card -->
     <div class="relative rounded-3xl overflow-hidden shadow-lg border border-slate-200 bg-white">
