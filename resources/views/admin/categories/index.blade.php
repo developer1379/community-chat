@@ -15,7 +15,7 @@
                 Forum Categories
             </h1>
             <p class="text-sm sm:text-lg text-slate-350 max-w-2xl font-medium leading-relaxed">
-                Add, remove, or temporarily disable forum categories. Active categories will be displayed on the public forum and allowed for thread creation.
+                Add, edit, remove, or temporarily disable forum categories. Active categories will be displayed on the public forum and allowed for thread creation.
             </p>
         </div>
     </div>
@@ -73,8 +73,14 @@
                                 <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-colors">
                                     <!-- Name & Icon -->
                                     <td class="p-4 flex items-start gap-3.5">
-                                        <div class="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                            <i class="{{ $category->icon ?: 'fas fa-comments' }} text-base"></i>
+                                        <div class="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center flex-shrink-0 mt-0.5 overflow-hidden">
+                                            @if(\Illuminate\Support\Str::startsWith($category->icon, ['http://', 'https://']) || \Illuminate\Support\Str::contains($category->icon, '/'))
+                                                <img src="{{ $category->icon }}" alt="" class="w-full h-full object-cover">
+                                            @elseif(\Illuminate\Support\Str::startsWith($category->icon, 'fa'))
+                                                <i class="{{ $category->icon }} text-base"></i>
+                                            @else
+                                                <span class="material-symbols-outlined text-base">{{ $category->icon ?: 'tag' }}</span>
+                                            @endif
                                         </div>
                                         <div>
                                             <h3 class="font-bold text-slate-900 dark:text-white text-sm">
@@ -118,7 +124,12 @@
 
                                     <!-- Actions -->
                                     <td class="p-4 text-right">
-                                        <div class="flex items-center justify-end gap-2">
+                                        <div class="flex items-center justify-end gap-1">
+                                            <!-- Edit Trigger -->
+                                            <button onclick="openEditModal('{{ $category->id }}', '{{ addslashes($category->name) }}', '{{ addslashes($category->description) }}', '{{ addslashes($category->icon) }}', '{{ $category->order }}')" class="p-2 rounded-xl text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-450 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer" title="Edit category">
+                                                <span class="material-symbols-outlined text-[20px]">edit</span>
+                                            </button>
+
                                             <!-- Toggle Status -->
                                             <form action="{{ route('admin.categories.toggle', $category) }}" method="POST" class="inline">
                                                 @csrf
@@ -153,7 +164,7 @@
                 <span class="material-symbols-outlined text-emerald-550">add_box</span> Add New Category
             </h2>
 
-            <form action="{{ route('admin.categories.store') }}" method="POST" class="space-y-4">
+            <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                 @csrf
 
                 <!-- Name -->
@@ -161,7 +172,7 @@
                     <label for="name" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
                         Category Name <span class="text-rose-500">*</span>
                     </label>
-                    <input type="text" name="name" id="name" required placeholder="e.g. general discussion, coding..." value="{{ old('name') }}"
+                    <input type="text" name="name" id="name" required placeholder="e.g. General Discussion" value="{{ old('name') }}"
                         class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">
                 </div>
 
@@ -174,14 +185,24 @@
                         class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">{{ old('description') }}</textarea>
                 </div>
 
-                <!-- Icon -->
+                <!-- Icon Class -->
                 <div class="space-y-1.5 text-left">
                     <label for="icon" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
-                        Icon Class
+                        Icon CSS Class or Default Name
                     </label>
-                    <input type="text" name="icon" id="icon" placeholder="e.g. fas fa-comments, fas fa-gamepad" value="{{ old('icon', 'fas fa-comments') }}"
+                    <input type="text" name="icon" id="icon" placeholder="e.g. fas fa-comments, sparkles, chat-bubble-left-right" value="{{ old('icon', 'fas fa-comments') }}"
                         class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">
-                    <span class="text-[10px] text-slate-405 font-bold">Uses FontAwesome icon CSS classes.</span>
+                    <span class="text-[10px] text-slate-405 font-bold">Use FontAwesome or predefined identifier.</span>
+                </div>
+
+                <!-- Icon Image Upload -->
+                <div class="space-y-1.5 text-left">
+                    <label for="icon_image" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
+                        Or Upload Custom Image Icon
+                    </label>
+                    <input type="file" name="icon_image" id="icon_image" accept="image/*"
+                        class="w-full px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-slate-800 dark:text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">
+                    <span class="text-[10px] text-slate-405 font-bold">Image will be resized automatically to 128x128px square.</span>
                 </div>
 
                 <!-- Display Order -->
@@ -201,4 +222,102 @@
         </div>
     </div>
 </div>
+
+<!-- Category Edit Overlay/Modal -->
+<div id="editCategoryModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-lg p-6 sm:p-8 m-4 shadow-2xl relative">
+        <button onclick="closeEditModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">
+            <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-6">
+            <span class="material-symbols-outlined text-emerald-550">edit_note</span> Edit Category
+        </h3>
+
+        <form id="editCategoryForm" method="POST" enctype="multipart/form-data" class="space-y-4">
+            @csrf
+            @method('PUT')
+
+            <!-- Name -->
+            <div class="space-y-1.5 text-left">
+                <label for="edit_name" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
+                    Category Name <span class="text-rose-500">*</span>
+                </label>
+                <input type="text" name="name" id="edit_name" required placeholder="e.g. General Discussion"
+                    class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">
+            </div>
+
+            <!-- Description -->
+            <div class="space-y-1.5 text-left">
+                <label for="edit_description" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
+                    Description
+                </label>
+                <textarea name="description" id="edit_description" rows="3" placeholder="Brief explanation..."
+                    class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold"></textarea>
+            </div>
+
+            <!-- Icon Class -->
+            <div class="space-y-1.5 text-left">
+                <label for="edit_icon" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
+                    Icon CSS Class or Default Name
+                </label>
+                <input type="text" name="icon" id="edit_icon" placeholder="e.g. fas fa-comments"
+                    class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">
+            </div>
+
+            <!-- Icon Image Upload -->
+            <div class="space-y-1.5 text-left">
+                <label for="edit_icon_image" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
+                    Or Replace Icon Image
+                </label>
+                <input type="file" name="icon_image" id="edit_icon_image" accept="image/*"
+                    class="w-full px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-slate-800 dark:text-slate-100 text-xs focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">
+                <span class="text-[10px] text-slate-405 font-bold">Resizes automatically to 128x128px square.</span>
+            </div>
+
+            <!-- Display Order -->
+            <div class="space-y-1.5 text-left">
+                <label for="edit_order" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
+                    Display Order <span class="text-rose-500">*</span>
+                </label>
+                <input type="number" name="order" id="edit_order" required min="0" placeholder="e.g. 0, 10"
+                    class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">
+            </div>
+
+            <!-- Modal Action Buttons -->
+            <div class="pt-4 flex items-center justify-end gap-3">
+                <button type="button" onclick="closeEditModal()" class="px-5 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-350 dark:hover:bg-slate-700 text-sm font-extrabold transition-all cursor-pointer">
+                    Cancel
+                </button>
+                <button type="submit" class="px-6 py-3 rounded-2xl bg-indigo-650 hover:bg-indigo-700 text-white text-sm font-extrabold shadow-lg shadow-indigo-500/20 transition-all cursor-pointer">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openEditModal(id, name, description, icon, order) {
+        const modal = document.getElementById('editCategoryModal');
+        const form = document.getElementById('editCategoryForm');
+        
+        // Setup action path
+        form.action = `/admin/categories/${id}`;
+
+        // Populate fields
+        document.getElementById('edit_name').value = name;
+        document.getElementById('edit_description').value = description;
+        document.getElementById('edit_icon').value = icon;
+        document.getElementById('edit_order').value = order;
+
+        // Show Modal
+        modal.classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+        const modal = document.getElementById('editCategoryModal');
+        modal.classList.add('hidden');
+    }
+</script>
 @endsection

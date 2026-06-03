@@ -192,17 +192,56 @@ class AdminController extends Controller
             'name' => 'required|string|max:255|unique:categories,name',
             'description' => 'nullable|string|max:1000',
             'icon' => 'nullable|string|max:255',
+            'icon_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'order' => 'required|integer|min:0',
         ]);
 
         $validated['slug'] = \Illuminate\Support\Str::slug($validated['name']);
         $validated['is_active'] = true;
 
+        if ($request->hasFile('icon_image')) {
+            $imgBB = app(\App\Services\ImgBBService::class);
+            $iconUrl = $imgBB->uploadResizedIcon($request->file('icon_image'), 128);
+            if ($iconUrl) {
+                $validated['icon'] = $iconUrl;
+            }
+        }
+
         \App\Models\Category::create($validated);
 
         \Illuminate\Support\Facades\Cache::forget('forum.categories');
 
         return redirect()->back()->with('success', 'Category created successfully.');
+    }
+
+    /**
+     * Update an existing category.
+     */
+    public function updateCategory(Request $request, \App\Models\Category $category)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+            'description' => 'nullable|string|max:1000',
+            'icon' => 'nullable|string|max:255',
+            'icon_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'order' => 'required|integer|min:0',
+        ]);
+
+        $validated['slug'] = \Illuminate\Support\Str::slug($validated['name']);
+
+        if ($request->hasFile('icon_image')) {
+            $imgBB = app(\App\Services\ImgBBService::class);
+            $iconUrl = $imgBB->uploadResizedIcon($request->file('icon_image'), 128);
+            if ($iconUrl) {
+                $validated['icon'] = $iconUrl;
+            }
+        }
+
+        $category->update($validated);
+
+        \Illuminate\Support\Facades\Cache::forget('forum.categories');
+
+        return redirect()->back()->with('success', 'Category updated successfully.');
     }
 
     /**

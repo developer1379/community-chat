@@ -96,6 +96,7 @@ Route::middleware('auth')->group(function () {
         // Category Management
         Route::get('/categories', [\App\Http\Controllers\AdminController::class, 'categories'])->name('categories.index');
         Route::post('/categories', [\App\Http\Controllers\AdminController::class, 'storeCategory'])->name('categories.store');
+        Route::put('/categories/{category}', [\App\Http\Controllers\AdminController::class, 'updateCategory'])->name('categories.update');
         Route::post('/categories/{category}/toggle', [\App\Http\Controllers\AdminController::class, 'toggleCategory'])->name('categories.toggle');
         Route::delete('/categories/{category}', [\App\Http\Controllers\AdminController::class, 'destroyCategory'])->name('categories.destroy');
     });

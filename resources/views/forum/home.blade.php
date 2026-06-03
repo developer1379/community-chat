@@ -182,15 +182,19 @@
                     <!-- Category Header -->
                     <div class="bg-gradient-to-r from-slate-50 to-white px-6 sm:px-8 py-6 border-b border-slate-100 flex items-center justify-between">
                         <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-                            <span class="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-blue-600 border border-slate-150 shadow-sm flex-shrink-0">
-                                @if($category->icon == 'chat-bubble-left-right')
+                            <span class="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-blue-600 border border-slate-150 shadow-sm flex-shrink-0 overflow-hidden">
+                                @if(\Illuminate\Support\Str::startsWith($category->icon, ['http://', 'https://']) || \Illuminate\Support\Str::contains($category->icon, '/'))
+                                    <img src="{{ $category->icon }}" alt="{{ $category->name }}" class="w-full h-full object-cover">
+                                @elseif($category->icon == 'chat-bubble-left-right')
                                     <span class="material-symbols-outlined text-2xl">forum</span>
                                 @elseif($category->icon == 'photo')
                                     <span class="material-symbols-outlined text-2xl">photo_library</span>
                                 @elseif($category->icon == 'sparkles')
                                     <span class="material-symbols-outlined text-2xl">auto_awesome</span>
+                                @elseif(\Illuminate\Support\Str::startsWith($category->icon, 'fa'))
+                                    <i class="{{ $category->icon }} text-2xl"></i>
                                 @else
-                                    <span class="material-symbols-outlined text-2xl">tag</span>
+                                    <span class="material-symbols-outlined text-2xl">{{ $category->icon ?: 'tag' }}</span>
                                 @endif
                             </span>
                             <div>

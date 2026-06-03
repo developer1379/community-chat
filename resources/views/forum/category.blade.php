@@ -13,15 +13,19 @@
             </div>
             <!-- Category Title -->
             <h1 class="text-3xl font-extrabold text-slate-950 tracking-tight flex items-center gap-3">
-                <span class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-150/60 shadow-sm">
-                    @if($category->icon == 'chat-bubble-left-right')
+                <span class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-150/60 shadow-sm overflow-hidden">
+                    @if(\Illuminate\Support\Str::startsWith($category->icon, ['http://', 'https://']) || \Illuminate\Support\Str::contains($category->icon, '/'))
+                        <img src="{{ $category->icon }}" alt="{{ $category->name }}" class="w-full h-full object-cover">
+                    @elseif($category->icon == 'chat-bubble-left-right')
                         <span class="material-symbols-outlined text-xl">forum</span>
                     @elseif($category->icon == 'photo')
                         <span class="material-symbols-outlined text-xl">photo_library</span>
                     @elseif($category->icon == 'sparkles')
                         <span class="material-symbols-outlined text-xl">auto_awesome</span>
+                    @elseif(\Illuminate\Support\Str::startsWith($category->icon, 'fa'))
+                        <i class="{{ $category->icon }} text-xl"></i>
                     @else
-                        <span class="material-symbols-outlined text-xl">tag</span>
+                        <span class="material-symbols-outlined text-xl">{{ $category->icon ?: 'tag' }}</span>
                     @endif
                 </span>
                 {{ $category->name }}
