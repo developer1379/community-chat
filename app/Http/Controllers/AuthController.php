@@ -65,7 +65,13 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended(route('home'))->with('success', 'Logged in successfully. Welcome back!');
+            
+            $intended = redirect()->intended(route('home'))->getTargetUrl();
+            if (str_contains($intended, '/dms/') || str_contains($intended, '/unread-count')) {
+                return redirect()->route('home')->with('success', 'Logged in successfully. Welcome back!');
+            }
+            
+            return redirect()->to($intended)->with('success', 'Logged in successfully. Welcome back!');
         }
 
         return back()->withErrors([
