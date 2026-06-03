@@ -250,7 +250,7 @@
             <!-- Scrollable Winding Roadmap Map Area -->
             <div class="relative bg-slate-50 dark:bg-slate-950/40 flex-grow overflow-y-auto custom-scrollbar p-4 flex flex-col items-center justify-start" id="roadmap-modal-scroll-container">
                 <!-- SVG Connector Track -->
-                <svg viewBox="0 0 400 1350" width="100%" class="h-auto w-full relative z-10">
+                <svg viewBox="0 0 400 1350" class="relative z-10 flex-shrink-0" style="min-height: 1600px; min-width: 480px; height: 1600px; width: 480px;">
                     <defs>
                         <linearGradient id="modalActiveTrackGrad" x1="0" y1="1" x2="0" y2="0">
                             <stop offset="0%" stop-color="#10B981" />
@@ -371,12 +371,14 @@
                 modal.classList.remove('opacity-0', 'pointer-events-none');
                 modal.classList.add('opacity-100');
                 
-                // Auto scroll to active node center
+                // Auto scroll to active node center using precise client rects
                 setTimeout(() => {
                     const activeNode = container ? container.querySelector('.active-focus-node-modal') : null;
                     if (container && activeNode) {
-                        const scrollPos = activeNode.getBBox().y - (container.clientHeight / 2);
-                        container.scrollTop = scrollPos;
+                        const containerRect = container.getBoundingClientRect();
+                        const activeRect = activeNode.getBoundingClientRect();
+                        const scrollOffset = activeRect.top - containerRect.top + container.scrollTop - (container.clientHeight / 2);
+                        container.scrollTop = scrollOffset;
                     }
                 }, 150);
             }
