@@ -46,8 +46,23 @@
 
             <!-- Actions -->
             <div class="flex items-center gap-3">
+                <a href="{{ route('admin.bugs.index') }}" class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all font-bold text-xs cursor-pointer">
+                    <span class="material-symbols-outlined text-[18px] mr-1">bug_report</span>
+                    <span>Bugs</span>
+                </a>
+
+                <a href="{{ route('admin.users.index') }}" class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all font-bold text-xs cursor-pointer">
+                    <span class="material-symbols-outlined text-[18px] mr-1">group</span>
+                    <span>Users</span>
+                </a>
+
+                <a href="{{ route('admin.settings') }}" class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all font-bold text-xs cursor-pointer">
+                    <span class="material-symbols-outlined text-[18px] mr-1">settings</span>
+                    <span>Settings</span>
+                </a>
+
                 <!-- Theme Toggle -->
-                <button onclick="toggleDarkMode()" class="w-8 h-8 rounded-lg border border-slate-800 text-slate-400 hover:bg-slate-800 transition-all flex items-center justify-center cursor-pointer" title="Toggle Theme">
+                <button onclick="toggleDarkMode()" class="w-8 h-8 rounded-lg border border-slate-850 text-slate-400 hover:bg-slate-800 transition-all flex items-center justify-center cursor-pointer" title="Toggle Theme">
                     <span class="material-symbols-outlined text-[18px]" id="theme-toggle-icon">dark_mode</span>
                 </button>
 

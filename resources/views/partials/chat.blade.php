@@ -105,83 +105,104 @@
         }
 
         // Poll global unread count and populate notification dropdown
+        // Poll global unread count and populate notification dropdown
         function checkUnreadBadge() {
-            fetch('/dms/unread-count')
-                .then(r => r.json())
-                .then(data => {
-                    const badge = document.getElementById('global-chat-badge');
-                    const notifyBadge = document.getElementById('global-notifications-badge');
-                    const chatCount = data.unread_count || 0;
+            Promise.all([
+                fetch('/dms/unread-count').then(r => r.json()),
+                fetch('/notifications/system').then(r => r.json())
+            ])
+            .then(([chatData, systemNotifs]) => {
+                const badge = document.getElementById('global-chat-badge');
+                const notifyBadge = document.getElementById('global-notifications-badge');
+                const chatCount = chatData.unread_count || 0;
+                const systemCount = systemNotifs.length || 0;
 
-                    // 1. Update primary chat quick icon badge
-                    if (badge) {
-                        if (chatCount > 0) {
-                            badge.innerText = chatCount;
-                            badge.classList.remove('hidden');
-                        } else {
-                            badge.classList.add('hidden');
-                        }
+                // 1. Update primary chat quick icon badge
+                if (badge) {
+                    if (chatCount > 0) {
+                        badge.innerText = chatCount;
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
                     }
+                }
 
-                    // 2. Update Combined Notification Badge (Standard 3 forum notifications + direct chat unreads!)
-                    if (notifyBadge) {
-                        const totalNotifications = 3 + chatCount;
-                        notifyBadge.innerText = totalNotifications;
-                    }
+                // 2. Update Combined Notification Badge (Standard 3 forum notifications + direct chat unreads + system notifications!)
+                if (notifyBadge) {
+                    const totalNotifications = 3 + chatCount + systemCount;
+                    notifyBadge.innerText = totalNotifications;
+                }
 
-                    // 3. Populate direct chat alert activities in the notifications list dynamically
-                    fetch('/dms/conversations')
-                        .then(res => res.json())
-                        .then(conversations => {
-                            const list = document.getElementById('notifications-dropdown-list');
-                            if (!list) return;
+                // 3. Populate direct chat alert activities in the notifications list dynamically
+                fetch('/dms/conversations')
+                    .then(res => res.json())
+                    .then(conversations => {
+                        const list = document.getElementById('notifications-dropdown-list');
+                        if (!list) return;
 
-                            // Extract only unread conversations
-                            const unreads = conversations.filter(c => c.unread_count > 0);
-                            
-                            let html = '<div class="space-y-1 divide-y divide-slate-100">';
-                            
-                            // Insert direct message triggers
-                            unreads.forEach(c => {
-                                let bodyPreview = 'Sent a message';
-                                if (c.last_message) {
-                                    const isImg = /^https?:\/\/[^\s]+?\.(jpe?g|png|gif|webp|bmp)(?:\?[^\s]*)?$/i.test(c.last_message.body.trim()) || 
-                                                  c.last_message.body.trim().startsWith('https://i.ibb.co/');
-                                    bodyPreview = isImg ? '📷 Image attachment' : c.last_message.body;
-                                }
-
-                                html += `
-                                    <div onclick="toggleDropdown('notify-dropdown'); startDirectChat('${c.other_user.name}')" class="block p-2 rounded-lg bg-blue-50/60 hover:bg-blue-50 transition-all text-xs cursor-pointer border-l-2 border-blue-500">
-                                        <div class="flex items-center justify-between">
-                                            <p class="font-bold text-slate-800 flex items-center gap-1">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-soft-pulse"></span>
-                                                New Message from ${c.other_user.name}
-                                            </p>
-                                            <span class="text-[7.5px] font-bold text-blue-600 bg-blue-100/70 px-1 rounded uppercase tracking-wider">Chat</span>
-                                        </div>
-                                        <p class="text-[10px] text-slate-650 truncate mt-0.5">${escapeHtml(bodyPreview)}</p>
-                                        <p class="text-[8px] text-slate-450 font-bold mt-0.5">${c.last_message ? c.last_message.created_at : ''}</p>
-                                    </div>
-                                `;
-                            });
-
-                            // Add fallback/static forum announcements at bottom
+                        // Extract only unread conversations
+                        const unreads = conversations.filter(c => c.unread_count > 0);
+                        
+                        let html = '<div class="space-y-1 divide-y divide-slate-100 dark:divide-slate-800">';
+                        
+                        // Insert system notifications
+                        systemNotifs.forEach(n => {
                             html += `
-                                <a href="#" class="block p-2 rounded-lg hover:bg-slate-50 transition-all text-xs pt-2">
-                                    <p class="font-bold text-slate-800">Welcome to XenProfessional!</p>
-                                    <p class="text-[10px] text-slate-500 mt-0.5">Customize your forum signature under quick settings.</p>
-                                </a>
-                                <a href="#" class="block p-2 rounded-lg hover:bg-slate-50 transition-all text-xs pt-2">
-                                    <p class="font-bold text-slate-800">Admin Replied</p>
-                                    <p class="text-[10px] text-slate-500 mt-0.5">Founder admin replied in General Discussion.</p>
-                                </a>
-                            </div>`;
+                                <div class="block p-2 rounded-lg bg-rose-50/60 hover:bg-rose-50/80 transition-all text-xs border-l-2 border-rose-500 dark:bg-rose-950/20 dark:border-rose-900/60">
+                                    <div class="flex items-center justify-between">
+                                        <p class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-600 animate-pulse"></span>
+                                            ${escapeHtml(n.title)}
+                                        </p>
+                                        <span class="text-[7.5px] font-extrabold text-rose-600 bg-rose-105 dark:text-rose-400 dark:bg-rose-900/40 px-1 rounded uppercase tracking-wider">Alert</span>
+                                    </div>
+                                    <p class="text-[10px] text-slate-650 dark:text-slate-400 mt-0.5">${escapeHtml(n.message)}</p>
+                                    <p class="text-[8.5px] text-slate-450 dark:text-slate-500 font-bold mt-0.5">${new Date(n.created_at).toLocaleDateString()}</p>
+                                </div>
+                            `;
+                        });
 
-                            list.innerHTML = html;
-                        })
-                        .catch(err => console.error('Error listing notifications:', err));
-                })
-                .catch(e => console.error('Error fetching chat count:', e));
+                        // Insert direct message triggers
+                        unreads.forEach(c => {
+                            let bodyPreview = 'Sent a message';
+                            if (c.last_message) {
+                                const isImg = /^https?:\/\/[^\s]+?\.(jpe?g|png|gif|webp|bmp)(?:\?[^\s]*)?$/i.test(c.last_message.body.trim()) || 
+                                              c.last_message.body.trim().startsWith('https://i.ibb.co/');
+                                bodyPreview = isImg ? '📷 Image attachment' : c.last_message.body;
+                            }
+
+                            html += `
+                                <div onclick="toggleDropdown('notify-dropdown'); startDirectChat('${c.other_user.name}')" class="block p-2 rounded-lg bg-blue-50/60 hover:bg-blue-50 transition-all text-xs cursor-pointer border-l-2 border-blue-500 dark:bg-blue-950/20 dark:border-blue-900/60">
+                                    <div class="flex items-center justify-between">
+                                        <p class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-soft-pulse"></span>
+                                            New Message from ${c.other_user.name}
+                                        </p>
+                                        <span class="text-[7.5px] font-bold text-blue-600 bg-blue-100/70 px-1 rounded uppercase tracking-wider dark:text-blue-400 dark:bg-blue-900/40">Chat</span>
+                                    </div>
+                                    <p class="text-[10px] text-slate-650 dark:text-slate-400 truncate mt-0.5">${escapeHtml(bodyPreview)}</p>
+                                    <p class="text-[8px] text-slate-450 dark:text-slate-500 font-bold mt-0.5">${c.last_message ? c.last_message.created_at : ''}</p>
+                                </div>
+                            `;
+                        });
+
+                        // Add fallback/static forum announcements at bottom
+                        html += `
+                            <a href="#" class="block p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-xs pt-2">
+                                <p class="font-bold text-slate-800 dark:text-slate-200">Welcome to XenProfessional!</p>
+                                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Customize your forum signature under quick settings.</p>
+                            </a>
+                            <a href="#" class="block p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-xs pt-2">
+                                <p class="font-bold text-slate-800 dark:text-slate-200">Admin Replied</p>
+                                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Founder admin replied in General Discussion.</p>
+                            </a>
+                        </div>`;
+
+                        list.innerHTML = html;
+                    })
+                    .catch(err => console.error('Error listing notifications:', err));
+            })
+            .catch(e => console.error('Error fetching counts:', e));
         }
 
         // Clear all direct chat unread alerts locally/remotely
@@ -207,6 +228,15 @@
                 notifBadge.innerText = '0';
                 notifBadge.classList.add('hidden');
             }
+            
+            // Clear system notifications in database
+            fetch('/notifications/system/clear', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            }).catch(err => console.error('Error clearing system notifications:', err));
             
             fetch('/dms/conversations')
                 .then(r => r.json())

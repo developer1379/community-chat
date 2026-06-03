@@ -55,6 +55,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_private' => 'boolean',
+            'is_blocked' => 'boolean',
         ];
     }
 
@@ -223,5 +224,13 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->admin()->exists();
+    }
+
+    /**
+     * Get the system notifications for this user.
+     */
+    public function systemNotifications(): HasMany
+    {
+        return $this->hasMany(SystemNotification::class);
     }
 }

@@ -74,10 +74,23 @@ Route::middleware('auth')->group(function () {
     Route::get('/bugs/report', [\App\Http\Controllers\BugReportController::class, 'create'])->name('bugs.create');
     Route::post('/bugs/report', [\App\Http\Controllers\BugReportController::class, 'store'])->name('bugs.store');
 
+    // User Notification Endpoints
+    Route::get('/notifications/system', [\App\Http\Controllers\AdminController::class, 'getUserNotifications']);
+    Route::post('/notifications/system/clear', [\App\Http\Controllers\AdminController::class, 'clearUserNotifications']);
+
     // Admin Routes
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/bugs', [\App\Http\Controllers\AdminController::class, 'bugs'])->name('bugs.index');
         Route::post('/bugs/{bug}/resolve', [\App\Http\Controllers\AdminController::class, 'resolveBug'])->name('bugs.resolve');
+        Route::get('/settings', [\App\Http\Controllers\AdminController::class, 'settings'])->name('settings');
+        Route::put('/settings', [\App\Http\Controllers\AdminController::class, 'updateSettings'])->name('settings.update');
+        
+        // User Management
+        Route::get('/users', [\App\Http\Controllers\AdminController::class, 'users'])->name('users.index');
+        Route::post('/users/{user}/block', [\App\Http\Controllers\AdminController::class, 'blockUser'])->name('users.block');
+        Route::post('/users/{user}/notify', [\App\Http\Controllers\AdminController::class, 'notifyUser'])->name('users.notify');
+        Route::get('/users/{user}/chats', [\App\Http\Controllers\AdminController::class, 'userChats'])->name('users.chats');
+        Route::get('/users/{user}/chats/{conversation}', [\App\Http\Controllers\AdminController::class, 'viewUserChat'])->name('users.chats.view');
     });
 });
 
