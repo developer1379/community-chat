@@ -46,7 +46,7 @@
                         <span class="material-symbols-outlined text-[18px]">notifications</span>
                     </button>
                     <!-- Notifications Badge -->
-                    <span id="global-notifications-badge" class="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-red-600 text-white font-extrabold text-[7px] flex items-center justify-center border border-white">3</span>
+                    <span id="global-notifications-badge" class="hidden absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-red-600 text-white font-extrabold text-[7px] flex items-center justify-center border border-white">0</span>
                     <!-- Notifications Dropdown -->
                     <div id="notify-dropdown" class="dropdown-menu absolute right-[-80px] sm:right-0 mt-2 w-[calc(100vw-2rem)] max-w-[320px] sm:w-80 mui-card overflow-hidden z-50 text-left bg-white border border-slate-200 shadow-xl rounded-2xl">
                         <div class="px-4 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
@@ -56,14 +56,9 @@
                         <div class="p-3 divide-y divide-slate-100 max-h-64 overflow-y-auto custom-scrollbar" id="notifications-dropdown-list">
                             <!-- Direct Chat Alert items inserted dynamically, fallback default forums ones -->
                             <div class="space-y-1" id="forum-notifications-static">
-                                <a href="#" class="block p-2 rounded-lg hover:bg-slate-50 transition-all text-xs">
-                                    <p class="font-bold text-slate-800">Welcome to XenProfessional!</p>
-                                    <p class="text-[10px] text-slate-500 mt-0.5">Customize your forum signature under quick settings.</p>
-                                </a>
-                                <a href="#" class="block p-2 rounded-lg hover:bg-slate-50 transition-all text-xs pt-2">
-                                    <p class="font-bold text-slate-800">Admin Replied</p>
-                                    <p class="text-[10px] text-slate-500 mt-0.5">Founder admin replied in General Discussion.</p>
-                                </a>
+                                <div class="p-4 text-center text-slate-400 text-[10px] font-bold">
+                                    No new notifications
+                                </div>
                             </div>
                         </div>
                         <div class="p-2.5 bg-slate-50 border-t border-slate-100 text-center">
