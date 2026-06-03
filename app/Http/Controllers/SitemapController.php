@@ -11,7 +11,7 @@ class SitemapController extends Controller
 {
     public function index(): Response
     {
-        $categories = Category::all();
+        $categories = Category::where('is_active', true)->get();
         $threads = Thread::latest()->get();
         $users = User::where('is_private', false)
             ->where('is_blocked', false)

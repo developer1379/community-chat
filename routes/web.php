@@ -92,6 +92,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/users/{user}/notify', [\App\Http\Controllers\AdminController::class, 'notifyUser'])->name('users.notify');
         Route::get('/users/{user}/chats', [\App\Http\Controllers\AdminController::class, 'userChats'])->name('users.chats');
         Route::get('/users/{user}/chats/{conversation}', [\App\Http\Controllers\AdminController::class, 'viewUserChat'])->name('users.chats.view');
+
+        // Category Management
+        Route::get('/categories', [\App\Http\Controllers\AdminController::class, 'categories'])->name('categories.index');
+        Route::post('/categories', [\App\Http\Controllers\AdminController::class, 'storeCategory'])->name('categories.store');
+        Route::post('/categories/{category}/toggle', [\App\Http\Controllers\AdminController::class, 'toggleCategory'])->name('categories.toggle');
+        Route::delete('/categories/{category}', [\App\Http\Controllers\AdminController::class, 'destroyCategory'])->name('categories.destroy');
     });
 });
 

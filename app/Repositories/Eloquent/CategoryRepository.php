@@ -13,7 +13,8 @@ class CategoryRepository implements CategoryRepositoryInterface
     public function getAllWithStats(): Collection
     {
         return Cache::remember('forum.categories', 3600, function () {
-            $categories = Category::withCount('threads')
+            $categories = Category::where('is_active', true)
+                ->withCount('threads')
                 ->orderBy('order')
                 ->get();
 
@@ -28,6 +29,6 @@ class CategoryRepository implements CategoryRepositoryInterface
 
     public function findBySlug(string $slug): ?Category
     {
-        return Category::where('slug', $slug)->firstOrFail();
+        return Category::where('slug', $slug)->where('is_active', true)->firstOrFail();
     }
 }

@@ -173,4 +173,64 @@ class AdminController extends Controller
         $notification->update(['show_alert' => false]);
         return response()->json(['status' => 'success']);
     }
+
+    /**
+     * Display a listing of all categories.
+     */
+    public function categories()
+    {
+        $categories = \App\Models\Category::withCount('threads')->orderBy('order')->get();
+        return view('admin.categories.index', compact('categories'));
+    }
+
+    /**
+     * Store a new category.
+     */
+    public function storeCategory(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name',
+            'description' => 'nullable|string|max:1000',
+            'icon' => 'nullable|string|max:255',
+            'order' => 'required|integer|min:0',
+        ]);
+
+        $validated['slug'] = \Illuminate\Support\Str::slug($validated['name']);
+        $validated['is_active'] = true;
+
+        \App\Models\Category::create($validated);
+
+        \Illuminate\Support\Facades\Cache::forget('forum.categories');
+
+        return redirect()->back()->with('success', 'Category created successfully.');
+    }
+
+    /**
+     * Toggle active status of a category.
+     */
+    public function toggleCategory(\App\Models\Category $category)
+    {
+        $category->update(['is_active' => !$category->is_active]);
+
+        \Illuminate\Support\Facades\Cache::forget('forum.categories');
+
+        $status = $category->is_active ? 'enabled' : 'disabled';
+        return redirect()->back()->with('success', "Category '{$category->name}' has been {$status} successfully.");
+    }
+
+    /**
+     * Delete a category.
+     */
+    public function destroyCategory(\App\Models\Category $category)
+    {
+        if ($category->threads()->count() > 0) {
+            return redirect()->back()->with('error', "Cannot delete category '{$category->name}' because it contains active threads.");
+        }
+
+        $category->delete();
+
+        \Illuminate\Support\Facades\Cache::forget('forum.categories');
+
+        return redirect()->back()->with('success', "Category '{$category->name}' has been deleted successfully.");
+    }
 }
