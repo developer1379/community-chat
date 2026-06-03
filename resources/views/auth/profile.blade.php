@@ -25,8 +25,27 @@ profile
 }
 </script>
 <div class="space-y-8">
+    @php
+        $points = $user->activity_points;
+        $tier = $user->computed_anime_tier;
+        $glowClass = 'border border-slate-200 shadow-lg';
+        $avatarGlow = 'border-4 border-white';
+        if ($points >= 1000) {
+            $glowClass = 'border border-rose-500/40 shadow-[0_0_30px_rgba(225,29,72,0.35)] ring-2 ring-rose-500/10';
+            $avatarGlow = 'border-4 border-rose-500 shadow-[0_0_20px_rgba(225,29,72,0.6)] ring-4 ring-rose-500/20';
+        } elseif ($points >= 500) {
+            $glowClass = 'border border-purple-500/40 shadow-[0_0_25px_rgba(124,58,237,0.25)]';
+            $avatarGlow = 'border-4 border-purple-500 shadow-[0_0_15px_rgba(124,58,237,0.5)] ring-2 ring-purple-500/20';
+        } elseif ($points >= 200) {
+            $glowClass = 'border border-amber-500/40 shadow-[0_0_20px_rgba(217,119,6,0.18)]';
+            $avatarGlow = 'border-4 border-amber-500 shadow-[0_0_10px_rgba(217,119,6,0.4)]';
+        } elseif ($points >= 50) {
+            $glowClass = 'border border-blue-500/30 shadow-md';
+            $avatarGlow = 'border-4 border-blue-500 shadow-[0_0_8px_rgba(37,99,235,0.3)]';
+        }
+    @endphp
     <!-- Premium Profile Hero Card -->
-    <div class="relative rounded-3xl overflow-hidden shadow-lg border border-slate-200 bg-white">
+    <div class="relative rounded-3xl overflow-hidden bg-white dark:bg-slate-900 transition-all duration-300 {{ $glowClass }}">
         <!-- Dynamic Gradient or Custom Uploaded Image Banner Background -->
         <div id="profile-banner-bg" class="h-44 sm:h-56 relative bg-cover bg-center" style="background: {{ $user->banner_path ? 'url(' . $user->banner_path . ')' : $user->banner_color }}">
             <div class="absolute inset-0 bg-black/10 backdrop-blur-[1px]"></div>
@@ -46,7 +65,7 @@ profile
             <!-- User Avatar & Core info -->
             <div class="flex flex-col sm:flex-row items-center sm:items-end gap-5 -mt-20 sm:-mt-24 z-10 text-center sm:text-left">
                 <!-- Large Avatar frame -->
-                <div class="w-32 h-32 rounded-3xl overflow-hidden border-4 border-white bg-slate-50 shadow-lg relative group/avatar">
+                <div class="w-32 h-32 rounded-3xl overflow-hidden {{ $avatarGlow }} bg-slate-50 shadow-lg relative group/avatar">
                     <img id="profile-avatar-img" src="{{ $user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
 
                     @auth
@@ -65,6 +84,11 @@ profile
                         <span class="text-xs px-3 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-sm" style="color: {{ $user->title_color ?: '#ffffff' }}; background: {{ $user->banner_color }}">
                             {{ $user->title_badge }}
                         </span>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 text-xs font-bold">
+                        <span class="material-symbols-outlined text-[14px]" style="color: {{ $tier['color'] }}">military_tech</span>
+                        <span style="color: {{ $tier['color'] }}">{{ $tier['name'] }}</span>
+                        <span class="text-[9px] px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 rounded text-slate-655 dark:text-slate-400 uppercase font-black tracking-wide">{{ $tier['badge'] }}</span>
                     </div>
                     <p class="text-xs text-slate-500 font-bold">Joined community on {{ $user->created_at->format('M d, Y') }}</p>
                 </div>
@@ -134,6 +158,67 @@ profile
             </div>
         @endif
     </div>
+    @php
+        $tier = $user->computed_anime_tier;
+        
+        $nextTierName = '';
+        $nextTierPoints = 0;
+        if ($points < 50) {
+            $nextTierName = 'Guild Adventurer 🛡️';
+            $nextTierPoints = 50;
+        } elseif ($points < 200) {
+            $nextTierName = 'Super Saiyan ⚡';
+            $nextTierPoints = 200;
+        } elseif ($points < 500) {
+            $nextTierName = 'Soul Reaper 💀';
+            $nextTierPoints = 500;
+        } elseif ($points < 1000) {
+            $nextTierName = 'Pirate King 🏴‍☠️';
+            $nextTierPoints = 1000;
+        }
+        
+        $percent = $nextTierPoints > 0 ? min(100, round(($points / $nextTierPoints) * 100)) : 100;
+    @endphp
+    <!-- Premium Rank Progress Widget -->
+    <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-md relative overflow-hidden text-left">
+        <div class="absolute -right-8 -top-8 w-24 h-24 rounded-full blur-xl pointer-events-none opacity-10" style="background-color: {{ $tier['color'] }}"></div>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="space-y-1">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-extrabold uppercase tracking-widest text-slate-500 bg-slate-100 dark:bg-slate-850 dark:text-slate-400 border border-slate-200/50 dark:border-slate-800">
+                    <span class="w-1.5 h-1.5 rounded-full" style="background-color: {{ $tier['color'] }}"></span> Otaku Reputation Level
+                </span>
+                <h3 class="text-xl sm:text-2xl font-black text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
+                    <span style="color: {{ $tier['color'] }}">{{ $tier['name'] }}</span>
+                    <span class="px-2 py-0.5 text-[9px] font-extrabold uppercase rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">{{ $tier['badge'] }}</span>
+                </h3>
+            </div>
+            <div class="text-left sm:text-right leading-none flex-shrink-0">
+                <span class="text-3xl font-black tracking-tight" style="color: {{ $tier['color'] }}">{{ $points }}</span>
+                <span class="text-[9px] font-black text-slate-400 block tracking-widest uppercase mt-0.5">POINTS</span>
+            </div>
+        </div>
+
+        @if($nextTierPoints > 0)
+            <!-- Progress Bar to next rank -->
+            <div class="mt-4 space-y-2">
+                <div class="flex items-center justify-between text-[9px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                    <span>Next Rank: {{ $nextTierName }}</span>
+                    <span>{{ $percent }}%</span>
+                </div>
+                <div class="w-full h-3.5 rounded-full bg-slate-100 dark:bg-slate-950 border border-slate-200/50 dark:border-slate-800 overflow-hidden p-0.5 shadow-inner">
+                    <div class="h-full rounded-full transition-all duration-700" style="width: {{ $percent }}%; background-color: {{ $tier['color'] }}"></div>
+                </div>
+                <div class="flex items-center justify-between text-[9px] font-bold text-slate-400 mt-1">
+                    <span>0 Points</span>
+                    <span>{{ $nextTierPoints }} points required</span>
+                </div>
+            </div>
+        @else
+            <div class="mt-4 p-3.5 bg-rose-50 border border-rose-200/30 rounded-2xl text-[10px] text-rose-800 font-bold text-center dark:bg-rose-950/20 dark:text-rose-450 dark:border-rose-900/30">
+                👑 Congratulations! You have achieved the peak Legendary Rank of Pirate King!
+            </div>
+        @endif
+    </div>
 
     <!-- Main Content Panels -->
     @if($isProfilePrivate)
@@ -171,61 +256,62 @@ profile
                             </div>
                             <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-5 bg-white">
                                 @csrf
-                                
-                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <!-- Material Design Upload & Input Grid -->
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                                     <!-- Avatar Upload -->
-                                    <div class="space-y-1.5">
-                                        <label for="avatar" class="text-xs font-bold text-slate-700 uppercase tracking-wider">Upload New Avatar</label>
-                                        <input type="file" id="avatar" name="avatar" class="block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all cursor-pointer">
+                                    <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-slate-50/50 hover:bg-slate-50 transition-all flex flex-col justify-center text-left">
+                                        <label for="avatar" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4">Upload New Avatar</label>
+                                        <input type="file" id="avatar" name="avatar" class="block w-full text-xs text-slate-500 mt-2.5 file:mr-3 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                                     </div>
+
                                     <!-- Banner Upload -->
-                                    <div class="space-y-1.5">
-                                        <label for="banner" class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                                    <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-slate-50/50 hover:bg-slate-50 transition-all flex flex-col justify-center text-left">
+                                        <label for="banner" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
                                             Upload Cover Photo
                                             @if($user->activity_points < 200 && !$user->isAdmin())
-                                                <span class="text-[9px] text-amber-650 bg-amber-50 px-1.5 py-0.5 rounded font-black">🔒 Super Saiyan (200 pts)</span>
+                                                <span class="text-[8px] text-amber-600 bg-amber-50 px-1 py-0.5 rounded font-black">🔒 SS (200 pts)</span>
                                             @endif
                                         </label>
-                                        <input type="file" id="banner" name="banner" {{ ($user->activity_points < 200 && !$user->isAdmin()) ? 'disabled' : '' }} class="block w-full text-xs text-slate-550 file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <input type="file" id="banner" name="banner" {{ ($user->activity_points < 200 && !$user->isAdmin()) ? 'disabled' : '' }} class="block w-full text-xs text-slate-550 mt-2.5 file:mr-3 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                     </div>
 
                                     <!-- Custom title badge -->
-                                    <div class="space-y-1.5">
-                                        <label for="title_badge" class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                                    <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-white transition-all text-left">
+                                        <label for="title_badge" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
                                             Custom Title Badge
                                             @if($user->activity_points < 1000 && !$user->isAdmin())
-                                                <span class="text-[9px] text-amber-655 bg-amber-50 px-1.5 py-0.5 rounded font-black">🔒 Pirate King (1000 pts)</span>
+                                                <span class="text-[8px] text-amber-605 bg-amber-50 px-1 py-0.5 rounded font-black">🔒 PK (1000 pts)</span>
                                             @endif
                                         </label>
-                                        <input type="text" id="title_badge" name="title_badge" {{ ($user->activity_points < 1000 && !$user->isAdmin()) ? 'disabled' : '' }} value="{{ old('title_badge', $user->title_badge) }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed" placeholder="{{ ($user->activity_points < 1000 && !$user->isAdmin()) ? 'Locked' : 'New Member, Staff, Guru...' }}">
+                                        <input type="text" id="title_badge" name="title_badge" {{ ($user->activity_points < 1000 && !$user->isAdmin()) ? 'disabled' : '' }} value="{{ old('title_badge', $user->title_badge) }}" class="w-full mt-2.5 bg-transparent border-0 p-0 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-0 placeholder:text-slate-350" placeholder="{{ ($user->activity_points < 1000 && !$user->isAdmin()) ? 'Locked' : 'Guru, Wizard, Ninja...' }}">
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <!-- Custom Title Badge Text Color -->
-                                    <div class="space-y-1.5 text-left">
-                                        <label for="title_color" class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
-                                            Title Badge Text Color
+                                    <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-white transition-all text-left">
+                                        <label for="title_color" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
+                                            Title Badge Color
                                             @if($user->activity_points < 500 && !$user->isAdmin())
-                                                <span class="text-[9px] text-amber-655 bg-amber-50 px-1.5 py-0.5 rounded font-black">🔒 Soul Reaper (500 pts)</span>
+                                                <span class="text-[8px] text-amber-605 bg-amber-50 px-1 py-0.5 rounded font-black">🔒 SR (500 pts)</span>
                                             @endif
                                         </label>
-                                        <div class="flex items-center gap-2.5">
-                                            <input type="color" id="title_color" name="title_color" {{ ($user->activity_points < 500 && !$user->isAdmin()) ? 'disabled' : '' }} value="{{ old('title_color', $user->title_color ?: '#ffffff') }}" class="w-10 h-10 border border-slate-200 rounded-xl p-1 bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
-                                            <span class="text-xs text-slate-400 font-bold">Choose a highlight color for your badge text.</span>
+                                        <div class="flex items-center gap-2.5 mt-2.5">
+                                            <input type="color" id="title_color" name="title_color" {{ ($user->activity_points < 500 && !$user->isAdmin()) ? 'disabled' : '' }} value="{{ old('title_color', $user->title_color ?: '#ffffff') }}" class="w-8 h-8 border-0 rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <span class="text-[10px] text-slate-400 font-bold">Pick badge text color</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Custom Banner Color (Gradients Preset) -->
-                                <div class="space-y-2">
-                                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                                <div class="relative border border-slate-200 rounded-2xl p-4 bg-white transition-all text-left">
+                                    <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
                                         Choose Profile Theme Gradient
                                         @if($user->activity_points < 200 && !$user->isAdmin())
-                                            <span class="text-[9px] text-amber-655 bg-amber-50 px-1.5 py-0.5 rounded font-black">🔒 Super Saiyan (200 pts)</span>
+                                            <span class="text-[8px] text-amber-600 bg-amber-50 px-1 py-0.5 rounded font-black">🔒 SS (200 pts)</span>
                                         @endif
                                     </label>
-                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 {{ ($user->activity_points < 200 && !$user->isAdmin()) ? 'opacity-50 pointer-events-none' : '' }}">
+                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2.5 {{ ($user->activity_points < 200 && !$user->isAdmin()) ? 'opacity-50 pointer-events-none' : '' }}">
                                         <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all">
                                             <input type="radio" name="banner_color" value="linear-gradient(135deg, #6366f1, #a855f7)" {{ $user->banner_color === 'linear-gradient(135deg, #6366f1, #a855f7)' ? 'checked' : '' }} class="mr-2 text-blue-600 focus:ring-blue-500">
                                             <span class="w-6 h-6 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 shadow-inner"></span>
@@ -263,10 +349,12 @@ profile
                                             <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                                         </label>
                                     </div>
-                                                         <!-- Custom Signature -->
-                                <div class="space-y-1.5">
-                                    <label for="signature" class="text-xs font-bold text-slate-700 uppercase tracking-wider">Forum Signature Quote</label>
-                                    <textarea id="signature" name="signature" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-400" placeholder="Write a short custom signature to display at the footer of all your posts...">{{ old('signature', $user->signature) }}</textarea>
+                                </div>
+
+                                <!-- Custom Signature -->
+                                <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-white transition-all text-left">
+                                    <label for="signature" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4">Forum Signature Quote</label>
+                                    <textarea id="signature" name="signature" rows="3" class="w-full mt-2.5 bg-transparent border-0 p-0 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-0 placeholder:text-slate-400 resize-none" placeholder="Write a short custom signature to display at the footer of all your posts...">{{ old('signature', $user->signature) }}</textarea>
                                 </div>
 
                                 @if(Auth::id() === $user->id && $threads->isNotEmpty())
