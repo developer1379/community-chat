@@ -153,24 +153,41 @@ class User extends Authenticatable
         return ($threadsCount * 10) + ($postsCount * 5) + ($reactionsCount * 2);
     }
 
-    /**
-     * Get computed Anime/Otaku Rank Tier based on activity points.
-     */
     public function getComputedAnimeTierAttribute(): array
     {
-        $pts = $this->activity_points;
-
-        if ($pts >= 1000) {
-            return ['name' => 'Pirate King 🏴‍☠️', 'color' => '#e11d48', 'badge' => 'Legendary'];
-        } elseif ($pts >= 500) {
-            return ['name' => 'Soul Reaper 💀', 'color' => '#7c3aed', 'badge' => 'Epic'];
-        } elseif ($pts >= 200) {
-            return ['name' => 'Super Saiyan ⚡', 'color' => '#d97706', 'badge' => 'Elite'];
-        } elseif ($pts >= 50) {
-            return ['name' => 'Guild Adventurer 🛡️', 'color' => '#2563eb', 'badge' => 'Active'];
+        if ($this->isAdmin()) {
+            $pk = \App\Models\RankMilestone::where('level', 20)->first();
+            if ($pk) {
+                return [
+                    'name' => $pk->name . ' ' . $pk->icon,
+                    'color' => $pk->color,
+                    'badge' => $pk->badge,
+                    'level' => $pk->level
+                ];
+            }
         }
 
-        return ['name' => 'Wandering Ninja 🍃', 'color' => '#16a34a', 'badge' => 'Beginner'];
+        $milestones = \App\Models\RankMilestone::orderBy('level', 'asc')->get();
+        
+        $currentMilestone = $milestones->first();
+        foreach ($milestones as $ms) {
+            if ($this->coins >= $ms->coins_required) {
+                $currentMilestone = $ms;
+            } else {
+                break;
+            }
+        }
+
+        if (!$currentMilestone) {
+            return ['name' => 'Wandering Ninja 🍃', 'color' => '#16a34a', 'badge' => 'Beginner', 'level' => 1];
+        }
+
+        return [
+            'name' => $currentMilestone->name . ' ' . $currentMilestone->icon,
+            'color' => $currentMilestone->color,
+            'badge' => $currentMilestone->badge,
+            'level' => $currentMilestone->level
+        ];
     }
 
     /**

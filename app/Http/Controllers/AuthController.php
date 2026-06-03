@@ -124,7 +124,6 @@ class AuthController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
-        $points = $user->activity_points;
 
         $request->validate([
             'signature' => ['nullable', 'string', 'max:500'],
@@ -140,8 +139,12 @@ class AuthController extends Controller
             'is_private' => $request->has('is_private'),
         ];
 
-        // Super Saiyan rank (level 2, points >= 200) required for custom banner color / background banner image
-        if ($points >= 200) {
+        $tier = $user->computed_anime_tier;
+        $level = $tier['level'] ?? 1;
+        $isAdmin = $user->isAdmin();
+
+        // Level 12 (Super Saiyan) required for custom banner color / background banner image
+        if ($level >= 12 || $isAdmin) {
             $data['banner_color'] = $request->banner_color;
             if ($request->hasFile('banner')) {
                 // Upload custom banner to ImgBB!
@@ -152,13 +155,13 @@ class AuthController extends Controller
             }
         }
 
-        // Soul Reaper rank (level 3, points >= 500) required for custom title badge text color
-        if ($points >= 500 && $request->has('title_color')) {
+        // Level 16 (Soul Reaper) required for custom title badge text color
+        if (($level >= 16 || $isAdmin) && $request->has('title_color')) {
             $data['title_color'] = $request->title_color;
         }
 
-        // Pirate King rank (level 4, points >= 1000) required for custom title badge text
-        if ($points >= 1000) {
+        // Level 20 (Pirate King) required for custom title badge text
+        if ($level >= 20 || $isAdmin) {
             $data['title_badge'] = $request->title_badge;
         }
 
