@@ -13,8 +13,8 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left">
         <div>
             <h1 class="text-2xl font-extrabold text-slate-950 dark:text-white tracking-tight flex items-center gap-2.5">
-                <span class="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/20 flex items-center justify-center text-amber-500 border border-amber-200 dark:border-amber-900/30 shadow-sm relative overflow-hidden group">
-                    <span class="material-symbols-outlined text-lg z-10 animate-pulse">account_balance_wallet</span>
+                <span class="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/20 flex items-center justify-center text-amber-500 border border-amber-200 dark:border-amber-900/30 shadow-sm relative overflow-hidden">
+                    <span class="material-symbols-outlined text-lg animate-pulse">account_balance_wallet</span>
                 </span>
                 My Coin Wallet
             </h1>
@@ -30,7 +30,7 @@
         <div class="lg:col-span-2 space-y-6">
             <!-- Compact Balance Card -->
             <div class="relative overflow-hidden rounded-2xl border border-amber-300 dark:border-amber-800 bg-gradient-to-tr from-amber-600 via-yellow-500 to-amber-700 p-6 text-white shadow-lg flex flex-col justify-between h-44 group transition-all duration-200">
-                <!-- 3D shimmering light effects -->
+                <!-- Shimmering light effects -->
                 <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
                 <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-[140px] text-white/10 select-none pointer-events-none group-hover:rotate-6 transition-transform duration-350">monetization_on</span>
                 
@@ -39,7 +39,7 @@
                         <span class="text-[9px] font-black uppercase tracking-widest text-amber-955 bg-white/20 px-3 py-1 rounded-full border border-white/20 shadow-sm">XenCoins Gold</span>
                         <h2 class="text-4xl font-black mt-3 flex items-center gap-1.5 drop-shadow-sm">
                             <span>{{ number_format($user->coins) }}</span>
-                            <span class="text-xl font-extrabold text-amber-100 animate-bounce">🪙</span>
+                            <span class="text-xl font-extrabold text-amber-100 animate-pulse">🪙</span>
                         </h2>
                     </div>
                     <span class="text-[9px] font-black uppercase tracking-widest text-white bg-slate-950/20 px-3 py-1 rounded-lg backdrop-blur-sm border border-white/10">Active Balance</span>
@@ -134,109 +134,183 @@
             </div>
         </div>
 
-        <!-- Sidebar Winding Candy Crush Level Map (Right Column) -->
+        <!-- Sidebar Journey Map (Right Column) -->
         <div class="space-y-6">
             <!-- Animated Candy Crush Stepping Stones Roadmap Card -->
-            <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-sm space-y-4 text-left relative overflow-hidden">
-                <!-- Glowing theme background circle -->
+            <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-sm space-y-3.5 text-left relative overflow-hidden flex flex-col">
+                <!-- Glowing background -->
                 <div class="absolute -right-8 -top-8 w-24 h-24 rounded-full blur-xl pointer-events-none opacity-5 bg-blue-500"></div>
 
-                <div class="border-b border-slate-100 dark:border-slate-800 pb-3 flex items-center justify-between">
+                <div class="border-b border-slate-100 dark:border-slate-800 pb-3 flex items-center justify-between flex-shrink-0">
                     <div>
-                        <h3 class="text-xs font-black uppercase text-slate-500 tracking-wider flex items-center gap-1">
+                        <h3 class="text-xs font-black uppercase text-slate-550 tracking-wider flex items-center gap-1">
                             <span class="material-symbols-outlined text-blue-600 text-base">map</span> Journey Map
                         </h3>
-                        <p class="text-[10px] font-medium text-slate-400 mt-0.5">Coins track Lvl milestones</p>
+                        <p class="text-[9px] font-medium text-slate-400 mt-0.5">Climb milestones to top!</p>
                     </div>
-                    <span class="text-[10px] font-black text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/20 border border-blue-150 dark:border-blue-900/30 px-2 py-0.5 rounded-lg">Lvl {{ $currentMilestone->level }}</span>
+                    <span class="text-[9px] font-black text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/20 border border-blue-150 dark:border-blue-900/30 px-2 py-0.5 rounded-lg">Lvl {{ $currentMilestone->level }}</span>
                 </div>
 
-                <!-- Candy Crush Winding Path Container -->
-                <div class="relative bg-slate-50/50 dark:bg-slate-950/20 rounded-2xl p-4 min-h-[460px] border border-slate-100 dark:border-slate-850 overflow-hidden flex flex-col justify-start select-none">
-                    <!-- SVG Winding Dashed Connecting Track (Snake path simulator) -->
-                    <svg class="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Custom snaking connector path generated dynamically matching our wavy items -->
-                        <path d="M 40,30 Q 150,70 190,110 T 40,190 T 190,270 T 40,350 T 190,430" fill="none" stroke="#e2e8f0" stroke-width="4" stroke-linecap="round"/>
-                        <path d="M 40,30 Q 150,70 190,110 T 40,190 T 190,270 T 40,350 T 190,430" fill="none" stroke="#fbbf24" stroke-width="4" stroke-linecap="round" stroke-dasharray="8, 6" class="animated-track-path"/>
+                <!-- Winding roadmap viewport with auto centering -->
+                <div class="relative bg-slate-50 dark:bg-slate-950/40 rounded-xl p-2 border border-slate-100 dark:border-slate-850 overflow-y-auto max-h-[500px] custom-scrollbar flex flex-col items-center justify-start select-none" id="roadmap-scroll-container">
+                    
+                    @php
+                        // Mathematical S-Curve Coordinates
+                        $coords = [
+                            1  => ['x' => 200, 'y' => 1280],
+                            2  => ['x' => 280, 'y' => 1215],
+                            3  => ['x' => 320, 'y' => 1150],
+                            4  => ['x' => 280, 'y' => 1085],
+                            5  => ['x' => 200, 'y' => 1020],
+                            6  => ['x' => 120, 'y' => 955],
+                            7  => ['x' => 80,  'y' => 890],
+                            8  => ['x' => 120, 'y' => 825],
+                            9  => ['x' => 200, 'y' => 760],
+                            10 => ['x' => 280, 'y' => 695],
+                            11 => ['x' => 320, 'y' => 630],
+                            12 => ['x' => 280, 'y' => 565],
+                            13 => ['x' => 200, 'y' => 500],
+                            14 => ['x' => 120, 'y' => 435],
+                            15 => ['x' => 80,  'y' => 370],
+                            16 => ['x' => 120, 'y' => 305],
+                            17 => ['x' => 200, 'y' => 240],
+                            18 => ['x' => 280, 'y' => 175],
+                            19 => ['x' => 320, 'y' => 110],
+                            20 => ['x' => 200, 'y' => 45],
+                        ];
+                    @endphp
+
+                    <!-- Responsive Viewport SVG Map -->
+                    <svg viewBox="0 0 400 1350" width="100%" class="h-auto w-full relative z-10">
+                        <defs>
+                            <linearGradient id="unlockedGrad" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#ffffff" />
+                                <stop offset="100%" stop-color="#fbbf24" />
+                            </linearGradient>
+                            <linearGradient id="activeTrackGrad" x1="0" y1="1" x2="0" y2="0">
+                                <stop offset="0%" stop-color="#10B981" />
+                                <stop offset="50%" stop-color="#3B82F6" />
+                                <stop offset="100%" stop-color="#EF4444" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Background Connection Path (Static Gray Line) -->
+                        <path d="M 200,1280 C 280,1280 320,1215 320,1150 C 320,1085 280,1020 200,1020 C 120,1020 80,955 80,890 C 80,825 120,760 200,760 C 280,760 320,695 320,630 C 320,565 280,500 200,500 C 120,500 80,435 80,370 C 80,305 120,240 200,240 C 280,240 320,175 320,110 C 320,45 200,45 200,45" fill="none" stroke="#e2e8f0" stroke-width="10" stroke-linecap="round"/>
+                        
+                        <!-- Animated Path for Unlocked Tiers -->
+                        <path d="M 200,1280 C 280,1280 320,1215 320,1150 C 320,1085 280,1020 200,1020 C 120,1020 80,955 80,890 C 80,825 120,760 200,760 C 280,760 320,695 320,630 C 320,565 280,500 200,500 C 120,500 80,435 80,370 C 80,305 120,240 200,240 C 280,240 320,175 320,110 C 320,45 200,45 200,45" fill="none" stroke="url(#activeTrackGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="14, 8" class="animate-conveyor"/>
+                        
                         <style>
-                            .animated-track-path {
-                                animation: trackDash 1.5s linear infinite;
+                            .animate-conveyor {
+                                animation: conveyorDash 2s linear infinite;
                             }
-                            @keyframes trackDash {
-                                to { stroke-dashoffset: -14; }
+                            @keyframes conveyorDash {
+                                to { stroke-dashoffset: -44; }
+                            }
+                            .roadmap-hover-target:hover .stone-ring {
+                                transform: scale(1.15);
                             }
                         </style>
-                    </svg>
 
-                    <!-- Nodes mapped in snaking margins -->
-                    <div class="space-y-4 relative z-10 flex flex-col">
-                        @php
-                            // Margin offsets matching the Q/T snake anchor path (alternates left and right)
-                            $offsets = [
-                                10, 25, 45, 60, 50, 30, 15, 10, 25, 45, 
-                                60, 50, 30, 15, 10, 25, 45, 60, 50, 30
-                            ];
-                        @endphp
+                        <!-- Milestones Nodes (Climbing Upwards) -->
                         @foreach($milestones as $index => $ms)
                             @php
+                                $c = $coords[$ms->level] ?? ['x' => 200, 'y' => 600];
                                 $unlocked = $user->coins >= $ms->coins_required;
                                 $isCurrent = $currentMilestone->level === $ms->level;
-                                $offset = $offsets[$index] ?? 20;
                                 
-                                // Dynamic material icon per milestone tier
-                                $mIcon = 'star_rate';
+                                // Text label offsets based on curve position to prevent overlapping
+                                $textX = $c['x'];
+                                $textY = $c['y'];
+                                $anchor = 'middle';
+                                
+                                if ($c['x'] == 200) {
+                                    $textY = $c['y'] - 26; // Above/below for center nodes
+                                } elseif ($c['x'] == 80) {
+                                    $textX = $c['x'] + 32; // To the right of left peaks
+                                    $anchor = 'start';
+                                } elseif ($c['x'] == 320) {
+                                    $textX = $c['x'] - 32; // To the left of right peaks
+                                    $anchor = 'end';
+                                } elseif ($c['x'] == 120) {
+                                    $textX = $c['x'] + 32;
+                                    $anchor = 'start';
+                                } elseif ($c['x'] == 280) {
+                                    $textX = $c['x'] - 32;
+                                    $anchor = 'end';
+                                }
+                                
+                                // Material Symbols definition per milestone tier
+                                $mIcon = 'star';
                                 if ($ms->level >= 20) { $mIcon = 'emoji_events'; }
                                 elseif ($ms->level >= 16) { $mIcon = 'diamond'; }
                                 elseif ($ms->level >= 12) { $mIcon = 'workspace_premium'; }
                                 elseif ($ms->level >= 8) { $mIcon = 'military_tech'; }
                                 elseif ($ms->level >= 4) { $mIcon = 'shield'; }
                             @endphp
-                            
-                            <!-- Stepping stone node (Horizontal shift simulating S-Curve) -->
-                            <div class="flex items-center gap-3 relative group" style="margin-left: {{ $offset }}%;">
-                                <!-- Pulsing ring for current location -->
+
+                            <!-- Level Group Node -->
+                            <g class="roadmap-hover-target cursor-help {{ $isCurrent ? 'active-focus-node' : '' }}" data-node-level="{{ $ms->level }}" data-node-name="{{ $ms->name }}" data-node-coins="{{ number_format($ms->coins_required) }}" data-node-badge="{{ $ms->badge }}" data-node-status="{{ $unlocked ? 'Unlocked' : 'Locked' }}">
+                                <!-- Pulse ring around current position -->
                                 @if($isCurrent)
-                                    <span class="absolute -left-1.5 -top-1.5 w-10 h-10 rounded-full border border-amber-500 bg-amber-500/20 animate-ping pointer-events-none"></span>
+                                    <circle cx="{{ $c['x'] }}" cy="{{ $c['y'] }}" r="28" fill="none" stroke="{{ $ms->color }}" stroke-width="2" opacity="0.4" class="animate-ping" style="transform-origin: {{ $c['x'] }}px {{ $c['y'] }}px;"/>
                                 @endif
                                 
-                                <!-- Stepping circle button (Candy node style) -->
-                                <button type="button" class="w-7 h-7 rounded-full flex items-center justify-center border-2 shadow-sm transition-all duration-300 transform group-hover:scale-110 active:scale-95 cursor-help"
-                                        style="
-                                            border-color: {{ $unlocked ? $ms->color : '#cbd5e1' }};
-                                            background: {{ $unlocked ? 'linear-gradient(135deg, #ffffff, ' . $ms->color . '25)' : '#f1f5f9' }};
-                                            color: {{ $unlocked ? $ms->color : '#94a3b8' }};
-                                        "
-                                        title="{{ $ms->name }} (Lvl {{ $ms->level }}) - {{ $unlocked ? 'Unlocked ✓' : number_format($ms->coins_required) . ' Coins Required' }}">
-                                    @if($unlocked)
-                                        <span class="material-symbols-outlined text-[15px] font-bold">{{ $mIcon }}</span>
+                                <!-- Outer Glowing Shadow Border -->
+                                <circle cx="{{ $c['x'] }}" cy="{{ $c['y'] }}" r="21" class="stone-ring transition-transform" fill="{{ $unlocked ? $ms->color : '#cbd5e1' }}" opacity="0.3"/>
+                                
+                                <!-- Stepping circle core -->
+                                <circle cx="{{ $c['x'] }}" cy="{{ $c['y'] }}" r="18" fill="{{ $unlocked ? '#ffffff' : '#f1f5f9' }}" stroke="{{ $unlocked ? $ms->color : '#94a3b8' }}" stroke-width="2"/>
+                                
+                                <!-- Node Level Number text label inside circle -->
+                                @if($unlocked)
+                                    <!-- Use dynamic material SVG icon path for node center -->
+                                    @if($mIcon === 'emoji_events')
+                                        <path d="M {{ $c['x']-6 }} {{ $c['y']-7 }} H {{ $c['x']+6 }} V {{ $c['y']-2 }} Q {{ $c['x']+6 }} {{ $c['y']+3 }} {{ $c['x'] }} {{ $c['y']+3 }} Q {{ $c['x']-6 }} {{ $c['y']+3 }} {{ $c['x']-6 }} {{ $c['y']-2 }} Z M {{ $c['x'] }} {{ $c['y']+3 }} V {{ $c['y']+7 }} H {{ $c['x']-3 }} V {{ $c['y']+9 }} H {{ $c['x']+3 }} V {{ $c['y']+7 }} H {{ $c['x'] }} Z" fill="{{ $ms->color }}" />
+                                    @elseif($mIcon === 'diamond')
+                                        <path d="M {{ $c['x'] }} {{ $c['y']-8 }} L {{ $c['x']+7 }} {{ $c['y']-2 }} L {{ $c['x'] }} {{ $c['y']+8 }} L {{ $c['x']-7 }} {{ $c['y']-2 }} Z" fill="{{ $ms->color }}" />
+                                    @elseif($mIcon === 'workspace_premium')
+                                        <circle cx="{{ $c['x'] }}" cy="{{ $c['y']-2 }}" r="5" stroke="{{ $ms->color }}" stroke-width="2" fill="none" />
+                                        <path d="M {{ $c['x']-2 }} {{ $c['y']+3 }} L {{ $c['x']-4 }} {{ $c['y']+8 }} L {{ $c['x'] }} {{ $c['y']+6 }} L {{ $c['x']+4 }} {{ $c['y']+8 }} L {{ $c['x']+2 }} {{ $c['y']+3 }}" fill="{{ $ms->color }}" />
+                                    @elseif($mIcon === 'military_tech')
+                                        <path d="M {{ $c['x']-4 }} {{ $c['y']-7 }} L {{ $c['x']+4 }} {{ $c['y']-7 }} L {{ $c['x']+6 }} {{ $c['y']+1 }} L {{ $c['x'] }} {{ $c['y']+8 }} L {{ $c['x']-6 }} {{ $c['y']+1 }} Z" fill="{{ $ms->color }}" opacity="0.3"/>
+                                        <circle cx="{{ $c['x'] }}" cy="{{ $c['y']-1 }}" r="3" fill="{{ $ms->color }}"/>
+                                    @elseif($mIcon === 'shield')
+                                        <path d="M {{ $c['x'] }} {{ $c['y']-8 }} L {{ $c['x']-6 }} {{ $c['y']-5 }} V {{ $c['y'] }} C {{ $c['x']-6 }} {{ $c['y']+4 }} {{ $c['x'] }} {{ $c['y']+8 }} {{ $c['x'] }} {{ $c['y']+8 }} C {{ $c['x'] }} {{ $c['y']+8 }} {{ $c['x']+6 }} {{ $c['y']+4 }} {{ $c['x']+6 }} {{ $c['y'] }} V {{ $c['y']-5 }} Z" fill="{{ $ms->color }}" />
                                     @else
-                                        <span class="material-symbols-outlined text-[13px] font-bold">lock</span>
+                                        <!-- Star -->
+                                        <path d="M {{ $c['x'] }} {{ $c['y']-7 }} L {{ $c['x']+2 }} {{ $c['y']-2 }} H {{ $c['x']+7 }} L {{ $c['x']+3 }} {{ $c['y']+1 }} L {{ $c['x']+5 }} {{ $c['y']+6 }} L {{ $c['x'] }} {{ $c['y']+3 }} L {{ $c['x']-5 }} {{ $c['y']+6 }} L {{ $c['x']-3 }} {{ $c['y']+1 }} L {{ $c['x']-7 }} {{ $c['y']-2 }} H {{ $c['x']-2 }} Z" fill="{{ $ms->color }}" />
                                     @endif
-                                </button>
-                                
-                                <!-- Popover/Hover info panel -->
-                                <div class="opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 absolute left-9 top-1/2 -translate-y-1/2 bg-slate-900 text-white p-2.5 rounded-xl text-[10px] w-40 z-30 shadow-md">
-                                    <div class="font-extrabold flex justify-between">
-                                        <span>{{ $ms->name }}</span>
-                                        <span style="color: {{ $ms->color }}">Lvl {{ $ms->level }}</span>
-                                    </div>
-                                    <p class="text-slate-400 mt-1 font-medium">{{ $ms->badge }}</p>
-                                    <p class="text-slate-500 mt-0.5">{{ number_format($ms->coins_required) }} Coins required</p>
-                                </div>
-                                
-                                <span class="text-[9px] font-black tracking-wide truncate max-w-[70px] uppercase text-slate-400 dark:text-slate-500 {{ $isCurrent ? 'font-bold' : '' }}" style="color: {{ $unlocked ? $ms->color : '' }}">
+                                @else
+                                    <!-- Lock symbol for locked nodes -->
+                                    <path d="M {{ $c['x']-4 }} {{ $c['y'] }} V {{ $c['y']-3 }} C {{ $c['x']-4 }} {{ $c['y']-5.5 }} {{ $c['x']+4 }} {{ $c['y']-5.5 }} {{ $c['x']+4 }} {{ $c['y']-3 }} V {{ $c['y'] }} H {{ $c['x']-4 }} Z M {{ $c['x']-5 }} {{ $c['y'] }} H {{ $c['x']+5 }} V {{ $c['y']+6 }} H {{ $c['x']-5 }} Z" fill="#94a3b8" />
+                                @endif
+
+                                <!-- Text label beside node -->
+                                <text x="{{ $textX }}" y="{{ $textY + 3 }}" font-size="10" font-weight="900" font-family="Plus Jakarta Sans, sans-serif" text-anchor="{{ $anchor }}" fill="{{ $unlocked ? $ms->color : '#94a3b8' }}" class="uppercase tracking-wide">
                                     {{ $ms->name }}
-                                </span>
-                            </div>
+                                </text>
+                            </g>
                         @endforeach
+                    </svg>
+
+                    <!-- Roadmap Tooltip element inside viewport -->
+                    <div id="roadmap-tooltip" class="absolute hidden bg-slate-900 text-white p-3 rounded-2xl text-[10px] w-48 shadow-xl border border-white/10 z-30 leading-relaxed pointer-events-none transition-opacity duration-200">
+                        <div class="flex justify-between font-extrabold items-center">
+                            <span id="tooltip-title" class="text-sm">Milestone</span>
+                            <span id="tooltip-level" class="text-[9px] uppercase px-1.5 py-0.2 bg-white/20 rounded font-black text-amber-300">Lvl</span>
+                        </div>
+                        <p id="tooltip-badge" class="text-slate-400 mt-1 font-bold">Badge Title</p>
+                        <p id="tooltip-coins" class="text-slate-500 mt-0.5">0 coins required</p>
+                        <p id="tooltip-status" class="text-emerald-400 font-extrabold uppercase mt-1">Unlocked</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Compact Earning Rules Card -->
+            <!-- Earning Rules -->
             <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm space-y-3.5 text-left">
-                <h3 class="text-xs font-black uppercase text-slate-500 tracking-wider flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-blue-600 text-base animate-pulse">emoji_events</span> Coin Rules
+                <h3 class="text-xs font-black uppercase text-slate-550 tracking-wider flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-blue-600 text-base">emoji_events</span> Coin Rules
                 </h3>
                 
                 <div class="space-y-2">
@@ -258,4 +332,68 @@
         </div>
     </div>
 </div>
+
+<!-- Inline Javascript triggers for Interactive Winding Roadmap -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('roadmap-scroll-container');
+        const tooltip = document.getElementById('roadmap-tooltip');
+        
+        // Auto scroll to active user focus node on load
+        const activeNode = container ? container.querySelector('.active-focus-node') : null;
+        if (container && activeNode) {
+            // Get bounding coordinates relative to container
+            const activeRect = activeNode.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            
+            // Calculate scroll position to center the active node
+            const scrollPos = activeNode.getBBox().y - (container.clientHeight / 2);
+            container.scrollTop = scrollPos;
+        }
+
+        // Event listeners on milestones group
+        document.querySelectorAll('.roadmap-hover-target').forEach(node => {
+            node.addEventListener('mouseenter', function(e) {
+                const name = node.getAttribute('data-node-name');
+                const level = node.getAttribute('data-node-level');
+                const coins = node.getAttribute('data-node-coins');
+                const badge = node.getAttribute('data-node-badge');
+                const status = node.getAttribute('data-node-status');
+
+                // Populate tooltip contents
+                document.getElementById('tooltip-title').innerText = name;
+                document.getElementById('tooltip-level').innerText = `Lvl ${level}`;
+                document.getElementById('tooltip-badge').innerText = badge;
+                document.getElementById('tooltip-coins').innerText = `${coins} coins required`;
+                
+                const statusEl = document.getElementById('tooltip-status');
+                statusEl.innerText = status === 'Unlocked' ? 'Unlocked ✓' : 'Locked 🔒';
+                statusEl.className = status === 'Unlocked' ? 'text-emerald-400 font-extrabold uppercase mt-1' : 'text-slate-500 font-extrabold uppercase mt-1';
+
+                // Display and position tooltip
+                tooltip.classList.remove('hidden');
+                tooltip.style.opacity = '1';
+            });
+
+            node.addEventListener('mousemove', function(e) {
+                if (!container) return;
+                const containerRect = container.getBoundingClientRect();
+                
+                // Position tooltip relative to scroll container
+                const x = e.clientX - containerRect.left + container.scrollLeft + 15;
+                const y = e.clientY - containerRect.top + container.scrollTop - 40;
+                
+                tooltip.style.left = `${x}px`;
+                tooltip.style.top = `${y}px`;
+            });
+
+            node.addEventListener('mouseleave', function() {
+                tooltip.style.opacity = '0';
+                setTimeout(() => {
+                    tooltip.classList.add('hidden');
+                }, 100);
+            });
+        });
+    });
+</script>
 @endsection
