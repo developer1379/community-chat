@@ -127,9 +127,9 @@
                     }
                 }
 
-                // 2. Update Combined Notification Badge (Standard 3 forum notifications + direct chat unreads + system notifications!)
+                // 2. Update Combined Notification Badge (direct chat unreads + system notifications!)
                 if (notifyBadge) {
-                    const totalNotifications = 3 + chatCount + systemCount;
+                    const totalNotifications = chatCount + systemCount;
                     notifyBadge.innerText = totalNotifications;
                     if (totalNotifications > 0) {
                         notifyBadge.classList.remove('hidden');
