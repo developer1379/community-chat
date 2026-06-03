@@ -14,6 +14,13 @@ class MediaProxyController extends Controller
      */
     public function proxyAttachment(Attachment $attachment)
     {
+        // Security check: if the attachment is private, only the owner can access it
+        if ($attachment->is_private) {
+            if (!auth()->check() || auth()->id() !== $attachment->user_id) {
+                return abort(403, 'Unauthorized access to private attachment.');
+            }
+        }
+
         $url = $attachment->file_path;
 
         // If it is not a remote URL, return normally
