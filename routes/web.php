@@ -57,6 +57,7 @@ Route::middleware('auth')->group(function () {
 
     // Chat routes
     Route::get('/dms/conversations', [\App\Http\Controllers\ChatController::class, 'index']);
+    Route::get('/dms/admins', [\App\Http\Controllers\ChatController::class, 'getAdmins']);
     Route::get('/dms/conversations/{conversation}', [\App\Http\Controllers\ChatController::class, 'show']);
     Route::post('/dms/conversations/{conversation}/send', [\App\Http\Controllers\ChatController::class, 'store']);
     Route::post('/dms/start/{username}', [\App\Http\Controllers\ChatController::class, 'startConversation']);

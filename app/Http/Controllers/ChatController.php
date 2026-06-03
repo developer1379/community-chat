@@ -358,4 +358,26 @@ class ChatController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    /**
+     * Get a list of all administrators.
+     */
+    public function getAdmins(): JsonResponse
+    {
+        $currentUserId = Auth::id();
+        $admins = User::has('admin')
+            ->where('id', '!=', $currentUserId)
+            ->get();
+
+        $formatted = $admins->map(function (User $u) {
+            return [
+                'id' => $u->id,
+                'name' => $u->name,
+                'avatar_url' => $u->avatar_url,
+                'title_badge' => $u->title_badge ?: 'Admin',
+            ];
+        });
+
+        return response()->json($formatted);
+    }
 }

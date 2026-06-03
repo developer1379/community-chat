@@ -37,6 +37,16 @@
                 </div>
             </div>
 
+            <!-- Admins quick start bar -->
+            <div id="chat-admins-container" class="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50 flex flex-col gap-1.5 flex-shrink-0 dark:bg-slate-950/20 dark:border-slate-850 hidden">
+                <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-1">
+                    <span class="material-symbols-outlined text-xs text-blue-500">verified_user</span> Quick Admin Help
+                </span>
+                <div id="chat-admins-list" class="flex items-center gap-3 overflow-x-auto pb-1 custom-scrollbar">
+                    <!-- Dynamic admins list -->
+                </div>
+            </div>
+
             <!-- List of existing conversations -->
             <div id="chat-conversations-list" class="flex-grow overflow-y-auto divide-y divide-slate-100 custom-scrollbar p-1 dark:divide-slate-850">
                 <!-- Loaded dynamically by JS -->
@@ -313,8 +323,43 @@
             }, 10000);
         });
 
+        // Load quick start admin list
+        function loadAdmins() {
+            const container = document.getElementById('chat-admins-container');
+            const list = document.getElementById('chat-admins-list');
+            if (!container || !list) return;
+
+            fetch('/dms/admins')
+                .then(r => r.json())
+                .then(admins => {
+                    if (admins.length === 0) {
+                        container.classList.add('hidden');
+                        return;
+                    }
+
+                    container.classList.remove('hidden');
+                    let html = '';
+                    admins.forEach(admin => {
+                        html += `
+                            <div onclick="startDirectChat('${escapeHtml(admin.name)}')" class="flex flex-col items-center gap-1 cursor-pointer flex-shrink-0 group">
+                                <div class="w-8.5 h-8.5 rounded-full overflow-hidden border-2 border-blue-500/20 group-hover:border-blue-500 transition-all flex-shrink-0 shadow-sm relative">
+                                    <img src="${admin.avatar_url}" class="w-full h-full object-cover">
+                                </div>
+                                <span class="text-[8px] font-extrabold text-slate-500 dark:text-slate-400 group-hover:text-blue-500 transition-colors truncate w-12 text-center leading-none">${admin.name}</span>
+                            </div>
+                        `;
+                    });
+                    list.innerHTML = html;
+                })
+                .catch(e => {
+                    console.error('Admins list error:', e);
+                    container.classList.add('hidden');
+                });
+        }
+
         // Load list of conversations
         function loadConversations() {
+            loadAdmins();
             const listContainer = document.getElementById('chat-conversations-list');
             if (!listContainer) return;
 
