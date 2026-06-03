@@ -186,3 +186,252 @@
         <p id="lightbox-caption" class="text-xs text-white/80 font-semibold tracking-wide mt-3 text-center px-4 max-w-md truncate"></p>
     </div>
 </div>
+
+<!-- Reusable Full-Screen Interactive Candy Crush Roadmap Modal -->
+@auth
+    @php
+        $globalUser = Auth::user();
+        $globalMilestones = \App\Models\RankMilestone::orderBy('level', 'asc')->get();
+        $globalCoins = $globalUser->coins;
+        
+        $globalCurrentMilestone = $globalMilestones->first();
+        foreach ($globalMilestones as $ms) {
+            if ($globalCoins >= $ms->coins_required) {
+                $globalCurrentMilestone = $ms;
+            } else {
+                break;
+            }
+        }
+        
+        $globalCoords = [
+            1  => ['x' => 200, 'y' => 1280],
+            2  => ['x' => 280, 'y' => 1215],
+            3  => ['x' => 320, 'y' => 1150],
+            4  => ['x' => 280, 'y' => 1085],
+            5  => ['x' => 200, 'y' => 1020],
+            6  => ['x' => 120, 'y' => 955],
+            7  => ['x' => 80,  'y' => 890],
+            8  => ['x' => 120, 'y' => 825],
+            9  => ['x' => 200, 'y' => 760],
+            10 => ['x' => 280, 'y' => 695],
+            11 => ['x' => 320, 'y' => 630],
+            12 => ['x' => 280, 'y' => 565],
+            13 => ['x' => 200, 'y' => 500],
+            14 => ['x' => 120, 'y' => 435],
+            15 => ['x' => 80,  'y' => 370],
+            16 => ['x' => 120, 'y' => 305],
+            17 => ['x' => 200, 'y' => 240],
+            18 => ['x' => 280, 'y' => 175],
+            19 => ['x' => 320, 'y' => 110],
+            20 => ['x' => 200, 'y' => 45],
+        ];
+    @endphp
+
+    <div id="roadmap-fullscreen-modal" onclick="closeRoadmapModal()" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+        <div class="relative w-full max-w-xl bg-white dark:bg-slate-900 rounded-[28px] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col h-[90vh]" onclick="event.stopPropagation()">
+            
+            <!-- Modal Header -->
+            <div class="px-6 py-4 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <div>
+                    <h3 class="text-xs font-black uppercase text-slate-500 tracking-wider flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-blue-600 text-base animate-pulse">map</span> Interactive Journey Roadmap
+                    </h3>
+                    <p class="text-[9px] font-bold text-slate-450 dark:text-slate-500">Milestones unlocked by saving coins</p>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <span class="text-[9px] font-black text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/20 border border-blue-150 dark:border-blue-900/30 px-2 py-0.5 rounded-lg">Level {{ $globalCurrentMilestone->level }}</span>
+                    <button onclick="closeRoadmapModal()" class="w-8.5 h-8.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-655 cursor-pointer transition-colors">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scrollable Winding Roadmap Map Area -->
+            <div class="relative bg-slate-50 dark:bg-slate-950/40 flex-grow overflow-y-auto custom-scrollbar p-4 flex flex-col items-center justify-start" id="roadmap-modal-scroll-container">
+                <!-- SVG Connector Track -->
+                <svg viewBox="0 0 400 1350" width="100%" class="h-auto w-full relative z-10">
+                    <defs>
+                        <linearGradient id="modalActiveTrackGrad" x1="0" y1="1" x2="0" y2="0">
+                            <stop offset="0%" stop-color="#10B981" />
+                            <stop offset="50%" stop-color="#3B82F6" />
+                            <stop offset="100%" stop-color="#EF4444" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Background Connection Path (Static Gray Line) -->
+                    <path d="M 200,1280 C 280,1280 320,1215 320,1150 C 320,1085 280,1020 200,1020 C 120,1020 80,955 80,890 C 80,825 120,760 200,760 C 280,760 320,695 320,630 C 320,565 280,500 200,500 C 120,500 80,435 80,370 C 80,305 120,240 200,240 C 280,240 320,175 320,110 C 320,45 200,45 200,45" fill="none" stroke="#e2e8f0" stroke-width="10" stroke-linecap="round"/>
+                    
+                    <!-- Animated conveyor belt track overlay -->
+                    <path d="M 200,1280 C 280,1280 320,1215 320,1150 C 320,1085 280,1020 200,1020 C 120,1020 80,955 80,890 C 80,825 120,760 200,760 C 280,760 320,695 320,630 C 320,565 280,500 200,500 C 120,500 80,435 80,370 C 80,305 120,240 200,240 C 280,240 320,175 320,110 C 320,45 200,45 200,45" fill="none" stroke="url(#modalActiveTrackGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="14, 8" class="animate-conveyor-modal"/>
+                    
+                    <style>
+                        .animate-conveyor-modal {
+                            animation: conveyorDashModal 2s linear infinite;
+                        }
+                        @keyframes conveyorDashModal {
+                            to { stroke-dashoffset: -44; }
+                        }
+                        .roadmap-hover-target-modal:hover .stone-ring-modal {
+                            transform: scale(1.15);
+                        }
+                    </style>
+
+                    <!-- Nodes -->
+                    @foreach($globalMilestones as $index => $ms)
+                        @php
+                            $c = $globalCoords[$ms->level] ?? ['x' => 200, 'y' => 600];
+                            $unlocked = $globalCoins >= $ms->coins_required;
+                            $isCurrent = $globalCurrentMilestone->level === $ms->level;
+                            
+                            $textX = $c['x'];
+                            $textY = $c['y'];
+                            $anchor = 'middle';
+                            
+                            if ($c['x'] == 200) {
+                                $textY = $c['y'] - 26;
+                            } elseif ($c['x'] == 80) {
+                                $textX = $c['x'] + 32;
+                                $anchor = 'start';
+                            } elseif ($c['x'] == 320) {
+                                $textX = $c['x'] - 32;
+                                $anchor = 'end';
+                            } elseif ($c['x'] == 120) {
+                                $textX = $c['x'] + 32;
+                                $anchor = 'start';
+                            } elseif ($c['x'] == 280) {
+                                $textX = $c['x'] - 32;
+                                $anchor = 'end';
+                            }
+                            
+                            $mIcon = 'star';
+                            if ($ms->level >= 20) { $mIcon = 'emoji_events'; }
+                            elseif ($ms->level >= 16) { $mIcon = 'diamond'; }
+                            elseif ($ms->level >= 12) { $mIcon = 'workspace_premium'; }
+                            elseif ($ms->level >= 8) { $mIcon = 'military_tech'; }
+                            elseif ($ms->level >= 4) { $mIcon = 'shield'; }
+                        @endphp
+
+                        <g class="roadmap-hover-target-modal cursor-help {{ $isCurrent ? 'active-focus-node-modal' : '' }}" data-node-level="{{ $ms->level }}" data-node-name="{{ $ms->name }}" data-node-coins="{{ number_format($ms->coins_required) }}" data-node-badge="{{ $ms->badge }}" data-node-status="{{ $unlocked ? 'Unlocked' : 'Locked' }}">
+                            @if($isCurrent)
+                                <circle cx="{{ $c['x'] }}" cy="{{ $c['y'] }}" r="28" fill="none" stroke="{{ $ms->color }}" stroke-width="2" opacity="0.4" class="animate-ping" style="transform-origin: {{ $c['x'] }}px {{ $c['y'] }}px;"/>
+                            @endif
+                            
+                            <circle cx="{{ $c['x'] }}" cy="{{ $c['y'] }}" r="21" class="stone-ring-modal transition-transform" fill="{{ $unlocked ? $ms->color : '#cbd5e1' }}" opacity="0.3"/>
+                            <circle cx="{{ $c['x'] }}" cy="{{ $c['y'] }}" r="18" fill="{{ $unlocked ? '#ffffff' : '#f1f5f9' }}" stroke="{{ $unlocked ? $ms->color : '#94a3b8' }}" stroke-width="2"/>
+                            
+                            @if($unlocked)
+                                @if($mIcon === 'emoji_events')
+                                    <path d="M {{ $c['x']-6 }} {{ $c['y']-7 }} H {{ $c['x']+6 }} V {{ $c['y']-2 }} Q {{ $c['x']+6 }} {{ $c['y']+3 }} {{ $c['x'] }} {{ $c['y']+3 }} Q {{ $c['x']-6 }} {{ $c['y']+3 }} {{ $c['x']-6 }} {{ $c['y']-2 }} Z M {{ $c['x'] }} {{ $c['y']+3 }} V {{ $c['y']+7 }} H {{ $c['x']-3 }} V {{ $c['y']+9 }} H {{ $c['x']+3 }} V {{ $c['y']+7 }} H {{ $c['x'] }} Z" fill="{{ $ms->color }}" />
+                                @elseif($mIcon === 'diamond')
+                                    <path d="M {{ $c['x'] }} {{ $c['y']-8 }} L {{ $c['x']+7 }} {{ $c['y']-2 }} L {{ $c['x'] }} {{ $c['y']+8 }} L {{ $c['x']-7 }} {{ $c['y']-2 }} Z" fill="{{ $ms->color }}" />
+                                @elseif($mIcon === 'workspace_premium')
+                                    <circle cx="{{ $c['x'] }}" cy="{{ $c['y']-2 }}" r="5" stroke="{{ $ms->color }}" stroke-width="2" fill="none" />
+                                    <path d="M {{ $c['x']-2 }} {{ $c['y']+3 }} L {{ $c['x']-4 }} {{ $c['y']+8 }} L {{ $c['x'] }} {{ $c['y']+6 }} L {{ $c['x']+4 }} {{ $c['y']+8 }} L {{ $c['x']+2 }} {{ $c['y']+3 }}" fill="{{ $ms->color }}" />
+                                @elseif($mIcon === 'military_tech')
+                                    <path d="M {{ $c['x']-4 }} {{ $c['y']-7 }} L {{ $c['x']+4 }} {{ $c['y']-7 }} L {{ $c['x']+6 }} {{ $c['y']+1 }} L {{ $c['x'] }} {{ $c['y']+8 }} L {{ $c['x']-6 }} {{ $c['y']+1 }} Z" fill="{{ $ms->color }}" opacity="0.3"/>
+                                    <circle cx="{{ $c['x'] }}" cy="{{ $c['y']-1 }}" r="3" fill="{{ $ms->color }}"/>
+                                @elseif($mIcon === 'shield')
+                                    <path d="M {{ $c['x'] }} {{ $c['y']-8 }} L {{ $c['x']-6 }} {{ $c['y']-5 }} V {{ $c['y'] }} C {{ $c['x']-6 }} {{ $c['y']+4 }} {{ $c['x'] }} {{ $c['y']+8 }} {{ $c['x'] }} {{ $c['y']+8 }} C {{ $c['x'] }} {{ $c['y']+8 }} {{ $c['x']+6 }} {{ $c['y']+4 }} {{ $c['x']+6 }} {{ $c['y'] }} V {{ $c['y']-5 }} Z" fill="{{ $ms->color }}" />
+                                @else
+                                    <path d="M {{ $c['x'] }} {{ $c['y']-7 }} L {{ $c['x']+2 }} {{ $c['y']-2 }} H {{ $c['x']+7 }} L {{ $c['x']+3 }} {{ $c['y']+1 }} L {{ $c['x']+5 }} {{ $c['y']+6 }} L {{ $c['x'] }} {{ $c['y']+3 }} L {{ $c['x']-5 }} {{ $c['y']+6 }} L {{ $c['x']-3 }} {{ $c['y']+1 }} L {{ $c['x']-7 }} {{ $c['y']-2 }} H {{ $c['x']-2 }} Z" fill="{{ $ms->color }}" />
+                                @endif
+                            @else
+                                <path d="M {{ $c['x']-4 }} {{ $c['y'] }} V {{ $c['y']-3 }} C {{ $c['x']-4 }} {{ $c['y']-5.5 }} {{ $c['x']+4 }} {{ $c['y']-5.5 }} {{ $c['x']+4 }} {{ $c['y']-3 }} V {{ $c['y'] }} H {{ $c['x']-4 }} Z M {{ $c['x']-5 }} {{ $c['y'] }} H {{ $c['x']+5 }} V {{ $c['y']+6 }} H {{ $c['x']-5 }} Z" fill="#94a3b8" />
+                            @endif
+
+                            <text x="{{ $textX }}" y="{{ $textY + 3 }}" font-size="10" font-weight="900" font-family="Plus Jakarta Sans, sans-serif" text-anchor="{{ $anchor }}" fill="{{ $unlocked ? $ms->color : '#94a3b8' }}" class="uppercase tracking-wide">
+                                {{ $ms->name }}
+                            </text>
+                        </g>
+                    @endforeach
+                </svg>
+
+                <!-- Tooltip inside scroll wrapper -->
+                <div id="roadmap-modal-tooltip" class="absolute hidden bg-slate-900 text-white p-3 rounded-2xl text-[10px] w-48 shadow-xl border border-white/10 z-30 leading-relaxed pointer-events-none transition-opacity duration-200">
+                    <div class="flex justify-between font-extrabold items-center">
+                        <span id="tooltip-modal-title" class="text-sm">Milestone</span>
+                        <span id="tooltip-modal-level" class="text-[9px] uppercase px-1.5 py-0.2 bg-white/20 rounded font-black text-amber-300">Lvl</span>
+                    </div>
+                    <p id="tooltip-modal-badge" class="text-slate-400 mt-1 font-bold">Badge Title</p>
+                    <p id="tooltip-modal-coins" class="text-slate-500 mt-0.5">0 coins required</p>
+                    <p id="tooltip-modal-status" class="text-emerald-400 font-extrabold uppercase mt-1">Unlocked</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Roadmap Modal Popover Controller Scripts -->
+    <script>
+        function openRoadmapModal() {
+            const modal = document.getElementById('roadmap-fullscreen-modal');
+            const container = document.getElementById('roadmap-modal-scroll-container');
+            
+            if (modal) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modal.classList.add('opacity-100');
+                
+                // Auto scroll to active node center
+                setTimeout(() => {
+                    const activeNode = container ? container.querySelector('.active-focus-node-modal') : null;
+                    if (container && activeNode) {
+                        const scrollPos = activeNode.getBBox().y - (container.clientHeight / 2);
+                        container.scrollTop = scrollPos;
+                    }
+                }, 150);
+            }
+        }
+
+        function closeRoadmapModal() {
+            const modal = document.getElementById('roadmap-fullscreen-modal');
+            if (modal) {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                modal.classList.remove('opacity-100');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('roadmap-modal-scroll-container');
+            const tooltip = document.getElementById('roadmap-modal-tooltip');
+
+            document.querySelectorAll('.roadmap-hover-target-modal').forEach(node => {
+                node.addEventListener('mouseenter', function(e) {
+                    const name = node.getAttribute('data-node-name');
+                    const level = node.getAttribute('data-node-level');
+                    const coins = node.getAttribute('data-node-coins');
+                    const badge = node.getAttribute('data-node-badge');
+                    const status = node.getAttribute('data-node-status');
+
+                    document.getElementById('tooltip-modal-title').innerText = name;
+                    document.getElementById('tooltip-modal-level').innerText = `Lvl ${level}`;
+                    document.getElementById('tooltip-modal-badge').innerText = badge;
+                    document.getElementById('tooltip-modal-coins').innerText = `${coins} coins required`;
+                    
+                    const statusEl = document.getElementById('tooltip-modal-status');
+                    statusEl.innerText = status === 'Unlocked' ? 'Unlocked ✓' : 'Locked 🔒';
+                    statusEl.className = status === 'Unlocked' ? 'text-emerald-400 font-extrabold uppercase mt-1' : 'text-slate-500 font-extrabold uppercase mt-1';
+
+                    tooltip.classList.remove('hidden');
+                    tooltip.style.opacity = '1';
+                });
+
+                node.addEventListener('mousemove', function(e) {
+                    if (!container) return;
+                    const containerRect = container.getBoundingClientRect();
+                    const x = e.clientX - containerRect.left + container.scrollLeft + 15;
+                    const y = e.clientY - containerRect.top + container.scrollTop - 40;
+                    
+                    tooltip.style.left = `${x}px`;
+                    tooltip.style.top = `${y}px`;
+                });
+
+                node.addEventListener('mouseleave', function() {
+                    tooltip.style.opacity = '0';
+                    setTimeout(() => {
+                        tooltip.classList.add('hidden');
+                    }, 100);
+                });
+            });
+        });
+    </script>
+@endauth

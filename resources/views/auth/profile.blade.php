@@ -200,10 +200,9 @@ profile
             $denom = $nextReq - $prevReq;
             $percent = $denom > 0 ? min(100, (int)(($coins - $prevReq) / $denom * 100)) : 100;
             $target = $nextMilestone->coins_required;
-        }
     @endphp
-    <!-- Premium Rank Progress Widget -->
-    <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-md relative overflow-hidden text-left">
+    <!-- Premium Clickable Rank Progress Widget -->
+    <div onclick="openRoadmapModal()" class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-md relative overflow-hidden text-left cursor-pointer hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-800 transition-all group">
         <div class="absolute -right-8 -top-8 w-24 h-24 rounded-full blur-xl pointer-events-none opacity-10" style="background-color: {{ $tier['color'] }}"></div>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="space-y-1">
@@ -233,6 +232,7 @@ profile
                 </div>
                 <div class="flex items-center justify-between text-[9px] font-bold text-slate-400 mt-1">
                     <span>{{ number_format($currentMilestone->coins_required) }} Coins</span>
+                    <span class="text-blue-600 dark:text-blue-400 font-extrabold flex items-center gap-1 group-hover:translate-x-1 transition-transform">Tap to view journey roadmap →</span>
                     <span>{{ number_format($target) }} coins required</span>
                 </div>
             </div>
