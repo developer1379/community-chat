@@ -200,4 +200,12 @@ class User extends Authenticatable
 
         return $saved;
     }
+
+    /**
+     * Get the bug reports submitted by this user.
+     */
+    public function bugReports(): HasMany
+    {
+        return $this->hasMany(BugReport::class);
+    }
 }

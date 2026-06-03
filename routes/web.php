@@ -69,6 +69,10 @@ Route::middleware('auth')->group(function () {
     
     // Wallet Routes
     Route::get('/wallet', [\App\Http\Controllers\WalletController::class, 'index'])->name('wallet.index');
+
+    // Bug Reporting
+    Route::get('/bugs/report', [\App\Http\Controllers\BugReportController::class, 'create'])->name('bugs.create');
+    Route::post('/bugs/report', [\App\Http\Controllers\BugReportController::class, 'store'])->name('bugs.store');
 });
 
 // Public profile page

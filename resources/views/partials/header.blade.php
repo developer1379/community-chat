@@ -171,6 +171,10 @@
                 <span class="material-symbols-outlined text-[18px] mr-1.5 text-slate-400 group-hover:text-blue-600 transition-colors">gavel</span>
                 Rules & Guides
             </a>
+            <a href="{{ route('bugs.create') }}" class="group flex items-center py-3 border-b-2 border-transparent hover:border-blue-600 text-xs sm:text-[13px] font-semibold text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 transition-colors flex-shrink-0">
+                <span class="material-symbols-outlined text-[18px] mr-1.5 text-slate-400 group-hover:text-blue-600 transition-colors">bug_report</span>
+                Report a Bug
+            </a>
         </div>
     </div>
 </div>
