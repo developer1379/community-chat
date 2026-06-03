@@ -12,7 +12,21 @@ class SystemNotification extends Model
         'title',
         'message',
         'is_read',
+        'show_alert',
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'is_read' => 'boolean',
+            'show_alert' => 'boolean',
+        ];
+    }
 
     /**
      * Get the user recipient of the notification.

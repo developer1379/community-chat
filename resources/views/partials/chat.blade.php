@@ -131,7 +131,34 @@
                 if (notifyBadge) {
                     const totalNotifications = 3 + chatCount + systemCount;
                     notifyBadge.innerText = totalNotifications;
+                    if (totalNotifications > 0) {
+                        notifyBadge.classList.remove('hidden');
+                    } else {
+                        notifyBadge.classList.add('hidden');
+                    }
                 }
+
+                // Check for Screen Alert Popups
+                systemNotifs.forEach(n => {
+                    if (n.show_alert) {
+                        Swal.fire({
+                            title: n.title,
+                            text: n.message,
+                            icon: 'warning',
+                            confirmButtonColor: '#e11d48',
+                            confirmButtonText: 'I Understand'
+                        });
+
+                        // Dismiss this screen alert immediately so it doesn't pop up again
+                        fetch(`/notifications/system/${n.id}/dismiss-alert`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            }
+                        }).catch(e => console.error('Error dismissing system notification alert:', e));
+                    }
+                });
 
                 // 3. Populate direct chat alert activities in the notifications list dynamically
                 fetch('/dms/conversations')

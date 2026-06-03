@@ -127,6 +127,7 @@ class AdminController extends Controller
             'title' => $validated['title'],
             'message' => $validated['message'],
             'is_read' => false,
+            'show_alert' => $request->boolean('show_alert'),
         ]);
 
         return redirect()->back()->with('success', "Alert notification sent to {$user->name} successfully.");
@@ -159,5 +160,17 @@ class AdminController extends Controller
             ->get();
 
         return view('admin.users.chat_messages', compact('user', 'conversation', 'messages'));
+    }
+
+    /**
+     * Dismiss the popup screen alert for a system notification.
+     */
+    public function dismissNotificationAlert(\App\Models\SystemNotification $notification)
+    {
+        if ($notification->user_id !== Auth::id()) {
+            abort(403);
+        }
+        $notification->update(['show_alert' => false]);
+        return response()->json(['status' => 'success']);
     }
 }

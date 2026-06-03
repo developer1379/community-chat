@@ -32,6 +32,7 @@ class User extends Authenticatable
         'signature',
         'is_private',
         'coins',
+        'is_blocked',
     ];
 
     /**

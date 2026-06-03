@@ -77,6 +77,7 @@ Route::middleware('auth')->group(function () {
     // User Notification Endpoints
     Route::get('/notifications/system', [\App\Http\Controllers\AdminController::class, 'getUserNotifications']);
     Route::post('/notifications/system/clear', [\App\Http\Controllers\AdminController::class, 'clearUserNotifications']);
+    Route::post('/notifications/system/{notification}/dismiss-alert', [\App\Http\Controllers\AdminController::class, 'dismissNotificationAlert']);
 
     // Admin Routes
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
