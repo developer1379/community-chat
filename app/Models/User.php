@@ -139,6 +139,10 @@ class User extends Authenticatable
      */
     public function getActivityPointsAttribute(): int
     {
+        if ($this->isAdmin()) {
+            return 1200; // Admins default to maximum rank (Pirate King) for testing all capabilities
+        }
+
         $threadsCount = $this->threads()->count();
         $postsCount = $this->posts()->count();
         
