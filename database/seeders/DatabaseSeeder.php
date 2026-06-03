@@ -27,6 +27,10 @@ class DatabaseSeeder extends Seeder
             'signature' => '💡 "Building future community hubs with high-end aesthetics."',
         ]);
 
+        \App\Models\Admin::create([
+            'user_id' => $admin->id,
+        ]);
+
         $user1 = User::create([
             'name' => 'TailwindWizard',
             'email' => 'wizard@tailwind.test',

@@ -208,4 +208,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(BugReport::class);
     }
+
+    /**
+     * Get the admin record for this user.
+     */
+    public function admin(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Admin::class, 'user_id');
+    }
+
+    /**
+     * Helper to verify if the user is an admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->admin()->exists();
+    }
 }

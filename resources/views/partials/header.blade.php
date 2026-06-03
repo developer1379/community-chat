@@ -123,6 +123,11 @@
                             <button onclick="openSignatureModal()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer font-semibold font-sans">
                                 <span class="material-symbols-outlined text-sm text-slate-500">settings</span> Profile Settings
                             </button>
+                            @if(Auth::user()->isAdmin())
+                            <a href="{{ route('admin.bugs.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-semibold">
+                                <span class="material-symbols-outlined text-sm text-rose-500">security</span> Admin Panel
+                            </a>
+                            @endif
                         </div>
                         <div class="border-t border-slate-100 dark:border-slate-850 py-1">
                             <form action="{{ route('logout') }}" method="POST" class="w-full">

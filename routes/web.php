@@ -73,6 +73,12 @@ Route::middleware('auth')->group(function () {
     // Bug Reporting
     Route::get('/bugs/report', [\App\Http\Controllers\BugReportController::class, 'create'])->name('bugs.create');
     Route::post('/bugs/report', [\App\Http\Controllers\BugReportController::class, 'store'])->name('bugs.store');
+
+    // Admin Routes
+    Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/bugs', [\App\Http\Controllers\AdminController::class, 'bugs'])->name('bugs.index');
+        Route::post('/bugs/{bug}/resolve', [\App\Http\Controllers\AdminController::class, 'resolveBug'])->name('bugs.resolve');
+    });
 });
 
 // Public profile page
