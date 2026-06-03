@@ -263,13 +263,34 @@ profile
                                             <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                                         </label>
                                     </div>
-                                </div>
-
-                                <!-- Custom Signature -->
+                                                         <!-- Custom Signature -->
                                 <div class="space-y-1.5">
                                     <label for="signature" class="text-xs font-bold text-slate-700 uppercase tracking-wider">Forum Signature Quote</label>
                                     <textarea id="signature" name="signature" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-400" placeholder="Write a short custom signature to display at the footer of all your posts...">{{ old('signature', $user->signature) }}</textarea>
                                 </div>
+
+                                @if(Auth::id() === $user->id && $threads->isNotEmpty())
+                                    <!-- Feature Thread Section -->
+                                    <div class="border-t border-slate-100 pt-5 space-y-2 text-left">
+                                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-xs text-amber-500">star</span>
+                                            Feature one of your discussions (50 Coins)
+                                        </h4>
+                                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                                            <select id="feature_thread_id" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                                                <option value="">-- Choose a thread to feature --</option>
+                                                @foreach($threads as $t)
+                                                    @if(!$t->is_featured)
+                                                        <option value="{{ $t->id }}">{{ $t->title }}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                            <button type="button" onclick="featureThreadFromProfile()" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-md shadow-amber-500/10 cursor-pointer flex items-center justify-center gap-1.5 flex-shrink-0">
+                                                <span class="material-symbols-outlined text-xs">star</span> Feature Thread
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endif
 
                                 <!-- Save changes -->
                                 <div class="text-right pt-3 border-t border-slate-100">
@@ -590,6 +611,34 @@ profile
             }
             document.body.removeChild(textarea);
         });
+    }
+
+    function featureThreadFromProfile() {
+        const threadId = document.getElementById('feature_thread_id').value;
+        if (!threadId) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No Thread Selected',
+                text: 'Please select one of your threads to feature.',
+                confirmButtonColor: '#3b82f6'
+            });
+            return;
+        }
+
+        if (confirm('Spend 50 coins to feature this thread on the homepage?')) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/threads/${threadId}/feature`;
+            
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = '{{ csrf_token() }}';
+            
+            form.appendChild(csrfInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
     }
 </script>
 @endsection
