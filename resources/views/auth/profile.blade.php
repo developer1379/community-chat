@@ -1,9 +1,17 @@
 @extends('layouts.app')
 
-@section('title', $user->name . '\'s Member Profile | XenForo Professional')
-@section('meta_description', $user->name . ' - Joined community on ' . $user->created_at->format('M d, Y') . '. Check out their recent discussions, uploads, and updates.')
-@section('meta_keywords', $user->name . ', member profile, forum user, conversations, posts')
-@section('og_type', 'profile')
+@section('title')
+{{ $user->name }}'s Member Profile | XenForo Professional
+@endsection
+@section('meta_description')
+{{ $user->name }} - Joined community on {{ $user->created_at->format('M d, Y') }}. Check out their recent discussions, uploads, and updates.
+@endsection
+@section('meta_keywords')
+{{ $user->name }}, member profile, forum user, conversations, posts
+@endsection
+@section('og_type')
+profile
+@endsection
 
 @section('content')
 <!-- JSON-LD Structured Schema for User Profile -->
