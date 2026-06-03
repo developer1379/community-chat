@@ -17,8 +17,8 @@ profile
 <!-- JSON-LD Structured Schema for User Profile -->
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@type": "Person",
+  "@@context": "https://schema.org",
+  "@@type": "Person",
   "name": "{{ e($user->name) }}",
   "url": "{{ url()->current() }}",
   "image": "{{ $user->avatar_url }}"

@@ -1,32 +1,40 @@
 @extends('layouts.app')
 
-@section('title', $thread->title . ' | XenForo Professional')
-@section('meta_description', \Illuminate\Support\Str::limit(strip_tags($posts->first()->content ?? 'Read discussions and replies in this thread.'), 155))
-@section('meta_keywords', $thread->tags ? $thread->tags : 'forum, discussion, thread, community')
-@section('og_type', 'article')
+@section('title')
+{{ $thread->title }} | XenForo Professional
+@endsection
+@section('meta_description')
+{{ \Illuminate\Support\Str::limit(strip_tags($posts->first()->content ?? 'Read discussions and replies in this thread.'), 155) }}
+@endsection
+@section('meta_keywords')
+{{ $thread->tags ? $thread->tags : 'forum, discussion, thread, community' }}
+@endsection
+@section('og_type')
+article
+@endsection
 
 @section('content')
 <!-- JSON-LD Structured Schema for Thread -->
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@type": "DiscussionForumPosting",
+  "@@context": "https://schema.org",
+  "@@type": "DiscussionForumPosting",
   "headline": "{{ e($thread->title) }}",
   "url": "{{ url()->current() }}",
   "datePublished": "{{ $thread->created_at->toIso8601String() }}",
   "author": {
-    "@type": "Person",
+    "@@type": "Person",
     "name": "{{ e($thread->user->name) }}",
     "url": "{{ route('profile.show', $thread->user->name) }}"
   },
   "interactionStatistic": [
     {
-      "@type": "InteractionCounter",
+      "@@type": "InteractionCounter",
       "interactionType": "https://schema.org/ViewAction",
       "userInteractionCount": {{ $thread->views_count }}
     },
     {
-      "@type": "InteractionCounter",
+      "@@type": "InteractionCounter",
       "interactionType": "https://schema.org/CommentAction",
       "userInteractionCount": {{ max(0, $posts->total() - 1) }}
     }
