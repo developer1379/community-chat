@@ -171,7 +171,7 @@
 </div>
 
 <!-- Reusable Premium Lightbox Modal for Images & GIFs -->
-<div id="lightbox-modal" onclick="closeLightbox()" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300 cursor-zoom-out">
+<div id="lightbox-modal" onclick="closeLightbox()" class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300 cursor-zoom-out">
     <div class="relative max-w-5xl max-h-[90vh] flex flex-col items-center justify-center select-none" onclick="event.stopPropagation()">
         <!-- Close Button -->
         <button onclick="closeLightbox()" class="absolute -top-12 right-0 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white flex items-center justify-center cursor-pointer transition-all shadow-lg text-lg">

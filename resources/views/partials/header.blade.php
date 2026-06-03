@@ -104,15 +104,21 @@
                             </div>
                             <div class="truncate leading-tight">
                                 <h4 class="font-bold text-slate-900 dark:text-slate-100 truncate">{{ Auth::user()->name }}</h4>
-                                <span class="text-[9px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">{{ Auth::user()->title_badge }}</span>
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="text-[9px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">{{ Auth::user()->title_badge }}</span>
+                                    <span class="text-[9px] font-extrabold text-amber-600 dark:text-amber-400 flex items-center gap-0.5"><span class="material-symbols-outlined text-[10px] text-amber-500 animate-pulse">monetization_on</span>{{ auth()->user()->coins }}</span>
+                                </div>
                             </div>
                         </div>
                         <div class="py-1">
                             <a href="{{ route('profile.show', Auth::user()->name) }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-semibold">
                                 <span class="material-symbols-outlined text-sm text-slate-500">person</span> View Profile
                             </a>
-                            <a href="{{ route('wallet.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-semibold">
-                                <span class="material-symbols-outlined text-sm text-slate-500">account_balance_wallet</span> My Wallet
+                            <a href="{{ route('wallet.index') }}" class="flex items-center justify-between px-4 py-2.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-semibold">
+                                <span class="flex items-center gap-2.5">
+                                    <span class="material-symbols-outlined text-sm text-slate-500">account_balance_wallet</span> My Wallet
+                                </span>
+                                <span class="text-[10px] text-amber-600 dark:text-amber-400 font-extrabold">{{ auth()->user()->coins }} Coins</span>
                             </a>
                             <button onclick="openSignatureModal()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer font-semibold font-sans">
                                 <span class="material-symbols-outlined text-sm text-slate-500">settings</span> Profile Settings

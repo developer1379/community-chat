@@ -440,7 +440,7 @@
                             <div class="${alignmentClass} max-w-[85%] ${msg.is_own ? 'ml-auto' : 'mr-auto'} leading-snug animate-fade-in group" id="msg-${msg.id}" data-body="${escapeHtml(msg.body)}">
                                 <div class="flex items-center gap-1.5 w-full ${msg.is_own ? 'justify-end' : 'justify-start'}">
                                     ${msg.is_own ? `
-                                        <div class="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 mr-1 flex-shrink-0">
+                                        <div class="opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 mr-1 flex-shrink-0">
                                             ${msg.can_edit && !isImage ? `
                                                 <button onclick="startEditMsg('${msg.id}')" class="text-slate-400 hover:text-blue-500 dark:hover:text-blue-400 p-0.5 rounded transition-colors cursor-pointer" title="Edit Message">
                                                     <span class="material-symbols-outlined text-[14px]">edit</span>
