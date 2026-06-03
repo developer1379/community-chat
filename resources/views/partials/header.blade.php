@@ -48,7 +48,7 @@
                     <!-- Notifications Badge -->
                     <span id="global-notifications-badge" class="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-red-600 text-white font-extrabold text-[7px] flex items-center justify-center border border-white">3</span>
                     <!-- Notifications Dropdown -->
-                    <div id="notify-dropdown" class="dropdown-menu absolute right-0 mt-2 w-80 mui-card overflow-hidden z-50 text-left bg-white border border-slate-200 shadow-xl rounded-2xl">
+                    <div id="notify-dropdown" class="dropdown-menu absolute right-[-80px] sm:right-0 mt-2 w-[calc(100vw-2rem)] max-w-[320px] sm:w-80 mui-card overflow-hidden z-50 text-left bg-white border border-slate-200 shadow-xl rounded-2xl">
                         <div class="px-4 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
                             <span class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">Notifications & Activity</span>
                             <button onclick="clearAllNotificationsLocal(event)" class="text-[8px] font-extrabold text-rose-600 uppercase tracking-wider hover:underline bg-transparent border-0 cursor-pointer">Clear All</button>

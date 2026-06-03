@@ -190,6 +190,23 @@
                 e.preventDefault();
                 e.stopPropagation();
             }
+
+            // Clear static notification elements on view
+            const staticEl = document.getElementById('forum-notifications-static');
+            if (staticEl) {
+                staticEl.innerHTML = `
+                    <div class="p-4 text-center text-slate-400 text-[10px] font-bold">
+                        No new notifications
+                    </div>
+                `;
+            }
+
+            // Hide global notifications badge
+            const notifBadge = document.getElementById('global-notifications-badge');
+            if (notifBadge) {
+                notifBadge.innerText = '0';
+                notifBadge.classList.add('hidden');
+            }
             
             fetch('/dms/conversations')
                 .then(r => r.json())
