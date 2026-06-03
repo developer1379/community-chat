@@ -38,14 +38,62 @@
                 <div class="space-y-1.5">
                     <label for="category_id" class="text-[11px] font-black text-slate-700 uppercase tracking-widest ml-1">Select Board Room</label>
                     <div class="relative">
-                        <select id="category_id" name="category_id" onchange="updatePreviewCategory(this)" class="w-full bg-slate-50/50 hover:bg-slate-50 border border-slate-200 rounded-2xl pl-4 pr-10 py-3.5 text-slate-800 text-xs sm:text-sm font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none cursor-pointer shadow-inner shadow-slate-100/50">
-                            @foreach($categories as $cat)
-                                <option value="{{ $cat->id }}" data-slug="{{ $cat->slug }}" {{ $cat->id === $category->id ? 'selected' : '' }}>
-                                    🚪 {{ $cat->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <span class="material-symbols-outlined absolute right-4 top-3.5 text-slate-400 pointer-events-none text-[18px]">unfold_more</span>
+                        <!-- Hidden Input to submit the category ID -->
+                        <input type="hidden" id="category_id" name="category_id" value="{{ $category->id }}">
+                        
+                        <!-- Trigger Box -->
+                        <div id="category-dropdown-trigger" onclick="toggleCategoryDropdown()" class="w-full bg-slate-50/50 hover:bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 flex items-center justify-between text-slate-800 text-xs sm:text-sm font-semibold focus-within:ring-2 focus-within:ring-blue-550 transition-all cursor-pointer shadow-inner shadow-slate-100/50 select-none">
+                            <div class="flex items-center gap-2.5 min-w-0" id="selected-category-display">
+                                <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 border border-slate-150 shadow-sm flex-shrink-0 overflow-hidden" id="selected-category-icon">
+                                    @if(\Illuminate\Support\Str::startsWith($category->icon, ['http://', 'https://']) || \Illuminate\Support\Str::contains($category->icon, '/'))
+                                        <img src="{{ $category->icon }}" alt="" class="w-full h-full object-cover">
+                                    @elseif($category->icon == 'chat-bubble-left-right')
+                                        <span class="material-symbols-outlined text-base">forum</span>
+                                    @elseif($category->icon == 'photo')
+                                        <span class="material-symbols-outlined text-base">photo_library</span>
+                                    @elseif($category->icon == 'sparkles')
+                                        <span class="material-symbols-outlined text-base">auto_awesome</span>
+                                    @elseif(\Illuminate\Support\Str::startsWith($category->icon, 'fa'))
+                                        <i class="{{ $category->icon }} text-xs"></i>
+                                    @else
+                                        <span class="material-symbols-outlined text-base">{{ $category->icon ?: 'tag' }}</span>
+                                    @endif
+                                </div>
+                                <span class="truncate" id="selected-category-name">{{ $category->name }}</span>
+                            </div>
+                            <span class="material-symbols-outlined text-slate-400 text-[18px]">unfold_more</span>
+                        </div>
+
+                        <!-- Dropdown Options List -->
+                        <div id="category-dropdown-options" class="absolute left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 max-h-64 overflow-y-auto hidden">
+                            <div class="p-1.5 space-y-1">
+                                @foreach($categories as $cat)
+                                    <div onclick="selectCategory('{{ $cat->id }}', '{{ addslashes($cat->name) }}', '{{ $cat->slug }}', '{{ $cat->icon }}')" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors">
+                                        <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 border border-slate-150 shadow-sm flex-shrink-0 overflow-hidden">
+                                            @if(\Illuminate\Support\Str::startsWith($cat->icon, ['http://', 'https://']) || \Illuminate\Support\Str::contains($cat->icon, '/'))
+                                                <img src="{{ $cat->icon }}" alt="" class="w-full h-full object-cover">
+                                            @elseif($cat->icon == 'chat-bubble-left-right')
+                                                <span class="material-symbols-outlined text-base">forum</span>
+                                            @elseif($cat->icon == 'photo')
+                                                <span class="material-symbols-outlined text-base">photo_library</span>
+                                            @elseif($cat->icon == 'sparkles')
+                                                <span class="material-symbols-outlined text-base">auto_awesome</span>
+                                            @elseif(\Illuminate\Support\Str::startsWith($cat->icon, 'fa'))
+                                                <i class="{{ $cat->icon }} text-xs"></i>
+                                            @else
+                                                <span class="material-symbols-outlined text-base">{{ $cat->icon ?: 'tag' }}</span>
+                                            @endif
+                                        </div>
+                                        <div class="text-left min-w-0">
+                                            <div class="font-bold text-slate-800 text-xs sm:text-sm truncate">{{ $cat->name }}</div>
+                                            @if($cat->description)
+                                                <div class="text-[10px] text-slate-400 font-medium truncate max-w-xs">{{ $cat->description }}</div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
                     @error('category_id')
                         <p class="text-xs text-rose-500 mt-1 font-bold ml-1">{{ $message }}</p>
@@ -540,11 +588,45 @@
         });
     }
 
-    // Category Change Preview Dynamic Sync
-    window.updatePreviewCategory = function(select) {
-        const option = select.options[select.selectedIndex];
-        const name = option.text.replace(/^[^\w]*/, '').trim(); // strip door emoji for breadcrumb
-        const slug = option.getAttribute('data-slug');
+    // Custom Category Dropdown Toggle & Selector
+    window.toggleCategoryDropdown = function() {
+        const options = document.getElementById('category-dropdown-options');
+        options.classList.toggle('hidden');
+    };
+
+    window.selectCategory = function(id, name, slug, icon) {
+        // Set value
+        document.getElementById('category_id').value = id;
+
+        // Set name
+        document.getElementById('selected-category-name').innerText = name;
+
+        // Set icon HTML
+        const iconDiv = document.getElementById('selected-category-icon');
+        let iconHtml = '';
+        if (icon.startsWith('http://') || icon.startsWith('https://') || icon.includes('/')) {
+            iconHtml = `<img src="${icon}" alt="" class="w-full h-full object-cover">`;
+        } else if (icon === 'chat-bubble-left-right') {
+            iconHtml = `<span class="material-symbols-outlined text-base">forum</span>`;
+        } else if (icon === 'photo') {
+            iconHtml = `<span class="material-symbols-outlined text-base">photo_library</span>`;
+        } else if (icon === 'sparkles') {
+            iconHtml = `<span class="material-symbols-outlined text-base">auto_awesome</span>`;
+        } else if (icon.startsWith('fa')) {
+            iconHtml = `<i class="${icon} text-xs"></i>`;
+        } else {
+            iconHtml = `<span class="material-symbols-outlined text-base">${icon || 'tag'}</span>`;
+        }
+        iconDiv.innerHTML = iconHtml;
+
+        // Sync preview text & breadcrumb
+        window.updatePreviewCategoryManual(name, slug);
+
+        // Hide options
+        document.getElementById('category-dropdown-options').classList.add('hidden');
+    };
+
+    window.updatePreviewCategoryManual = function(name, slug) {
         const url = `/categories/${slug}`;
 
         const breadcrumb = document.getElementById('breadcrumb-category');
@@ -562,6 +644,15 @@
             preview.innerText = name;
         }
     };
+
+    // Close options list if clicked outside
+    document.addEventListener('click', function(event) {
+        const trigger = document.getElementById('category-dropdown-trigger');
+        const options = document.getElementById('category-dropdown-options');
+        if (trigger && options && !trigger.contains(event.target) && !options.contains(event.target)) {
+            options.classList.add('hidden');
+        }
+    });
 
     function renderPreviewTags() {
         const previewTagsContainer = document.getElementById('preview-tags');
