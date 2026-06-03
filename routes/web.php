@@ -81,4 +81,8 @@ Route::get('/rankings', [\App\Http\Controllers\RankingController::class, 'index'
 // Rules & Guide Page
 Route::view('/rules', 'forum.rules')->name('rules');
 
+// Image proxy endpoints
+Route::get('/attachments/{attachment}', [\App\Http\Controllers\MediaProxyController::class, 'proxyAttachment'])->name('media.proxy.attachment');
+Route::get('/avatars/{user}', [\App\Http\Controllers\MediaProxyController::class, 'proxyAvatar'])->name('media.proxy.avatar');
+
 

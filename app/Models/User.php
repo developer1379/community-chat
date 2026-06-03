@@ -171,18 +171,7 @@ class User extends Authenticatable
      */
     public function getAvatarUrlAttribute(): string
     {
-        if ($this->avatar_path) {
-            return str_starts_with($this->avatar_path, 'http') 
-                ? $this->avatar_path 
-                : asset('storage/' . $this->avatar_path);
-        }
-
-        // Curated high-quality dynamic anime character seed options!
-        $animeSeeds = ['Luffy', 'Zoro', 'Nami', 'Goku', 'Naruto', 'Sasuke', 'Kakashi', 'Hinata', 'Deku', 'Bakugo', 'Saber', 'Asuka', 'Rei', 'Kirito', 'Asuna', 'Rem', 'Emilia'];
-        $hash = crc32($this->name);
-        $seed = $animeSeeds[abs($hash) % count($animeSeeds)];
-        
-        return "https://api.dicebear.com/7.x/adventurer/svg?seed=" . $seed;
+        return route('media.proxy.avatar', $this->id);
     }
 
     /**

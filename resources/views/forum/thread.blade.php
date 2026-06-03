@@ -143,8 +143,8 @@
                                     @foreach($post->attachments as $attach)
                                         <div class="relative group rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-300/40 dark:border-slate-800/60 shadow-sm">
                                             @if(str_starts_with($attach->file_type, 'image/') || preg_match('/\.(jpe?g|png|gif|webp|bmp)/i', $attach->file_path) || str_contains($attach->file_path, 'ibb.co') || str_contains($attach->file_path, 'imgbb'))
-                                                 <button onclick="openLightbox('{{ str_starts_with($attach->file_path, 'http') ? $attach->file_path : asset('storage/' . $attach->file_path) }}', '{{ $attach->file_name }}')" class="block w-full h-24 sm:h-28 overflow-hidden cursor-zoom-in text-left p-0 border-0 outline-none w-full">
-                                                     <img src="{{ str_starts_with($attach->file_path, 'http') ? $attach->file_path : asset('storage/' . $attach->file_path) }}" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-200" alt="attached image">
+                                                 <button onclick="openLightbox('{{ $attach->url }}', '{{ $attach->file_name }}')" class="block w-full h-24 sm:h-28 overflow-hidden cursor-zoom-in text-left p-0 border-0 outline-none w-full">
+                                                     <img src="{{ $attach->url }}" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-200" alt="attached image">
                                                  </button>
                                                 <!-- Media Tag Badge (e.g. GIF) -->
                                                 @if(str_contains($attach->file_name, '.gif') || str_contains($attach->file_type, 'gif'))
@@ -163,7 +163,7 @@
                                             <div class="bg-slate-200/60 dark:bg-slate-950/80 p-1.5 text-[8px] text-slate-500 dark:text-slate-400 border-t border-slate-300/30 dark:border-slate-800/40 flex items-center justify-between">
                                                 <span class="truncate pr-2 font-medium">{{ $attach->file_name }}</span>
                                                 @if(!str_starts_with($attach->file_type, 'image/'))
-                                                    <a href="{{ str_starts_with($attach->file_path, 'http') ? $attach->file_path : asset('storage/' . $attach->file_path) }}" download class="hover:text-slate-800 dark:hover:text-white transition-colors" title="Download">
+                                                    <a href="{{ $attach->url }}" download class="hover:text-slate-800 dark:hover:text-white transition-colors" title="Download">
                                                         <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                                                         </svg>

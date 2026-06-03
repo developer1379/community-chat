@@ -41,7 +41,7 @@
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none"></div>
 
                             <!-- Image -->
-                            <img src="{{ str_starts_with($attach->file_path, 'http') ? $attach->file_path : asset('storage/' . $attach->file_path) }}" class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300" alt="{{ $attach->file_name }}">
+                            <img src="{{ $attach->url }}" class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300" alt="{{ $attach->file_name }}">
 
                             <!-- GIF Badge -->
                             @if(str_contains($attach->file_name, '.gif') || str_contains($attach->file_type, 'gif'))
@@ -51,7 +51,7 @@
                             @endif
 
                             <!-- Quick Action: Zoom in Lightbox -->
-                            <button onclick="openLightbox('{{ str_starts_with($attach->file_path, 'http') ? $attach->file_path : asset('storage/' . $attach->file_path) }}', '{{ $attach->file_name }}')" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 text-slate-800 hover:bg-white flex items-center justify-center opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300 z-20 cursor-pointer shadow-md" title="Zoom Media">
+                            <button onclick="openLightbox('{{ $attach->url }}', '{{ $attach->file_name }}')" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 text-slate-800 hover:bg-white flex items-center justify-center opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 transition-all duration-300 z-20 cursor-pointer shadow-md" title="Zoom Media">
                                 <span class="material-symbols-outlined text-[20px] font-bold">zoom_in</span>
                             </button>
                         </div>

@@ -279,8 +279,8 @@
                                         @endif
                                     @endauth
 
-                                    <button onclick="openLightbox('{{ str_starts_with($attach->file_path, 'http') ? $attach->file_path : asset('storage/' . $attach->file_path) }}', '{{ $attach->file_name }}')" class="block w-full h-24 overflow-hidden cursor-zoom-in text-left p-0 border-0 outline-none w-full">
-                                        <img src="{{ str_starts_with($attach->file_path, 'http') ? $attach->file_path : asset('storage/' . $attach->file_path) }}" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-200" alt="uploaded media">
+                                    <button onclick="openLightbox('{{ $attach->url }}', '{{ $attach->file_name }}')" class="block w-full h-24 overflow-hidden cursor-zoom-in text-left p-0 border-0 outline-none w-full">
+                                        <img src="{{ $attach->url }}" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-200" alt="uploaded media">
                                     </button>
                                     <!-- Check if GIF -->
                                     @if(str_contains($attach->file_name, '.gif') || str_contains($attach->file_type, 'gif'))

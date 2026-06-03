@@ -50,4 +50,12 @@ class Attachment extends Model
     {
         return $this->belongsTo(Thread::class);
     }
+
+    /**
+     * Get the local proxy URL for the attachment.
+     */
+    public function getUrlAttribute(): string
+    {
+        return route('media.proxy.attachment', $this->id);
+    }
 }
