@@ -190,6 +190,14 @@ class User extends Authenticatable
         ];
     }
 
+    public function getCoinsAttribute($value): int
+    {
+        if ($this->isAdmin()) {
+            return 9999;
+        }
+        return (int) ($value ?? 0);
+    }
+
     /**
      * Get the user's avatar URL, falling back to a themed anime character avatar.
      */

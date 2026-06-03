@@ -87,9 +87,24 @@ profile
                         </span>
                     </div>
                     <div class="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 text-xs font-bold">
-                        <span class="material-symbols-outlined text-[14px]" style="color: {{ $tier['color'] }}">military_tech</span>
+                        <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: {{ $tier['color'] }}">
+                            <path d="M12 2L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 2Z" fill="currentColor" fill-opacity="0.2" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                            @if($level >= 20)
+                                <path d="M8 15L10 9L12 11.5L14 9L16 15H8Z" fill="currentColor"/>
+                                <circle cx="12" cy="7" r="1" fill="currentColor"/>
+                            @elseif($level >= 16)
+                                <path d="M12 7L13.5 10L16.8 10.5L14.4 12.8L15 16L12 14.5L9 16L9.6 12.8L7.2 10.5L10.5 10L12 7Z" fill="currentColor"/>
+                            @elseif($level >= 12)
+                                <path d="M10 9L11 11L13 11.3L11.5 12.7L12 14.7L10 13.7L8 14.7L8.5 12.7L7 11.3L9 11L10 9Z" fill="currentColor"/>
+                                <path d="M14 9L15 11L17 11.3L15.5 12.7L16 14.7L14 13.7L12 14.7L12.5 12.7L11 11.3L13 11L14 9Z" fill="currentColor"/>
+                            @elseif($level >= 8)
+                                <path d="M12 8L15 11L12 14L9 11L12 8Z" fill="currentColor"/>
+                            @else
+                                <circle cx="12" cy="12" r="3" fill="currentColor"/>
+                            @endif
+                        </svg>
                         <span style="color: {{ $tier['color'] }}">{{ $tier['name'] }}</span>
-                        <span class="text-[9px] px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 rounded text-slate-655 dark:text-slate-400 uppercase font-black tracking-wide">{{ $tier['badge'] }}</span>
+                        <span class="text-[9px] px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400 uppercase font-black tracking-wide">{{ $tier['badge'] }}</span>
                     </div>
                     <p class="text-xs text-slate-500 font-bold">Joined community on {{ $user->created_at->format('M d, Y') }}</p>
                 </div>
@@ -269,8 +284,9 @@ profile
                                     <!-- Avatar Upload -->
                                     <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-slate-50/50 hover:bg-slate-50 transition-all flex flex-col justify-center text-left">
                                         <label for="avatar" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4">Upload New Avatar</label>
-                                        <input type="file" id="avatar" name="avatar" class="block w-full text-xs text-slate-500 mt-2.5 file:mr-3 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                                    </                                    <!-- Banner Upload -->
+                                        <input type="file" id="avatar" name="avatar" class="block w-full text-xs text-slate-550 mt-2.5 file:mr-3 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                                    </div>
+                                    <!-- Banner Upload -->
                                     <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-slate-50/50 hover:bg-slate-50 transition-all flex flex-col justify-center text-left">
                                         <label for="banner" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
                                             Upload Cover Photo
@@ -317,7 +333,7 @@ profile
                                             <span class="text-[8px] text-amber-600 bg-amber-50 px-1 py-0.5 rounded font-black">🔒 SS (Lvl 12)</span>
                                         @endif
                                     </label>
-                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2.5 {{ ($tier['level'] < 12 && !$user->isAdmin()) ? 'opacity-50 pointer-events-none' : '' }}">ts-none' : '' }}">
+                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2.5 {{ ($tier['level'] < 12 && !$user->isAdmin()) ? 'opacity-50 pointer-events-none' : '' }}">
                                         <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all">
                                             <input type="radio" name="banner_color" value="linear-gradient(135deg, #6366f1, #a855f7)" {{ $user->banner_color === 'linear-gradient(135deg, #6366f1, #a855f7)' ? 'checked' : '' }} class="mr-2 text-blue-600 focus:ring-blue-500">
                                             <span class="w-6 h-6 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 shadow-inner"></span>
