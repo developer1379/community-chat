@@ -10,15 +10,42 @@
                 left: 1.5rem !important;
                 max-width: 1200px !important;
                 margin: auto !important;
-                border-radius: 1rem !important;
+                border-radius: 1.25rem !important;
+                flex-direction: row !important; /* Side-by-side split layout */
+            }
+
+            /* Hide standard global header in fullscreen mode */
+            #chat-drawer-container.chat-fullscreen > #chat-global-header {
+                display: none !important;
+            }
+
+            /* Force display both left sidebar & right chat pane side-by-side */
+            #chat-drawer-container.chat-fullscreen #chat-conversations-view {
+                display: flex !important;
+                width: 320px !important;
+                border-right: 1px solid #e2e8f0 !important;
+                flex-shrink: 0 !important;
+            }
+            .dark #chat-drawer-container.chat-fullscreen #chat-conversations-view {
+                border-right-color: #1e293b !important;
+            }
+
+            #chat-drawer-container.chat-fullscreen #chat-messages-view {
+                display: flex !important;
+                flex-grow: 1 !important;
+            }
+
+            /* Show local split headers only in fullscreen mode */
+            #chat-drawer-container.chat-fullscreen .chat-local-header {
+                display: flex !important;
             }
         }
     </style>
     <!-- sliding chat panel drawer -->
     <div id="chat-drawer-container" class="chat-drawer translate-x-full fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-96 sm:h-[500px] z-50 bg-white border border-slate-200 sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden pointer-events-auto dark:bg-slate-900 dark:border-slate-800">
         
-        <!-- Header area -->
-        <div class="px-4 py-3 bg-blue-600 text-white flex items-center justify-between shadow-sm flex-shrink-0">
+        <!-- Global Header area (Hidden in fullscreen desktop split layout) -->
+        <div id="chat-global-header" class="px-4 py-3 bg-blue-600 text-white flex items-center justify-between shadow-sm flex-shrink-0">
             <div class="flex items-center gap-2">
                 <!-- Back Button (shown only when in active conversation view) -->
                 <button id="chat-back-btn" onclick="showConversationsList()" class="hidden hover:bg-white/10 rounded-lg p-1 transition-colors cursor-pointer">
@@ -41,6 +68,14 @@
 
         <!-- Conversations List View -->
         <div id="chat-conversations-view" class="flex-grow flex flex-col overflow-hidden relative dark:bg-slate-900">
+            <!-- Local Sidebar Header (Visible only in fullscreen) -->
+            <div class="chat-local-header hidden px-4 py-3 bg-blue-600 text-white items-center justify-between flex-shrink-0">
+                <div class="leading-tight">
+                    <h3 class="font-bold text-xs">Direct Messages</h3>
+                    <p class="text-[9px] text-blue-100 font-medium">Conversations</p>
+                </div>
+            </div>
+
             <!-- Search bar to start new conversation -->
             <div class="p-3 border-b border-slate-100 bg-slate-50 flex flex-col gap-2 flex-shrink-0 relative dark:bg-slate-950/40 dark:border-slate-850">
                 <div class="flex items-center gap-2">
@@ -74,32 +109,62 @@
             </div>
         </div>
 
-        <!-- Thread Messages View (Hidden initially) -->
+        <!-- Thread Messages View (Hidden initially, but side-by-side in fullscreen mode) -->
         <div id="chat-messages-view" class="hidden flex-grow flex flex-col overflow-hidden bg-slate-50/50 dark:bg-slate-950/20">
+            <!-- Local Main Chat Header (Visible only in fullscreen) -->
+            <div class="chat-local-header hidden px-4 py-3 bg-blue-600 text-white items-center justify-between flex-shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="leading-tight">
+                        <h3 id="chat-main-title" class="font-bold text-xs">Select a conversation</h3>
+                        <p id="chat-main-subtitle" class="text-[9px] text-blue-100 font-medium">Offline</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button onclick="toggleChatFullscreen()" class="hover:bg-white/10 rounded-lg p-1 transition-colors cursor-pointer" title="Exit Fullscreen">
+                        <span class="material-symbols-outlined text-base">fullscreen_exit</span>
+                    </button>
+                    <button onclick="toggleChatDrawer()" class="hover:bg-white/10 rounded-lg p-1 transition-colors cursor-pointer" title="Close Panel">
+                        <span class="material-symbols-outlined text-base">close</span>
+                    </button>
+                </div>
+            </div>
+
             <!-- Loading Indicator -->
             <div id="chat-messages-loading" class="hidden absolute inset-0 bg-white/80 z-10 flex items-center justify-center dark:bg-slate-900/80">
                 <span class="animate-pulse text-xs font-bold text-blue-600 dark:text-blue-400">Retrieving messages...</span>
             </div>
 
-            <!-- Messages list -->
-            <div id="chat-messages-list" class="flex-grow overflow-y-auto p-4 space-y-3.5 custom-scrollbar">
-                <!-- Loaded dynamically by JS -->
+            <!-- No Conversation Selected Fallback Box -->
+            <div id="chat-no-conversation-selected" class="hidden flex-grow flex-col items-center justify-center text-center p-8 bg-slate-50/50 dark:bg-slate-950/20 select-none">
+                <div class="w-14 h-14 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500 mb-3 shadow-inner">
+                    <span class="material-symbols-outlined text-2xl">chat_bubble</span>
+                </div>
+                <h4 class="font-bold text-slate-700 dark:text-slate-350 text-xs">No Conversation Active</h4>
+                <p class="text-[10px] text-slate-400 dark:text-slate-500 max-w-[220px] mt-1 leading-normal">Choose a conversation from the sidebar list or search for a member name to start a new chat.</p>
             </div>
 
-            <!-- Input reply container -->
-            <div class="p-3 border-t border-slate-200/80 bg-white dark:border-slate-850 dark:bg-slate-900">
-                <form id="chat-send-form" onsubmit="handleSendSubmit(event)" class="flex items-center gap-2">
-                    <!-- Hidden file input for images/GIFs -->
-                    <input type="file" id="chat-file-input" class="hidden" accept="image/*" onchange="handleChatFileSelect(this)">
-                    <button type="button" onclick="document.getElementById('chat-file-input').click()" class="w-8.5 h-8.5 rounded-xl bg-slate-50 border border-slate-200/60 hover:bg-slate-100 hover:border-slate-350 text-slate-500 flex items-center justify-center cursor-pointer transition-all active:scale-95 flex-shrink-0 dark:bg-slate-950 dark:border-slate-800 dark:hover:bg-slate-850 dark:text-slate-400" title="Attach Image or GIF">
-                        <span class="material-symbols-outlined text-base">image</span>
-                    </button>
+            <!-- Chat Message Thread Content Wrapper -->
+            <div id="chat-messages-content" class="flex-grow flex flex-col overflow-hidden">
+                <!-- Messages list -->
+                <div id="chat-messages-list" class="flex-grow overflow-y-auto p-4 space-y-3.5 custom-scrollbar">
+                    <!-- Loaded dynamically by JS -->
+                </div>
 
-                    <input type="text" id="chat-message-input" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-slate-400 font-medium dark:bg-slate-950 dark:border-slate-800 dark:text-slate-100" placeholder="Type a message..." autocomplete="off">
-                    <button type="submit" class="w-8.5 h-8.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center cursor-pointer shadow-md shadow-blue-500/10 transition-transform active:scale-95 flex-shrink-0">
-                        <span class="material-symbols-outlined text-sm">send</span>
-                    </button>
-                </form>
+                <!-- Input reply container -->
+                <div class="p-3 border-t border-slate-200/80 bg-white dark:border-slate-850 dark:bg-slate-900 flex-shrink-0">
+                    <form id="chat-send-form" onsubmit="handleSendSubmit(event)" class="flex items-center gap-2">
+                        <!-- Hidden file input for images/GIFs -->
+                        <input type="file" id="chat-file-input" class="hidden" accept="image/*" onchange="handleChatFileSelect(this)">
+                        <button type="button" onclick="document.getElementById('chat-file-input').click()" class="w-8.5 h-8.5 rounded-xl bg-slate-50 border border-slate-200/60 hover:bg-slate-100 hover:border-slate-350 text-slate-500 flex items-center justify-center cursor-pointer transition-all active:scale-95 flex-shrink-0 dark:bg-slate-950 dark:border-slate-800 dark:hover:bg-slate-850 dark:text-slate-400" title="Attach Image or GIF">
+                            <span class="material-symbols-outlined text-base">image</span>
+                        </button>
+
+                        <input type="text" id="chat-message-input" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-slate-400 font-medium dark:bg-slate-950 dark:border-slate-800 dark:text-slate-100" placeholder="Type a message..." autocomplete="off">
+                        <button type="submit" class="w-8.5 h-8.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center cursor-pointer shadow-md shadow-blue-500/10 transition-transform active:scale-95 flex-shrink-0">
+                            <span class="material-symbols-outlined text-sm">send</span>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
 
@@ -125,6 +190,25 @@
                 drawer.classList.add('active');
                 loadConversations();
                 startChatPolling();
+
+                // If starting in fullscreen, configure layout states
+                if (drawer.classList.contains('chat-fullscreen')) {
+                    const noConv = document.getElementById('chat-no-conversation-selected');
+                    const msgContent = document.getElementById('chat-messages-content');
+                    if (activeConversationId) {
+                        if (noConv) {
+                            noConv.classList.add('hidden');
+                            noConv.classList.remove('sm:flex');
+                        }
+                        if (msgContent) msgContent.classList.remove('hidden');
+                    } else {
+                        if (noConv) {
+                            noConv.classList.remove('hidden');
+                            noConv.classList.add('sm:flex');
+                        }
+                        if (msgContent) msgContent.classList.add('hidden');
+                    }
+                }
             } else {
                 drawer.classList.add('translate-x-full');
                 drawer.classList.remove('active');
@@ -138,7 +222,7 @@
             }
         }
 
-        // Toggle fullscreen mode on desktop
+        // Toggle fullscreen mode on desktop (WhatsApp/Telegram split side-by-side mode)
         function toggleChatFullscreen() {
             const drawer = document.getElementById('chat-drawer-container');
             const icon = document.getElementById('chat-fullscreen-icon');
@@ -146,12 +230,46 @@
 
             drawer.classList.toggle('chat-fullscreen');
             
+            const noConv = document.getElementById('chat-no-conversation-selected');
+            const msgContent = document.getElementById('chat-messages-content');
+
             if (drawer.classList.contains('chat-fullscreen')) {
                 icon.innerText = 'fullscreen_exit';
                 icon.title = 'Exit Fullscreen';
+                
+                // Show side-by-side split layout: If conversation active show messages, otherwise show selection fallback
+                if (activeConversationId) {
+                    if (noConv) {
+                        noConv.classList.add('hidden');
+                        noConv.classList.remove('sm:flex');
+                    }
+                    if (msgContent) msgContent.classList.remove('hidden');
+                } else {
+                    if (noConv) {
+                        noConv.classList.remove('hidden');
+                        noConv.classList.add('sm:flex');
+                    }
+                    if (msgContent) msgContent.classList.add('hidden');
+                }
             } else {
                 icon.innerText = 'fullscreen';
                 icon.title = 'Toggle Fullscreen';
+                
+                // Normal compact single-column mode: Hide selection fallback
+                if (noConv) {
+                    noConv.classList.add('hidden');
+                    noConv.classList.remove('sm:flex');
+                }
+                if (msgContent) msgContent.classList.remove('hidden');
+
+                // Toggle views based on active state
+                if (activeConversationId) {
+                    document.getElementById('chat-conversations-view').classList.add('hidden');
+                    document.getElementById('chat-messages-view').classList.remove('hidden');
+                } else {
+                    document.getElementById('chat-conversations-view').classList.remove('hidden');
+                    document.getElementById('chat-messages-view').classList.add('hidden');
+                }
             }
             
             // Auto scroll messages to bottom on size change
@@ -473,19 +591,24 @@
         function updateChatHeaderPresence(partnerName) {
             if (!partnerName) return;
             const subtitle = document.getElementById('chat-subtitle');
-            if (!subtitle) return;
+            const mainSubtitle = document.getElementById('chat-main-subtitle');
+            if (!subtitle && !mainSubtitle) return;
             
             fetch(`/dms/user-card/${encodeURIComponent(partnerName)}`)
                 .then(r => r.json())
                 .then(data => {
+                    let html = '';
                     if (data.is_online) {
-                        subtitle.innerHTML = `<span class="flex items-center gap-1 text-[9px] text-emerald-500 font-bold"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Online</span>`;
+                        html = `<span class="flex items-center gap-1 text-[9px] text-emerald-500 font-bold"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Online</span>`;
                     } else {
-                        subtitle.innerHTML = `<span class="flex items-center gap-1 text-[9px] text-slate-400 font-bold"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> ${data.last_active}</span>`;
+                        html = `<span class="flex items-center gap-1 text-[9px] text-slate-400 font-bold"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> ${data.last_active}</span>`;
                     }
+                    if (subtitle) subtitle.innerHTML = html;
+                    if (mainSubtitle) mainSubtitle.innerHTML = html;
                 })
                 .catch(() => {
-                    subtitle.innerText = 'Offline';
+                    if (subtitle) subtitle.innerText = 'Offline';
+                    if (mainSubtitle) mainSubtitle.innerText = 'Offline';
                 });
         }
 
@@ -502,7 +625,22 @@
             // Set Header details
             document.getElementById('chat-title').innerText = partnerName;
             const subtitle = document.getElementById('chat-subtitle');
-            subtitle.innerHTML = `<span class="animate-pulse opacity-70">Connecting...</span>`;
+            if (subtitle) subtitle.innerHTML = `<span class="animate-pulse opacity-70">Connecting...</span>`;
+
+            // Set Local Fullscreen Header details
+            const mainTitle = document.getElementById('chat-main-title');
+            if (mainTitle) mainTitle.innerText = partnerName;
+            const mainSubtitle = document.getElementById('chat-main-subtitle');
+            if (mainSubtitle) mainSubtitle.innerHTML = `<span class="animate-pulse opacity-70">Connecting...</span>`;
+
+            // Handle panel displays for fullscreen side-by-side mode
+            const noConv = document.getElementById('chat-no-conversation-selected');
+            const msgContent = document.getElementById('chat-messages-content');
+            if (noConv) {
+                noConv.classList.add('hidden');
+                noConv.classList.remove('sm:flex');
+            }
+            if (msgContent) msgContent.classList.remove('hidden');
 
             // Instantly query presence details
             updateChatHeaderPresence(partnerName);
@@ -528,7 +666,23 @@
             document.getElementById('chat-back-btn').classList.add('hidden');
 
             document.getElementById('chat-title').innerText = 'Direct Messages';
-            document.getElementById('chat-subtitle').innerText = 'Conversations';
+            const subtitle = document.getElementById('chat-subtitle');
+            if (subtitle) subtitle.innerText = 'Conversations';
+
+            // Reset Local Fullscreen Header details
+            const mainTitle = document.getElementById('chat-main-title');
+            if (mainTitle) mainTitle.innerText = 'Select a conversation';
+            const mainSubtitle = document.getElementById('chat-main-subtitle');
+            if (mainSubtitle) mainSubtitle.innerText = 'Offline';
+
+            // Reset panel displays for fullscreen side-by-side mode
+            const noConv = document.getElementById('chat-no-conversation-selected');
+            const msgContent = document.getElementById('chat-messages-content');
+            if (noConv) {
+                noConv.classList.remove('hidden');
+                noConv.classList.add('sm:flex');
+            }
+            if (msgContent) msgContent.classList.add('hidden');
 
             loadConversations();
             checkUnreadBadge();
