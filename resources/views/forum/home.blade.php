@@ -318,6 +318,11 @@
 
                             </div>
 
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
             <!-- Latest and Viral Threads Grid Section -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 
