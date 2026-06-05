@@ -1,4 +1,19 @@
 @auth
+    <style>
+        @media (min-width: 640px) {
+            #chat-drawer-container.chat-fullscreen {
+                width: calc(100% - 3rem) !important;
+                height: calc(100% - 3rem) !important;
+                bottom: 1.5rem !important;
+                right: 1.5rem !important;
+                top: 1.5rem !important;
+                left: 1.5rem !important;
+                max-width: 1200px !important;
+                margin: auto !important;
+                border-radius: 1rem !important;
+            }
+        }
+    </style>
     <!-- sliding chat panel drawer -->
     <div id="chat-drawer-container" class="chat-drawer translate-x-full fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-96 sm:h-[500px] z-50 bg-white border border-slate-200 sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden pointer-events-auto dark:bg-slate-900 dark:border-slate-800">
         
@@ -15,6 +30,9 @@
                 </div>
             </div>
             <div class="flex items-center gap-1.5">
+                <button onclick="toggleChatFullscreen()" id="chat-fullscreen-btn" class="hidden sm:inline-flex hover:bg-white/10 rounded-lg p-1 transition-colors cursor-pointer" title="Toggle Fullscreen">
+                    <span class="material-symbols-outlined text-base" id="chat-fullscreen-icon">fullscreen</span>
+                </button>
                 <button onclick="toggleChatDrawer()" class="hover:bg-white/10 rounded-lg p-1 transition-colors cursor-pointer" title="Close Panel">
                     <span class="material-symbols-outlined text-base">close</span>
                 </button>
@@ -110,7 +128,38 @@
             } else {
                 drawer.classList.add('translate-x-full');
                 drawer.classList.remove('active');
+                drawer.classList.remove('chat-fullscreen');
+                const icon = document.getElementById('chat-fullscreen-icon');
+                if (icon) {
+                    icon.innerText = 'fullscreen';
+                    icon.title = 'Toggle Fullscreen';
+                }
                 stopChatPolling();
+            }
+        }
+
+        // Toggle fullscreen mode on desktop
+        function toggleChatFullscreen() {
+            const drawer = document.getElementById('chat-drawer-container');
+            const icon = document.getElementById('chat-fullscreen-icon');
+            if (!drawer || !icon) return;
+
+            drawer.classList.toggle('chat-fullscreen');
+            
+            if (drawer.classList.contains('chat-fullscreen')) {
+                icon.innerText = 'fullscreen_exit';
+                icon.title = 'Exit Fullscreen';
+            } else {
+                icon.innerText = 'fullscreen';
+                icon.title = 'Toggle Fullscreen';
+            }
+            
+            // Auto scroll messages to bottom on size change
+            const listContainer = document.getElementById('chat-messages-list');
+            if (listContainer) {
+                setTimeout(() => {
+                    listContainer.scrollTop = listContainer.scrollHeight;
+                }, 100);
             }
         }
 
