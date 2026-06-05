@@ -19,10 +19,10 @@
                 display: none !important;
             }
 
-            /* Force display both left sidebar & right chat pane side-by-side */
+            /* Force display both left sidebar & right chat pane side-by-side (30/70 Ratio) */
             #chat-drawer-container.chat-fullscreen #chat-conversations-view {
                 display: flex !important;
-                width: 320px !important;
+                width: 30% !important;
                 border-right: 1px solid #e2e8f0 !important;
                 flex-shrink: 0 !important;
             }
@@ -32,6 +32,7 @@
 
             #chat-drawer-container.chat-fullscreen #chat-messages-view {
                 display: flex !important;
+                width: 70% !important;
                 flex-grow: 1 !important;
             }
 
