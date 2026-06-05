@@ -42,241 +42,286 @@
         </a>
     </div>
 
-    <!-- Sleek Trending Carousel Banner -->
-    <!-- Sleek Trending Carousel Banner -->
-    <div class="relative rounded-3xl overflow-hidden border border-slate-200 bg-white h-64 sm:h-80 shadow-lg mb-10 group">
-        <!-- Slides Wrapper -->
-        <div id="carousel-wrapper" class="relative w-full h-full flex transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]" style="width: 300%;">
-            
-            <!-- Slide 1: General Discussion -->
-            <div class="w-full h-full relative flex-shrink-0 flex items-center p-8 sm:p-16">
-                <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80'); filter: brightness(0.4);"></div>
-                <div class="absolute inset-0 bg-gradient-to-r from-slate-900/90 to-slate-900/10"></div>
-                <div class="relative z-10 max-w-2xl text-left space-y-4">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-blue-500/20 backdrop-blur-md text-blue-300 border border-blue-400/30 uppercase tracking-widest shadow-sm">
-                        <span class="material-symbols-outlined text-sm animate-pulse text-blue-400">local_fire_department</span> Trending Topic
-                    </span>
-                    <h2 class="text-3xl sm:text-5xl font-black text-white leading-tight drop-shadow-md">
-                        Building Future Community Hubs with High-End Aesthetics
-                    </h2>
-                    <p class="text-sm sm:text-lg text-slate-200 line-clamp-2 font-medium max-w-xl">
-                        Discover the ultimate blueprints for creating blazingly fast forum engines with sleek glassmorphism, HSL tailormade colors, and advanced caching layers.
-                    </p>
-                    <div class="pt-4">
-                        <a href="{{ route('categories.show', 'general-discussion') }}" class="inline-flex items-center gap-2 text-sm font-bold text-slate-900 bg-white hover:bg-blue-50 hover:scale-105 transition-all duration-300 px-6 py-3 rounded-2xl shadow-xl">
-                            Explore Board <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 2: GIF Showroom -->
-            <div class="w-full h-full relative flex-shrink-0 flex items-center p-8 sm:p-16">
-                <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80'); filter: brightness(0.4);"></div>
-                <div class="absolute inset-0 bg-gradient-to-r from-slate-900/90 to-slate-900/10"></div>
-                <div class="relative z-10 max-w-2xl text-left space-y-4">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-pink-500/20 backdrop-blur-md text-pink-300 border border-pink-400/30 uppercase tracking-widest shadow-sm">
-                        <span class="material-symbols-outlined text-sm text-pink-400">movie</span> Media Gallery
-                    </span>
-                    <h2 class="text-3xl sm:text-5xl font-black text-white leading-tight drop-shadow-md">
-                        Upload Your Custom Imagery & Animated GIFs
-                    </h2>
-                    <p class="text-sm sm:text-lg text-slate-200 line-clamp-2 font-medium max-w-xl">
-                        Check out the hottest animated reactions and WebP showroom. Integrated directly with ImgBB cloud storage for instant delivery.
-                    </p>
-                    <div class="pt-4">
-                        <a href="{{ route('categories.show', 'images-and-gifs') }}" class="inline-flex items-center gap-2 text-sm font-bold text-slate-900 bg-white hover:bg-pink-50 hover:scale-105 transition-all duration-300 px-6 py-3 rounded-2xl shadow-xl">
-                            View Showroom <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 3: Web Dev Theme Showcase -->
-            <div class="w-full h-full relative flex-shrink-0 flex items-center p-8 sm:p-16">
-                <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80'); filter: brightness(0.4);"></div>
-                <div class="absolute inset-0 bg-gradient-to-r from-slate-900/90 to-slate-900/10"></div>
-                <div class="relative z-10 max-w-2xl text-left space-y-4">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-purple-500/20 backdrop-blur-md text-purple-300 border border-purple-400/30 uppercase tracking-widest shadow-sm">
-                        <span class="material-symbols-outlined text-sm text-purple-400">magic_button</span> Theme Showcase
-                    </span>
-                    <h2 class="text-3xl sm:text-5xl font-black text-white leading-tight drop-shadow-md">
-                        Modern TailwindCSS v4 Browser Dynamic Engines
-                    </h2>
-                    <p class="text-sm sm:text-lg text-slate-200 line-clamp-2 font-medium max-w-xl">
-                        Who needs complex asset builders? Leverage standard browser engines to render beautiful dynamic variables with zero server lag.
-                    </p>
-                    <div class="pt-4">
-                        <a href="{{ route('categories.show', 'web-dev-styles') }}" class="inline-flex items-center gap-2 text-sm font-bold text-slate-900 bg-white hover:bg-purple-50 hover:scale-105 transition-all duration-300 px-6 py-3 rounded-2xl shadow-xl">
-                            View Showcases <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
+    <!-- Header App Bar Area -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 text-left">
+        <div>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">{{ config('app.name', 'XenProfessional') }}</h1>
         </div>
-
-        <!-- Next/Prev Chevron Buttons -->
-        <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-slate-950/40 hover:bg-slate-950/70 backdrop-blur-sm border border-white/20 text-white flex items-center justify-center transition-all z-20 cursor-pointer shadow-md hover:scale-105">
-            <span class="material-symbols-outlined text-base font-bold">chevron_left</span>
-        </button>
-        <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-slate-950/40 hover:bg-slate-950/70 backdrop-blur-sm border border-white/20 text-white flex items-center justify-center transition-all z-20 cursor-pointer shadow-md hover:scale-105">
-            <span class="material-symbols-outlined text-base font-bold">chevron_right</span>
-        </button>
-
-        <!-- Slide Indicators -->
-        <div class="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
-            <span onclick="setSlide(0)" class="carousel-dot w-2 h-2 rounded-full bg-white/40 cursor-pointer hover:bg-white transition-all"></span>
-            <span onclick="setSlide(1)" class="carousel-dot w-2 h-2 rounded-full bg-white/40 cursor-pointer hover:bg-white transition-all"></span>
-            <span onclick="setSlide(2)" class="carousel-dot w-2 h-2 rounded-full bg-white/40 cursor-pointer hover:bg-white transition-all"></span>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('home') }}?tab=latest" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all">
+                <span class="material-symbols-outlined text-[16px]">bolt</span> New posts
+            </a>
+            <a href="{{ route('categories.show', 'general-discussion') }}/create" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-xs shadow-md transition-all">
+                <span class="material-symbols-outlined text-[16px]">edit</span> Post thread...
+            </a>
         </div>
     </div>
 
-    <!-- Forum Grid Layout -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Forum Categories List (Left - 8 Cols) -->
-        <div class="lg:col-span-8 space-y-6">
-            @if(isset($featuredThreads) && $featuredThreads->isNotEmpty())
-                <div class="bg-gradient-to-r from-amber-500/10 via-yellow-550/5 to-amber-500/10 border border-amber-250 dark:border-amber-900/30 rounded-[2rem] p-6 shadow-sm mb-6 text-left">
-                    <h3 class="text-xs font-black text-amber-600 dark:text-amber-400 uppercase tracking-[0.2em] flex items-center gap-2 mb-4">
-                        <span class="material-symbols-outlined text-sm text-amber-500">star</span> Featured Discussions
-                    </h3>
-                    <div class="grid grid-cols-1 gap-3">
-                        @foreach($featuredThreads as $thread)
-                            <a href="{{ route('threads.show', $thread->slug) }}" class="flex items-center justify-between gap-4 p-4 bg-white/80 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-900 rounded-2xl border border-amber-100 dark:border-amber-900/30 hover:border-amber-300 hover:shadow-md transition-all">
-                                <div class="flex items-center gap-3 min-w-0">
-                                    <div class="w-8 h-8 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0">
-                                        <img src="{{ $thread->user->avatar_url }}" class="w-full h-full object-cover">
+    <!-- Featured Threads Section (Slider Interface) -->
+    @if(isset($featuredThreads) && $featuredThreads->isNotEmpty())
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-md text-left mb-8 relative group/slider">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xs font-black text-slate-700 dark:text-slate-350 uppercase tracking-[0.2em] flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm text-blue-600 dark:text-blue-400">star</span> Featured Threads
+                </h2>
+                <!-- Slider controls navigation buttons -->
+                <div class="flex items-center gap-2">
+                    <button onclick="prevSlide()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 flex items-center justify-center border border-slate-200/50 dark:border-slate-700/50 shadow-sm transition-all focus:outline-none">
+                        <span class="material-symbols-outlined text-base">chevron_left</span>
+                    </button>
+                    <button onclick="nextSlide()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 flex items-center justify-center border border-slate-200/50 dark:border-slate-700/50 shadow-sm transition-all focus:outline-none">
+                        <span class="material-symbols-outlined text-base">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Slider Viewport Window -->
+            <div class="overflow-hidden w-full rounded-2xl">
+                <div id="featured-slider" class="flex transition-transform duration-500 ease-out gap-5">
+                    @foreach($featuredThreads as $thread)
+                        @php
+                            $firstAttachment = \App\Models\Attachment::where('thread_id', $thread->id)->first();
+                            $previewUrl = $firstAttachment ? $firstAttachment->file_path : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80';
+                            $repliesCount = $thread->posts->count();
+                        @endphp
+                        <div class="flex-none w-full md:w-[calc(33.333%-14px)] flex flex-col rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 group hover:shadow-lg transition-all duration-300">
+                            <div class="h-40 w-full relative overflow-hidden bg-slate-200 dark:bg-slate-900">
+                                <img src="{{ $previewUrl }}" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500" alt="">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div>
+                                
+                                <!-- Overlay Info -->
+                                <div class="absolute inset-x-0 bottom-0 p-3 flex items-center justify-between text-white">
+                                    <div class="flex items-center gap-1.5 min-w-0">
+                                        <a href="{{ route('profile.show', $thread->user->name) }}"
+                                           data-user-hover="true"
+                                           data-user-name="{{ $thread->user->name }}"
+                                           data-user-badge="{{ $thread->user->title_badge }}"
+                                           data-user-joined="{{ $thread->user->created_at->format('M d, Y') }}"
+                                           data-user-threads="{{ $thread->user->threads()->count() }}"
+                                           data-user-posts="{{ $thread->user->posts()->count() }}"
+                                           data-user-uploads="{{ $thread->user->attachments()->count() }}"
+                                           data-user-avatar="{{ $thread->user->avatar_url }}"
+                                           data-user-banner="{{ $thread->user->banner_color }}"
+                                           data-user-banner-path="{{ $thread->user->banner_path }}"
+                                           class="w-6 h-6 rounded-full overflow-hidden border border-white/20 flex-shrink-0 block hover:scale-105 transition-transform">
+                                            <img src="{{ $thread->user->avatar_url }}" class="w-full h-full object-cover">
+                                        </a>
+                                        <a href="{{ route('profile.show', $thread->user->name) }}"
+                                           data-user-hover="true"
+                                           data-user-name="{{ $thread->user->name }}"
+                                           data-user-badge="{{ $thread->user->title_badge }}"
+                                           data-user-joined="{{ $thread->user->created_at->format('M d, Y') }}"
+                                           data-user-threads="{{ $thread->user->threads()->count() }}"
+                                           data-user-posts="{{ $thread->user->posts()->count() }}"
+                                           data-user-uploads="{{ $thread->user->attachments()->count() }}"
+                                           data-user-avatar="{{ $thread->user->avatar_url }}"
+                                           data-user-banner="{{ $thread->user->banner_color }}"
+                                           data-user-banner-path="{{ $thread->user->banner_path }}"
+                                           class="text-[9px] font-bold truncate hover:underline">{{ $thread->user->name }}</a>
                                     </div>
-                                    <div class="min-w-0 text-left">
-                                        <h4 class="font-extrabold text-slate-900 dark:text-white text-sm truncate flex items-center gap-1.5">
-                                            {{ $thread->title }}
-                                            <span class="px-2 py-0.5 text-[8px] font-black uppercase rounded bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-450 tracking-wider">FEATURED</span>
-                                        </h4>
-                                        <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-0.5">by {{ $thread->user->name }} • {{ $thread->category->name }} • {{ $thread->views_count }} views</p>
+                                    <div class="flex items-center gap-2 text-[8px] font-bold opacity-90">
+                                        <span>💬 {{ $repliesCount }}</span>
+                                        <span>👁️ {{ $thread->views_count }}</span>
                                     </div>
                                 </div>
-                                <span class="material-symbols-outlined text-slate-400 text-[18px]">arrow_forward</span>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-            @endif
-
-            <!-- Unified Community Boards Card -->
-    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-md overflow-hidden text-left mb-8">
-        <!-- Section Header -->
-        <div class="bg-slate-50 dark:bg-slate-950/40 px-6 py-4 border-b border-slate-200 dark:border-slate-800">
-            <h2 class="text-xs font-black text-slate-700 dark:text-slate-350 uppercase tracking-[0.2em] flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm text-blue-600 dark:text-blue-400">forum</span> Discussion Boards
-            </h2>
-            <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Browse and participate in our professional coding, design, and media showcase categories.</p>
-        </div>
-
-        <!-- Categories Table Grid -->
-        <div class="divide-y divide-slate-100 dark:divide-slate-800">
-            @foreach($categories as $category)
-                @php
-                    // Count threads
-                    $threadsCount = $category->threads->count();
-                    // Count total posts (each thread represents 1 post, plus replies count)
-                    $postsCount = 0;
-                    foreach($category->threads as $t) {
-                        $postsCount += 1 + $t->posts->count();
-                    }
-                    
-                    // Format stats counts
-                    $fmtThreads = $threadsCount >= 1000 ? number_format($threadsCount / 1000, 1) . 'K' : $threadsCount;
-                    $fmtPosts = $postsCount >= 1000 ? number_format($postsCount / 1000, 1) . 'K' : $postsCount;
-                    
-                    // Find latest thread based on last update
-                    $latestThread = $category->threads->sortByDesc('updated_at')->first();
-                    $lastPostUser = null;
-                    $lastPostTime = null;
-                    if ($latestThread) {
-                        $lastPost = $latestThread->posts->sortByDesc('created_at')->first();
-                        if ($lastPost) {
-                            $lastPostUser = $lastPost->user;
-                            $lastPostTime = $lastPost->created_at->diffForHumans();
-                        } else {
-                            $lastPostUser = $latestThread->user;
-                            $lastPostTime = $latestThread->created_at->diffForHumans();
-                        }
-                    }
-                @endphp
-                
-                <div class="px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50/50 dark:hover:bg-slate-950/20 transition-all">
-                    
-                    <!-- Left: Icon & Category details -->
-                    <div class="flex items-start gap-4 flex-grow min-w-0 md:max-w-[50%]">
-                        <!-- Category Icon -->
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30 shadow-sm flex-shrink-0 overflow-hidden mt-0.5">
-                            @if(\Illuminate\Support\Str::startsWith($category->icon, ['http://', 'https://']) || \Illuminate\Support\Str::contains($category->icon, '/'))
-                                <img src="{{ $category->icon }}" alt="{{ $category->name }}" class="w-full h-full object-cover">
-                            @elseif($category->icon == 'chat-bubble-left-right')
-                                <span class="material-symbols-outlined text-xl">forum</span>
-                            @elseif($category->icon == 'photo')
-                                <span class="material-symbols-outlined text-xl">photo_library</span>
-                            @elseif($category->icon == 'sparkles')
-                                <span class="material-symbols-outlined text-xl">auto_awesome</span>
-                            @elseif(\Illuminate\Support\Str::startsWith($category->icon, 'fa'))
-                                <i class="{{ $category->icon }} text-base"></i>
-                            @else
-                                <span class="material-symbols-outlined text-xl">{{ $category->icon ?: 'tag' }}</span>
-                            @endif
-                        </div>
-                        <!-- Name & description -->
-                        <div class="min-w-0 leading-tight space-y-1">
-                            <h3 class="font-extrabold text-slate-900 dark:text-white text-sm sm:text-base hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate">
-                                <a href="{{ route('categories.show', $category->slug) }}">{{ $category->name }}</a>
-                            </h3>
-                            <p class="text-xs text-slate-450 dark:text-slate-400 font-medium line-clamp-1 leading-normal">{{ $category->description }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Right side: stats & last action (Only visible on MD grids and larger) -->
-                    <div class="flex items-center gap-6 sm:gap-10 md:gap-14 flex-shrink-0 justify-between md:justify-end">
-                        
-                        <!-- Stats: Threads & Posts -->
-                        <div class="flex items-center gap-6 sm:gap-10">
-                            <div class="text-center w-12 flex-shrink-0">
-                                <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">Threads</span>
-                                <span class="text-xs font-black text-slate-700 dark:text-slate-350 mt-0.5 block">{{ $fmtThreads }}</span>
                             </div>
-                            <div class="text-center w-12 flex-shrink-0">
-                                <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">Posts</span>
-                                <span class="text-xs font-black text-slate-700 dark:text-slate-350 mt-0.5 block">{{ $fmtPosts }}</span>
-                            </div>
-                        </div>
-
-                        <!-- Last Post Activity -->
-                        <div class="w-48 text-left flex items-center gap-2.5 min-w-0">
-                            @if($latestThread && $lastPostUser)
-                                <!-- Last Post User Avatar -->
-                                <a href="{{ route('profile.show', $lastPostUser->name) }}" class="w-8 h-8 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 shadow-sm block">
-                                    <img src="{{ $lastPostUser->avatar_url }}" class="w-full h-full object-cover">
-                                </a>
-                                <div class="min-w-0 leading-none">
-                                    <!-- Latest thread title link -->
-                                    <a href="{{ route('threads.show', $latestThread->slug) }}" class="text-xs font-extrabold text-slate-750 dark:text-slate-350 hover:text-blue-600 dark:hover:text-blue-400 truncate block max-w-[130px] sm:max-w-[160px] tracking-tight leading-normal" title="{{ $latestThread->title }}">
-                                        {{ $latestThread->title }}
-                                    </a>
-                                    <!-- Timestamp & User -->
-                                    <span class="text-[9px] text-slate-400 dark:text-slate-500 font-bold block mt-0.5 leading-normal">
-                                        {{ $lastPostTime }} • <a href="{{ route('profile.show', $lastPostUser->name) }}" class="hover:underline font-extrabold text-slate-500 dark:text-slate-400">{{ $lastPostUser->name }}</a>
+                            <div class="p-3.5 flex-grow flex flex-col justify-between space-y-2 text-left">
+                                <div class="space-y-1">
+                                    <span class="inline-block text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-450 border border-blue-200/40 dark:border-blue-900/30">
+                                        {{ $thread->category->name }}
                                     </span>
+                                    <h3 class="font-extrabold text-slate-900 dark:text-white text-xs sm:text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 leading-snug">
+                                        <a href="{{ route('threads.show', $thread->slug) }}">{{ $thread->title }}</a>
+                                    </h3>
                                 </div>
-                            @else
-                                <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium tracking-tight">No activity yet</span>
-                            @endif
+                                <span class="text-[9px] text-slate-400 dark:text-slate-500 font-bold block">{{ $thread->created_at->diffForHumans() }}</span>
+                            </div>
                         </div>
-
-                    </div>
-
+                    @endforeach
                 </div>
-            @endforeach
+            </div>
         </div>
-    </div>
+
+        <script>
+            let currentOffset = 0;
+            function getSlideWidth() {
+                const slider = document.getElementById('featured-slider');
+                if (!slider || !slider.firstElementChild) return 0;
+                return slider.firstElementChild.offsetWidth + 20; // width + gap
+            }
+            function getMaxOffset() {
+                const slider = document.getElementById('featured-slider');
+                if (!slider) return 0;
+                const totalWidth = slider.scrollWidth;
+                const viewportWidth = slider.parentElement.offsetWidth;
+                return Math.max(0, totalWidth - viewportWidth);
+            }
+            function nextSlide() {
+                const slider = document.getElementById('featured-slider');
+                const max = getMaxOffset();
+                currentOffset += getSlideWidth();
+                if (currentOffset > max) {
+                    currentOffset = 0; // Wrap around to start
+                }
+                slider.style.transform = `translateX(-${currentOffset}px)`;
+            }
+            function prevSlide() {
+                const slider = document.getElementById('featured-slider');
+                const max = getMaxOffset();
+                currentOffset -= getSlideWidth();
+                if (currentOffset < 0) {
+                    currentOffset = Math.floor(max / getSlideWidth()) * getSlideWidth(); // Wrap around to end
+                }
+                slider.style.transform = `translateX(-${currentOffset}px)`;
+            }
+            // Auto slide every 8 seconds
+            setInterval(() => {
+                nextSlide();
+            }, 8000);
+        </script>
+    @endif
+
+    <!-- Grid Layout Container for Boards and Sidebar -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Main Boards Column (8 Cols) -->
+        <div class="lg:col-span-8 space-y-6">
+            <!-- Unified Community Boards Card -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-md overflow-hidden text-left mb-8">
+                <!-- Section Header -->
+                <div class="bg-slate-50 dark:bg-slate-950/40 px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+                    <h2 class="text-xs font-black text-slate-700 dark:text-slate-350 uppercase tracking-[0.2em] flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-blue-600 dark:text-blue-400">forum</span> Discussion Boards
+                    </h2>
+                    <p class="text-[10px] sm:text-xs text-slate-400 mt-1">Browse and participate in our professional coding, design, and media showcase categories.</p>
+                </div>
+
+                <!-- Categories Table Grid -->
+                <div class="divide-y divide-slate-100 dark:divide-slate-800">
+                    @foreach($categories as $category)
+                        @php
+                            // Count threads
+                            $threadsCount = $category->threads->count();
+                            // Count total posts (each thread represents 1 post, plus replies count)
+                            $postsCount = 0;
+                            foreach($category->threads as $t) {
+                                $postsCount += 1 + $t->posts->count();
+                            }
+                            
+                            // Format stats counts
+                            $fmtThreads = $threadsCount >= 1000 ? number_format($threadsCount / 1000, 1) . 'K' : $threadsCount;
+                            $fmtPosts = $postsCount >= 1000 ? number_format($postsCount / 1000, 1) . 'K' : $postsCount;
+                            
+                            // Find latest thread based on last update
+                            $latestThread = $category->threads->sortByDesc('updated_at')->first();
+                            $lastPostUser = null;
+                            $lastPostTime = null;
+                            if ($latestThread) {
+                                $lastPost = $latestThread->posts->sortByDesc('created_at')->first();
+                                if ($lastPost) {
+                                    $lastPostUser = $lastPost->user;
+                                    $lastPostTime = $lastPost->created_at->diffForHumans();
+                                } else {
+                                    $lastPostUser = $latestThread->user;
+                                    $lastPostTime = $latestThread->created_at->diffForHumans();
+                                }
+                            }
+                        @endphp
+                        
+                        <div class="px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50/50 dark:hover:bg-slate-950/20 transition-all">
+                            
+                            <!-- Left: Icon & Category details -->
+                            <div class="flex items-start gap-4 flex-grow min-w-0 md:max-w-[50%]">
+                                <!-- Category Icon -->
+                                <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30 shadow-sm flex-shrink-0 overflow-hidden mt-0.5">
+                                    @if(\Illuminate\Support\Str::startsWith($category->icon, ['http://', 'https://']) || \Illuminate\Support\Str::contains($category->icon, '/'))
+                                        <img src="{{ $category->icon }}" alt="{{ $category->name }}" class="w-full h-full object-cover">
+                                    @elseif($category->icon == 'chat-bubble-left-right')
+                                        <span class="material-symbols-outlined text-xl">forum</span>
+                                    @elseif($category->icon == 'photo')
+                                        <span class="material-symbols-outlined text-xl">photo_library</span>
+                                    @elseif($category->icon == 'sparkles')
+                                        <span class="material-symbols-outlined text-xl">auto_awesome</span>
+                                    @elseif(\Illuminate\Support\Str::startsWith($category->icon, 'fa'))
+                                        <i class="{{ $category->icon }} text-base"></i>
+                                    @else
+                                        <span class="material-symbols-outlined text-xl">{{ $category->icon ?: 'tag' }}</span>
+                                    @endif
+                                </div>
+                                <!-- Name & description -->
+                                <div class="min-w-0 leading-tight space-y-1">
+                                    <h3 class="font-extrabold text-slate-900 dark:text-white text-sm sm:text-base hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate">
+                                        <a href="{{ route('categories.show', $category->slug) }}">{{ $category->name }}</a>
+                                    </h3>
+                                    <p class="text-xs text-slate-450 dark:text-slate-400 font-medium line-clamp-1 leading-normal">{{ $category->description }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Right side: stats & last action (Only visible on MD grids and larger) -->
+                            <div class="flex items-center gap-6 sm:gap-10 md:gap-14 flex-shrink-0 justify-between md:justify-end">
+                                
+                                <!-- Stats: Threads & Posts -->
+                                <div class="flex items-center gap-6 sm:gap-10">
+                                    <div class="text-center w-12 flex-shrink-0">
+                                        <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">Threads</span>
+                                        <span class="text-xs font-black text-slate-700 dark:text-slate-350 mt-0.5 block">{{ $fmtThreads }}</span>
+                                    </div>
+                                    <div class="text-center w-12 flex-shrink-0">
+                                        <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">Posts</span>
+                                        <span class="text-xs font-black text-slate-700 dark:text-slate-350 mt-0.5 block">{{ $fmtPosts }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Last Post Activity -->
+                                <div class="w-48 text-left flex items-center gap-2.5 min-w-0">
+                                    @if($latestThread && $lastPostUser)
+                                        <!-- Last Post User Avatar -->
+                                        <a href="{{ route('profile.show', $lastPostUser->name) }}" 
+                                           data-user-hover="true" 
+                                           data-user-name="{{ $lastPostUser->name }}" 
+                                           data-user-badge="{{ $lastPostUser->title_badge }}" 
+                                           data-user-joined="{{ $lastPostUser->created_at->format('M d, Y') }}" 
+                                           data-user-threads="{{ $lastPostUser->threads()->count() }}" 
+                                           data-user-posts="{{ $lastPostUser->posts()->count() }}" 
+                                           data-user-uploads="{{ $lastPostUser->attachments()->count() }}" 
+                                           data-user-avatar="{{ $lastPostUser->avatar_url }}" 
+                                           data-user-banner="{{ $lastPostUser->banner_color }}"
+                                           data-user-banner-path="{{ $lastPostUser->banner_path }}"
+                                           class="w-8 h-8 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 shadow-sm block hover:shadow transition-shadow">
+                                            <img src="{{ $lastPostUser->avatar_url }}" class="w-full h-full object-cover">
+                                        </a>
+                                        <div class="min-w-0 leading-none">
+                                            <!-- Latest thread title link -->
+                                            <a href="{{ route('threads.show', $latestThread->slug) }}" class="text-xs font-extrabold text-slate-750 dark:text-slate-350 hover:text-blue-600 dark:hover:text-blue-400 truncate block max-w-[130px] sm:max-w-[160px] tracking-tight leading-normal" title="{{ $latestThread->title }}">
+                                                {{ $latestThread->title }}
+                                            </a>
+                                            <!-- Timestamp & User -->
+                                            <span class="text-[9px] text-slate-400 dark:text-slate-500 font-bold block mt-0.5 leading-normal">
+                                                {{ $lastPostTime }} • <a href="{{ route('profile.show', $lastPostUser->name) }}" 
+                                                                       data-user-hover="true" 
+                                                                       data-user-name="{{ $lastPostUser->name }}" 
+                                                                       data-user-badge="{{ $lastPostUser->title_badge }}" 
+                                                                       data-user-joined="{{ $lastPostUser->created_at->format('M d, Y') }}" 
+                                                                       data-user-threads="{{ $lastPostUser->threads()->count() }}" 
+                                                                       data-user-posts="{{ $lastPostUser->posts()->count() }}" 
+                                                                       data-user-uploads="{{ $lastPostUser->attachments()->count() }}" 
+                                                                       data-user-avatar="{{ $lastPostUser->avatar_url }}" 
+                                                                       data-user-banner="{{ $lastPostUser->banner_color }}"
+                                                                       data-user-banner-path="{{ $lastPostUser->banner_path }}"
+                                                                       class="hover:underline font-extrabold text-slate-550 dark:text-slate-450">{{ $lastPostUser->name }}</a>
+                                            </span>
+                                        </div>
+                                    @else
+                                        <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium tracking-tight">No activity yet</span>
+                                    @endif
+                                </div>
+
+                            </div>
+
+                        </div>
+                    @endforeach
+                </div>
+            </div>
         </div>
 
         <!-- Sidebar Section (Right - 4 Cols) -->
@@ -291,14 +336,36 @@
                     
                     <div class="px-5 pb-5 pt-3 relative">
                         <!-- User Avatar overlay -->
-                        <div class="absolute -top-10 left-4 w-16 h-16 rounded-2xl overflow-hidden border-4 border-white dark:border-slate-900 shadow-md bg-white">
+                        <a href="{{ route('profile.show', auth()->user()->name) }}" 
+                           data-user-hover="true" 
+                           data-user-name="{{ auth()->user()->name }}" 
+                           data-user-badge="{{ auth()->user()->title_badge }}" 
+                           data-user-joined="{{ auth()->user()->created_at->format('M d, Y') }}" 
+                           data-user-threads="{{ auth()->user()->threads()->count() }}" 
+                           data-user-posts="{{ auth()->user()->posts()->count() }}" 
+                           data-user-uploads="{{ auth()->user()->attachments()->count() }}" 
+                           data-user-avatar="{{ auth()->user()->avatar_url }}" 
+                           data-user-banner="{{ auth()->user()->banner_color }}"
+                           data-user-banner-path="{{ auth()->user()->banner_path }}"
+                           class="absolute -top-10 left-4 w-16 h-16 rounded-2xl overflow-hidden border-4 border-white dark:border-slate-900 shadow-md bg-white block hover:shadow transition-shadow">
                             <img src="{{ auth()->user()->avatar_url }}" class="w-full h-full object-cover">
-                        </div>
+                        </a>
                         
                         <!-- User Name and Badges -->
                         <div class="pl-20 min-h-[40px] flex flex-col justify-center">
                             <h3 class="font-extrabold text-slate-900 dark:text-white text-sm sm:text-base leading-tight truncate">
-                                <a href="{{ route('profile.show', auth()->user()->name) }}" class="hover:underline">{{ auth()->user()->name }}</a>
+                                <a href="{{ route('profile.show', auth()->user()->name) }}" 
+                                   data-user-hover="true" 
+                                   data-user-name="{{ auth()->user()->name }}" 
+                                   data-user-badge="{{ auth()->user()->title_badge }}" 
+                                   data-user-joined="{{ auth()->user()->created_at->format('M d, Y') }}" 
+                                   data-user-threads="{{ auth()->user()->threads()->count() }}" 
+                                   data-user-posts="{{ auth()->user()->posts()->count() }}" 
+                                   data-user-uploads="{{ auth()->user()->attachments()->count() }}" 
+                                   data-user-avatar="{{ auth()->user()->avatar_url }}" 
+                                   data-user-banner="{{ auth()->user()->banner_color }}"
+                                   data-user-banner-path="{{ auth()->user()->banner_path }}"
+                                   class="hover:underline">{{ auth()->user()->name }}</a>
                             </h3>
                             @php $tier = auth()->user()->computed_anime_tier; @endphp
                             <div class="flex items-center gap-1.5 mt-0.5">
@@ -379,21 +446,21 @@
             </div>
 
             <!-- Dynamic Community Stats Card -->
-            <div class="border border-slate-200 p-5 bg-white rounded-2xl shadow-sm text-left">
+            <div class="border border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-slate-900 rounded-2xl shadow-sm text-left">
                 <h3 class="text-sm font-extrabold tracking-wider text-slate-500 uppercase mb-4 flex items-center gap-1.5">
                     <span class="material-symbols-outlined text-blue-600 text-sm">equalizer</span> Forum Stats
                 </h3>
                 <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-slate-50 p-3 border border-slate-200 text-center rounded-2xl">
-                        <span class="block text-2xl font-extrabold text-slate-900 tracking-tight">{{ $stats['threads_count'] }}</span>
-                        <span class="text-xs font-bold text-slate-450 tracking-wider uppercase">Threads</span>
+                    <div class="bg-slate-50 dark:bg-slate-950/40 p-3 border border-slate-200 dark:border-slate-800 text-center rounded-2xl">
+                        <span class="block text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">{{ $stats['threads_count'] }}</span>
+                        <span class="text-xs font-bold text-slate-450 dark:text-slate-450 tracking-wider uppercase">Threads</span>
                     </div>
-                    <div class="bg-slate-50 p-3 border border-slate-200 text-center rounded-2xl">
-                        <span class="block text-2xl font-extrabold text-slate-900 tracking-tight">{{ $stats['posts_count'] }}</span>
-                        <span class="text-xs font-bold text-slate-450 tracking-wider uppercase">Replies</span>
+                    <div class="bg-slate-50 dark:bg-slate-950/40 p-3 border border-slate-200 dark:border-slate-800 text-center rounded-2xl">
+                        <span class="block text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">{{ $stats['posts_count'] }}</span>
+                        <span class="text-xs font-bold text-slate-450 dark:text-slate-450 tracking-wider uppercase">Replies</span>
                     </div>
                 </div>
-                <div class="mt-4 pt-3.5 border-t border-slate-100 text-sm text-slate-600 flex justify-between items-center font-semibold">
+                <div class="mt-4 pt-3.5 border-t border-slate-100 dark:border-slate-850 text-sm text-slate-650 dark:text-slate-400 flex justify-between items-center font-semibold">
                     <span>Newest Member:</span>
                     @if($stats['latest_user'])
                     <a href="{{ route('profile.show', $stats['latest_user']->name) }}" 
@@ -416,6 +483,73 @@
                     @endif
                 </div>
             </div>
+
+            <!-- Latest Profile Posts Widget -->
+            @php
+                $latestProfilePosts = \App\Models\Post::whereHas('attachments')
+                    ->with(['user', 'thread'])
+                    ->latest()
+                    ->take(3)
+                    ->get();
+            @endphp
+            @if($latestProfilePosts->isNotEmpty())
+                <div class="border border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-slate-900 rounded-3xl shadow-sm text-left">
+                    <h3 class="text-xs font-black tracking-wider text-slate-400 dark:text-slate-500 uppercase mb-4 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-blue-600 text-sm">rss_feed</span> Latest profile posts
+                    </h3>
+                    <div class="space-y-4">
+                        @foreach($latestProfilePosts as $post)
+                            @php
+                                $firstAttach = $post->attachments->first();
+                            @endphp
+                            <div class="space-y-2 border-b border-slate-100 dark:border-slate-850 pb-3.5 last:border-0 last:pb-0">
+                                <!-- User & Title -->
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('profile.show', $post->user->name) }}"
+                                       data-user-hover="true"
+                                       data-user-name="{{ $post->user->name }}"
+                                       data-user-badge="{{ $post->user->title_badge }}"
+                                       data-user-joined="{{ $post->user->created_at->format('M d, Y') }}"
+                                       data-user-threads="{{ $post->user->threads()->count() }}"
+                                       data-user-posts="{{ $post->user->posts()->count() }}"
+                                       data-user-uploads="{{ $post->user->attachments()->count() }}"
+                                       data-user-avatar="{{ $post->user->avatar_url }}"
+                                       data-user-banner="{{ $post->user->banner_color }}"
+                                       data-user-banner-path="{{ $post->user->banner_path }}"
+                                       class="w-6 h-6 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 block">
+                                        <img src="{{ $post->user->avatar_url }}" class="w-full h-full object-cover">
+                                    </a>
+                                    <div class="leading-none">
+                                        <a href="{{ route('profile.show', $post->user->name) }}"
+                                           data-user-hover="true"
+                                           data-user-name="{{ $post->user->name }}"
+                                           data-user-badge="{{ $post->user->title_badge }}"
+                                           data-user-joined="{{ $post->user->created_at->format('M d, Y') }}"
+                                           data-user-threads="{{ $post->user->threads()->count() }}"
+                                           data-user-posts="{{ $post->user->posts()->count() }}"
+                                           data-user-uploads="{{ $post->user->attachments()->count() }}"
+                                           data-user-avatar="{{ $post->user->avatar_url }}"
+                                           data-user-banner="{{ $post->user->banner_color }}"
+                                           data-user-banner-path="{{ $post->user->banner_path }}"
+                                           class="text-xs font-extrabold text-blue-600 dark:text-blue-450 hover:underline">{{ $post->user->name }}</a>
+                                        <span class="text-[8px] text-slate-400 font-bold block mt-0.5">{{ $post->created_at->diffForHumans() }}</span>
+                                    </div>
+                                </div>
+                                <!-- Post snippet text -->
+                                <p class="text-xs text-slate-650 dark:text-slate-350 leading-relaxed line-clamp-2">
+                                    {{ strip_tags($post->content) }}
+                                </p>
+                                <!-- Image attachment preview at bottom if exists -->
+                                @if($firstAttach)
+                                    <div class="h-20 w-full rounded-xl overflow-hidden border border-slate-250 dark:border-slate-800 bg-slate-50">
+                                        <img src="{{ $firstAttach->file_path }}" class="w-full h-full object-cover">
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
 
             <!-- Active Members Sidebar -->
             <div class="border border-slate-200 p-5 bg-white rounded-2xl shadow-sm text-left">
@@ -476,42 +610,4 @@
     </div>
 </div>
 
-<!-- Carousel Slider Logic Script -->
-<script>
-    let currentSlideIndex = 0;
-    const totalSlides = 3;
-    const wrapper = document.getElementById('carousel-wrapper');
-    const dots = document.querySelectorAll('.carousel-dot');
-
-    function updateCarousel() {
-        wrapper.style.transform = `translateX(-${currentSlideIndex * 33.333}%)`;
-        dots.forEach((dot, idx) => {
-            if (idx === currentSlideIndex) {
-                dot.classList.add('bg-white', 'w-4');
-                dot.classList.remove('bg-white/40');
-            } else {
-                dot.classList.add('bg-white/40');
-                dot.classList.remove('bg-white', 'w-4');
-            }
-        });
-    }
-
-    function nextSlide() {
-        currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
-        updateCarousel();
-    }
-
-    function prevSlide() {
-        currentSlideIndex = (currentSlideIndex - 1 + totalSlides) % totalSlides;
-        updateCarousel();
-    }
-
-    function setSlide(index) {
-        currentSlideIndex = index;
-        updateCarousel();
-    }
-
-    setInterval(nextSlide, 5000);
-    updateCarousel();
-</script>
 @endsection

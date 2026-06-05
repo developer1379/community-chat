@@ -89,9 +89,7 @@ class DatabaseSeeder extends Seeder
             'description' => 'Discuss hosting environments, databases, local environments, and code troubleshooting.',
             'icon' => 'cpu-chip',
             'order' => 4,
-        ]);
-
-        // 3. Seed Threads & Posts (Replies) inside General Discussion
+           // 3. Seed Threads & Posts (Replies) inside General Discussion
         $thread1 = Thread::create([
             'category_id' => $catGeneral->id,
             'user_id' => $user3->id,
@@ -99,12 +97,21 @@ class DatabaseSeeder extends Seeder
             'slug' => 'building-future-community-hubs-with-high-end-aesthetics',
             'views_count' => 156,
             'is_pinned' => true,
+            'is_featured' => true,
         ]);
 
         Post::create([
             'thread_id' => $thread1->id,
             'user_id' => $user3->id,
             'content' => "Welcome everyone to our next-generation community hub discussion!\n\nTo build a highly active community, the user interface must be absolutely premium. Generic designs feel dated and push members away. Modern web design is all about soft glassmorphic panels, curated HSL color gradients, clean typography (like Outfit and Plus Jakarta Sans), and smooth micro-animations.\n\nLet's use this thread to compile the best design frameworks and principles for a stunning forum app!",
+        ]);
+
+        \App\Models\Attachment::create([
+            'thread_id' => $thread1->id,
+            'user_id' => $user3->id,
+            'file_name' => 'featured-ui-design.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
         ]);
 
         Post::create([
@@ -126,6 +133,7 @@ class DatabaseSeeder extends Seeder
             'title' => 'Why TailwindCSS v4 with Zero-Vite Lag is the Next Big Thing',
             'slug' => 'why-tailwindcss-v4-with-zero-vite-lag-is-the-next-big-thing',
             'views_count' => 84,
+            'is_featured' => true,
         ]);
 
         Post::create([
@@ -134,10 +142,18 @@ class DatabaseSeeder extends Seeder
             'content' => "Tailwind v4 delivers unprecedented compilation speed, but using the browser-based Tailwind runtime CDN during initial prototyping is a total game-changer. It allows us to build complex material designs with HSL tailor-made variables on the fly with absolutely zero compilation setup!\n\nHere is a simple example of how to configure our corporate color tokens:\n\n```css\n:root {\n  --color-primary: #2563eb;\n  --color-slate-dark: #0f172a;\n  --border-radius-card: 16px;\n}\n```\n\nWhat are your thoughts on bypassing asset compilation during initial prototyping phases?",
         ]);
 
+        \App\Models\Attachment::create([
+            'thread_id' => $thread2->id,
+            'user_id' => $user1->id,
+            'file_name' => 'tailwind-v4.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
+        ]);
+
         Post::create([
             'thread_id' => $thread2->id,
             'user_id' => $user2->id,
-            'content' => "Bypassing Vite compiler makes local environment testing super portable! It means anyone can download the repository, run the migrations and seeders, and start the app instantly without having to run `npm install` and `npm run dev` in the background.\n\nIt is super clean!",
+            'content' => "Bypassing Vite compiler makes local environment testing super portable! It means anyone can download the repository, run the migrations and seeders, and start the app instantly without having to run `npm install` and `npm run dev` in the background.\n\nIT is super clean!",
         ]);
 
         // 5. Seed Threads inside Support
@@ -147,6 +163,7 @@ class DatabaseSeeder extends Seeder
             'title' => 'Decoupling Database Access with Repository & Interface Pattern',
             'slug' => 'decoupling-database-access-with-repository-pattern',
             'views_count' => 42,
+            'is_featured' => true,
         ]);
 
         Post::create([
@@ -154,5 +171,15 @@ class DatabaseSeeder extends Seeder
             'user_id' => $user2->id,
             'content' => "When building scalable Laravel applications, I always recommend decoupling database queries from HTTP Controllers.\n\nBy creating a `ThreadRepositoryInterface` and binding it to a concrete `ThreadRepository` inside `AppServiceProvider`, controllers only interact with the interface. This makes unit testing extremely simple because we can swap database implementations or mock the repository layers entirely without touching a single controller line.\n\nWho else is using this architecture?",
         ]);
+
+        \App\Models\Attachment::create([
+            'thread_id' => $thread3->id,
+            'user_id' => $user2->id,
+            'file_name' => 'repository-pattern.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
+        ]);
+    }
+});
     }
 }
