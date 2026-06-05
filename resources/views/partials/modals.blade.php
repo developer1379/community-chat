@@ -24,6 +24,35 @@
     </div>
 </div>
 
+<!-- Modern Edit Post Modal -->
+<div id="edit-post-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/20 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+    <div class="w-full max-w-2xl mui-card p-5 bg-white border border-slate-200 rounded-[2rem] shadow-2xl">
+        <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+            <h3 class="text-xs font-extrabold text-slate-900 uppercase tracking-widest flex items-center gap-2">
+                <span class="material-symbols-outlined text-blue-600">edit_note</span> Edit Post Reply
+            </h3>
+            <button type="button" onclick="closeEditPostModal()" class="w-8.5 h-8.5 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-500 cursor-pointer">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form id="edit-post-form" method="POST" class="space-y-4">
+            @csrf
+            @method('PUT')
+            <div class="space-y-1.5">
+                <!-- Hidden Quill value storage -->
+                <input type="hidden" id="edit-post-content-input" name="content">
+                <div class="rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
+                    <div id="edit-post-quill-editor" style="height: 200px; font-size: 13px;"></div>
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 pt-3 border-t border-slate-100">
+                <button type="button" onclick="closeEditPostModal()" class="px-5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs cursor-pointer transition-all">Cancel</button>
+                <button type="submit" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs cursor-pointer shadow-md transition-all">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Modern Notifications Modal -->
 <div id="notifications-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/20 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
     <div class="w-full max-w-md mui-card p-5 bg-white border border-slate-200">

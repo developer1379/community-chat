@@ -89,7 +89,9 @@ class DatabaseSeeder extends Seeder
             'description' => 'Discuss hosting environments, databases, local environments, and code troubleshooting.',
             'icon' => 'cpu-chip',
             'order' => 4,
-           // 3. Seed Threads & Posts (Replies) inside General Discussion
+        ]);
+
+        // 3. Seed Threads & Posts (Replies) inside General Discussion
         $thread1 = Thread::create([
             'category_id' => $catGeneral->id,
             'user_id' => $user3->id,
@@ -179,7 +181,5 @@ class DatabaseSeeder extends Seeder
             'file_path' => 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=800&q=80',
             'file_type' => 'image/jpeg',
         ]);
-    }
-});
     }
 }

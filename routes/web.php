@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
     
     // Post replies
     Route::post('/threads/{thread:slug}/reply', [ForumController::class, 'reply'])->name('threads.reply');
+    Route::put('/posts/{post}', [ForumController::class, 'editPost'])->name('posts.update');
     
     // Profile Updates
     Route::post('/profile/update', [AuthController::class, 'updateProfile'])->name('profile.update');

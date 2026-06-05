@@ -59,7 +59,19 @@ class ForumController extends Controller
         // Online users
         $onlineUsers = $this->userRepo->getActiveUsers(6);
 
-        return view('forum.home', compact('categories', 'stats', 'activeThreads', 'onlineUsers', 'featuredThreads'));
+        // Fetch Latest Threads
+        $latestThreads = Thread::with(['user', 'category'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // Fetch Viral Threads (sorted by views_count desc)
+        $viralThreads = Thread::with(['user', 'category'])
+            ->orderBy('views_count', 'desc')
+            ->take(5)
+            ->get();
+
+        return view('forum.home', compact('categories', 'stats', 'activeThreads', 'onlineUsers', 'featuredThreads', 'latestThreads', 'viralThreads'));
     }
 
     public function search(Request $request)
@@ -140,6 +152,33 @@ class ForumController extends Controller
         Auth::user()->addCoins(5, 'reply_posted', "Replied to thread: " . $thread->title);
 
         return back()->with('success', 'Your reply has been posted successfully!');
+    }
+
+    public function editPost(Request $request, Post $post)
+    {
+        if ($post->user_id !== Auth::id()) {
+            return back()->with('error', 'You are not authorized to edit this post.');
+        }
+
+        if ($post->thread->is_locked) {
+            return back()->with('error', 'This thread is locked.');
+        }
+
+        $request->validate([
+            'content' => ['required', 'string', 'min:3'],
+        ]);
+
+        $post->update([
+            'content' => $request->content,
+        ]);
+
+        // Invalidate corresponding thread posts cache so edits are visible immediately
+        \Illuminate\Support\Facades\Cache::forget("forum.thread.{$post->thread_id}.posts.page.1");
+        \Illuminate\Support\Facades\Cache::forget("forum.thread.{$post->thread_id}.posts.page.2");
+        \Illuminate\Support\Facades\Cache::forget("forum.thread.{$post->thread_id}.posts.page.3");
+        \Illuminate\Support\Facades\Cache::forget("forum.thread.{$post->thread_id}.posts.page.4");
+
+        return back()->with('success', 'Your post has been successfully edited!');
     }
 
     public function uploadMedia(Request $request)

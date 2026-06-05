@@ -318,9 +318,63 @@
 
                             </div>
 
-                        </div>
-                    @endforeach
+            <!-- Latest and Viral Threads Grid Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                
+                <!-- Latest Threads Widget -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-md overflow-hidden text-left flex flex-col">
+                    <div class="bg-slate-50 dark:bg-slate-950/40 px-5 py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-blue-600 dark:text-blue-400">schedule</span>
+                        <h3 class="text-xs font-black text-slate-700 dark:text-slate-350 uppercase tracking-[0.15em]">Latest Threads</h3>
+                    </div>
+                    <div class="p-4 divide-y divide-slate-100 dark:divide-slate-800 flex-grow">
+                        @forelse($latestThreads as $thread)
+                            <div class="py-3 first:pt-0 last:pb-0 flex items-start gap-3">
+                                <a href="{{ route('profile.show', $thread->user->name) }}" class="w-8 h-8 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-850 flex-shrink-0">
+                                    <img src="{{ $thread->user->avatar_url }}" class="w-full h-full object-cover">
+                                </a>
+                                <div class="min-w-0">
+                                    <a href="{{ route('threads.show', $thread->slug) }}" class="text-xs font-extrabold text-slate-850 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-450 transition-colors line-clamp-1 leading-snug">
+                                        {{ $thread->title }}
+                                    </a>
+                                    <span class="text-[9px] font-semibold text-slate-400 dark:text-slate-500 block mt-0.5">
+                                        by <a href="{{ route('profile.show', $thread->user->name) }}" class="hover:underline font-bold text-slate-500 dark:text-slate-400">{{ $thread->user->name }}</a> • {{ $thread->created_at->diffForHumans() }}
+                                    </span>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-xs text-slate-400 text-center py-4">No latest threads found</p>
+                        @endforelse
+                    </div>
                 </div>
+
+                <!-- Viral Threads Widget -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-md overflow-hidden text-left flex flex-col">
+                    <div class="bg-slate-50 dark:bg-slate-950/40 px-5 py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-pink-600 dark:text-pink-400">trending_up</span>
+                        <h3 class="text-xs font-black text-slate-700 dark:text-slate-350 uppercase tracking-[0.15em]">Viral Threads</h3>
+                    </div>
+                    <div class="p-4 divide-y divide-slate-100 dark:divide-slate-800 flex-grow">
+                        @forelse($viralThreads as $thread)
+                            <div class="py-3 first:pt-0 last:pb-0 flex items-start gap-3">
+                                <a href="{{ route('profile.show', $thread->user->name) }}" class="w-8 h-8 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-850 flex-shrink-0">
+                                    <img src="{{ $thread->user->avatar_url }}" class="w-full h-full object-cover">
+                                </a>
+                                <div class="min-w-0">
+                                    <a href="{{ route('threads.show', $thread->slug) }}" class="text-xs font-extrabold text-slate-850 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-450 transition-colors line-clamp-1 leading-snug">
+                                        {{ $thread->title }}
+                                    </a>
+                                    <span class="text-[9px] font-semibold text-slate-400 dark:text-slate-500 block mt-0.5">
+                                        🔥 {{ $thread->views_count }} views • by <a href="{{ route('profile.show', $thread->user->name) }}" class="hover:underline font-bold text-slate-500 dark:text-slate-400">{{ $thread->user->name }}</a>
+                                    </span>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-xs text-slate-400 text-center py-4">No viral threads found</p>
+                        @endforelse
+                    </div>
+                </div>
+
             </div>
         </div>
 

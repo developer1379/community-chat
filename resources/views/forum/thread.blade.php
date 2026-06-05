@@ -271,6 +271,20 @@ article
                                         <button onclick="toggleReaction('{{ $post->id }}', 'angry')" class="reaction-emoji" title="Angry">😡</button>
                                     </div>
                                 </div>
+                                
+                                <!-- Edit Button for Auth User -->
+                                @if(Auth::id() === $post->user_id)
+                                    <button onclick="openEditPostModal('{{ $post->id }}')" class="flex items-center gap-1 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 text-xs font-bold text-slate-500 hover:text-blue-600 dark:text-slate-450 transition-all cursor-pointer shadow-sm border border-slate-200 dark:border-slate-800">
+                                        <span class="material-symbols-outlined text-sm">edit</span>
+                                        <span>Edit</span>
+                                    </button>
+                                @endif
+
+                                <!-- Quote / Reply Button -->
+                                <button onclick="quotePostReply('{{ $post->user->name }}', '{{ $post->id }}')" class="flex items-center gap-1 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 text-xs font-bold text-slate-500 hover:text-blue-600 dark:text-slate-450 transition-all cursor-pointer shadow-sm border border-slate-200 dark:border-slate-800">
+                                    <span class="material-symbols-outlined text-sm">chat</span>
+                                    <span>Reply</span>
+                                </button>
                             @else
                                 <a href="{{ route('login') }}" class="flex items-center justify-center w-full sm:w-auto gap-1 px-3 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs text-slate-500 font-bold border border-slate-200 dark:border-slate-800 transition-all shadow-sm">
                                     <span class="material-symbols-outlined text-sm">thumb_up</span>
@@ -827,5 +841,71 @@ article
             }
         @endif
     @endauth
+
+    // Quote Reply function to copy quoted post block into Quick Reply editor
+    function quotePostReply(username, postId) {
+        if (!replyQuill) return;
+        const postElement = document.querySelector(`#post-${postId} .ql-editor`);
+        const originalContent = postElement ? postElement.innerHTML.trim() : '';
+        
+        // Construct the quote markup representation
+        const quoteHtml = `<blockquote class="border-l-4 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 pl-3 py-1 my-2 text-slate-550 text-xs italic font-sans" data-quoted-post="${postId}"><strong>Post by @${username}:</strong><br>${originalContent}</blockquote><p><br></p>`;
+        
+        // Append quoted HTML structure into Quick Reply editor
+        const range = replyQuill.getSelection(true);
+        replyQuill.clipboard.dangerouslyPasteHTML(range.index, quoteHtml);
+        replyQuill.setSelection(replyQuill.getLength());
+        
+        // Scroll down to the reply editor
+        const replyEditorContainer = document.getElementById('reply-form');
+        if (replyEditorContainer) {
+            replyEditorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    // Modal Edit Post controller logic
+    let editPostQuill;
+    function openEditPostModal(postId) {
+        const modal = document.getElementById('edit-post-modal');
+        const form = document.getElementById('edit-post-form');
+        const postElement = document.querySelector(`#post-${postId} .ql-editor`);
+        const originalContent = postElement ? postElement.innerHTML.trim() : '';
+
+        if (!modal || !form) return;
+
+        // Set form action route
+        form.action = `/posts/${postId}`;
+
+        // Initialize edit Quill instance if not already initialized
+        if (!editPostQuill) {
+            editPostQuill = new Quill('#edit-post-quill-editor', {
+                theme: 'snow',
+                placeholder: 'Edit your post reply message...',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link', 'clean']
+                    ]
+                }
+            });
+
+            form.addEventListener('submit', function(e) {
+                const contentInput = document.getElementById('edit-post-content-input');
+                contentInput.value = editPostQuill.root.innerHTML;
+            });
+        }
+
+        editPostQuill.root.innerHTML = originalContent;
+
+        modal.classList.remove('pointer-events-none', 'opacity-0');
+    }
+
+    function closeEditPostModal() {
+        const modal = document.getElementById('edit-post-modal');
+        if (modal) {
+            modal.classList.add('pointer-events-none', 'opacity-0');
+        }
+    }
 </script>
 @endsection
