@@ -85,7 +85,7 @@ class ShopController extends Controller
         // Increment sold count
         $shopItem->increment('sold_count');
 
-        return redirect()->route('shop.index')->with('success', 'You purchased "' . $shopItem->name . '" successfully!');
+        return redirect()->route('profile.show', $user->name)->with('success', 'You purchased "' . $shopItem->name . '" successfully! You can configure it below under the Upgrades section.');
     }
 
     /**

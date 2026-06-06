@@ -288,6 +288,130 @@ profile
                 <!-- Customization Panel (Shown only to the owner) -->
                 @auth
                     @if(Auth::id() === $user->id)
+                        @php
+                            $hasUsernameStyle = $user->hasActiveShopItem('username_style');
+                            $hasUsernameChange = $user->hasActiveShopItem('username_change');
+                            $hasStickyUpgrade = $user->hasActiveShopItem('sticky_thread');
+                            $hasFeaturedThread = $user->hasActiveShopItem('featured_homepage_thread');
+                            $hasTitleStyle = $user->hasActiveShopItem('thread_title_style');
+                            $hasHighlight = $user->hasActiveShopItem('thread_highlight');
+                            
+                            $purchasedItems = $user->purchases()->with('shopItem')->where(function($q) {
+                                $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+                            })->get();
+                        @endphp
+
+                        @if($purchasedItems->isNotEmpty())
+                            <div id="shop-upgrades-card" class="mui-card overflow-hidden bg-white border border-slate-200 shadow-lg rounded-2xl mb-8 text-left">
+                                <div class="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-slate-900 dark:to-slate-850 px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+                                    <h3 class="font-bold text-slate-800 dark:text-white text-xs flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-emerald-600 text-sm">shopping_bag</span>
+                                        My Purchased Shop Upgrades
+                                    </h3>
+                                </div>
+                                <div class="p-6 space-y-6">
+                                    <!-- List of upgrades -->
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        @foreach($purchasedItems as $purchase)
+                                            <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 dark:bg-slate-950/20 dark:border-slate-850 flex items-start gap-3 justify-between">
+                                                <div class="min-w-0">
+                                                    <span class="inline-block text-[8px] font-black uppercase bg-emerald-100 dark:bg-emerald-955/50 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded leading-none">Active Upgrade</span>
+                                                    <h4 class="text-xs font-black text-slate-850 dark:text-white mt-1">{{ $purchase->shopItem->name }}</h4>
+                                                    <p class="text-[10px] text-slate-400 mt-0.5 font-bold">
+                                                        Expires: {{ $purchase->expires_at ? $purchase->expires_at->format('M d, Y') : 'Never (Permanent)' }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+
+                                    <!-- Action Upgrades Controls -->
+                                    <div class="border-t border-slate-100 dark:border-slate-800 pt-5 space-y-5">
+                                        <h4 class="text-xs font-extrabold text-slate-800 dark:text-white uppercase tracking-wider">Configure Upgrades</h4>
+                                        
+                                        @if($hasUsernameChange)
+                                            <!-- Username change upgrade action -->
+                                            <form action="{{ route('profile.update_username') }}" method="POST" class="p-4 rounded-xl border border-slate-200 dark:border-slate-850 space-y-3">
+                                                @csrf
+                                                <div>
+                                                    <label class="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Change Username (Purchased Upgrade)</label>
+                                                    <input type="text" name="name" required value="{{ $user->name }}" class="w-full mt-2 bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-850 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-550">
+                                                </div>
+                                                <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all cursor-pointer">
+                                                    Update Username
+                                                </button>
+                                            </form>
+                                        @endif
+
+                                        @if($hasUsernameStyle)
+                                            <!-- Username style customization -->
+                                            <form action="{{ route('profile.update_username_style') }}" method="POST" class="p-4 rounded-xl border border-slate-200 dark:border-slate-850 space-y-4">
+                                                @csrf
+                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                    <div>
+                                                        <label class="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Text/Badge Color</label>
+                                                        <input type="color" name="title_color" value="{{ $user->title_color ?: '#4f46e5' }}" class="w-10 h-10 border-0 rounded-lg cursor-pointer mt-2">
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Title Badge Text (Custom)</label>
+                                                        <input type="text" name="title_badge" value="{{ $user->title_badge ?: 'VIP Member' }}" class="w-full mt-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                                    </div>
+                                                </div>
+                                                <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all cursor-pointer">
+                                                    Apply Custom Styles
+                                                </button>
+                                            </form>
+                                        @endif
+
+                                        @if(($hasTitleStyle || $hasHighlight || $hasFeaturedThread || $hasStickyUpgrade) && $threads->isNotEmpty())
+                                            <!-- Thread styles upgrade actions -->
+                                            <form action="{{ route('profile.update_thread_upgrades') }}" method="POST" class="p-4 rounded-xl border border-slate-200 dark:border-slate-850 space-y-4">
+                                                @csrf
+                                                <div class="space-y-3">
+                                                    <label class="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Apply Upgrades to Your Threads</label>
+                                                    <select name="thread_id" required class="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-850 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                                        <option value="">-- Select one of your threads --</option>
+                                                        @foreach($threads as $t)
+                                                            <option value="{{ $t->id }}">{{ $t->title }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="flex flex-wrap gap-4 text-xs font-bold text-slate-650 dark:text-slate-350">
+                                                    @if($hasTitleStyle)
+                                                        <label class="flex items-center gap-2">
+                                                            <input type="checkbox" name="apply_title_style" value="1" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                                            <span>Thread Title Style (Glow Effect)</span>
+                                                        </label>
+                                                    @endif
+                                                    @if($hasHighlight)
+                                                        <label class="flex items-center gap-2">
+                                                            <input type="checkbox" name="apply_highlight" value="1" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                                            <span>Thread Highlight (Colored Box)</span>
+                                                        </label>
+                                                    @endif
+                                                    @if($hasFeaturedThread)
+                                                        <label class="flex items-center gap-2">
+                                                            <input type="checkbox" name="apply_featured" value="1" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                                            <span>Homepage Featured Slider</span>
+                                                        </label>
+                                                    @endif
+                                                    @if($hasStickyUpgrade)
+                                                        <label class="flex items-center gap-2">
+                                                            <input type="checkbox" name="apply_sticky" value="1" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                                            <span>Sticky (Pin to Top)</span>
+                                                        </label>
+                                                    @endif
+                                                </div>
+                                                <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all cursor-pointer">
+                                                    Apply Thread Upgrades
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
                         <div class="mui-card overflow-hidden bg-white border border-slate-200 shadow-lg rounded-2xl">
                             <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
                                 <h3 class="font-bold text-slate-700 text-xs flex items-center gap-2">

@@ -66,8 +66,8 @@ it('successfully purchases item and deducts coins', function () {
 
     $response = $this->actingAs($user)->post(route('shop.purchase', $item->id));
 
-    $response->assertRedirect(route('shop.index'));
-    $response->assertSessionHas('success', 'You purchased "' . $item->name . '" successfully!');
+    $response->assertRedirect(route('profile.show', $user->name));
+    $response->assertSessionHas('success', 'You purchased "' . $item->name . '" successfully! You can configure it below under the Upgrades section.');
 
     // Check coin deduction
     expect($user->fresh()->coins)->toBe(95);
@@ -178,4 +178,57 @@ it('allows admin to access shop management and edit attributes', function () {
     expect($item->stock)->toBe(5);
     expect($item->duration)->toBe('3 months');
     expect($item->key)->toBe('updated_feature_key');
+});
+
+it('allows users to configure purchased upgrades in profile settings', function () {
+    $user = User::factory()->create();
+    
+    // Purchase upgrades
+    $itemChangeName = createTestShopItem(['key' => 'username_change']);
+    $itemStyle = createTestShopItem(['key' => 'username_style']);
+    $itemSticky = createTestShopItem(['key' => 'sticky_thread']);
+    
+    PurchasedItem::create(['user_id' => $user->id, 'shop_item_id' => $itemChangeName->id]);
+    PurchasedItem::create(['user_id' => $user->id, 'shop_item_id' => $itemStyle->id]);
+    PurchasedItem::create(['user_id' => $user->id, 'shop_item_id' => $itemSticky->id]);
+
+    $user = $user->fresh();
+
+    // 1. Update Username
+    $response = $this->actingAs($user)->post(route('profile.update_username'), [
+        'name' => 'NewCoolName'
+    ]);
+    $response->assertRedirect(route('profile.show', 'NewCoolName'));
+    $user = $user->fresh();
+    expect($user->name)->toBe('NewCoolName');
+
+    // 2. Update Username Style
+    $response = $this->actingAs($user)->post(route('profile.update_username_style'), [
+        'title_color' => '#ff0000',
+        'title_badge' => 'Exclusive Gold Member'
+    ]);
+    $response->assertSessionHasNoErrors();
+    $response->assertRedirect();
+    $user = $user->fresh();
+    expect($user->title_color)->toBe('#ff0000');
+    expect($user->title_badge)->toBe('Exclusive Gold Member');
+
+    // 3. Update Thread Sticky Options
+    $thread = \App\Models\Thread::create([
+        'category_id' => \App\Models\Category::factory()->create()->id,
+        'user_id' => $user->id,
+        'title' => 'My Pinned Discussion',
+        'slug' => 'my-pinned-discussion'
+    ]);
+
+    $response = $this->actingAs($user)->post(route('profile.update_thread_upgrades'), [
+        'thread_id' => $thread->id,
+        'apply_sticky' => '1'
+    ]);
+    if (session('error')) {
+        dd(session('error'));
+    }
+    $response->assertSessionHas('success', 'Thread upgrades applied successfully!');
+    $response->assertRedirect();
+    expect($thread->fresh()->is_pinned)->toBeTrue();
 });

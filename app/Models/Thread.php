@@ -24,7 +24,17 @@ class Thread extends Model
         'is_featured',
         'tags',
     ];
-
+    /**
+     * The attributes that should be cast.
+     */
+    protected function casts(): array
+    {
+        return [
+            'is_pinned' => 'boolean',
+            'is_locked' => 'boolean',
+            'is_featured' => 'boolean',
+        ];
+    }
     /**
      * Get the category that owns the thread.
      */

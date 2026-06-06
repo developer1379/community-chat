@@ -248,4 +248,82 @@ class AuthController extends Controller
             'message' => $attachment->is_private ? 'Media is now Private.' : 'Media is now Public.'
         ]);
     }
+
+    public function updateUsername(Request $request)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (!$user->hasActiveShopItem('username_change')) {
+            return redirect()->back()->with('error', 'You must purchase Username Change feature first.');
+        }
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255', 'unique:users,name,' . $user->id],
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('profile.show', $user->name)->with('success', 'Your username has been updated successfully!');
+    }
+
+    public function updateUsernameStyle(Request $request)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (!$user->hasActiveShopItem('username_style')) {
+            return redirect()->back()->with('error', 'You must purchase Username Style upgrade first.');
+        }
+
+        $request->validate([
+            'title_color' => ['nullable', 'string', 'max:7', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
+            'title_badge' => ['nullable', 'string', 'max:50'],
+        ]);
+
+        $user->update([
+            'title_color' => $request->title_color,
+            'title_badge' => $request->title_badge,
+        ]);
+
+        return redirect()->back()->with('success', 'Your custom username style has been applied!');
+    }
+
+    public function updateThreadUpgrades(Request $request)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $request->validate([
+            'thread_id' => ['required', 'uuid', 'exists:threads,id'],
+        ]);
+
+        $thread = \App\Models\Thread::findOrFail($request->thread_id);
+
+        if ($thread->user_id !== $user->id) {
+            abort(403);
+        }
+
+        if ($request->has('apply_featured')) {
+            if (!$user->hasActiveShopItem('featured_homepage_thread')) {
+                return redirect()->back()->with('error', 'You must purchase Featured homepage thread upgrade first.');
+            }
+            $thread->update(['is_featured' => true]);
+        }
+
+        if ($request->has('apply_sticky')) {
+            if (!$user->hasActiveShopItem('sticky_thread')) {
+                return redirect()->back()->with('error', 'You must purchase Sticky Thread upgrade first.');
+            }
+            $thread->update(['is_pinned' => true]);
+        }
+
+        // Flush dynamic caches
+        \Illuminate\Support\Facades\Cache::forget('forum.categories');
+        \Illuminate\Support\Facades\Cache::forget('forum.active_threads');
+
+        return redirect()->back()->with('success', 'Thread upgrades applied successfully!');
+    }
 }
