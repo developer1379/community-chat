@@ -26,7 +26,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         <!-- Sidebar Column (3 Cols) -->
-        <div class="lg:col-span-3 space-y-6">
+        <div class="lg:col-span-3 space-y-6 hidden lg:block">
             
             <!-- Wallet widget -->
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-md text-left">
@@ -39,15 +39,15 @@
 
             <!-- Categories Card -->
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-md text-left">
-                <h3 class="text-xs font-black text-slate-450 dark:text-slate-500 uppercase tracking-widest mb-4">Categories</h3>
+                <h3 class="text-xs font-black text-slate-455 dark:text-slate-500 uppercase tracking-widest mb-4">Categories</h3>
                 <div class="space-y-2">
-                    <a href="{{ route('shop.index') }}" class="flex items-center justify-between text-xs font-bold px-3 py-2 rounded-xl transition-all {{ !$selectedCategory ? 'bg-blue-600 text-white shadow-md' : 'text-slate-650 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-850' }}">
+                    <a href="{{ route('shop.index') }}" class="flex items-center justify-between text-xs font-bold px-3 py-2 rounded-xl transition-all {{ !$selectedCategory ? 'bg-blue-600 text-white shadow-md' : 'text-slate-655 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-850' }}">
                         <span>All Items</span>
                     </a>
                     @foreach($categories as $cat => $count)
-                        <a href="{{ route('shop.index', ['category' => $cat]) }}" class="flex items-center justify-between text-xs font-bold px-3 py-2 rounded-xl transition-all {{ $selectedCategory == $cat ? 'bg-blue-600 text-white shadow-md' : 'text-slate-650 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-850' }}">
+                        <a href="{{ route('shop.index', ['category' => $cat]) }}" class="flex items-center justify-between text-xs font-bold px-3 py-2 rounded-xl transition-all {{ $selectedCategory == $cat ? 'bg-blue-600 text-white shadow-md' : 'text-slate-655 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-850' }}">
                             <span>{{ $cat }}</span>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] {{ $selectedCategory == $cat ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-550' }}">{{ $count }}</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] {{ $selectedCategory == $cat ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-555' }}">{{ $count }}</span>
                         </a>
                     @endforeach
                 </div>
@@ -55,11 +55,11 @@
 
             <!-- Top rated items Widget -->
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-md text-left">
-                <h3 class="text-xs font-black text-slate-450 dark:text-slate-500 uppercase tracking-widest mb-4">Top rated items</h3>
+                <h3 class="text-xs font-black text-slate-455 dark:text-slate-500 uppercase tracking-widest mb-4">Top rated items</h3>
                 <div class="space-y-4">
                     @foreach($topRatedItems as $tri)
                         <div class="flex items-start gap-2.5">
-                            <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-450 flex-shrink-0">
+                            <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-955/30 border border-blue-100 dark:border-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-455 flex-shrink-0">
                                 <span class="material-symbols-outlined text-sm">shopping_bag</span>
                             </div>
                             <div class="min-w-0">
@@ -69,7 +69,7 @@
                                 <span class="text-[9px] font-bold text-slate-400 block mt-0.5">{{ $tri->category }}</span>
                                 <div class="flex items-center gap-0.5 mt-0.5 text-amber-500">
                                     <span class="material-symbols-outlined text-[10px] fill-amber-500">star</span>
-                                    <span class="text-[9.5px] font-bold text-slate-550 dark:text-slate-400">{{ number_format($tri->rating, 2) }}</span>
+                                    <span class="text-[9.5px] font-bold text-slate-555 dark:text-slate-400">{{ number_format($tri->rating, 2) }}</span>
                                 </div>
                             </div>
                         </div>
@@ -80,6 +80,29 @@
 
         <!-- Main Items Catalog Column (9 Cols) -->
         <div class="lg:col-span-9 space-y-6">
+            
+            <!-- Mobile Wallet and Categories (Visible only on Mobile) -->
+            <div class="lg:hidden flex flex-col gap-4 mb-2">
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex items-center justify-between text-left">
+                    <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">My Balance</span>
+                    <div class="flex items-center gap-1.5 text-sm font-black text-slate-900 dark:text-white">
+                        <span class="material-symbols-outlined text-amber-500 text-base">monetization_on</span>
+                        <span>{{ number_format($userCoins, 2) }} Coins</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 overflow-x-auto pb-1.5 -mx-4 px-4 scrollbar-none scroll-smooth">
+                    <a href="{{ route('shop.index') }}" class="whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold transition-all flex-shrink-0 {{ !$selectedCategory ? 'bg-blue-600 text-white shadow-md' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800' }}">
+                        All Items
+                    </a>
+                    @foreach($categories as $cat => $count)
+                        <a href="{{ route('shop.index', ['category' => $cat]) }}" class="whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold transition-all flex-shrink-0 {{ $selectedCategory == $cat ? 'bg-blue-600 text-white shadow-md' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800' }}">
+                            {{ $cat }} <span class="opacity-60 ml-0.5">({{ $count }})</span>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-md text-left">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 dark:border-slate-850 pb-4 mb-6 gap-3">
                     <div>

@@ -156,10 +156,13 @@
                     </table>
                 </div>
 
-                <!-- Pagination -->
-                @if($transactions->hasPages())
-                    <div class="px-4 py-3 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
-                        {{ $transactions->links() }}
+                <!-- View More Button -->
+                @if($transactions->hasMorePages())
+                    <div class="px-4 py-3.5 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 text-center" id="view-more-container">
+                        <button id="view-more-btn" data-next-page="{{ $transactions->currentPage() + 1 }}" class="inline-flex items-center gap-1.5 px-6 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all cursor-pointer border-0">
+                            <span class="material-symbols-outlined text-sm font-black">expand_more</span>
+                            <span>View More Logs</span>
+                        </button>
                     </div>
                 @endif
             </div>
@@ -222,4 +225,46 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const viewMoreBtn = document.getElementById('view-more-btn');
+        const viewMoreContainer = document.getElementById('view-more-container');
+        const tbody = document.querySelector('tbody');
+
+        if (viewMoreBtn && tbody) {
+            viewMoreBtn.addEventListener('click', function() {
+                const nextPage = viewMoreBtn.getAttribute('data-next-page');
+                viewMoreBtn.disabled = true;
+                viewMoreBtn.innerHTML = '<span>Loading...</span>';
+
+                fetch(`?page=${nextPage}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    const tempDiv = document.createElement('tbody');
+                    tempDiv.innerHTML = data.html;
+                    
+                    const newRows = tempDiv.querySelectorAll('tr');
+                    newRows.forEach(row => tbody.appendChild(row));
+
+                    if (data.hasMorePages) {
+                        viewMoreBtn.setAttribute('data-next-page', data.nextPage);
+                        viewMoreBtn.disabled = false;
+                        viewMoreBtn.innerHTML = '<span class="material-symbols-outlined text-sm font-black">expand_more</span><span>View More Logs</span>';
+                    } else {
+                        viewMoreContainer.remove();
+                    }
+                })
+                .catch(() => {
+                    viewMoreBtn.disabled = false;
+                    viewMoreBtn.innerHTML = '<span class="material-symbols-outlined text-sm font-black">expand_more</span><span>View More Logs</span>';
+                });
+            });
+        }
+    });
+</script>
 @endsection

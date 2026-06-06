@@ -18,6 +18,14 @@ class WalletController extends Controller
         $transactions = $user->transactions()
             ->paginate(15);
 
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('auth.partials.transaction_rows', compact('transactions'))->render(),
+                'hasMorePages' => $transactions->hasMorePages(),
+                'nextPage' => $transactions->currentPage() + 1
+            ]);
+        }
+
         $coins = $user->coins;
 
         // Fetch rank milestones dynamically from the database (20 stages!)
