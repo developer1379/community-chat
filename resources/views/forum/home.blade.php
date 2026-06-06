@@ -181,6 +181,39 @@
         </script>
     @endif
 
+    <!-- Most Reactions Circular Highlights Section -->
+    @if(isset($topReactedThreads) && $topReactedThreads->isNotEmpty())
+        <div class="mb-8 text-left bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-md">
+            <h2 class="text-xs font-black text-slate-700 dark:text-slate-350 uppercase tracking-[0.2em] mb-4 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sm text-pink-600 dark:text-pink-400">local_fire_department</span> Most reactions - Past 7 days
+            </h2>
+            
+            <div class="flex items-center gap-6 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800 scrollbar-track-transparent">
+                @foreach($topReactedThreads as $thread)
+                    @php
+                        $firstAttach = $thread->attachments->first();
+                        $previewUrl = $firstAttach ? $firstAttach->file_path : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=150&q=80';
+                    @endphp
+                    <a href="{{ route('threads.show', $thread->slug) }}" class="flex flex-col items-center flex-shrink-0 group text-center select-none w-16">
+                        <div class="relative w-14 h-14 rounded-full overflow-hidden p-0.5 border-2 border-pink-500/85 dark:border-pink-600/85 group-hover:scale-105 transition-transform duration-300 shadow-sm bg-white dark:bg-slate-950">
+                            <img src="{{ $previewUrl }}" class="w-full h-full object-cover rounded-full animate-fade-in" alt="reaction thumb">
+                            <!-- Overlay user avatar mini bubble at bottom right -->
+                            <div class="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full overflow-hidden border border-white dark:border-slate-900 bg-white shadow-sm">
+                                <img src="{{ $thread->user->avatar_url }}" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                        <p class="text-[9px] font-black text-slate-650 dark:text-slate-350 mt-2 truncate w-full group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                            {{ $thread->user->name }}
+                        </p>
+                        <span class="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-pink-50 dark:bg-pink-950/40 text-pink-600 dark:text-pink-400 border border-pink-100 dark:border-pink-900/30 mt-0.5 leading-none shadow-sm flex items-center gap-0.5">
+                            🔥 {{ $thread->total_reacts ?? 15 }}
+                        </span>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     <!-- Grid Layout Container for Boards and Sidebar -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         

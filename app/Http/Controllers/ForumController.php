@@ -89,7 +89,27 @@ class ForumController extends Controller
             ->take(5)
             ->get();
 
-        return view('forum.home', compact('categories', 'stats', 'activeThreads', 'onlineUsers', 'featuredThreads', 'latestThreads', 'viralThreads', 'mostLikedThread'));
+        // Fetch top reacted threads for highlights row (preferring attachments)
+        $topReactedThreads = Thread::whereHas('attachments')
+            ->with(['user', 'category', 'attachments'])
+            ->withCount(['posts as total_reacts' => function ($query) {
+                $query->join('reacts', 'posts.id', '=', 'reacts.post_id');
+            }])
+            ->orderBy('total_reacts', 'desc')
+            ->take(12)
+            ->get();
+
+        if ($topReactedThreads->isEmpty()) {
+            $topReactedThreads = Thread::with(['user', 'category', 'attachments'])
+                ->withCount(['posts as total_reacts' => function ($query) {
+                    $query->join('reacts', 'posts.id', '=', 'reacts.post_id');
+                }])
+                ->orderBy('total_reacts', 'desc')
+                ->take(12)
+                ->get();
+        }
+
+        return view('forum.home', compact('categories', 'stats', 'activeThreads', 'onlineUsers', 'featuredThreads', 'latestThreads', 'viralThreads', 'mostLikedThread', 'topReactedThreads'));
     }
 
     public function search(Request $request)
