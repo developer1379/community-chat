@@ -45,6 +45,24 @@ class ForumController extends Controller
             ->take(5)
             ->get();
 
+        // Fetch most liked thread of the day (preferring those with attachments)
+        $mostLikedThread = Thread::whereHas('attachments')
+            ->with(['user', 'category', 'attachments'])
+            ->withCount(['posts as total_reacts' => function ($query) {
+                $query->join('reacts', 'posts.id', '=', 'reacts.post_id');
+            }])
+            ->orderBy('total_reacts', 'desc')
+            ->first();
+
+        if (!$mostLikedThread) {
+            $mostLikedThread = Thread::with(['user', 'category', 'attachments'])
+                ->withCount(['posts as total_reacts' => function ($query) {
+                    $query->join('reacts', 'posts.id', '=', 'reacts.post_id');
+                }])
+                ->orderBy('total_reacts', 'desc')
+                ->first();
+        }
+
         // Sidebar stats
         $stats = [
             'users_count' => $this->userRepo->getTotalCount(),
@@ -71,7 +89,7 @@ class ForumController extends Controller
             ->take(5)
             ->get();
 
-        return view('forum.home', compact('categories', 'stats', 'activeThreads', 'onlineUsers', 'featuredThreads', 'latestThreads', 'viralThreads'));
+        return view('forum.home', compact('categories', 'stats', 'activeThreads', 'onlineUsers', 'featuredThreads', 'latestThreads', 'viralThreads', 'mostLikedThread'));
     }
 
     public function search(Request $request)
