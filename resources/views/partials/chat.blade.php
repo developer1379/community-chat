@@ -319,12 +319,30 @@
                 // Check for Screen Alert Popups
                 systemNotifs.forEach(n => {
                     if (n.show_alert) {
-                        Swal.fire({
+                        let toastIcon = 'info';
+                        const titleLower = n.title.toLowerCase();
+                        if (titleLower.includes('warning') || titleLower.includes('alert')) {
+                            toastIcon = 'warning';
+                        } else if (titleLower.includes('reply') || titleLower.includes('reaction') || titleLower.includes('follow')) {
+                            toastIcon = 'success';
+                        }
+
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 4000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        });
+
+                        Toast.fire({
+                            icon: toastIcon,
                             title: n.title,
-                            text: n.message,
-                            icon: 'warning',
-                            confirmButtonColor: '#e11d48',
-                            confirmButtonText: 'I Understand'
+                            text: n.message
                         });
 
                         // Dismiss this screen alert immediately so it doesn't pop up again
