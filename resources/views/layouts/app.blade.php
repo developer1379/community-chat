@@ -155,7 +155,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: titleShimmer 3s linear infinite;
-            display: inline-block;
+            display: inline;
         }
     </style>
 
