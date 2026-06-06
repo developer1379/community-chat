@@ -254,7 +254,13 @@ class AuthController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        if (!$user->hasActiveShopItem('username_change')) {
+        $purchase = $user->purchases()
+            ->whereHas('shopItem', function ($q) {
+                $q->where('key', 'username_change');
+            })
+            ->first();
+
+        if (!$purchase) {
             return redirect()->back()->with('error', 'You must purchase Username Change feature first.');
         }
 
@@ -265,6 +271,8 @@ class AuthController extends Controller
         $user->update([
             'name' => $request->name,
         ]);
+
+        $purchase->delete();
 
         return redirect()->route('profile.show', $user->name)->with('success', 'Your username has been updated successfully!');
     }
@@ -306,18 +314,98 @@ class AuthController extends Controller
             abort(403);
         }
 
+        // Validate first
         if ($request->has('apply_featured')) {
-            if (!$user->hasActiveShopItem('featured_homepage_thread')) {
+            $hasItem = $user->purchases()
+                ->whereHas('shopItem', function ($q) {
+                    $q->where('key', 'featured_homepage_thread');
+                })
+                ->exists();
+            if (!$hasItem) {
                 return redirect()->back()->with('error', 'You must purchase Featured homepage thread upgrade first.');
             }
-            $thread->update(['is_featured' => true]);
         }
 
         if ($request->has('apply_sticky')) {
-            if (!$user->hasActiveShopItem('sticky_thread')) {
+            $hasItem = $user->purchases()
+                ->whereHas('shopItem', function ($q) {
+                    $q->where('key', 'sticky_thread');
+                })
+                ->exists();
+            if (!$hasItem) {
                 return redirect()->back()->with('error', 'You must purchase Sticky Thread upgrade first.');
             }
-            $thread->update(['is_pinned' => true]);
+        }
+
+        if ($request->has('apply_title_style')) {
+            $hasItem = $user->purchases()
+                ->whereHas('shopItem', function ($q) {
+                    $q->where('key', 'thread_title_style');
+                })
+                ->exists();
+            if (!$hasItem) {
+                return redirect()->back()->with('error', 'You must purchase Thread Title Style upgrade first.');
+            }
+        }
+
+        if ($request->has('apply_highlight')) {
+            $hasItem = $user->purchases()
+                ->whereHas('shopItem', function ($q) {
+                    $q->where('key', 'thread_highlight');
+                })
+                ->exists();
+            if (!$hasItem) {
+                return redirect()->back()->with('error', 'You must purchase Thread Highlight upgrade first.');
+            }
+        }
+
+        // Apply and consume
+        if ($request->has('apply_featured')) {
+            $purchase = $user->purchases()
+                ->whereHas('shopItem', function ($q) {
+                    $q->where('key', 'featured_homepage_thread');
+                })
+                ->first();
+            if ($purchase) {
+                $thread->update(['is_featured' => true]);
+                $purchase->delete();
+            }
+        }
+
+        if ($request->has('apply_sticky')) {
+            $purchase = $user->purchases()
+                ->whereHas('shopItem', function ($q) {
+                    $q->where('key', 'sticky_thread');
+                })
+                ->first();
+            if ($purchase) {
+                $thread->update(['is_pinned' => true]);
+                $purchase->delete();
+            }
+        }
+
+        if ($request->has('apply_title_style')) {
+            $purchase = $user->purchases()
+                ->whereHas('shopItem', function ($q) {
+                    $q->where('key', 'thread_title_style');
+                })
+                ->first();
+            if ($purchase) {
+                $thread->update(['is_title_styled' => true]);
+                $purchase->delete();
+            }
+        }
+
+        if ($request->has('apply_highlight')) {
+            $purchase = $user->purchases()
+                ->whereHas('shopItem', function ($q) {
+                    $q->where('key', 'thread_highlight');
+                })
+                ->first();
+            if ($purchase) {
+                $thread->update(['is_highlighted' => true]);
+                $purchase->delete();
+            }
         }
 
         // Flush dynamic caches

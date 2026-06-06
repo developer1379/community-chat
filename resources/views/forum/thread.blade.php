@@ -51,14 +51,14 @@ article
             <span>/</span>
             <span class="text-indigo-600 dark:text-indigo-300 truncate">{{ $thread->title }}</span>
         </div>
-        <h1 class="text-2xl font-extrabold text-slate-800 dark:text-white tracking-tight flex items-center gap-2 flex-wrap">
+        <h1 class="text-2xl font-extrabold text-slate-800 dark:text-white tracking-tight flex items-center gap-2 flex-wrap {{ $thread->is_highlighted ? 'px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20 dark:bg-amber-500/5 dark:border-amber-550/20' : '' }}">
             @if($thread->is_pinned)
                 <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-amber-500/10 text-amber-600 dark:text-amber-300 border border-amber-500/20">📌 Pinned</span>
             @endif
             @if($thread->is_locked)
                 <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-700">🔒 Locked</span>
             @endif
-            {{ $thread->title }}
+            <span class="{{ $thread->is_title_styled ? 'font-black text-rose-600 dark:text-rose-400 drop-shadow-[0_1px_1px_rgba(244,63,94,0.2)] tracking-wide' : '' }}">{{ $thread->title }}</span>
         </h1>
         @if($thread->tags)
             <div class="flex flex-wrap gap-1.5 mt-2">

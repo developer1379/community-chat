@@ -22,6 +22,8 @@ class Thread extends Model
         'is_pinned',
         'is_locked',
         'is_featured',
+        'is_title_styled',
+        'is_highlighted',
         'tags',
     ];
     /**
@@ -33,6 +35,8 @@ class Thread extends Model
             'is_pinned' => 'boolean',
             'is_locked' => 'boolean',
             'is_featured' => 'boolean',
+            'is_title_styled' => 'boolean',
+            'is_highlighted' => 'boolean',
         ];
     }
     /**

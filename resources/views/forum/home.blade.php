@@ -400,9 +400,8 @@
                                 </a>
                                 <div class="min-w-0">
                                     @php
-                                        $creator = $thread->user;
-                                        $hasTitleStyle = $creator ? $creator->hasActiveShopItem('thread_title_style') : false;
-                                        $hasHighlight = $creator ? $creator->hasActiveShopItem('thread_highlight') : false;
+                                        $hasTitleStyle = $thread->is_title_styled;
+                                        $hasHighlight = $thread->is_highlighted;
                                     @endphp
                                     <a href="{{ route('threads.show', $thread->slug) }}" class="text-xs font-extrabold text-slate-850 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-450 transition-colors line-clamp-1 leading-snug {{ $hasHighlight ? 'bg-amber-500/10 px-1 rounded' : '' }} {{ $hasTitleStyle ? 'font-black text-rose-600 dark:text-rose-400 drop-shadow-[0_1px_1px_rgba(244,63,94,0.15)]' : '' }}">
                                         {{ $thread->title }}
@@ -432,9 +431,8 @@
                                 </a>
                                 <div class="min-w-0">
                                     @php
-                                        $creator = $thread->user;
-                                        $hasTitleStyle = $creator ? $creator->hasActiveShopItem('thread_title_style') : false;
-                                        $hasHighlight = $creator ? $creator->hasActiveShopItem('thread_highlight') : false;
+                                        $hasTitleStyle = $thread->is_title_styled;
+                                        $hasHighlight = $thread->is_highlighted;
                                     @endphp
                                     <a href="{{ route('threads.show', $thread->slug) }}" class="text-xs font-extrabold text-slate-850 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-450 transition-colors line-clamp-1 leading-snug {{ $hasHighlight ? 'bg-amber-500/10 px-1 rounded' : '' }} {{ $hasTitleStyle ? 'font-black text-rose-600 dark:text-rose-400 drop-shadow-[0_1px_1px_rgba(244,63,94,0.15)]' : '' }}">
                                         {{ $thread->title }}

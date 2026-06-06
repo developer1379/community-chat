@@ -87,9 +87,8 @@
                                     </span>
                                 @endif
                                 @php
-                                    $creator = $thread->user;
-                                    $hasTitleStyle = $creator ? $creator->hasActiveShopItem('thread_title_style') : false;
-                                    $hasHighlight = $creator ? $creator->hasActiveShopItem('thread_highlight') : false;
+                                    $hasTitleStyle = $thread->is_title_styled;
+                                    $hasHighlight = $thread->is_highlighted;
                                 @endphp
                                 <h2 class="font-bold text-slate-900 text-base hover:text-blue-600 transition-colors leading-tight {{ $hasHighlight ? 'px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20 dark:bg-amber-500/5 dark:border-amber-550/20' : '' }}">
                                     <a href="{{ route('threads.show', $thread->slug) }}" class="{{ $hasTitleStyle ? 'font-black text-rose-600 dark:text-rose-400 drop-shadow-[0_1px_1px_rgba(244,63,94,0.2)] tracking-wide' : '' }}">{{ $thread->title }}</a>

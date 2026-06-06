@@ -201,6 +201,8 @@ it('allows users to configure purchased upgrades in profile settings', function 
     $response->assertRedirect(route('profile.show', 'NewCoolName'));
     $user = $user->fresh();
     expect($user->name)->toBe('NewCoolName');
+    // Verify consumption
+    expect($user->hasActiveShopItem('username_change'))->toBeFalse();
 
     // 2. Update Username Style
     $response = $this->actingAs($user)->post(route('profile.update_username_style'), [
@@ -212,8 +214,19 @@ it('allows users to configure purchased upgrades in profile settings', function 
     $user = $user->fresh();
     expect($user->title_color)->toBe('#ff0000');
     expect($user->title_badge)->toBe('Exclusive Gold Member');
+    // Username style is permanent, should still be active
+    expect($user->hasActiveShopItem('username_style'))->toBeTrue();
 
-    // 3. Update Thread Sticky Options
+    // 3. Purchase thread upgrades for title style, highlight, featured
+    $itemTitleStyle = createTestShopItem(['key' => 'thread_title_style']);
+    $itemHighlight = createTestShopItem(['key' => 'thread_highlight']);
+    $itemFeatured = createTestShopItem(['key' => 'featured_homepage_thread']);
+
+    PurchasedItem::create(['user_id' => $user->id, 'shop_item_id' => $itemTitleStyle->id]);
+    PurchasedItem::create(['user_id' => $user->id, 'shop_item_id' => $itemHighlight->id]);
+    PurchasedItem::create(['user_id' => $user->id, 'shop_item_id' => $itemFeatured->id]);
+
+    // Update Thread Upgrades (Sticky, Title Style, Highlight, Featured)
     $thread = \App\Models\Thread::create([
         'category_id' => \App\Models\Category::factory()->create()->id,
         'user_id' => $user->id,
@@ -223,12 +236,27 @@ it('allows users to configure purchased upgrades in profile settings', function 
 
     $response = $this->actingAs($user)->post(route('profile.update_thread_upgrades'), [
         'thread_id' => $thread->id,
-        'apply_sticky' => '1'
+        'apply_sticky' => '1',
+        'apply_title_style' => '1',
+        'apply_highlight' => '1',
+        'apply_featured' => '1',
     ]);
     if (session('error')) {
         dd(session('error'));
     }
     $response->assertSessionHas('success', 'Thread upgrades applied successfully!');
     $response->assertRedirect();
-    expect($thread->fresh()->is_pinned)->toBeTrue();
+
+    $thread = $thread->fresh();
+    expect($thread->is_pinned)->toBeTrue();
+    expect($thread->is_title_styled)->toBeTrue();
+    expect($thread->is_highlighted)->toBeTrue();
+    expect($thread->is_featured)->toBeTrue();
+
+    // Verify consumption of all thread upgrades
+    $user = $user->fresh();
+    expect($user->hasActiveShopItem('sticky_thread'))->toBeFalse();
+    expect($user->hasActiveShopItem('thread_title_style'))->toBeFalse();
+    expect($user->hasActiveShopItem('thread_highlight'))->toBeFalse();
+    expect($user->hasActiveShopItem('featured_homepage_thread'))->toBeFalse();
 });
