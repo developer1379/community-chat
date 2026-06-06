@@ -186,6 +186,16 @@ class ForumController extends Controller
 
         $thread->touch();
 
+        if ($thread->user_id !== Auth::id()) {
+            \App\Models\SystemNotification::create([
+                'user_id' => $thread->user_id,
+                'title' => 'New Reply to your Thread',
+                'message' => Auth::user()->name . ' replied to your thread: "' . $thread->title . '"',
+                'link' => route('threads.show', $thread->slug) . '#post-' . $post->id,
+                'show_alert' => true,
+            ]);
+        }
+
         // Reward user with 5 coins for posting a reply
         Auth::user()->addCoins(5, 'reply_posted', "Replied to thread: " . $thread->title);
 

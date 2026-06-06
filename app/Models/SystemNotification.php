@@ -11,6 +11,7 @@ class SystemNotification extends Model
         'user_id',
         'title',
         'message',
+        'link',
         'is_read',
         'show_alert',
     ];

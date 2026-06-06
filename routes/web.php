@@ -90,6 +90,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/bugs/report', [\App\Http\Controllers\BugReportController::class, 'store'])->name('bugs.store');
 
     // User Notification Endpoints
+    Route::get('/notifications', [\App\Http\Controllers\AdminController::class, 'notificationsIndex'])->name('notifications.index');
+    Route::get('/notifications/{notification}/read', [\App\Http\Controllers\AdminController::class, 'readNotification'])->name('notifications.read');
     Route::get('/notifications/system', [\App\Http\Controllers\AdminController::class, 'getUserNotifications']);
     Route::post('/notifications/system/clear', [\App\Http\Controllers\AdminController::class, 'clearUserNotifications']);
     Route::post('/notifications/system/{notification}/dismiss-alert', [\App\Http\Controllers\AdminController::class, 'dismissNotificationAlert']);

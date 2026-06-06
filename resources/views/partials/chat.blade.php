@@ -352,18 +352,41 @@
                         
                         // Insert system notifications
                         systemNotifs.forEach(n => {
+                            let borderClass = 'border-rose-500 dark:border-rose-900/60';
+                            let bgClass = 'bg-rose-50/60 hover:bg-rose-50/80 dark:bg-rose-950/20';
+                            let tagColor = 'text-rose-600 bg-rose-100 dark:text-rose-400 dark:bg-rose-900/40';
+                            let tagLabel = 'Alert';
+
+                            const titleLower = n.title.toLowerCase();
+                            if (titleLower.includes('reply')) {
+                                borderClass = 'border-blue-500 dark:border-blue-900/60';
+                                bgClass = 'bg-blue-50/60 hover:bg-blue-50/80 dark:bg-blue-950/20';
+                                tagColor = 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/40';
+                                tagLabel = 'Reply';
+                            } else if (titleLower.includes('reaction') || titleLower.includes('like')) {
+                                borderClass = 'border-amber-500 dark:border-amber-900/60';
+                                bgClass = 'bg-amber-50/60 hover:bg-amber-50/80 dark:bg-amber-950/20';
+                                tagColor = 'text-amber-600 bg-amber-100 dark:text-amber-400 dark:bg-amber-900/40';
+                                tagLabel = 'Reaction';
+                            } else if (titleLower.includes('follow')) {
+                                borderClass = 'border-emerald-500 dark:border-emerald-900/60';
+                                bgClass = 'bg-emerald-50/60 hover:bg-emerald-50/80 dark:bg-emerald-950/20';
+                                tagColor = 'text-emerald-600 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-900/40';
+                                tagLabel = 'Follow';
+                            }
+
                             html += `
-                                <div class="block p-2 rounded-lg bg-rose-50/60 hover:bg-rose-50/80 transition-all text-xs border-l-2 border-rose-500 dark:bg-rose-950/20 dark:border-rose-900/60">
+                                <a href="/notifications/${n.id}/read" class="block p-2 rounded-lg ${bgClass} transition-all text-xs border-l-2 ${borderClass}">
                                     <div class="flex items-center justify-between">
                                         <p class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-600 animate-pulse"></span>
+                                            <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
                                             ${escapeHtml(n.title)}
                                         </p>
-                                        <span class="text-[7.5px] font-extrabold text-rose-600 bg-rose-105 dark:text-rose-400 dark:bg-rose-900/40 px-1 rounded uppercase tracking-wider">Alert</span>
+                                        <span class="text-[7.5px] font-extrabold ${tagColor} px-1 rounded uppercase tracking-wider">${tagLabel}</span>
                                     </div>
                                     <p class="text-[10px] text-slate-650 dark:text-slate-400 mt-0.5">${escapeHtml(n.message)}</p>
                                     <p class="text-[8.5px] text-slate-450 dark:text-slate-500 font-bold mt-0.5">${new Date(n.created_at).toLocaleDateString()}</p>
-                                </div>
+                                </a>
                             `;
                         });
 

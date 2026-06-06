@@ -55,6 +55,14 @@ class ReactController extends Controller
             // Reward 2 coins to post owner (if not self)
             if ($post->user_id !== $userId) {
                 $post->user->addCoins(2, 'reaction_received', "Received reaction on post in: " . $post->thread->title);
+
+                \App\Models\SystemNotification::create([
+                    'user_id' => $post->user_id,
+                    'title' => 'New Reaction on your Post',
+                    'message' => Auth::user()->name . ' reacted with ' . ucfirst($type) . ' to your post in: "' . $post->thread->title . '"',
+                    'link' => route('threads.show', $post->thread->slug) . '#post-' . $post->id,
+                    'show_alert' => true,
+                ]);
             }
         }
 

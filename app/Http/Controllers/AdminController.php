@@ -334,4 +334,34 @@ class AdminController extends Controller
 
         return redirect()->back()->with('success', 'Shop item deleted successfully.');
     }
+
+    /**
+     * Show all notifications for the authenticated user.
+     */
+    public function notificationsIndex(Request $request)
+    {
+        $notifications = \App\Models\SystemNotification::where('user_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        return view('auth.notifications', compact('notifications'));
+    }
+
+    /**
+     * Mark a notification as read and redirect to target link.
+     */
+    public function readNotification(\App\Models\SystemNotification $notification)
+    {
+        if ($notification->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $notification->update(['is_read' => true]);
+
+        if ($notification->link) {
+            return redirect()->to($notification->link);
+        }
+
+        return redirect()->route('home');
+    }
 }

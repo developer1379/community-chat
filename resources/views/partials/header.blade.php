@@ -67,7 +67,7 @@
                             </div>
                         </div>
                         <div class="p-2.5 bg-slate-50 dark:bg-slate-950/50 border-t border-slate-100 dark:border-slate-800 text-center">
-                            <a href="#" onclick="openAllNotificationsPage(event)" class="text-[9px] font-extrabold text-blue-600 dark:text-blue-400 uppercase tracking-widest hover:underline block">View All Notifications</a>
+                            <a href="{{ route('notifications.index') }}" class="text-[9px] font-extrabold text-blue-600 dark:text-blue-400 uppercase tracking-widest hover:underline block">View All Notifications</a>
                         </div>
                     </div>
                 </div>

@@ -53,6 +53,14 @@ class FollowController extends Controller
         } else {
             $this->userRepo->followUser($currentUserId, $user->id);
             $following = true;
+
+            \App\Models\SystemNotification::create([
+                'user_id' => $user->id,
+                'title' => 'New Follower',
+                'message' => $currentUser->name . ' followed you!',
+                'link' => route('profile.show', $currentUser->name),
+                'show_alert' => true,
+            ]);
         }
 
         // Return the updated follower statistics
