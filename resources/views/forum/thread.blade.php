@@ -98,7 +98,7 @@ article
 
                     @if(!$thread->is_featured)
                         <span>•</span>
-                        <form action="{{ route('threads.feature', $thread->id) }}" method="POST" class="inline" onsubmit="return confirm('{{ $hasFeaturedUpgrade ? \'Feature this thread on the homepage for free?\' : \'Spend 50 coins to feature this thread on the homepage?\' }}');">
+                        <form action="{{ route('threads.feature', $thread->id) }}" method="POST" class="inline" onsubmit="return confirm('{{ $hasFeaturedUpgrade ? "Feature this thread on the homepage for free?" : "Spend 50 coins to feature this thread on the homepage?" }}');">
                             @csrf
                             <button type="submit" class="text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 hover:underline inline-flex items-center gap-0.5 bg-transparent border-0 p-0 cursor-pointer font-sans text-[10px] font-bold">
                                 <span class="material-symbols-outlined text-[12px] font-bold">star</span>
