@@ -135,6 +135,28 @@
         .dark .ql-snow.ql-toolbar button.ql-active .ql-fill {
             fill: #3b82f6 !important;
         }
+
+        /* Dynamic Thread Title Animations */
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 0 0 4px currentColor, 0 0 10px currentColor; }
+            50% { text-shadow: 0 0 8px currentColor, 0 0 20px currentColor; }
+        }
+        .animate-glow {
+            animation: titleGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes titleShimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        .animate-shimmer {
+            background: linear-gradient(90deg, currentColor, #ffffff, currentColor);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleShimmer 3s linear infinite;
+            display: inline-block;
+        }
     </style>
 
     <!-- SweetAlert2 library for premium corporate dialogs -->

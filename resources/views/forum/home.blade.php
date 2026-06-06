@@ -402,8 +402,15 @@
                                     @php
                                         $hasTitleStyle = $thread->is_title_styled;
                                         $hasHighlight = $thread->is_highlighted;
+                                        $animClass = '';
+                                        if ($thread->title_animation === 'glow') $animClass = 'animate-glow';
+                                        elseif ($thread->title_animation === 'pulse') $animClass = 'animate-pulse';
+                                        elseif ($thread->title_animation === 'crackle') $animClass = 'animate-bolt';
+                                        elseif ($thread->title_animation === 'shimmer') $animClass = 'animate-shimmer';
+                                        $colorStyle = ($hasTitleStyle && $thread->title_color) ? 'color: ' . $thread->title_color . ';' : '';
+                                        $defaultClass = ($hasTitleStyle && !$thread->title_color) ? 'text-rose-600 dark:text-rose-400 drop-shadow-[0_1px_1px_rgba(244,63,94,0.15)]' : 'text-slate-850 dark:text-slate-200';
                                     @endphp
-                                    <a href="{{ route('threads.show', $thread->slug) }}" class="text-xs font-extrabold text-slate-850 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-450 transition-colors line-clamp-1 leading-snug {{ $hasHighlight ? 'bg-amber-500/10 px-1 rounded' : '' }} {{ $hasTitleStyle ? 'font-black text-rose-600 dark:text-rose-400 drop-shadow-[0_1px_1px_rgba(244,63,94,0.15)]' : '' }}">
+                                    <a href="{{ route('threads.show', $thread->slug) }}" class="text-xs font-extrabold hover:text-blue-600 dark:hover:text-blue-450 transition-colors line-clamp-1 leading-snug {{ $hasHighlight ? 'bg-amber-500/10 px-1 rounded' : '' }} {{ $hasTitleStyle ? 'font-black' : '' }} {{ $defaultClass }} {{ $animClass }}" style="{{ $colorStyle }}">
                                         {{ $thread->title }}
                                     </a>
                                     <span class="text-[9px] font-semibold text-slate-400 dark:text-slate-500 block mt-0.5">
@@ -433,8 +440,15 @@
                                     @php
                                         $hasTitleStyle = $thread->is_title_styled;
                                         $hasHighlight = $thread->is_highlighted;
+                                        $animClass = '';
+                                        if ($thread->title_animation === 'glow') $animClass = 'animate-glow';
+                                        elseif ($thread->title_animation === 'pulse') $animClass = 'animate-pulse';
+                                        elseif ($thread->title_animation === 'crackle') $animClass = 'animate-bolt';
+                                        elseif ($thread->title_animation === 'shimmer') $animClass = 'animate-shimmer';
+                                        $colorStyle = ($hasTitleStyle && $thread->title_color) ? 'color: ' . $thread->title_color . ';' : '';
+                                        $defaultClass = ($hasTitleStyle && !$thread->title_color) ? 'text-rose-600 dark:text-rose-400 drop-shadow-[0_1px_1px_rgba(244,63,94,0.15)]' : 'text-slate-850 dark:text-slate-200';
                                     @endphp
-                                    <a href="{{ route('threads.show', $thread->slug) }}" class="text-xs font-extrabold text-slate-850 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-450 transition-colors line-clamp-1 leading-snug {{ $hasHighlight ? 'bg-amber-500/10 px-1 rounded' : '' }} {{ $hasTitleStyle ? 'font-black text-rose-600 dark:text-rose-400 drop-shadow-[0_1px_1px_rgba(244,63,94,0.15)]' : '' }}">
+                                    <a href="{{ route('threads.show', $thread->slug) }}" class="text-xs font-extrabold hover:text-blue-600 dark:hover:text-blue-450 transition-colors line-clamp-1 leading-snug {{ $hasHighlight ? 'bg-amber-500/10 px-1 rounded' : '' }} {{ $hasTitleStyle ? 'font-black' : '' }} {{ $defaultClass }} {{ $animClass }}" style="{{ $colorStyle }}">
                                         {{ $thread->title }}
                                     </a>
                                     <span class="text-[9px] font-semibold text-slate-400 dark:text-slate-500 block mt-0.5">

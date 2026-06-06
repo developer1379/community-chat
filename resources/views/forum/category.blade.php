@@ -89,9 +89,17 @@
                                 @php
                                     $hasTitleStyle = $thread->is_title_styled;
                                     $hasHighlight = $thread->is_highlighted;
+                                    $animClass = '';
+                                    if ($thread->title_animation === 'glow') $animClass = 'animate-glow';
+                                    elseif ($thread->title_animation === 'pulse') $animClass = 'animate-pulse';
+                                    elseif ($thread->title_animation === 'crackle') $animClass = 'animate-bolt';
+                                    elseif ($thread->title_animation === 'shimmer') $animClass = 'animate-shimmer';
+                                    // Fallback text color style if no custom color is set
+                                    $colorStyle = ($hasTitleStyle && $thread->title_color) ? 'color: ' . $thread->title_color . ';' : '';
+                                    $defaultClass = ($hasTitleStyle && !$thread->title_color) ? 'text-rose-600 dark:text-rose-400 drop-shadow-[0_1px_1px_rgba(244,63,94,0.2)]' : '';
                                 @endphp
                                 <h2 class="font-bold text-slate-900 text-base hover:text-blue-600 transition-colors leading-tight {{ $hasHighlight ? 'px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20 dark:bg-amber-500/5 dark:border-amber-550/20' : '' }}">
-                                    <a href="{{ route('threads.show', $thread->slug) }}" class="{{ $hasTitleStyle ? 'font-black text-rose-600 dark:text-rose-400 drop-shadow-[0_1px_1px_rgba(244,63,94,0.2)] tracking-wide' : '' }}">{{ $thread->title }}</a>
+                                    <a href="{{ route('threads.show', $thread->slug) }}" class="{{ $hasTitleStyle ? 'font-black tracking-wide' : '' }} {{ $defaultClass }} {{ $animClass }}" style="{{ $colorStyle }}">{{ $thread->title }}</a>
                                 </h2>
                             </div>
                             <div class="flex items-center gap-2 text-xs text-slate-500 font-medium flex-wrap">

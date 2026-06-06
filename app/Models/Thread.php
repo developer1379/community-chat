@@ -24,6 +24,8 @@ class Thread extends Model
         'is_featured',
         'is_title_styled',
         'is_highlighted',
+        'title_color',
+        'title_animation',
         'tags',
     ];
     /**

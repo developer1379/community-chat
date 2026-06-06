@@ -163,7 +163,7 @@ class ThreadController extends Controller
         return redirect()->route('home')->with('success', 'Your thread has been deleted.');
     }
 
-    public function feature(\App\Models\Thread $thread)
+    public function feature(Request $request, \App\Models\Thread $thread)
     {
         abort_if(Auth::id() !== $thread->user_id, 403);
 
@@ -184,6 +184,11 @@ class ThreadController extends Controller
             return redirect()->back()->with('error', 'You do not have enough coins to feature this thread. (Requires 50 coins)');
         }
 
+        $request->validate([
+            'title_color' => ['nullable', 'string', 'max:7', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
+            'title_animation' => ['nullable', 'string', 'in:none,glow,pulse,crackle,shimmer'],
+        ]);
+
         // Deduct coins if not active in shop, otherwise consume the upgrade
         if (!$purchase) {
             $user->addCoins(-50, 'thread_featured', "Featured thread: " . $thread->title);
@@ -192,7 +197,12 @@ class ThreadController extends Controller
         }
 
         // Mark as featured
-        $thread->update(['is_featured' => true]);
+        $thread->update([
+            'is_featured' => true,
+            'title_color' => $request->title_color,
+            'title_animation' => $request->title_animation,
+            'is_title_styled' => $request->filled('title_color') || ($request->title_animation && $request->title_animation !== 'none'),
+        ]);
 
         return redirect()->back()->with('success', 'Your thread has been featured on the homepage successfully!');
     }
