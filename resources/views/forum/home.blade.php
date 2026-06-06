@@ -426,9 +426,9 @@
                         <span class="material-symbols-outlined text-sm text-amber-500">favorite</span> Most reactions - Past 7 days
                     </h2>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 bg-slate-950/40 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-md overflow-hidden">
-                        <!-- Main Thread Left Box (Spans 9 columns) -->
-                        <div class="md:col-span-9 flex flex-col justify-between space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                        <!-- Main Thread Left Box (Spans 9 columns in its own white/dark card) -->
+                        <div class="md:col-span-9 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-md flex flex-col justify-between space-y-4">
                             <div class="space-y-3">
                                 <!-- Category/Forum Name -->
                                 <span class="text-xs font-extrabold uppercase text-blue-600 dark:text-blue-400 tracking-wider block">
@@ -463,7 +463,7 @@
                                 </div>
                                 
                                 <!-- Yellow/Orange Title -->
-                                <h3 class="text-base sm:text-lg font-black italic tracking-wide text-amber-550 dark:text-amber-400 uppercase leading-snug">
+                                <h3 class="text-base sm:text-lg font-black italic tracking-wide text-amber-500 dark:text-amber-400 uppercase leading-snug">
                                     <a href="{{ route('threads.show', $mostLikedThread->slug) }}" class="hover:underline">
                                         {{ $mostLikedThread->title }}
                                     </a>
@@ -471,7 +471,7 @@
                             </div>
                             
                             <!-- Large Main Attachment Image -->
-                            <div class="relative rounded-2xl overflow-hidden border border-slate-250 dark:border-slate-800 bg-slate-900 aspect-[16/10] w-full shadow-sm">
+                            <div class="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 aspect-[16/10] w-full shadow-sm">
                                 <a href="{{ route('threads.show', $mostLikedThread->slug) }}" class="block w-full h-full group">
                                     <img src="{{ $mostLikedPreviewUrl }}" class="w-full h-full object-cover group-hover:scale-[1.01] transition-all duration-550" alt="{{ $mostLikedThread->title }}">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
@@ -495,31 +495,26 @@
                             </div>
                         </div>
                         
-                        <!-- Side Images (Spans 3 columns) -->
-                        <div class="md:col-span-3 flex flex-col justify-start space-y-4 border-t md:border-t-0 md:border-l border-slate-200 dark:border-slate-800 pt-4 md:pt-0 md:pl-5">
-                            <h4 class="text-[10px] font-black text-slate-450 dark:text-slate-500 uppercase tracking-widest border-b border-slate-200 dark:border-slate-800 pb-2">
-                                Featured Images
-                            </h4>
-                            <div class="flex flex-row md:flex-col gap-4 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800 scrollbar-track-transparent">
-                                @foreach($featuredThreads->take(4) as $ft)
-                                    @php
-                                        $ftAttachment = \App\Models\Attachment::where('thread_id', $ft->id)->first();
-                                        $ftPreviewUrl = $ftAttachment ? $ftAttachment->file_path : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80';
-                                    @endphp
-                                    <a href="{{ route('threads.show', $ft->slug) }}" class="flex-shrink-0 w-24 md:w-full group block">
-                                        <div class="relative aspect-[16/10] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-950 group-hover:border-blue-500 transition-all shadow-sm">
-                                            <img src="{{ $ftPreviewUrl }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ $ft->title }}">
-                                            <!-- Title Overlay -->
-                                            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2 text-center">
-                                                <p class="text-[8px] font-extrabold text-white line-clamp-2 leading-tight">{{ $ft->title }}</p>
-                                            </div>
+                        <!-- Side Images (Spans 3 columns of separate standalone cards) -->
+                        <div class="md:col-span-3 flex flex-row md:flex-col gap-4 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800 scrollbar-track-transparent">
+                            @foreach($featuredThreads->take(3) as $ft)
+                                @php
+                                    $ftAttachment = \App\Models\Attachment::where('thread_id', $ft->id)->first();
+                                    $ftPreviewUrl = $ftAttachment ? $ftAttachment->file_path : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80';
+                                @endphp
+                                <a href="{{ route('threads.show', $ft->slug) }}" class="flex-shrink-0 w-28 md:w-full group block bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 shadow-sm hover:shadow-md transition-shadow">
+                                    <div class="relative aspect-[16/10] rounded-xl overflow-hidden bg-white dark:bg-slate-950 group-hover:border-blue-500 transition-all">
+                                        <img src="{{ $ftPreviewUrl }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ $ft->title }}">
+                                        <!-- Title Overlay -->
+                                        <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2 text-center">
+                                            <p class="text-[8px] font-extrabold text-white line-clamp-2 leading-tight">{{ $ft->title }}</p>
                                         </div>
-                                        <p class="text-[9px] font-extrabold text-slate-450 dark:text-slate-400 mt-1.5 line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors md:block hidden">
-                                            {{ $ft->title }}
-                                        </p>
-                                    </a>
-                                @endforeach
-                            </div>
+                                    </div>
+                                    <p class="text-[9px] font-extrabold text-slate-500 dark:text-slate-400 mt-2 px-1 line-clamp-1 group-hover:text-blue-650 dark:group-hover:text-blue-400 transition-colors md:block hidden">
+                                        {{ $ft->title }}
+                                    </p>
+                                </a>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -644,45 +639,6 @@
                     <a href="{{ route('rules') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 hover:underline transition-colors">
                         View complete ranking tiers <span class="material-symbols-outlined text-xs">arrow_forward</span>
                     </a>
-                </div>
-            </div>
-
-            <!-- Dynamic Community Stats Card -->
-            <div class="border border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-slate-900 rounded-2xl shadow-sm text-left">
-                <h3 class="text-sm font-extrabold tracking-wider text-slate-500 uppercase mb-4 flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-blue-600 text-sm">equalizer</span> Forum Stats
-                </h3>
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-slate-50 dark:bg-slate-950/40 p-3 border border-slate-200 dark:border-slate-800 text-center rounded-2xl">
-                        <span class="block text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">{{ $stats['threads_count'] }}</span>
-                        <span class="text-xs font-bold text-slate-450 dark:text-slate-450 tracking-wider uppercase">Threads</span>
-                    </div>
-                    <div class="bg-slate-50 dark:bg-slate-950/40 p-3 border border-slate-200 dark:border-slate-800 text-center rounded-2xl">
-                        <span class="block text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">{{ $stats['posts_count'] }}</span>
-                        <span class="text-xs font-bold text-slate-450 dark:text-slate-450 tracking-wider uppercase">Replies</span>
-                    </div>
-                </div>
-                <div class="mt-4 pt-3.5 border-t border-slate-100 dark:border-slate-850 text-sm text-slate-650 dark:text-slate-400 flex justify-between items-center font-semibold">
-                    <span>Newest Member:</span>
-                    @if($stats['latest_user'])
-                    <a href="{{ route('profile.show', $stats['latest_user']->name) }}" 
-                       data-user-hover="true" 
-                       data-user-name="{{ $stats['latest_user']->name }}" 
-                       data-user-badge="{{ $stats['latest_user']->title_badge }}" 
-                       data-user-joined="{{ $stats['latest_user']->created_at->format('M d, Y') }}" 
-                       data-user-threads="{{ $stats['latest_user']->threads()->count() }}" 
-                       data-user-posts="{{ $stats['latest_user']->posts()->count() }}" 
-                       data-user-uploads="{{ $stats['latest_user']->attachments()->count() }}" 
-                       data-user-avatar="{{ $stats['latest_user']->avatar_url }}" 
-                       data-user-banner="{{ $stats['latest_user']->banner_color }}"
-                       data-user-banner-path="{{ $stats['latest_user']->banner_path }}"
-                       class="font-bold text-blue-600 hover:underline flex items-center gap-1">
-                        {{ $stats['latest_user']->name }}
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-                    </a>
-                    @else
-                    <span class="text-slate-400 text-xs">None yet</span>
-                    @endif
                 </div>
             </div>
 
