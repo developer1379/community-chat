@@ -249,9 +249,11 @@
                     const hoverCardName = document.getElementById('hover-card-name');
                     const hoverCardBadge = document.getElementById('hover-card-badge');
                     const hoverCardJoined = document.getElementById('hover-card-joined');
-                    const hoverCardThreads = document.getElementById('hover-card-threads');
                     const hoverCardPosts = document.getElementById('hover-card-posts');
-                    const hoverCardUploads = document.getElementById('hover-card-uploads');
+                    const hoverCardReactions = document.getElementById('hover-card-reactions');
+                    const hoverCardBadges = document.getElementById('hover-card-badges');
+                    const hoverCardPoints = document.getElementById('hover-card-points');
+                    const hoverCardCoins = document.getElementById('hover-card-coins');
                     const hoverCardHeader = document.getElementById('hover-card-header');
                     const hoverCardActions = document.getElementById('hover-card-actions');
                     const hoverCardRankBadge = document.getElementById('hover-card-rank-badge');
@@ -269,9 +271,11 @@
                         hoverCardRankBadge.style.background = data.rank_color;
                     }
                     if (hoverCardJoined) hoverCardJoined.innerText = data.joined;
-                    if (hoverCardThreads) hoverCardThreads.innerText = data.threads_count;
                     if (hoverCardPosts) hoverCardPosts.innerText = data.posts_count;
-                    if (hoverCardUploads) hoverCardUploads.innerText = data.uploads_count;
+                    if (hoverCardReactions) hoverCardReactions.innerText = data.reactions_count;
+                    if (hoverCardBadges) hoverCardBadges.innerText = data.badges_count;
+                    if (hoverCardPoints) hoverCardPoints.innerText = data.activity_points;
+                    if (hoverCardCoins) hoverCardCoins.innerText = data.coins;
 
                     // Online / Presence Indicators
                     const presenceDot = document.getElementById('hover-card-presence-dot');

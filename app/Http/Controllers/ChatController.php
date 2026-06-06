@@ -288,12 +288,15 @@ class ChatController extends Controller
             }
         }
 
+        $reactionsCount = \App\Models\React::whereIn('post_id', $user->posts()->pluck('id'))->count();
+        $badgesCount = max(1, min(10, floor($reactionsCount / 100) + floor($user->posts()->count() / 50) + 1));
+
         return response()->json([
             'id' => $user->id,
             'name' => $user->name,
             'avatar_url' => $user->avatar_url,
             'title_badge' => $user->title_badge ?? 'Member',
-            'joined' => $user->created_at->format('M Y'),
+            'joined' => $user->created_at->format('M d, Y'),
             'threads_count' => $user->threads()->count(),
             'posts_count' => $user->posts()->count(),
             'uploads_count' => $user->attachments()->count(),
@@ -307,6 +310,9 @@ class ChatController extends Controller
             'rank_name' => $user->computed_anime_tier['name'],
             'rank_color' => $user->computed_anime_tier['color'],
             'rank_badge' => $user->computed_anime_tier['badge'],
+            'reactions_count' => $reactionsCount,
+            'coins' => number_format($user->coins, 2),
+            'badges_count' => $badgesCount,
         ]);
     }
 

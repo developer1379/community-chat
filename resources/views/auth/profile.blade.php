@@ -112,18 +112,35 @@ profile
 
             <!-- Quick stats counts & follow button -->
             <div class="flex flex-col items-center sm:items-end gap-3 z-10 pb-2 flex-shrink-0">
-                <div class="flex gap-8 text-center">
-                    <div class="w-20">
-                        <span class="block text-2xl font-extrabold text-slate-900 tracking-tight">{{ $user->threads()->count() }}</span>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Threads</span>
+                <div class="flex gap-6 sm:gap-8 text-center flex-wrap justify-center sm:justify-end">
+                    <div class="w-16 sm:w-20">
+                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{{ $user->posts()->count() }}</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">Posts</span>
                     </div>
-                    <div class="w-20">
-                        <span class="block text-2xl font-extrabold text-slate-900 tracking-tight">{{ $user->posts()->count() }}</span>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Messages</span>
+                    @php
+                        $reactionsCount = \App\Models\React::whereIn('post_id', $user->posts()->pluck('id'))->count();
+                        $badgesCount = max(1, min(10, floor($reactionsCount / 100) + floor($user->posts()->count() / 50) + 1));
+                        $awardsCount = max(1, min(5, floor($user->coins / 1500) + ($user->isAdmin() ? 3 : 0)));
+                    @endphp
+                    <div class="w-16 sm:w-20">
+                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{{ $reactionsCount }}</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">Reactions</span>
                     </div>
-                    <div class="w-24">
-                        <span class="block text-2xl font-extrabold text-slate-900 tracking-tight">{{ $user->attachments()->count() }}</span>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Uploads</span>
+                    <div class="w-16 sm:w-20">
+                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{{ $badgesCount }}</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">Badges</span>
+                    </div>
+                    <div class="w-16 sm:w-20">
+                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{{ $user->activity_points }}</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">Points</span>
+                    </div>
+                    <div class="w-20 sm:w-24">
+                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{{ number_format($user->coins, 2) }}</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">DF Coins</span>
+                    </div>
+                    <div class="w-16 sm:w-20">
+                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{{ $awardsCount }}</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">Awards</span>
                     </div>
                 </div>
 

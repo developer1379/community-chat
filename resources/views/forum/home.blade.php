@@ -194,21 +194,48 @@
                         $firstAttach = $thread->attachments->first();
                         $previewUrl = $firstAttach ? $firstAttach->file_path : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=150&q=80';
                     @endphp
-                    <a href="{{ route('threads.show', $thread->slug) }}" class="flex flex-col items-center flex-shrink-0 group text-center select-none w-16">
-                        <div class="relative w-14 h-14 rounded-full overflow-hidden p-0.5 border-2 border-pink-500/85 dark:border-pink-600/85 group-hover:scale-105 transition-transform duration-300 shadow-sm bg-white dark:bg-slate-950">
-                            <img src="{{ $previewUrl }}" class="w-full h-full object-cover rounded-full animate-fade-in" alt="reaction thumb">
-                            <!-- Overlay user avatar mini bubble at bottom right -->
-                            <div class="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full overflow-hidden border border-white dark:border-slate-900 bg-white shadow-sm">
+                    <div class="flex flex-col items-center flex-shrink-0 text-center select-none w-16">
+                        <div class="relative w-14 h-14 rounded-full p-0.5 border-2 border-pink-500/85 dark:border-pink-600/85 hover:scale-105 transition-transform duration-300 shadow-sm bg-white dark:bg-slate-950">
+                            <!-- Big circle links to the thread -->
+                            <a href="{{ route('threads.show', $thread->slug) }}" class="block w-full h-full rounded-full overflow-hidden">
+                                <img src="{{ $previewUrl }}" class="w-full h-full object-cover rounded-full animate-fade-in" alt="reaction thumb">
+                            </a>
+                            <!-- Overlay user avatar mini bubble at bottom right links to profile & triggers hover card -->
+                            <a href="{{ route('profile.show', $thread->user->name) }}"
+                               data-user-hover="true"
+                               data-user-name="{{ $thread->user->name }}"
+                               data-user-badge="{{ $thread->user->title_badge }}"
+                               data-user-joined="{{ $thread->user->created_at->format('M d, Y') }}"
+                               data-user-threads="{{ $thread->user->threads()->count() }}"
+                               data-user-posts="{{ $thread->user->posts()->count() }}"
+                               data-user-uploads="{{ $thread->user->attachments()->count() }}"
+                               data-user-avatar="{{ $thread->user->avatar_url }}"
+                               data-user-banner="{{ $thread->user->banner_color }}"
+                               data-user-banner-path="{{ $thread->user->banner_path }}"
+                               class="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full overflow-hidden border border-white dark:border-slate-900 bg-white shadow-sm block hover:scale-110 transition-transform">
                                 <img src="{{ $thread->user->avatar_url }}" class="w-full h-full object-cover">
-                            </div>
+                            </a>
                         </div>
-                        <p class="text-[9px] font-black text-slate-650 dark:text-slate-350 mt-2 truncate w-full group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        <!-- Username text links to profile & triggers hover card -->
+                        <a href="{{ route('profile.show', $thread->user->name) }}"
+                           data-user-hover="true"
+                           data-user-name="{{ $thread->user->name }}"
+                           data-user-badge="{{ $thread->user->title_badge }}"
+                           data-user-joined="{{ $thread->user->created_at->format('M d, Y') }}"
+                           data-user-threads="{{ $thread->user->threads()->count() }}"
+                           data-user-posts="{{ $thread->user->posts()->count() }}"
+                           data-user-uploads="{{ $thread->user->attachments()->count() }}"
+                           data-user-avatar="{{ $thread->user->avatar_url }}"
+                           data-user-banner="{{ $thread->user->banner_color }}"
+                           data-user-banner-path="{{ $thread->user->banner_path }}"
+                           class="text-[9px] font-black text-slate-650 dark:text-slate-350 mt-2 truncate w-full hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                             {{ $thread->user->name }}
-                        </p>
-                        <span class="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-pink-50 dark:bg-pink-950/40 text-pink-600 dark:text-pink-400 border border-pink-100 dark:border-pink-900/30 mt-0.5 leading-none shadow-sm flex items-center gap-0.5">
+                        </a>
+                        <!-- Reaction count links to thread -->
+                        <a href="{{ route('threads.show', $thread->slug) }}" class="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-pink-50 dark:bg-pink-950/40 text-pink-600 dark:text-pink-400 border border-pink-100 dark:border-pink-900/30 mt-0.5 leading-none shadow-sm flex items-center gap-0.5 hover:bg-pink-100 transition-colors">
                             🔥 {{ $thread->total_reacts ?? 15 }}
-                        </span>
-                    </a>
+                        </a>
+                    </div>
                 @endforeach
             </div>
         </div>

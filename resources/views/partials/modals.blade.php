@@ -173,18 +173,26 @@
         </div>
     </div>
     <!-- Stats Row -->
-    <div class="grid grid-cols-3 border-t border-slate-100 bg-slate-50/50 text-center divide-x divide-slate-100">
-        <div class="py-1.5">
-            <span class="block text-[11px] font-extrabold text-slate-850" id="hover-card-threads"></span>
-            <span class="text-[7px] font-bold text-slate-400 uppercase tracking-widest leading-none">Threads</span>
+    <div class="grid grid-cols-5 border-t border-slate-100 bg-slate-50/50 text-center divide-x divide-slate-100">
+        <div class="py-1.5 px-0.5">
+            <span class="block text-[10px] font-extrabold text-slate-850" id="hover-card-posts"></span>
+            <span class="text-[6.5px] font-bold text-slate-400 uppercase tracking-widest leading-none">Posts</span>
         </div>
-        <div class="py-1.5">
-            <span class="block text-[11px] font-extrabold text-slate-850" id="hover-card-posts"></span>
-            <span class="text-[7px] font-bold text-slate-400 uppercase tracking-widest leading-none">Replies</span>
+        <div class="py-1.5 px-0.5">
+            <span class="block text-[10px] font-extrabold text-slate-850" id="hover-card-reactions"></span>
+            <span class="text-[6.5px] font-bold text-slate-400 uppercase tracking-widest leading-none">Reactions</span>
         </div>
-        <div class="py-1.5">
-            <span class="block text-[11px] font-extrabold text-slate-850" id="hover-card-uploads"></span>
-            <span class="text-[7px] font-bold text-slate-400 uppercase tracking-widest leading-none">Uploads</span>
+        <div class="py-1.5 px-0.5">
+            <span class="block text-[10px] font-extrabold text-slate-850" id="hover-card-badges"></span>
+            <span class="text-[6.5px] font-bold text-slate-400 uppercase tracking-widest leading-none">Badges</span>
+        </div>
+        <div class="py-1.5 px-0.5">
+            <span class="block text-[10px] font-extrabold text-slate-850" id="hover-card-points"></span>
+            <span class="text-[6.5px] font-bold text-slate-400 uppercase tracking-widest leading-none">Points</span>
+        </div>
+        <div class="py-1.5 px-0.5 min-w-0">
+            <span class="block text-[10px] font-extrabold text-slate-850 truncate" id="hover-card-coins"></span>
+            <span class="text-[6.5px] font-bold text-slate-400 uppercase tracking-widest leading-none">DF Coins</span>
         </div>
     </div>
     <!-- Actions Row -->
