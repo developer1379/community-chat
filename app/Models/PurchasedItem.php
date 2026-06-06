@@ -19,6 +19,16 @@ class PurchasedItem extends Model
     ];
 
     /**
+     * The attributes that should be cast.
+     */
+    protected function casts(): array
+    {
+        return [
+            'expires_at' => 'datetime',
+        ];
+    }
+
+    /**
      * Get the user who bought this.
      */
     public function user(): BelongsTo
