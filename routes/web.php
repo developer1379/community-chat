@@ -73,6 +73,11 @@ Route::middleware('auth')->group(function () {
     // Wallet Routes
     Route::get('/wallet', [\App\Http\Controllers\WalletController::class, 'index'])->name('wallet.index');
 
+    // Shop Routes
+    Route::get('/shop', [\App\Http\Controllers\ShopController::class, 'index'])->name('shop.index');
+    Route::get('/shop/{id}', [\App\Http\Controllers\ShopController::class, 'show'])->name('shop.show');
+    Route::post('/shop/{id}/purchase', [\App\Http\Controllers\ShopController::class, 'purchase'])->name('shop.purchase');
+
     // Bug Reporting
     Route::get('/bugs/report', [\App\Http\Controllers\BugReportController::class, 'create'])->name('bugs.create');
     Route::post('/bugs/report', [\App\Http\Controllers\BugReportController::class, 'store'])->name('bugs.store');

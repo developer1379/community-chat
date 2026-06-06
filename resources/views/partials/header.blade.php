@@ -120,6 +120,9 @@
                                 </span>
                                 <span class="text-[10px] text-amber-600 dark:text-amber-400 font-extrabold">{{ auth()->user()->coins }} Coins</span>
                             </a>
+                            <a href="{{ route('shop.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-semibold">
+                                <span class="material-symbols-outlined text-sm text-slate-500">storefront</span> Shop
+                            </a>
                             <button onclick="openSignatureModal()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer font-semibold font-sans">
                                 <span class="material-symbols-outlined text-sm text-slate-500">settings</span> Profile Settings
                             </button>
@@ -159,6 +162,10 @@
             <a href="{{ route('home') }}" class="group flex items-center py-3 border-b-2 border-transparent hover:border-blue-600 text-xs sm:text-[13px] font-semibold text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 transition-colors flex-shrink-0">
                 <span class="material-symbols-outlined text-[18px] mr-1.5 text-slate-400 group-hover:text-blue-600 transition-colors">forum</span>
                 Discussions
+            </a>
+            <a href="{{ route('shop.index') }}" class="group flex items-center py-3 border-b-2 border-transparent hover:border-blue-600 text-xs sm:text-[13px] font-semibold text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 transition-colors flex-shrink-0">
+                <span class="material-symbols-outlined text-[18px] mr-1.5 text-slate-400 group-hover:text-blue-600 transition-colors">storefront</span>
+                Shop
             </a>
             <a href="{{ route('media.index') }}" class="group flex items-center py-3 border-b-2 border-transparent hover:border-blue-600 text-xs sm:text-[13px] font-semibold text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 transition-colors flex-shrink-0">
                 <span class="material-symbols-outlined text-[18px] mr-1.5 text-slate-400 group-hover:text-blue-600 transition-colors">image</span>
