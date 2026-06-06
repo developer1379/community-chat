@@ -374,8 +374,10 @@ article
                         <input type="hidden" id="reply-content-input" name="content" value="{{ old('content') }}">
                         
                         <!-- Quill container -->
-                        <div class="rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
+                        <div class="relative rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
                             <div id="reply-quill-editor" style="height: 200px; font-size: 13px;">{!! old('content') !!}</div>
+                            <!-- Mentions Autocomplete Dropdown -->
+                            <div id="mention-dropdown" class="hidden absolute z-50 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl max-h-48 overflow-y-auto w-56 text-left py-1 text-xs"></div>
                         </div>
                         @error('content')
                             <p class="text-xs text-rose-500 mt-1 font-medium">{{ $message }}</p>
@@ -511,6 +513,141 @@ article
                     }
                 },
                 placeholder: 'Type your reply message here...'
+            });
+
+            // Mentions Autocomplete logic
+            const mentionDropdown = document.getElementById('mention-dropdown');
+            let activeIndex = -1;
+            let currentMatches = [];
+            let lastQuery = '';
+
+            function hideDropdown() {
+                if (mentionDropdown) {
+                    mentionDropdown.classList.add('hidden');
+                }
+                activeIndex = -1;
+                currentMatches = [];
+            }
+
+            replyQuill.on('text-change', function() {
+                const range = replyQuill.getSelection();
+                if (!range) {
+                    hideDropdown();
+                    return;
+                }
+
+                const text = replyQuill.getText(0, range.index);
+                const lastWordMatch = text.match(/@([a-zA-Z0-9_\-]*)$/);
+
+                if (lastWordMatch) {
+                    const query = lastWordMatch[1];
+                    lastQuery = lastWordMatch[0]; // "@username"
+                    
+                    fetch(`/dms/search-users?q=${encodeURIComponent(query)}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data && data.length > 0) {
+                                currentMatches = data;
+                                activeIndex = 0;
+                                renderDropdown(boundsPosition(range.index));
+                            } else {
+                                hideDropdown();
+                            }
+                        })
+                        .catch(() => hideDropdown());
+                } else {
+                    hideDropdown();
+                }
+            });
+
+            replyQuill.on('selection-change', function(range) {
+                if (!range) {
+                    hideDropdown();
+                }
+            });
+
+            function boundsPosition(index) {
+                try {
+                    return replyQuill.getBounds(index);
+                } catch(e) {
+                    return { left: 15, top: 40, height: 15 };
+                }
+            }
+
+            function renderDropdown(bounds) {
+                if (!mentionDropdown) return;
+                mentionDropdown.innerHTML = '';
+                mentionDropdown.style.left = Math.min(bounds.left, replyQuill.root.clientWidth - 230) + 'px';
+                mentionDropdown.style.top = (bounds.top + bounds.height + 5) + 'px';
+                mentionDropdown.classList.remove('hidden');
+
+                currentMatches.forEach((user, index) => {
+                    const item = document.createElement('div');
+                    item.className = `px-3 py-2 cursor-pointer flex items-center gap-2 hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors ${index === activeIndex ? 'bg-blue-50 dark:bg-slate-800' : ''}`;
+                    item.innerHTML = `
+                        <img src="${user.avatar_url}" class="w-5 h-5 rounded-full object-cover">
+                        <div class="min-w-0">
+                            <div class="font-bold text-slate-800 dark:text-white truncate">${user.name}</div>
+                            ${user.title_badge ? `<div class="text-[9px] text-slate-400 font-medium truncate">${user.title_badge}</div>` : ''}
+                        </div>
+                    `;
+                    item.addEventListener('click', () => selectUser(user));
+                    mentionDropdown.appendChild(item);
+                });
+            }
+
+            function selectUser(user) {
+                const range = replyQuill.getSelection();
+                if (!range) return;
+                
+                const text = replyQuill.getText(0, range.index);
+                const lastWordMatch = text.match(/@([a-zA-Z0-9_\-]*)$/);
+                if (!lastWordMatch) return;
+
+                const startOfMentionIndex = range.index - lastWordMatch[0].length;
+                
+                replyQuill.deleteText(startOfMentionIndex, lastWordMatch[0].length);
+                
+                const profileUrl = `/profile/${encodeURIComponent(user.name)}`;
+                const html = `<a href="${profileUrl}" class="font-extrabold text-blue-600 dark:text-blue-400">@${user.name}</a>&nbsp;`;
+                replyQuill.clipboard.dangerouslyPasteHTML(startOfMentionIndex, html);
+                
+                setTimeout(() => {
+                    replyQuill.setSelection(startOfMentionIndex + user.name.length + 2);
+                }, 10);
+                
+                hideDropdown();
+            }
+
+            const editorContainerEl = document.getElementById('reply-quill-editor');
+            if (editorContainerEl) {
+                editorContainerEl.addEventListener('keydown', function(e) {
+                    if (mentionDropdown && !mentionDropdown.classList.contains('hidden')) {
+                        if (e.key === 'ArrowDown') {
+                            e.preventDefault();
+                            activeIndex = (activeIndex + 1) % currentMatches.length;
+                            renderDropdown(boundsPosition(replyQuill.getSelection().index));
+                        } else if (e.key === 'ArrowUp') {
+                            e.preventDefault();
+                            activeIndex = (activeIndex - 1 + currentMatches.length) % currentMatches.length;
+                            renderDropdown(boundsPosition(replyQuill.getSelection().index));
+                        } else if (e.key === 'Enter') {
+                            e.preventDefault();
+                            if (currentMatches[activeIndex]) {
+                                selectUser(currentMatches[activeIndex]);
+                            }
+                        } else if (e.key === 'Escape') {
+                            e.preventDefault();
+                            hideDropdown();
+                        }
+                    }
+                }, true);
+            }
+
+            document.addEventListener('click', function(e) {
+                if (mentionDropdown && !mentionDropdown.contains(e.target) && e.target !== editorContainerEl) {
+                    hideDropdown();
+                }
             });
 
             // Intercept form submit to sync Quill HTML content to the hidden content input
