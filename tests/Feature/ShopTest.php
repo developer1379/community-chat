@@ -4,6 +4,8 @@ use App\Models\User;
 use App\Models\ShopItem;
 use App\Models\PurchasedItem;
 use App\Models\CoinTransaction;
+use App\Models\ShopItemInteraction;
+use App\Models\ShopItemReview;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -84,4 +86,96 @@ it('successfully purchases item and deducts coins', function () {
 
     // Check incremented sold count
     expect($item->fresh()->sold_count)->toBe($initialSoldCount + 1);
+});
+
+it('toggles shop item likes', function () {
+    $user = User::factory()->create();
+    $item = createTestShopItem();
+
+    // First like
+    $response = $this->actingAs($user)->post(route('shop.like', $item->id));
+    $response->assertStatus(200);
+    expect($response->json('liked'))->toBeTrue();
+    expect($response->json('likes_count'))->toBe(1);
+
+    // Unlike
+    $response = $this->actingAs($user)->post(route('shop.like', $item->id));
+    $response->assertStatus(200);
+    expect($response->json('liked'))->toBeFalse();
+    expect($response->json('likes_count'))->toBe(0);
+});
+
+it('toggles shop item bookmarks', function () {
+    $user = User::factory()->create();
+    $item = createTestShopItem();
+
+    // First bookmark
+    $response = $this->actingAs($user)->post(route('shop.bookmark', $item->id));
+    $response->assertStatus(200);
+    expect($response->json('bookmarked'))->toBeTrue();
+
+    // Unbookmark
+    $response = $this->actingAs($user)->post(route('shop.bookmark', $item->id));
+    $response->assertStatus(200);
+    expect($response->json('bookmarked'))->toBeFalse();
+});
+
+it('stores user reviews and updates ratings', function () {
+    $user = User::factory()->create();
+    $item = createTestShopItem(['rating' => 5.0, 'rating_count' => 0]);
+
+    $response = $this->actingAs($user)->post(route('shop.review', $item->id), [
+        'rating' => 4,
+        'review' => 'Pretty good update!'
+    ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('success', 'Thank you for your review!');
+
+    // Check database review values
+    $review = ShopItemReview::where('shop_item_id', $item->id)->first();
+    expect($review)->not->toBeNull();
+    expect($review->rating)->toBe(4);
+    expect($review->review)->toBe('Pretty good update!');
+
+    // Check updated item metrics
+    $item = $item->fresh();
+    expect((int)$item->rating)->toBe(4);
+    expect($item->rating_count)->toBe(1);
+});
+
+it('allows admin to access shop management and edit attributes', function () {
+    // Setup Admin User
+    $user = User::factory()->create();
+    $user->admin()->create(); // Grant admin role
+
+    $item = createTestShopItem();
+
+    // 1. Visit index page
+    $response = $this->actingAs($user)->get(route('admin.shop.index'));
+    $response->assertStatus(200);
+    $response->assertSee($item->name);
+
+    // 2. Edit the shop item
+    $response = $this->actingAs($user)->put(route('admin.shop.update', $item->id), [
+        'name' => 'Updated Feature Upgrade',
+        'category' => 'User Access',
+        'description' => 'New modified description details.',
+        'price' => 15.00,
+        'stock' => 5,
+        'duration' => '3 months',
+        'key' => 'updated_feature_key'
+    ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('success', 'Shop item updated successfully.');
+
+    // Check updated properties in database
+    $item = $item->fresh();
+    expect($item->name)->toBe('Updated Feature Upgrade');
+    expect($item->category)->toBe('User Access');
+    expect($item->price)->toEqual(15.00);
+    expect($item->stock)->toBe(5);
+    expect($item->duration)->toBe('3 months');
+    expect($item->key)->toBe('updated_feature_key');
 });

@@ -61,6 +61,11 @@
                     <span>Categories</span>
                 </a>
 
+                <a href="{{ route('admin.shop.index') }}" class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all font-bold text-xs cursor-pointer">
+                    <span class="material-symbols-outlined text-[18px] mr-1">shopping_bag</span>
+                    <span>Shop</span>
+                </a>
+
                 <a href="{{ route('admin.settings') }}" class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all font-bold text-xs cursor-pointer">
                     <span class="material-symbols-outlined text-[18px] mr-1">settings</span>
                     <span>Settings</span>

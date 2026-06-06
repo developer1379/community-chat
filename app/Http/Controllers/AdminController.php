@@ -272,4 +272,66 @@ class AdminController extends Controller
 
         return redirect()->back()->with('success', "Category '{$category->name}' has been deleted successfully.");
     }
+
+    /**
+     * Display a listing of shop items in admin panel.
+     */
+    public function shop()
+    {
+        $shopItems = \App\Models\ShopItem::orderBy('category')->orderBy('name')->get();
+        return view('admin.shop.index', compact('shopItems'));
+    }
+
+    /**
+     * Store a new shop item.
+     */
+    public function storeShopItem(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'category' => 'required|string|in:Feature Updates,Promot your content,User Access,Private threads',
+            'description' => 'nullable|string|max:1000',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'nullable|integer|min:0',
+            'duration' => 'required|string|max:255',
+            'key' => 'required|string|max:255|unique:shop_items,key',
+        ]);
+
+        \App\Models\ShopItem::create($validated);
+
+        return redirect()->back()->with('success', 'Shop item created successfully.');
+    }
+
+    /**
+     * Update an existing shop item.
+     */
+    public function updateShopItem(Request $request, string $id)
+    {
+        $shopItem = \App\Models\ShopItem::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'category' => 'required|string|in:Feature Updates,Promot your content,User Access,Private threads',
+            'description' => 'nullable|string|max:1000',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'nullable|integer|min:0',
+            'duration' => 'required|string|max:255',
+            'key' => 'required|string|max:255|unique:shop_items,key,' . $id,
+        ]);
+
+        $shopItem->update($validated);
+
+        return redirect()->back()->with('success', 'Shop item updated successfully.');
+    }
+
+    /**
+     * Delete a shop item.
+     */
+    public function destroyShopItem(string $id)
+    {
+        $shopItem = \App\Models\ShopItem::findOrFail($id);
+        $shopItem->delete();
+
+        return redirect()->back()->with('success', 'Shop item deleted successfully.');
+    }
 }

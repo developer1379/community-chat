@@ -77,6 +77,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/shop', [\App\Http\Controllers\ShopController::class, 'index'])->name('shop.index');
     Route::get('/shop/{id}', [\App\Http\Controllers\ShopController::class, 'show'])->name('shop.show');
     Route::post('/shop/{id}/purchase', [\App\Http\Controllers\ShopController::class, 'purchase'])->name('shop.purchase');
+    Route::post('/shop/{id}/like', [\App\Http\Controllers\ShopController::class, 'toggleLike'])->name('shop.like');
+    Route::post('/shop/{id}/bookmark', [\App\Http\Controllers\ShopController::class, 'toggleBookmark'])->name('shop.bookmark');
+    Route::post('/shop/{id}/review', [\App\Http\Controllers\ShopController::class, 'storeReview'])->name('shop.review');
 
     // Bug Reporting
     Route::get('/bugs/report', [\App\Http\Controllers\BugReportController::class, 'create'])->name('bugs.create');
@@ -107,6 +110,12 @@ Route::middleware('auth')->group(function () {
         Route::put('/categories/{category}', [\App\Http\Controllers\AdminController::class, 'updateCategory'])->name('categories.update');
         Route::post('/categories/{category}/toggle', [\App\Http\Controllers\AdminController::class, 'toggleCategory'])->name('categories.toggle');
         Route::delete('/categories/{category}', [\App\Http\Controllers\AdminController::class, 'destroyCategory'])->name('categories.destroy');
+
+        // Shop Management
+        Route::get('/shop', [\App\Http\Controllers\AdminController::class, 'shop'])->name('shop.index');
+        Route::post('/shop', [\App\Http\Controllers\AdminController::class, 'storeShopItem'])->name('shop.store');
+        Route::put('/shop/{id}', [\App\Http\Controllers\AdminController::class, 'updateShopItem'])->name('shop.update');
+        Route::delete('/shop/{id}', [\App\Http\Controllers\AdminController::class, 'destroyShopItem'])->name('shop.destroy');
     });
 });
 

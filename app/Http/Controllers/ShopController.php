@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\ShopItem;
 use App\Models\PurchasedItem;
+use App\Models\ShopItemReview;
+use App\Models\ShopItemInteraction;
 use Illuminate\Support\Facades\Auth;
 
 class ShopController extends Controller
@@ -91,5 +93,117 @@ class ShopController extends Controller
         $shopItem->increment('sold_count');
 
         return redirect()->route('shop.index')->with('success', 'You purchased "' . $shopItem->name . '" successfully!');
+    }
+
+    /**
+     * Toggle like status for a shop item.
+     */
+    public function toggleLike(string $id)
+    {
+        $userId = Auth::id();
+        if (!$userId) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $like = ShopItemInteraction::where('shop_item_id', $id)
+            ->where('user_id', $userId)
+            ->where('type', 'like')
+            ->first();
+
+        if ($like) {
+            $like->delete();
+            $liked = false;
+        } else {
+            ShopItemInteraction::create([
+                'shop_item_id' => $id,
+                'user_id' => $userId,
+                'type' => 'like',
+            ]);
+            $liked = true;
+        }
+
+        $count = ShopItemInteraction::where('shop_item_id', $id)
+            ->where('type', 'like')
+            ->count();
+
+        return response()->json([
+            'success' => true,
+            'liked' => $liked,
+            'likes_count' => $count
+        ]);
+    }
+
+    /**
+     * Toggle bookmark status for a shop item.
+     */
+    public function toggleBookmark(string $id)
+    {
+        $userId = Auth::id();
+        if (!$userId) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $bookmark = ShopItemInteraction::where('shop_item_id', $id)
+            ->where('user_id', $userId)
+            ->where('type', 'bookmark')
+            ->first();
+
+        if ($bookmark) {
+            $bookmark->delete();
+            $bookmarked = false;
+        } else {
+            ShopItemInteraction::create([
+                'shop_item_id' => $id,
+                'user_id' => $userId,
+                'type' => 'bookmark',
+            ]);
+            $bookmarked = true;
+        }
+
+        return response()->json([
+            'success' => true,
+            'bookmarked' => $bookmarked
+        ]);
+    }
+
+    /**
+     * Store a user review for a shop item.
+     */
+    public function storeReview(Request $request, string $id)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->back()->with('error', 'You must be logged in to leave a review.');
+        }
+
+        $validated = $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'review' => 'nullable|string|max:1000',
+        ]);
+
+        $shopItem = ShopItem::findOrFail($id);
+
+        ShopItemReview::updateOrCreate(
+            [
+                'shop_item_id' => $id,
+                'user_id' => $user->id,
+            ],
+            [
+                'rating' => $validated['rating'],
+                'review' => $validated['review'],
+            ]
+        );
+
+        // Recalculate average rating & counts on the shop item
+        $reviews = $shopItem->reviews;
+        $ratingCount = $reviews->count();
+        $averageRating = $reviews->avg('rating') ?: 5.0;
+
+        $shopItem->update([
+            'rating' => $averageRating,
+            'rating_count' => $ratingCount,
+        ]);
+
+        return redirect()->back()->with('success', 'Thank you for your review!');
     }
 }
