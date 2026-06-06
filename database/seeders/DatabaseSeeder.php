@@ -182,5 +182,8 @@ class DatabaseSeeder extends Seeder
             'file_path' => 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?auto=format&fit=crop&w=800&q=80',
             'file_type' => 'image/jpeg',
         ]);
+
+        // Call the Shop Seeder to populate catalog items
+        $this->call(\Database\Seeders\ShopItemSeeder::class);
     }
 }
