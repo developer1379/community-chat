@@ -1126,68 +1126,72 @@ article
     }
 </script>
 
-<!-- Feature Styling Modal -->
-<div id="feature-thread-modal" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300">
-    <!-- Backdrop -->
-    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeFeatureModal()"></div>
-    
-    <!-- Modal content -->
-    <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl max-w-md w-full mx-4 overflow-hidden transform transition-all duration-300 scale-95 z-55">
-        <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-slate-950 dark:to-slate-850 px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-            <h3 class="font-black text-slate-850 dark:text-white text-xs flex items-center gap-2">
-                <span class="material-symbols-outlined text-amber-500 text-sm">star</span>
-                Feature & Style Thread
-            </h3>
-            <button type="button" onclick="closeFeatureModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer transition-colors bg-transparent border-0 p-0 flex items-center">
-                <span class="material-symbols-outlined text-sm">close</span>
-            </button>
+@auth
+    @if(Auth::id() === $thread->user_id)
+        <!-- Feature Styling Modal -->
+        <div id="feature-thread-modal" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300">
+            <!-- Backdrop -->
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeFeatureModal()"></div>
+            
+            <!-- Modal content -->
+            <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl max-w-md w-full mx-4 overflow-hidden transform transition-all duration-300 scale-95 z-55">
+                <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-slate-950 dark:to-slate-850 px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                    <h3 class="font-black text-slate-850 dark:text-white text-xs flex items-center gap-2">
+                        <span class="material-symbols-outlined text-amber-500 text-sm">star</span>
+                        Feature & Style Thread
+                    </h3>
+                    <button type="button" onclick="closeFeatureModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer transition-colors bg-transparent border-0 p-0 flex items-center">
+                        <span class="material-symbols-outlined text-sm">close</span>
+                    </button>
+                </div>
+                
+                <form id="feature-thread-form" action="{{ route('threads.feature', $thread->id) }}" method="POST" class="p-6 space-y-4 text-left bg-white dark:bg-slate-900">
+                    @csrf
+                    <p class="text-[11px] text-slate-500 dark:text-slate-450 font-semibold leading-relaxed">
+                        {{ $hasFeaturedUpgrade ? "You have an active Feature upgrade! Apply it now for free." : "This promotion costs 50 DF Coins and will feature your thread on the homepage slider." }}
+                    </p>
+
+                    <!-- Color selector -->
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Choose Title Color (Optional)</label>
+                        <div class="flex items-center gap-3">
+                            <input type="color" name="title_color" id="feature-color-input" value="#e11d48" class="w-10 h-10 border-0 rounded-lg cursor-pointer bg-transparent">
+                            <div class="text-[10px] text-slate-400 dark:text-slate-500 font-bold">Pick a hex color or leave as default</div>
+                        </div>
+                    </div>
+
+                    <!-- Animation selector -->
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Choose Title Animation (Optional)</label>
+                        <select name="title_animation" id="feature-anim-select" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            <option value="none">None (Static Color)</option>
+                            <option value="glow" selected>Glow (Soft neon pulse)</option>
+                            <option value="pulse">Pulse (Scale and fade)</option>
+                            <option value="crackle">Crackle (Lightning glow)</option>
+                            <option value="shimmer">Shimmer (Metallic shine)</option>
+                        </select>
+                    </div>
+
+                    <!-- Live Preview Block -->
+                    <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-850 space-y-1">
+                        <span class="block text-[8px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider">Title Live Preview</span>
+                        <div class="text-sm font-bold text-slate-800 dark:text-white py-1">
+                            <span id="feature-preview-title" class="font-black tracking-wide">{{ $thread->title }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <button type="button" onclick="closeFeatureModal()" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-550 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold text-xs cursor-pointer transition-all bg-transparent">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-md transition-all cursor-pointer border-0">
+                            Confirm & Promote
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-        
-        <form id="feature-thread-form" action="{{ route('threads.feature', $thread->id) }}" method="POST" class="p-6 space-y-4 text-left bg-white dark:bg-slate-900">
-            @csrf
-            <p class="text-[11px] text-slate-500 dark:text-slate-450 font-semibold leading-relaxed">
-                {{ $hasFeaturedUpgrade ? "You have an active Feature upgrade! Apply it now for free." : "This promotion costs 50 DF Coins and will feature your thread on the homepage slider." }}
-            </p>
-
-            <!-- Color selector -->
-            <div class="space-y-2">
-                <label class="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Choose Title Color (Optional)</label>
-                <div class="flex items-center gap-3">
-                    <input type="color" name="title_color" id="feature-color-input" value="#e11d48" class="w-10 h-10 border-0 rounded-lg cursor-pointer bg-transparent">
-                    <div class="text-[10px] text-slate-400 dark:text-slate-500 font-bold">Pick a hex color or leave as default</div>
-                </div>
-            </div>
-
-            <!-- Animation selector -->
-            <div class="space-y-2">
-                <label class="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Choose Title Animation (Optional)</label>
-                <select name="title_animation" id="feature-anim-select" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                    <option value="none">None (Static Color)</option>
-                    <option value="glow" selected>Glow (Soft neon pulse)</option>
-                    <option value="pulse">Pulse (Scale and fade)</option>
-                    <option value="crackle">Crackle (Lightning glow)</option>
-                    <option value="shimmer">Shimmer (Metallic shine)</option>
-                </select>
-            </div>
-
-            <!-- Live Preview Block -->
-            <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-850 space-y-1">
-                <span class="block text-[8px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider">Title Live Preview</span>
-                <div class="text-sm font-bold text-slate-800 dark:text-white py-1">
-                    <span id="feature-preview-title" class="font-black tracking-wide">{{ $thread->title }}</span>
-                </div>
-            </div>
-
-            <!-- Action buttons -->
-            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                <button type="button" onclick="closeFeatureModal()" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-550 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold text-xs cursor-pointer transition-all bg-transparent">
-                    Cancel
-                </button>
-                <button type="submit" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-md transition-all cursor-pointer border-0">
-                    Confirm & Promote
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+    @endif
+@endauth
 @endsection
