@@ -29,6 +29,8 @@ class ThreadRepository implements ThreadRepositoryInterface
             return $category->threads()
                 ->with(['user', 'firstPost', 'lastPost.user'])
                 ->withCount('posts')
+                ->orderBy('is_pinned', 'desc')
+                ->orderBy('created_at', 'desc')
                 ->paginate($perPage);
         });
     }

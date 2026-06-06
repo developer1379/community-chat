@@ -192,9 +192,6 @@ class User extends Authenticatable
 
     public function getCoinsAttribute($value): int
     {
-        if ($this->isAdmin()) {
-            return 9999;
-        }
         return (int) ($value ?? 0);
     }
 

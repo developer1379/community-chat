@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Antigravity Developer',
             'email' => 'admin@xenforo.test',
             'password' => Hash::make('password123'),
+            'coins' => 99999,
             'title_badge' => 'Founder & Admin',
             'banner_color' => 'linear-gradient(135deg, #ec4899, #8b5cf6)',
             'signature' => '💡 "Building future community hubs with high-end aesthetics."',
