@@ -90,13 +90,19 @@ article
                         <span class="material-symbols-outlined text-[12px] font-bold">delete</span>
                         <span>Delete</span>
                     </button>
+                    <!-- Feature toggle -->
+                    @php
+                        $hasFeaturedUpgrade = Auth::user()->hasActiveShopItem('featured_homepage_thread');
+                        $hasStickyUpgrade = Auth::user()->hasActiveShopItem('sticky_thread');
+                    @endphp
+
                     @if(!$thread->is_featured)
                         <span>•</span>
-                        <form action="{{ route('threads.feature', $thread->id) }}" method="POST" class="inline" onsubmit="return confirm('Spend 50 coins to feature this thread on the homepage?');">
+                        <form action="{{ route('threads.feature', $thread->id) }}" method="POST" class="inline" onsubmit="return confirm('{{ $hasFeaturedUpgrade ? \'Feature this thread on the homepage for free?\' : \'Spend 50 coins to feature this thread on the homepage?\' }}');">
                             @csrf
                             <button type="submit" class="text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 hover:underline inline-flex items-center gap-0.5 bg-transparent border-0 p-0 cursor-pointer font-sans text-[10px] font-bold">
                                 <span class="material-symbols-outlined text-[12px] font-bold">star</span>
-                                <span>Feature (50 coins)</span>
+                                <span>Feature {{ $hasFeaturedUpgrade ? '(Free)' : '(50 coins)' }}</span>
                             </button>
                         </form>
                     @else
@@ -105,6 +111,18 @@ article
                             <span class="material-symbols-outlined text-[12px] font-bold animate-pulse">star</span>
                             <span>Featured</span>
                         </span>
+                    @endif
+
+                    <!-- Pin (Sticky) toggle -->
+                    @if($hasStickyUpgrade)
+                        <span>•</span>
+                        <form action="{{ route('threads.pin', $thread->id) }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="text-indigo-600 hover:text-indigo-750 dark:text-indigo-400 dark:hover:text-indigo-300 hover:underline inline-flex items-center gap-0.5 bg-transparent border-0 p-0 cursor-pointer font-sans text-[10px] font-bold">
+                                <span class="material-symbols-outlined text-[12px] font-bold">keep</span>
+                                <span>{{ $thread->is_pinned ? 'Unpin' : 'Pin (Sticky)' }}</span>
+                            </button>
+                        </form>
                     @endif
                     <form id="delete-thread-form" action="{{ route('threads.destroy', $thread->id) }}" method="POST" class="hidden">
                         @csrf
@@ -144,6 +162,7 @@ article
                     <div class="flex-grow md:w-full flex flex-col md:items-center">
                         <h3 class="font-bold text-slate-800 dark:text-slate-200 text-sm md:text-xs hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
                             <a href="{{ route('profile.show', $post->user->name) }}"
+                               class="{{ $post->user->username_style }}"
                                data-user-hover="true" 
                                data-user-name="{{ $post->user->name }}" 
                                data-user-badge="{{ $post->user->title_badge }}" 

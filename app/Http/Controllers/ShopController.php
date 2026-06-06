@@ -66,15 +66,8 @@ class ShopController extends Controller
             return redirect()->back()->with('error', 'You do not have enough DF Coins to buy this item.');
         }
 
-        // Deduct coins and log transaction
-        $user->coins -= $shopItem->price;
-        $user->save();
-
-        $user->transactions()->create([
-            'amount' => -$shopItem->price,
-            'type' => 'purchase',
-            'description' => 'Purchased shop item: ' . $shopItem->name,
-        ]);
+        // Deduct coins and log transaction using standard helper
+        $user->addCoins(-(int)$shopItem->price, 'purchase', 'Purchased shop item: ' . $shopItem->name);
 
         // Determine expiration
         $expiresAt = null;

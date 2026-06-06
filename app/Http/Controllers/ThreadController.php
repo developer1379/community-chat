@@ -174,16 +174,40 @@ class ThreadController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        if ($user->coins < 50) {
+        $hasShopFeature = $user->hasActiveShopItem('featured_homepage_thread');
+
+        if (!$hasShopFeature && $user->coins < 50) {
             return redirect()->back()->with('error', 'You do not have enough coins to feature this thread. (Requires 50 coins)');
         }
 
-        // Deduct coins
-        $user->addCoins(-50, 'thread_featured', "Featured thread: " . $thread->title);
+        // Deduct coins if not active in shop
+        if (!$hasShopFeature) {
+            $user->addCoins(-50, 'thread_featured', "Featured thread: " . $thread->title);
+        }
 
         // Mark as featured
         $thread->update(['is_featured' => true]);
 
         return redirect()->back()->with('success', 'Your thread has been featured on the homepage successfully!');
+    }
+
+    public function pin(\App\Models\Thread $thread)
+    {
+        abort_if(Auth::id() !== $thread->user_id, 403);
+
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $hasShopFeature = $user->hasActiveShopItem('sticky_thread');
+
+        if (!$hasShopFeature) {
+            return redirect()->back()->with('error', 'You need to purchase the Sticky Thread feature from the shop to pin threads.');
+        }
+
+        // Toggle pin
+        $thread->update(['is_pinned' => !$thread->is_pinned]);
+        $status = $thread->is_pinned ? 'pinned to top' : 'unpinned';
+
+        return redirect()->back()->with('success', "Your thread has been {$status} successfully!");
     }
 }

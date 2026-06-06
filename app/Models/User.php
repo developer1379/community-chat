@@ -207,6 +207,41 @@ class User extends Authenticatable
     }
 
     /**
+     * Get custom username style classes if purchased.
+     */
+    public function getUsernameStyleAttribute(): string
+    {
+        if ($this->hasActiveShopItem('username_style')) {
+            return 'text-indigo-650 dark:text-indigo-400 font-extrabold drop-shadow-[0_0.8px_0.8px_rgba(99,102,241,0.15)] shadow-indigo-500/20';
+        }
+        return '';
+    }
+
+    /**
+     * Get all purchased items for the user.
+     */
+    public function purchases(): HasMany
+    {
+        return $this->hasMany(PurchasedItem::class, 'user_id');
+    }
+
+    /**
+     * Check if user has an active purchased shop item by key.
+     */
+    public function hasActiveShopItem(string $key): bool
+    {
+        return $this->purchases()
+            ->whereHas('shopItem', function ($q) use ($key) {
+                $q->where('key', $key);
+            })
+            ->where(function ($q) {
+                $q->whereNull('expires_at')
+                  ->orWhere('expires_at', '>', now());
+            })
+            ->exists();
+    }
+
+    /**
      * Get all coin transactions for this user.
      */
     public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
