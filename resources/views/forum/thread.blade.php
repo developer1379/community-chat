@@ -1076,6 +1076,43 @@ article
             modal.classList.remove('pointer-events-none', 'opacity-0');
             modal.querySelector('.relative').classList.remove('scale-95');
             modal.querySelector('.relative').classList.add('scale-100');
+            
+            const colorInput = document.getElementById('feature-color-input');
+            const animSelect = document.getElementById('feature-anim-select');
+            if (colorInput && animSelect) {
+                // Ensure single listener attachment
+                colorInput.removeEventListener('input', updateFeaturePreview);
+                colorInput.addEventListener('input', updateFeaturePreview);
+                animSelect.removeEventListener('change', updateFeaturePreview);
+                animSelect.addEventListener('change', updateFeaturePreview);
+            }
+            updateFeaturePreview();
+        }
+    }
+
+    function updateFeaturePreview() {
+        const colorInput = document.getElementById('feature-color-input');
+        const animSelect = document.getElementById('feature-anim-select');
+        const previewSpan = document.getElementById('feature-preview-title');
+        
+        if (!colorInput || !animSelect || !previewSpan) return;
+        
+        // Update color
+        previewSpan.style.color = colorInput.value;
+        
+        // Remove animation classes
+        previewSpan.classList.remove('animate-glow', 'animate-pulse', 'animate-bolt', 'animate-shimmer');
+        
+        // Add selected animation
+        const animVal = animSelect.value;
+        if (animVal === 'glow') {
+            previewSpan.classList.add('animate-glow');
+        } else if (animVal === 'pulse') {
+            previewSpan.classList.add('animate-pulse');
+        } else if (animVal === 'crackle') {
+            previewSpan.classList.add('animate-bolt');
+        } else if (animVal === 'shimmer') {
+            previewSpan.classList.add('animate-shimmer');
         }
     }
 
@@ -1124,13 +1161,21 @@ article
             <!-- Animation selector -->
             <div class="space-y-2">
                 <label class="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Choose Title Animation (Optional)</label>
-                <select name="title_animation" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <select name="title_animation" id="feature-anim-select" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500">
                     <option value="none">None (Static Color)</option>
                     <option value="glow" selected>Glow (Soft neon pulse)</option>
                     <option value="pulse">Pulse (Scale and fade)</option>
                     <option value="crackle">Crackle (Lightning glow)</option>
                     <option value="shimmer">Shimmer (Metallic shine)</option>
                 </select>
+            </div>
+
+            <!-- Live Preview Block -->
+            <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-850 space-y-1">
+                <span class="block text-[8px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider">Title Live Preview</span>
+                <div class="text-sm font-bold text-slate-800 dark:text-white py-1">
+                    <span id="feature-preview-title" class="font-black tracking-wide">{{ $thread->title }}</span>
+                </div>
             </div>
 
             <!-- Action buttons -->
