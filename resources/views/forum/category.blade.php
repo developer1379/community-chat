@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="space-y-6 max-w-7xl mx-auto px-4 sm:px-6">
+<div class="space-y-6 max-w-7xl mx-auto px-0 sm:px-6">
     <!-- Board Navigation Path & Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left px-4 sm:px-0">
         <div>
             <!-- Breadcrumbs -->
             <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 mb-2">
@@ -42,7 +42,7 @@
     </div>
 
     <!-- Threads Listing Panel -->
-    <div class="rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+    <div class="rounded-none sm:rounded-2xl overflow-hidden shadow-sm border-y sm:border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
         <!-- Panel Header (Desktop Only) -->
         <div class="hidden md:flex bg-slate-50 dark:bg-slate-950 px-6 py-3 border-b border-slate-200 dark:border-slate-800 items-center justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
             <span>Discussions</span>
@@ -204,7 +204,7 @@
 
     <!-- Pagination -->
     @if($threads->hasPages())
-        <div class="mt-6">
+        <div class="mt-6 px-4 sm:px-0">
             {{ $threads->links() }}
         </div>
     @endif
