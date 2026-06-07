@@ -22,3 +22,9 @@ it('rules page returns 200', function () {
 
     $response->assertStatus(200);
 });
+
+it('search page returns 200 with empty query', function () {
+    $response = $this->get('/search?q=');
+
+    $response->assertStatus(200);
+});

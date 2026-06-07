@@ -116,7 +116,6 @@ class ForumController extends Controller
     {
         $query = $request->input('q');
         
-        $threads = collect();
         if ($query) {
             $threads = Thread::where('title', 'like', "%{$query}%")
                 ->orWhereHas('posts', function($q) use ($query) {
@@ -125,6 +124,8 @@ class ForumController extends Controller
                 ->with(['user', 'category', 'lastPost.user'])
                 ->latest()
                 ->paginate(15);
+        } else {
+            $threads = Thread::whereRaw('1=0')->paginate(15);
         }
 
         return view('forum.search', compact('threads', 'query'));
