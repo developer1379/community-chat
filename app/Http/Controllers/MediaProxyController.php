@@ -41,8 +41,21 @@ class MediaProxyController extends Controller
     public function proxyAvatar(User $user)
     {
         $url = $user->avatar_path;
+        $useFallback = false;
 
         if (!$url) {
+            $useFallback = true;
+        } else {
+            if (!str_starts_with($url, 'http')) {
+                $path = storage_path('app/public/' . $url);
+                if (file_exists($path)) {
+                    return response()->file($path);
+                }
+                $useFallback = true;
+            }
+        }
+
+        if ($useFallback) {
             // Default fallback using DiceBear URL
             $animeSeeds = ['Luffy', 'Zoro', 'Nami', 'Goku', 'Naruto', 'Sasuke', 'Kakashi', 'Hinata', 'Deku', 'Bakugo', 'Saber', 'Asuka', 'Rei', 'Kirito', 'Asuna', 'Rem', 'Emilia'];
             $hash = crc32($user->name);
@@ -50,21 +63,14 @@ class MediaProxyController extends Controller
             $url = "https://api.dicebear.com/7.x/adventurer/svg?seed=" . $seed;
             $contentType = 'image/svg+xml';
         } else {
-            if (!str_starts_with($url, 'http')) {
-                $path = storage_path('app/public/' . $url);
-                if (file_exists($path)) {
-                    return response()->file($path);
-                }
-                return abort(404);
-            }
-
             // Determine content type dynamically
             $contentType = 'image/jpeg';
-            if (str_ends_with(strtolower($url), '.png')) {
+            $pathOnly = parse_url($url, PHP_URL_PATH) ?? $url;
+            if (str_ends_with(strtolower($pathOnly), '.png')) {
                 $contentType = 'image/png';
-            } elseif (str_ends_with(strtolower($url), '.gif')) {
+            } elseif (str_ends_with(strtolower($pathOnly), '.gif')) {
                 $contentType = 'image/gif';
-            } elseif (str_ends_with(strtolower($url), '.svg')) {
+            } elseif (str_ends_with(strtolower($pathOnly), '.svg') || str_contains(strtolower($url), '/svg')) {
                 $contentType = 'image/svg+xml';
             }
         }
