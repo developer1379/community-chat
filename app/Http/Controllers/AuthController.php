@@ -31,6 +31,19 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
+    public function checkUsername(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+        ]);
+
+        $exists = \App\Models\User::where('name', $request->name)->exists();
+
+        return response()->json([
+            'available' => !$exists,
+        ]);
+    }
+
     public function register(Request $request)
     {
         $request->validate([
