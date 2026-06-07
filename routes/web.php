@@ -36,6 +36,9 @@ Route::get('/dms/user-card/{username}', [\App\Http\Controllers\ChatController::c
 
 // Authenticated Routes
 Route::middleware('auth')->group(function () {
+    Route::get('/register/setup-profile', [AuthController::class, 'showSetupProfile'])->name('register.setup-profile');
+    Route::post('/register/setup-profile', [AuthController::class, 'saveSetupProfile'])->name('register.save-setup-profile');
+
     // Thread creation
     Route::get('/categories/{category:slug}/create', [ThreadController::class, 'create'])->name('threads.create');
     Route::post('/threads/store', [ThreadController::class, 'store'])->name('threads.store');

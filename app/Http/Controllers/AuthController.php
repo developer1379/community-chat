@@ -238,12 +238,81 @@ class AuthController extends Controller
                 'password' => Hash::make(Str::random(24)), // Random secure password
                 'avatar_path' => $googleUser->getAvatar(),
                 'title_badge' => 'New Member',
+                'is_onboarded' => false, // Set to false to trigger onboarding flow!
             ]);
         }
 
         Auth::login($user, true);
 
+        if (!$user->is_onboarded) {
+            return redirect()->route('register.setup-profile')->with('info', 'Please finalize your profile details.');
+        }
+
         return redirect()->route('home')->with('success', 'Logged in successfully with Google. Welcome!');
+    }
+
+    /**
+     * Show the profile onboarding configuration page.
+     */
+    public function showSetupProfile()
+    {
+        $user = Auth::user();
+        if ($user->is_onboarded) {
+            return redirect()->route('home');
+        }
+
+        $presets = [
+            'https://api.dicebear.com/7.x/bottts/svg?seed=Felix',
+            'https://api.dicebear.com/7.x/bottts/svg?seed=Aneka',
+            'https://api.dicebear.com/7.x/adventurer/svg?seed=Nala',
+            'https://api.dicebear.com/7.x/adventurer/svg?seed=Buster',
+            'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Gizmo',
+            'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Maggie',
+            'https://api.dicebear.com/7.x/pixel-art/svg?seed=Luna',
+            'https://api.dicebear.com/7.x/pixel-art/svg?seed=Cooper'
+        ];
+
+        return view('auth.setup-profile', compact('user', 'presets'));
+    }
+
+    /**
+     * Save the configured onboarding details (unique name and custom or preset avatar).
+     */
+    public function saveSetupProfile(Request $request)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        if ($user->is_onboarded) {
+            return redirect()->route('home');
+        }
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255', 'unique:users,name,' . $user->id],
+            'avatar_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'],
+            'avatar_preset' => ['nullable', 'string', 'url'],
+        ]);
+
+        $avatarPath = $user->avatar_path;
+
+        // 1. Check custom file upload first
+        if ($request->hasFile('avatar_file')) {
+            $uploadedUrl = $this->imgBBService->upload($request->file('avatar_file'));
+            if ($uploadedUrl) {
+                $avatarPath = $uploadedUrl;
+            }
+        } 
+        // 2. Check preset select second
+        elseif ($request->filled('avatar_preset')) {
+            $avatarPath = $request->avatar_preset;
+        }
+
+        $user->update([
+            'name' => $request->name,
+            'avatar_path' => $avatarPath,
+            'is_onboarded' => true,
+        ]);
+
+        return redirect()->route('home')->with('success', 'Profile configured successfully! Welcome to the community.');
     }
 
     public function toggleMediaPrivacy(\App\Models\Attachment $attachment)

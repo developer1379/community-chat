@@ -34,6 +34,7 @@ class User extends Authenticatable
         'is_private',
         'coins',
         'is_blocked',
+        'is_onboarded',
     ];
 
     /**
@@ -58,6 +59,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_private' => 'boolean',
             'is_blocked' => 'boolean',
+            'is_onboarded' => 'boolean',
         ];
     }
 
