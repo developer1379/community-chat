@@ -49,7 +49,7 @@
             </div>
 
             <!-- Multi-step Form -->
-            <form id="registration-form" action="{{ route('register') }}" method="POST" class="space-y-5">
+            <form id="registration-form" action="{{ route('register') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
                 @csrf
 
                 <!-- STEP 1: Username & Profile Setup -->
@@ -78,6 +78,66 @@
                         @error('name')
                             <p class="text-xs text-rose-500 mt-1.5 ml-1 font-bold">{{ $message }}</p>
                         @enderror
+                    </div>
+
+                    <!-- Profile Avatar Custom Selection Section -->
+                    <div class="space-y-4 text-left border-t border-slate-100 dark:border-slate-850 pt-4">
+                        <label class="text-[11px] font-black text-slate-700 dark:text-slate-350 uppercase tracking-widest ml-1">Profile Avatar</label>
+                        
+                        <!-- Active preview of avatar -->
+                        <div class="flex items-center gap-4 p-4 border border-slate-150 dark:border-slate-800 rounded-2xl bg-slate-50/30 dark:bg-slate-950/20">
+                            <div class="relative w-14 h-14 rounded-full overflow-hidden border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900 flex-shrink-0">
+                                <img id="avatar-preview" src="https://api.dicebear.com/7.x/bottts/svg?seed=Felix" class="w-full h-full object-cover" alt="Avatar preview">
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">Avatar Preview</h4>
+                                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Choose a preset or upload an image file.</p>
+                            </div>
+                        </div>
+
+                        <!-- Option A: File Upload -->
+                        <div class="space-y-2">
+                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Option A: Upload custom image</span>
+                            <div class="relative">
+                                <input type="file" id="avatar_file" name="avatar_file" accept="image/*" class="hidden" onchange="previewUploadedFile(this)">
+                                <label for="avatar_file" class="flex items-center justify-center gap-2 w-full px-4 py-3 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-850 hover:border-purple-400 transition-all font-bold text-xs text-slate-650 dark:text-slate-350">
+                                    <span class="material-symbols-outlined text-sm">cloud_upload</span>
+                                    Choose custom file...
+                                </label>
+                            </div>
+                            @error('avatar_file')
+                                <p class="text-xs text-rose-500 mt-1.5 ml-1 font-bold">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Option B: Presets -->
+                        <div class="space-y-2">
+                            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Option B: Select preset</span>
+                            <input type="hidden" id="selected-preset" name="avatar_preset" value="https://api.dicebear.com/7.x/bottts/svg?seed=Felix">
+                            
+                            <div class="grid grid-cols-4 gap-2">
+                                @php
+                                    $presets = [
+                                        'https://api.dicebear.com/7.x/bottts/svg?seed=Felix',
+                                        'https://api.dicebear.com/7.x/bottts/svg?seed=Aneka',
+                                        'https://api.dicebear.com/7.x/adventurer/svg?seed=Nala',
+                                        'https://api.dicebear.com/7.x/adventurer/svg?seed=Buster',
+                                        'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Gizmo',
+                                        'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Maggie',
+                                        'https://api.dicebear.com/7.x/pixel-art/svg?seed=Luna',
+                                        'https://api.dicebear.com/7.x/pixel-art/svg?seed=Cooper'
+                                    ];
+                                @endphp
+                                @foreach($presets as $index => $preset)
+                                    <div onclick="selectPreset('{{ $preset }}', this)" class="avatar-option-item relative aspect-square rounded-full overflow-hidden border-2 {{ $index === 0 ? 'border-purple-500 ring-2 ring-purple-500/20' : 'border-slate-200 dark:border-slate-850' }} hover:border-purple-450 cursor-pointer hover:scale-105 transition-all select-none bg-slate-50 dark:bg-slate-950">
+                                        <img src="{{ $preset }}" class="w-full h-full object-cover" alt="Preset">
+                                        <div class="checkmark-overlay {{ $index === 0 ? '' : 'hidden' }} absolute inset-0 bg-purple-500/10 flex items-center justify-center">
+                                            <span class="material-symbols-outlined text-white text-xs bg-purple-500 rounded-full p-0.5 font-bold">done</span>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Step 1 Button -->
@@ -161,6 +221,43 @@
 </div>
 
 <script>
+function selectPreset(url, element) {
+    document.getElementById('selected-preset').value = url;
+    document.getElementById('avatar_file').value = '';
+    
+    document.querySelectorAll('.avatar-option-item').forEach(item => {
+        item.classList.remove('border-purple-500', 'ring-2', 'ring-purple-500/20');
+        item.classList.add('border-slate-200', 'dark:border-slate-850');
+        const overlay = item.querySelector('.checkmark-overlay');
+        if (overlay) overlay.classList.add('hidden');
+    });
+
+    element.classList.add('border-purple-500', 'ring-2', 'ring-purple-500/20');
+    element.classList.remove('border-slate-200', 'dark:border-slate-850');
+    const overlay = element.querySelector('.checkmark-overlay');
+    if (overlay) overlay.classList.remove('hidden');
+
+    document.getElementById('avatar-preview').src = url;
+}
+
+function previewUploadedFile(input) {
+    if (input.files && input.files[0]) {
+        document.getElementById('selected-preset').value = '';
+        document.querySelectorAll('.avatar-option-item').forEach(item => {
+            item.classList.remove('border-purple-500', 'ring-2', 'ring-purple-500/20');
+            item.classList.add('border-slate-200', 'dark:border-slate-850');
+            const overlay = item.querySelector('.checkmark-overlay');
+            if (overlay) overlay.classList.add('hidden');
+        });
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('avatar-preview').src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const nameInput = document.getElementById('name');
     const feedbackText = document.getElementById('username-feedback');
@@ -187,36 +284,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function goToStep(step) {
         if (step === 2) {
-            // Hide Step 1 panel & google container
             stepPanel1.classList.add('hidden');
             googleContainer.classList.add('hidden');
-            // Show Step 2 panel
             stepPanel2.classList.remove('hidden');
-            // Update dots
+            
             stepDot1.classList.remove('bg-purple-600', 'shadow-purple-500/50');
             stepDot1.classList.add('bg-slate-200', 'dark:bg-slate-800');
             stepDot2.classList.add('bg-purple-600', 'shadow-purple-500/50');
             stepDot2.classList.remove('bg-slate-200', 'dark:bg-slate-800');
             
-            // Require fields on step 2 for native browser validation
             document.getElementById('email').required = true;
             document.getElementById('password').required = true;
             document.getElementById('password_confirmation').required = true;
             
             activeStep = 2;
         } else {
-            // Show Step 1 panel & google container
             stepPanel1.classList.remove('hidden');
             googleContainer.classList.remove('hidden');
-            // Hide Step 2 panel
             stepPanel2.classList.add('hidden');
-            // Update dots
+            
             stepDot1.classList.add('bg-purple-600', 'shadow-purple-500/50');
             stepDot1.classList.remove('bg-slate-200', 'dark:bg-slate-800');
             stepDot2.classList.remove('bg-purple-600', 'shadow-purple-500/50');
             stepDot2.classList.add('bg-slate-200', 'dark:bg-slate-800');
             
-            // Remove requirement from step 2 fields during step 1 to prevent validation block
             document.getElementById('email').required = false;
             document.getElementById('password').required = false;
             document.getElementById('password_confirmation').required = false;
@@ -225,12 +316,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Initialize step based on backend state
     if (activeStep === 2) {
         goToStep(2);
     }
 
-    // Validation handler
     function checkUsername(username) {
         if (!username || username.trim().length < 3) {
             feedbackText.innerText = "Username must be at least 3 characters.";
@@ -242,7 +331,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Check format
         const cleanRegex = /^[A-Za-z0-9\s-_]+$/;
         if (!cleanRegex.test(username)) {
             feedbackText.innerText = "No special characters allowed (letters, numbers, space, dash, underscore only).";
@@ -297,7 +385,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 400);
     });
 
-    // Handle stepping
     btnNext.addEventListener('click', () => {
         const val = nameInput.value.trim();
         
@@ -306,13 +393,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Perform final check or step transition if available
         if (isUsernameAvailable) {
             goToStep(2);
         } else {
-            // Re-run checks if needed
             checkUsername(val);
-            // Shake username input or show warning
             nameInput.focus();
         }
     });

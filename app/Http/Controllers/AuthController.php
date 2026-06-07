@@ -50,12 +50,26 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:255', 'unique:users'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Password::defaults()],
+            'avatar_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:5120'],
+            'avatar_preset' => ['nullable', 'string', 'url'],
         ]);
+
+        $avatarPath = null;
+
+        if ($request->hasFile('avatar_file')) {
+            $uploadedUrl = $this->imgBBService->upload($request->file('avatar_file'));
+            if ($uploadedUrl) {
+                $avatarPath = $uploadedUrl;
+            }
+        } elseif ($request->filled('avatar_preset')) {
+            $avatarPath = $request->avatar_preset;
+        }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'avatar_path' => $avatarPath,
             'title_badge' => 'New Member',
         ]);
 
