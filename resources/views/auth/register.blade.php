@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-md mx-auto my-12 px-4 sm:px-0">
+<div class="max-w-md mx-auto sm:my-12 px-0 sm:px-4">
     <!-- Brand Header -->
-    <div class="text-center mb-8">
+    <div class="text-center mb-8 px-4 sm:px-0">
         <div class="w-16 h-16 mx-auto bg-gradient-to-tr from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl shadow-purple-500/20 mb-6 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
             <span class="material-symbols-outlined text-white text-3xl font-light">person_add</span>
         </div>
@@ -12,7 +12,7 @@
     </div>
 
     <!-- Registration Panel -->
-    <div class="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden relative">
+    <div class="bg-white dark:bg-slate-900 rounded-none sm:rounded-[2rem] border-y sm:border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden relative">
         <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
         
         <!-- Step Indicator -->
