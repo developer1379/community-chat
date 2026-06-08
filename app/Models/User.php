@@ -219,6 +219,17 @@ class User extends Authenticatable
     }
 
     /**
+     * Get custom username inline color styles based on custom title_color.
+     */
+    public function getUsernameStyleCssAttribute(): string
+    {
+        if ($this->title_color) {
+            return 'color: ' . $this->title_color . ' !important;';
+        }
+        return '';
+    }
+
+    /**
      * Get all purchased items for the user.
      */
     public function purchases(): HasMany

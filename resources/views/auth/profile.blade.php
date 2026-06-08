@@ -81,8 +81,8 @@ profile
 
                 <div class="space-y-1.5 pb-2">
                     <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
-                        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ $user->name }}</h2>
-                        <span class="text-xs px-3 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-sm" style="color: {{ $user->title_color ?: '#ffffff' }}; background: {{ $user->banner_color }}">
+                        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight" style="{{ $user->username_style_css }}">{{ $user->name }}</h2>
+                        <span class="text-xs px-3 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-sm" style="color: #ffffff; background: {{ $user->banner_color }}">
                             {{ $user->title_badge }}
                         </span>
                     </div>

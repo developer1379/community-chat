@@ -82,7 +82,7 @@ article
         <div class="flex items-center gap-3 text-[10px] text-slate-500 dark:text-slate-400 mt-1.5 flex-wrap">
             <div class="flex items-center gap-1">
                 <span>By</span>
-                <a href="{{ route('profile.show', $thread->user->name) }}" class="font-bold text-slate-700 dark:text-slate-355 hover:underline">{{ $thread->user->name }}</a>
+                <a href="{{ route('profile.show', $thread->user->name) }}" class="font-bold text-slate-700 dark:text-slate-355 hover:underline" style="{{ $thread->user->username_style_css }}">{{ $thread->user->name }}</a>
             </div>
             <span>•</span>
             <span>Created {{ $thread->created_at->format('M d, Y') }}</span>
@@ -174,6 +174,7 @@ article
                         <h3 class="font-bold text-slate-800 dark:text-slate-200 text-sm md:text-xs hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
                             <a href="{{ route('profile.show', $post->user->name) }}"
                                class="{{ $post->user->username_style }}"
+                               style="{{ $post->user->username_style_css }}"
                                data-user-hover="true" 
                                data-user-name="{{ $post->user->name }}" 
                                data-user-badge="{{ $post->user->title_badge }}" 
@@ -437,7 +438,7 @@ article
                         <div class="w-16 h-16 rounded-xl overflow-hidden border border-slate-300 shadow-sm mb-2 bg-blue-50 flex items-center justify-center font-bold text-blue-600 text-lg">
                             <img src="{{ Auth::user()->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                         </div>
-                        <h3 class="font-bold text-slate-800 text-xs">{{ Auth::user()->name }}</h3>
+                        <h3 class="font-bold text-slate-800 text-xs" style="{{ Auth::user()->username_style_css }}">{{ Auth::user()->name }}</h3>
                         <span class="text-[8px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider text-white mt-1 border border-slate-350 shadow-sm" style="background: {{ Auth::user()->banner_color ?? '#2563eb' }}">
                             {{ Auth::user()->title_badge ?? 'Member' }}
                         </span>

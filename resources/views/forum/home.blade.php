@@ -117,7 +117,7 @@
                                            data-user-avatar="{{ $thread->user->avatar_url }}"
                                            data-user-banner="{{ $thread->user->banner_color }}"
                                            data-user-banner-path="{{ $thread->user->banner_path }}"
-                                           class="text-[9px] font-bold truncate hover:underline">{{ $thread->user->name }}</a>
+                                           class="text-[9px] font-bold truncate hover:underline" style="{{ $thread->user->username_style_css }}">{{ $thread->user->name }}</a>
                                     </div>
                                     <div class="flex items-center gap-2 text-[8px] font-bold opacity-90">
                                         <span>💬 {{ $repliesCount }}</span>
@@ -228,7 +228,8 @@
                            data-user-avatar="{{ $thread->user->avatar_url }}"
                            data-user-banner="{{ $thread->user->banner_color }}"
                            data-user-banner-path="{{ $thread->user->banner_path }}"
-                           class="text-[9px] font-black text-slate-650 dark:text-slate-350 mt-2 truncate w-full hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                           class="text-[9px] font-black text-slate-650 dark:text-slate-350 mt-2 truncate w-full hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                           style="{{ $thread->user->username_style_css }}">
                             {{ $thread->user->name }}
                         </a>
                         <!-- Reaction count links to thread -->
@@ -368,7 +369,8 @@
                                                                        data-user-avatar="{{ $lastPostUser->avatar_url }}" 
                                                                        data-user-banner="{{ $lastPostUser->banner_color }}"
                                                                        data-user-banner-path="{{ $lastPostUser->banner_path }}"
-                                                                       class="hover:underline font-extrabold text-slate-550 dark:text-slate-450">{{ $lastPostUser->name }}</a>
+                                                                       class="hover:underline font-extrabold text-slate-550 dark:text-slate-450"
+                                                                       style="{{ $lastPostUser->username_style_css }}">{{ $lastPostUser->name }}</a>
                                             </span>
                                         </div>
                                     @else
@@ -414,7 +416,7 @@
                                         {{ $thread->title }}
                                     </a>
                                     <span class="text-[9px] font-semibold text-slate-400 dark:text-slate-500 block mt-0.5">
-                                        by <a href="{{ route('profile.show', $thread->user->name) }}" data-user-hover="true" data-user-name="{{ $thread->user->name }}" class="hover:underline font-bold text-slate-500 dark:text-slate-400">{{ $thread->user->name }}</a> • {{ $thread->created_at->diffForHumans() }}
+                                        by <a href="{{ route('profile.show', $thread->user->name) }}" data-user-hover="true" data-user-name="{{ $thread->user->name }}" class="hover:underline font-bold text-slate-500 dark:text-slate-400" style="{{ $thread->user->username_style_css }}">{{ $thread->user->name }}</a> • {{ $thread->created_at->diffForHumans() }}
                                     </span>
                                 </div>
                             </div>
@@ -452,7 +454,7 @@
                                         {{ $thread->title }}
                                     </a>
                                     <span class="text-[9px] font-semibold text-slate-400 dark:text-slate-500 block mt-0.5">
-                                        🔥 {{ $thread->views_count }} views • by <a href="{{ route('profile.show', $thread->user->name) }}" data-user-hover="true" data-user-name="{{ $thread->user->name }}" class="hover:underline font-bold text-slate-500 dark:text-slate-400">{{ $thread->user->name }}</a>
+                                        🔥 {{ $thread->views_count }} views • by <a href="{{ route('profile.show', $thread->user->name) }}" data-user-hover="true" data-user-name="{{ $thread->user->name }}" class="hover:underline font-bold text-slate-500 dark:text-slate-400" style="{{ $thread->user->username_style_css }}">{{ $thread->user->name }}</a>
                                     </span>
                                 </div>
                             </div>
