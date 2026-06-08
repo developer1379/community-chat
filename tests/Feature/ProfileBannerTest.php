@@ -17,9 +17,6 @@ beforeEach(function () {
             ]
         ], 200)
     ]);
-
-    // Set all milestones to require 0 coins so level check passes for any coin amount
-    \App\Models\RankMilestone::query()->update(['coins_required' => 0]);
 });
 
 it('allows user to update profile banner for the first time for free', function () {

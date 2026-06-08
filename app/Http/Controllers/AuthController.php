@@ -170,25 +170,23 @@ class AuthController extends Controller
         $level = $tier['level'] ?? 1;
         $isAdmin = $user->isAdmin();
 
-        // Level 12 (Super Saiyan) required for custom banner color / background banner image
-        if ($level >= 12 || $isAdmin) {
-            $data['banner_color'] = $request->banner_color;
-            if ($request->hasFile('banner')) {
-                if ($user->banner_updates_count >= 1 && !$isAdmin) {
-                    if ($user->coins < 50) {
-                        return redirect()->back()->with('error', 'You need 50 coins to update your profile banner.');
-                    }
+        // Banner color and cover photo update allowed for everyone
+        $data['banner_color'] = $request->banner_color;
+        if ($request->hasFile('banner')) {
+            if ($user->banner_updates_count >= 1 && !$isAdmin) {
+                if ($user->coins < 50) {
+                    return redirect()->back()->with('error', 'You need 50 coins to update your profile banner.');
                 }
+            }
 
-                // Upload custom banner to ImgBB!
-                $bannerUrl = $this->imgBBService->upload($request->file('banner'));
-                if ($bannerUrl) {
-                    if ($user->banner_updates_count >= 1 && !$isAdmin) {
-                        $user->addCoins(-50, 'banner_update', 'Profile banner update fee');
-                    }
-                    $data['banner_path'] = $bannerUrl; // save ImgBB URL
-                    $data['banner_updates_count'] = $user->banner_updates_count + 1;
+            // Upload custom banner to ImgBB!
+            $bannerUrl = $this->imgBBService->upload($request->file('banner'));
+            if ($bannerUrl) {
+                if ($user->banner_updates_count >= 1 && !$isAdmin) {
+                    $user->addCoins(-50, 'banner_update', 'Profile banner update fee');
                 }
+                $data['banner_path'] = $bannerUrl; // save ImgBB URL
+                $data['banner_updates_count'] = $user->banner_updates_count + 1;
             }
         }
 

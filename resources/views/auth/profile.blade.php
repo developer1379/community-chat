@@ -432,13 +432,11 @@ profile
                                     <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-slate-50/50 hover:bg-slate-50 transition-all flex flex-col justify-center text-left">
                                         <label for="banner" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
                                             Upload Cover Photo
-                                            @if($tier['level'] < 12 && !$user->isAdmin())
-                                                <span class="text-[8px] text-amber-600 bg-amber-50 px-1 py-0.5 rounded font-black">🔒 SS (Lvl 12)</span>
-                                            @elseif($user->banner_updates_count >= 1 && !$user->isAdmin())
+                                            @if($user->banner_updates_count >= 1 && !$user->isAdmin())
                                                 <span class="text-[8px] text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded font-black">💰 Costs 50 Coins</span>
                                             @endif
                                         </label>
-                                        <input type="file" id="banner" name="banner" {{ ($tier['level'] < 12 && !$user->isAdmin()) ? 'disabled' : '' }} class="block w-full text-xs text-slate-550 mt-2.5 file:mr-3 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <input type="file" id="banner" name="banner" class="block w-full text-xs text-slate-550 mt-2.5 file:mr-3 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                                     </div>
 
                                     <!-- Custom title badge -->
@@ -473,11 +471,8 @@ profile
                                 <div class="relative border border-slate-200 rounded-2xl p-4 bg-white transition-all text-left">
                                     <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
                                         Choose Profile Theme Gradient
-                                        @if($tier['level'] < 12 && !$user->isAdmin())
-                                            <span class="text-[8px] text-amber-600 bg-amber-50 px-1 py-0.5 rounded font-black">🔒 SS (Lvl 12)</span>
-                                        @endif
                                     </label>
-                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2.5 {{ ($tier['level'] < 12 && !$user->isAdmin()) ? 'opacity-50 pointer-events-none' : '' }}">
+                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2.5">
                                         <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all">
                                             <input type="radio" name="banner_color" value="linear-gradient(135deg, #6366f1, #a855f7)" {{ $user->banner_color === 'linear-gradient(135deg, #6366f1, #a855f7)' ? 'checked' : '' }} class="mr-2 text-blue-600 focus:ring-blue-500">
                                             <span class="w-6 h-6 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 shadow-inner"></span>
