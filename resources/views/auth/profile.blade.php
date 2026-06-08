@@ -434,6 +434,8 @@ profile
                                             Upload Cover Photo
                                             @if($tier['level'] < 12 && !$user->isAdmin())
                                                 <span class="text-[8px] text-amber-600 bg-amber-50 px-1 py-0.5 rounded font-black">🔒 SS (Lvl 12)</span>
+                                            @elseif($user->banner_updates_count >= 1 && !$user->isAdmin())
+                                                <span class="text-[8px] text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded font-black">💰 Costs 50 Coins</span>
                                             @endif
                                         </label>
                                         <input type="file" id="banner" name="banner" {{ ($tier['level'] < 12 && !$user->isAdmin()) ? 'disabled' : '' }} class="block w-full text-xs text-slate-550 mt-2.5 file:mr-3 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">

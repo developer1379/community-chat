@@ -28,6 +28,7 @@ class User extends Authenticatable
         'avatar_path',
         'banner_color',
         'banner_path',
+        'banner_updates_count',
         'title_badge',
         'title_color',
         'signature',
