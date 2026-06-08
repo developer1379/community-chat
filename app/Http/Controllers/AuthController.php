@@ -196,9 +196,9 @@ class AuthController extends Controller
             if ($newColor !== $user->title_color) {
                 if ($user->title_color_updates_count >= 1 && !$isAdmin) {
                     if ($user->coins < 100) {
-                        return redirect()->back()->with('error', 'You need 100 coins to update your title badge color.');
+                        return redirect()->back()->with('error', 'You need 100 coins to update your title color.');
                     }
-                    $user->addCoins(-100, 'title_color_update', 'Title badge color update fee');
+                    $user->addCoins(-100, 'title_color_update', 'Title color update fee');
                 }
                 $data['title_color'] = $newColor;
                 $data['title_color_updates_count'] = $user->title_color_updates_count + 1;

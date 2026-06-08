@@ -114,7 +114,7 @@ it('allows admins to update banners freely without coin deduction', function () 
     expect($user->coins)->toBe(0); // Admin not charged
 });
 
-it('allows user to update title badge color for the first time for free', function () {
+it('allows user to update title color for the first time for free', function () {
     $user = User::factory()->create([
         'coins' => 150,
         'title_color' => null,
@@ -136,7 +136,7 @@ it('allows user to update title badge color for the first time for free', functi
     expect($user->coins)->toBe(150);
 });
 
-it('charges user 100 coins for subsequent title badge color updates if they have enough coins', function () {
+it('charges user 100 coins for subsequent title color updates if they have enough coins', function () {
     $user = User::factory()->create([
         'coins' => 150,
         'title_color' => '#ff5555',
@@ -165,7 +165,7 @@ it('charges user 100 coins for subsequent title badge color updates if they have
     expect($transaction->amount)->toBe(-100);
 });
 
-it('prevents user from updating title badge color if they have insufficient coins on subsequent updates', function () {
+it('prevents user from updating title color if they have insufficient coins on subsequent updates', function () {
     $user = User::factory()->create([
         'coins' => 30, // Less than 100 coins
         'title_color' => '#ff5555',
@@ -178,7 +178,7 @@ it('prevents user from updating title badge color if they have insufficient coin
     ]);
 
     $response->assertRedirect();
-    $response->assertSessionHas('error', 'You need 100 coins to update your title badge color.');
+    $response->assertSessionHas('error', 'You need 100 coins to update your title color.');
 
     $user->refresh();
     expect($user->title_color_updates_count)->toBe(1);
@@ -186,7 +186,7 @@ it('prevents user from updating title badge color if they have insufficient coin
     expect($user->coins)->toBe(30);
 });
 
-it('allows admins to update title badge color freely without coin deduction', function () {
+it('allows admins to update title color freely without coin deduction', function () {
     $user = User::factory()->create([
         'coins' => 20,
         'title_color' => '#ff5555',
