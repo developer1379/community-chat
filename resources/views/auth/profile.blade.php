@@ -438,7 +438,6 @@ profile
                                         </label>
                                         <input type="file" id="banner" name="banner" class="block w-full text-xs text-slate-550 mt-2.5 file:mr-3 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                                     </div>
-
                                     <!-- Custom title badge -->
                                     <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-white transition-all text-left">
                                         <label for="title_badge" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
@@ -456,12 +455,12 @@ profile
                                     <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-white transition-all text-left">
                                         <label for="title_color" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
                                             Title Badge Color
-                                            @if($tier['level'] < 16 && !$user->isAdmin())
-                                                <span class="text-[8px] text-amber-605 bg-amber-50 px-1 py-0.5 rounded font-black">🔒 SR (Lvl 16)</span>
+                                            @if($user->title_color_updates_count >= 1 && !$user->isAdmin())
+                                                <span class="text-[8px] text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded font-black">💰 Costs 100 Coins</span>
                                             @endif
                                         </label>
                                         <div class="flex items-center gap-2.5 mt-2.5">
-                                            <input type="color" id="title_color" name="title_color" {{ ($tier['level'] < 16 && !$user->isAdmin()) ? 'disabled' : '' }} value="{{ old('title_color', $user->title_color ?: '#ffffff') }}" class="w-8 h-8 border-0 rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                            <input type="color" id="title_color" name="title_color" value="{{ old('title_color', $user->title_color ?: '#ffffff') }}" class="w-8 h-8 border-0 rounded-lg cursor-pointer">
                                             <span class="text-[10px] text-slate-400 font-bold">Pick badge text color</span>
                                         </div>
                                     </div>

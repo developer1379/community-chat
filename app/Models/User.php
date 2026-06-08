@@ -31,6 +31,7 @@ class User extends Authenticatable
         'banner_updates_count',
         'title_badge',
         'title_color',
+        'title_color_updates_count',
         'signature',
         'is_private',
         'coins',

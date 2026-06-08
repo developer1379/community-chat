@@ -190,9 +190,19 @@ class AuthController extends Controller
             }
         }
 
-        // Level 16 (Soul Reaper) required for custom title badge text color
-        if (($level >= 16 || $isAdmin) && $request->has('title_color')) {
-            $data['title_color'] = $request->title_color;
+        // Title color update allowed for everyone (level 16 requirement removed)
+        if ($request->has('title_color')) {
+            $newColor = $request->title_color;
+            if ($newColor !== $user->title_color) {
+                if ($user->title_color_updates_count >= 1 && !$isAdmin) {
+                    if ($user->coins < 100) {
+                        return redirect()->back()->with('error', 'You need 100 coins to update your title badge color.');
+                    }
+                    $user->addCoins(-100, 'title_color_update', 'Title badge color update fee');
+                }
+                $data['title_color'] = $newColor;
+                $data['title_color_updates_count'] = $user->title_color_updates_count + 1;
+            }
         }
 
         // Level 20 (Pirate King) required for custom title badge text

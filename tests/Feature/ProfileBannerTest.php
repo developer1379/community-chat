@@ -113,3 +113,97 @@ it('allows admins to update banners freely without coin deduction', function () 
     expect($user->banner_updates_count)->toBe(6);
     expect($user->coins)->toBe(0); // Admin not charged
 });
+
+it('allows user to update title badge color for the first time for free', function () {
+    $user = User::factory()->create([
+        'coins' => 150,
+        'title_color' => null,
+        'title_color_updates_count' => 0,
+    ]);
+
+    $response = $this->actingAs($user)->post(route('profile.update'), [
+        'banner_color' => 'linear-gradient(135deg, #6366f1, #a855f7)',
+        'title_color' => '#ff5555',
+    ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('success', 'Your profile card has been updated successfully!');
+
+    $user->refresh();
+    expect($user->title_color_updates_count)->toBe(1);
+    expect($user->title_color)->toBe('#ff5555');
+    // First update is free
+    expect($user->coins)->toBe(150);
+});
+
+it('charges user 100 coins for subsequent title badge color updates if they have enough coins', function () {
+    $user = User::factory()->create([
+        'coins' => 150,
+        'title_color' => '#ff5555',
+        'title_color_updates_count' => 1,
+    ]);
+
+    $response = $this->actingAs($user)->post(route('profile.update'), [
+        'banner_color' => 'linear-gradient(135deg, #6366f1, #a855f7)',
+        'title_color' => '#00ff00',
+    ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('success', 'Your profile card has been updated successfully!');
+
+    $user->refresh();
+    expect($user->title_color_updates_count)->toBe(2);
+    expect($user->title_color)->toBe('#00ff00');
+    // Charged 100 coins: 150 - 100 = 50
+    expect($user->coins)->toBe(50);
+
+    // Verify transaction
+    $transaction = CoinTransaction::where('user_id', $user->id)
+        ->where('type', 'title_color_update')
+        ->first();
+    expect($transaction)->not->toBeNull();
+    expect($transaction->amount)->toBe(-100);
+});
+
+it('prevents user from updating title badge color if they have insufficient coins on subsequent updates', function () {
+    $user = User::factory()->create([
+        'coins' => 30, // Less than 100 coins
+        'title_color' => '#ff5555',
+        'title_color_updates_count' => 1,
+    ]);
+
+    $response = $this->actingAs($user)->post(route('profile.update'), [
+        'banner_color' => 'linear-gradient(135deg, #6366f1, #a855f7)',
+        'title_color' => '#00ff00',
+    ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('error', 'You need 100 coins to update your title badge color.');
+
+    $user->refresh();
+    expect($user->title_color_updates_count)->toBe(1);
+    expect($user->title_color)->toBe('#ff5555');
+    expect($user->coins)->toBe(30);
+});
+
+it('allows admins to update title badge color freely without coin deduction', function () {
+    $user = User::factory()->create([
+        'coins' => 20,
+        'title_color' => '#ff5555',
+        'title_color_updates_count' => 5,
+    ]);
+    $user->admin()->create();
+
+    $response = $this->actingAs($user)->post(route('profile.update'), [
+        'banner_color' => 'linear-gradient(135deg, #6366f1, #a855f7)',
+        'title_color' => '#00ff00',
+    ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHas('success', 'Your profile card has been updated successfully!');
+
+    $user->refresh();
+    expect($user->title_color_updates_count)->toBe(6);
+    expect($user->title_color)->toBe('#00ff00');
+    expect($user->coins)->toBe(20);
+});
