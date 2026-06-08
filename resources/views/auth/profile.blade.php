@@ -81,7 +81,7 @@ profile
 
                 <div class="space-y-1.5 pb-2">
                     <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
-                        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight" style="{{ $user->username_style_css }}">{{ $user->name }}</h2>
+                        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight {{ $user->username_style }}" style="{{ $user->username_style_css }}">{{ $user->name }}</h2>
                         <span class="text-xs px-3 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-sm" style="color: #ffffff; background: {{ $user->banner_color }}">
                             {{ $user->title_badge }}
                         </span>
@@ -419,7 +419,7 @@ profile
                                     Customize Profile Card
                                 </h3>
                             </div>
-                            <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-5 bg-white">
+                            <form id="profile-form" action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-5 bg-white">
                                 @csrf
                                         <!-- Material Design Upload & Input Grid -->
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -451,15 +451,40 @@ profile
                                 </div>
 
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    <!-- Custom Title Badge Text Color -->
+                                    <!-- Username Color -->
                                     <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-white transition-all text-left">
-                                        <label for="title_color" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
-                                            Title Color
+                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
+                                            Username Color
+                                            @if(!$user->isAdmin())
+                                                <span class="text-[8px] text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded font-black">💰 100 Coins</span>
+                                            @endif
                                         </label>
+                                        <input type="hidden" name="title_color" id="profile-color-hidden-input" value="{{ $user->title_color }}">
                                         <div class="flex items-center gap-2.5 mt-2.5">
-                                            <input type="color" id="title_color" name="title_color" value="{{ old('title_color', $user->title_color ?: '#ffffff') }}" class="w-8 h-8 border-0 rounded-lg cursor-pointer">
-                                            <span class="text-[10px] text-slate-400 font-bold">Pick title text color</span>
+                                            <div class="flex items-center gap-1.5">
+                                                <input type="checkbox" id="profile-color-reset" class="rounded border-slate-300 text-indigo-650 focus:ring-indigo-500" {{ !$user->title_color ? 'checked' : '' }}>
+                                                <label for="profile-color-reset" class="text-[10px] text-slate-500 font-bold cursor-pointer">Default</label>
+                                            </div>
+                                            <input type="color" id="profile-color-input" value="{{ $user->title_color ?: '#4f46e5' }}" class="w-8 h-8 border-0 rounded-lg cursor-pointer">
+                                            <span class="text-[10px] text-slate-400 font-bold">Pick color</span>
                                         </div>
+                                    </div>
+
+                                    <!-- Username Animation -->
+                                    <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-white transition-all text-left">
+                                        <label for="username_animation" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
+                                            Username Animation
+                                            @if(!$user->isAdmin())
+                                                <span class="text-[8px] text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded font-black">💰 500 Coins</span>
+                                            @endif
+                                        </label>
+                                        <select name="username_animation" id="profile-anim-select" class="w-full mt-2.5 bg-transparent border-0 p-0 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-0">
+                                            <option value="none" {{ !$user->username_animation || $user->username_animation === 'none' ? 'selected' : '' }}>None (Static Color)</option>
+                                            <option value="glow" {{ $user->username_animation === 'glow' ? 'selected' : '' }}>Glow (Soft neon pulse)</option>
+                                            <option value="pulse" {{ $user->username_animation === 'pulse' ? 'selected' : '' }}>Pulse (Scale and fade)</option>
+                                            <option value="crackle" {{ $user->username_animation === 'crackle' ? 'selected' : '' }}>Crackle (Lightning glow)</option>
+                                            <option value="shimmer" {{ $user->username_animation === 'shimmer' ? 'selected' : '' }}>Shimmer (Metallic shine)</option>
+                                        </select>
                                     </div>
                                 </div>
 
@@ -645,15 +670,14 @@ profile
             document.addEventListener('DOMContentLoaded', function() {
                 const avatarInput = document.getElementById('avatar');
                 const bannerInput = document.getElementById('banner');
-                const saveCard = document.querySelector('form[action*="profile/update"]');
-                const submitBtn = saveCard ? saveCard.querySelector('button[type="submit"]') : null;
+                const profileForm = document.getElementById('profile-form');
+                const submitBtn = profileForm ? profileForm.querySelector('button[type="submit"]') : null;
 
                 function highlightSaveButton() {
                     if (submitBtn) {
                         submitBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
                         submitBtn.classList.add('animate-pulse');
                         submitBtn.innerText = '💾 Save Changes!';
-                        submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
                 }
 
@@ -688,6 +712,139 @@ profile
                             }
                             highlightSaveButton();
                         }
+                    });
+                }
+
+                // Username color reset control
+                const colorInput = document.getElementById('profile-color-input');
+                const colorReset = document.getElementById('profile-color-reset');
+                const colorHidden = document.getElementById('profile-color-hidden-input');
+                const animSelect = document.getElementById('profile-anim-select');
+
+                function updateProfileColorsAndInputs() {
+                    if (colorReset.checked) {
+                        colorInput.disabled = true;
+                        colorInput.style.opacity = '0.5';
+                        colorHidden.value = '';
+                    } else {
+                        colorInput.disabled = false;
+                        colorInput.style.opacity = '1';
+                        colorHidden.value = colorInput.value;
+                    }
+                    highlightSaveButton();
+                }
+
+                if (colorInput && colorReset && colorHidden) {
+                    colorInput.addEventListener('input', updateProfileColorsAndInputs);
+                    colorReset.addEventListener('change', updateProfileColorsAndInputs);
+                    updateProfileColorsAndInputs();
+                }
+
+                if (animSelect) {
+                    animSelect.addEventListener('change', highlightSaveButton);
+                }
+
+                if (profileForm) {
+                    profileForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+
+                        const currentCoins = @json(Auth::user()->coins);
+                        const isAdmin = @json(Auth::user()->isAdmin());
+                        const origColor = @json(Auth::user()->title_color);
+                        const origAnim = @json(Auth::user()->username_animation ?: 'none');
+                        const hasBannerBefore = @json(Auth::user()->banner_updates_count >= 1);
+
+                        const isResetChecked = colorReset.checked;
+                        const chosenColor = isResetChecked ? null : colorInput.value;
+                        const chosenAnim = animSelect.value;
+
+                        const bannerFile = document.getElementById('banner');
+                        const hasNewBanner = bannerFile && bannerFile.files && bannerFile.files.length > 0;
+
+                        let bannerCost = 0;
+                        if (hasNewBanner && hasBannerBefore && !isAdmin) {
+                            bannerCost = 50;
+                        }
+
+                        let styleCost = 0;
+                        const normalizedOrigColor = origColor ? origColor.toLowerCase() : null;
+                        const normalizedChosenColor = chosenColor ? chosenColor.toLowerCase() : null;
+
+                        if (normalizedChosenColor !== normalizedOrigColor) {
+                            styleCost += 100;
+                        }
+
+                        const normalizedOrigAnim = origAnim === 'none' ? 'none' : origAnim;
+                        const normalizedChosenAnim = chosenAnim === 'none' ? 'none' : chosenAnim;
+
+                        if (normalizedChosenAnim !== normalizedOrigAnim) {
+                            styleCost += 500;
+                        }
+
+                        const totalCost = bannerCost + styleCost;
+
+                        if (totalCost > currentCoins && !isAdmin) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Insufficient Coins',
+                                text: `You do not have enough coins to apply these changes. Required: ${totalCost} coins, Balance: ${currentCoins} coins.`,
+                                confirmButtonColor: '#3b82f6'
+                            });
+                            return;
+                        }
+
+                        const username = @json(Auth::user()->name);
+                        let displayStyle = '';
+                        if (chosenColor) {
+                            displayStyle += `color: ${chosenColor} !important;`;
+                        }
+
+                        let animClass = '';
+                        if (chosenAnim === 'glow') animClass = 'animate-glow';
+                        else if (chosenAnim === 'pulse') animClass = 'animate-pulse';
+                        else if (chosenAnim === 'crackle') animClass = 'animate-bolt';
+                        else if (chosenAnim === 'shimmer') animClass = 'animate-shimmer';
+
+                        let costBreakdownHtml = '';
+                        if (totalCost > 0) {
+                            costBreakdownHtml = `
+                                <div style="margin-top: 15px; padding: 10px; border-radius: 12px; background: #f8fafc; font-size: 11px; text-align: left; border: 1px solid #e2e8f0; color: #475569;">
+                                    <b style="display:block; margin-bottom: 5px; color: #1e293b; font-size: 12px;">Coin Usage Summary</b>
+                                    ${bannerCost > 0 ? `<div style="display:flex; justify-content:space-between; margin-bottom: 3px;"><span>Cover Photo Update:</span> <b>50 Coins</b></div>` : ''}
+                                    ${styleCost > 0 && normalizedChosenColor !== normalizedOrigColor ? `<div style="display:flex; justify-content:space-between; margin-bottom: 3px;"><span>Username Color:</span> <b>100 Coins</b></div>` : ''}
+                                    ${styleCost > 0 && normalizedChosenAnim !== normalizedOrigAnim ? `<div style="display:flex; justify-content:space-between; margin-bottom: 3px;"><span>Username Animation:</span> <b>500 Coins</b></div>` : ''}
+                                    <div style="margin-top:5px; border-top:1px solid #e2e8f0; padding-top:5px; display:flex; justify-content:space-between; font-weight:bold; color:#0f172a;">
+                                        <span>Total Cost:</span> <span>${totalCost} Coins</span>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            costBreakdownHtml = `<div style="margin-top: 10px; font-size: 11px; color: #10b981; font-weight: bold; text-align: center;">✓ This update is free!</div>`;
+                        }
+
+                        const previewHtml = `
+                            <div style="font-family: inherit;">
+                                <p style="font-size: 12px; color: #64748b; margin-bottom: 15px; text-align: center;">Here is how your styled username will look across the community:</p>
+                                <div style="padding: 20px; border-radius: 16px; background: #0f172a; text-align: center; margin-bottom: 15px; box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);">
+                                    <span class="text-xl font-black tracking-tight ${animClass}" style="${displayStyle}">${username}</span>
+                                </div>
+                                ${costBreakdownHtml}
+                            </div>
+                        `;
+
+                        Swal.fire({
+                            title: 'Preview Username Style',
+                            html: previewHtml,
+                            showCancelButton: true,
+                            confirmButtonColor: '#3b82f6',
+                            cancelButtonColor: '#64748b',
+                            confirmButtonText: 'Confirm & Save',
+                            cancelButtonText: 'Cancel'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                profileForm.submit();
+                            }
+                        });
                     });
                 }
             });

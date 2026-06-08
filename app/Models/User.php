@@ -31,6 +31,7 @@ class User extends Authenticatable
         'banner_updates_count',
         'title_badge',
         'title_color',
+        'username_animation',
         'title_color_updates_count',
         'signature',
         'is_private',
@@ -212,10 +213,19 @@ class User extends Authenticatable
      */
     public function getUsernameStyleAttribute(): string
     {
+        $classes = [];
         if ($this->hasActiveShopItem('username_style')) {
-            return 'text-indigo-650 dark:text-indigo-400 font-extrabold drop-shadow-[0_0.8px_0.8px_rgba(99,102,241,0.15)] shadow-indigo-500/20';
+            $classes[] = 'text-indigo-650 dark:text-indigo-400 font-extrabold drop-shadow-[0_0.8px_0.8px_rgba(99,102,241,0.15)] shadow-indigo-500/20';
         }
-        return '';
+        
+        if ($this->username_animation) {
+            if ($this->username_animation === 'glow') $classes[] = 'animate-glow';
+            elseif ($this->username_animation === 'pulse') $classes[] = 'animate-pulse';
+            elseif ($this->username_animation === 'crackle') $classes[] = 'animate-bolt';
+            elseif ($this->username_animation === 'shimmer') $classes[] = 'animate-shimmer';
+        }
+        
+        return implode(' ', $classes);
     }
 
     /**

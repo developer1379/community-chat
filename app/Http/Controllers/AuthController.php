@@ -157,6 +157,7 @@ class AuthController extends Controller
             'banner_color' => ['required', 'string'],
             'title_badge' => ['nullable', 'string', 'max:50'],
             'title_color' => ['nullable', 'string', 'max:7', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
+            'username_animation' => ['nullable', 'string', 'in:none,glow,pulse,crackle,shimmer'],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:4096'],
             'banner' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:8192'],
         ]);
@@ -170,29 +171,56 @@ class AuthController extends Controller
         $level = $tier['level'] ?? 1;
         $isAdmin = $user->isAdmin();
 
-        // Banner color and cover photo update allowed for everyone
-        $data['banner_color'] = $request->banner_color;
+        // Banner cost calculation
+        $bannerCost = 0;
         if ($request->hasFile('banner')) {
             if ($user->banner_updates_count >= 1 && !$isAdmin) {
-                if ($user->coins < 50) {
-                    return redirect()->back()->with('error', 'You need 50 coins to update your profile banner.');
-                }
+                $bannerCost = 50;
             }
+        }
 
-            // Upload custom banner to ImgBB!
+        // Style cost calculation
+        $styleCost = 0;
+        $newColor = $request->title_color ?: null;
+        $newAnim = ($request->username_animation && $request->username_animation !== 'none') ? $request->username_animation : null;
+
+        if ($newColor !== $user->title_color) {
+            $styleCost += 100;
+        }
+        if ($newAnim !== $user->username_animation) {
+            $styleCost += 500;
+        }
+
+        $totalCost = $bannerCost + $styleCost;
+
+        if ($totalCost > 0 && !$isAdmin) {
+            if ($user->coins < $totalCost) {
+                return redirect()->back()->with('error', "You do not have enough coins to apply these changes. (Requires {$totalCost} coins)");
+            }
+            if ($bannerCost > 0) {
+                $user->addCoins(-$bannerCost, 'banner_update', 'Profile banner update fee');
+            }
+            if ($styleCost > 0) {
+                $user->addCoins(-$styleCost, 'profile_style', 'Profile username style customization fee');
+            }
+        }
+
+        // Banner color and cover photo update
+        $data['banner_color'] = $request->banner_color;
+        if ($request->hasFile('banner')) {
             $bannerUrl = $this->imgBBService->upload($request->file('banner'));
             if ($bannerUrl) {
-                if ($user->banner_updates_count >= 1 && !$isAdmin) {
-                    $user->addCoins(-50, 'banner_update', 'Profile banner update fee');
-                }
-                $data['banner_path'] = $bannerUrl; // save ImgBB URL
+                $data['banner_path'] = $bannerUrl;
                 $data['banner_updates_count'] = $user->banner_updates_count + 1;
             }
         }
 
-        // Title color update allowed for everyone (free)
+        // Title color and animation updates
         if ($request->has('title_color')) {
-            $data['title_color'] = $request->title_color;
+            $data['title_color'] = $newColor;
+        }
+        if ($request->has('username_animation')) {
+            $data['username_animation'] = $newAnim;
         }
 
         // Level 20 (Pirate King) required for custom title badge text
@@ -201,10 +229,9 @@ class AuthController extends Controller
         }
 
         if ($request->hasFile('avatar')) {
-            // Upload avatar to ImgBB and use returning URL!
             $avatarUrl = $this->imgBBService->upload($request->file('avatar'));
             if ($avatarUrl) {
-                $data['avatar_path'] = $avatarUrl; // save ImgBB URL directly
+                $data['avatar_path'] = $avatarUrl;
             }
         }
 
