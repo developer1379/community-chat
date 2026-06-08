@@ -190,19 +190,9 @@ class AuthController extends Controller
             }
         }
 
-        // Title color update allowed for everyone (level 16 requirement removed)
+        // Title color update allowed for everyone (free)
         if ($request->has('title_color')) {
-            $newColor = $request->title_color;
-            if ($newColor !== $user->title_color) {
-                if ($user->title_color_updates_count >= 1 && !$isAdmin) {
-                    if ($user->coins < 100) {
-                        return redirect()->back()->with('error', 'You need 100 coins to update your title color.');
-                    }
-                    $user->addCoins(-100, 'title_color_update', 'Title color update fee');
-                }
-                $data['title_color'] = $newColor;
-                $data['title_color_updates_count'] = $user->title_color_updates_count + 1;
-            }
+            $data['title_color'] = $request->title_color;
         }
 
         // Level 20 (Pirate King) required for custom title badge text

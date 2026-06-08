@@ -235,4 +235,45 @@ class ThreadController extends Controller
 
         return redirect()->back()->with('success', "Your thread has been {$status} successfully!");
     }
+
+    public function customizeTitle(Request $request, \App\Models\Thread $thread)
+    {
+        abort_if(Auth::id() !== $thread->user_id, 403);
+
+        $request->validate([
+            'title_color' => ['nullable', 'string', 'max:7', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
+            'title_animation' => ['nullable', 'string', 'in:none,glow,pulse,crackle,shimmer'],
+        ]);
+
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $isAdmin = $user->isAdmin();
+
+        $cost = 0;
+        $newColor = $request->title_color ?: null;
+        $newAnimation = ($request->title_animation && $request->title_animation !== 'none') ? $request->title_animation : null;
+
+        if ($newColor !== $thread->title_color) {
+            $cost += 100;
+        }
+
+        if ($newAnimation !== $thread->title_animation) {
+            $cost += 500;
+        }
+
+        if ($cost > 0 && !$isAdmin) {
+            if ($user->coins < $cost) {
+                return redirect()->back()->with('error', "You do not have enough coins to apply these changes. (Requires {$cost} coins)");
+            }
+            $user->addCoins(-$cost, 'thread_style', "Thread title style updated: " . $thread->title);
+        }
+
+        $thread->update([
+            'title_color' => $newColor,
+            'title_animation' => $newAnimation,
+            'is_title_styled' => ($newColor !== null || $newAnimation !== null),
+        ]);
+
+        return redirect()->back()->with('success', 'Your thread title has been styled successfully!');
+    }
 }

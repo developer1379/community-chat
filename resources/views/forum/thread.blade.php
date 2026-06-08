@@ -100,6 +100,11 @@ article
                         <span class="material-symbols-outlined text-[12px] font-bold">delete</span>
                         <span>Delete</span>
                     </button>
+                    <span>•</span>
+                    <button onclick="openCustomizeTitleModal()" type="button" class="text-indigo-600 hover:text-indigo-750 dark:text-indigo-400 dark:hover:text-indigo-300 hover:underline inline-flex items-center gap-0.5 bg-transparent border-0 p-0 cursor-pointer font-sans text-[10px] font-bold">
+                        <span class="material-symbols-outlined text-[12px] font-bold">palette</span>
+                        <span>Customize Title</span>
+                    </button>
                     <!-- Feature toggle -->
                     @php
                         $hasFeaturedUpgrade = Auth::user()->hasActiveShopItem('featured_homepage_thread');
@@ -1124,6 +1129,126 @@ article
             modal.querySelector('.relative').classList.add('scale-95');
         }
     }
+
+    function openCustomizeTitleModal() {
+        const modal = document.getElementById('customize-title-modal');
+        if (modal) {
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            modal.querySelector('.relative').classList.remove('scale-95');
+            modal.querySelector('.relative').classList.add('scale-100');
+            
+            const colorInput = document.getElementById('cust-color-input');
+            const animSelect = document.getElementById('cust-anim-select');
+            const colorReset = document.getElementById('cust-color-reset');
+            
+            if (colorInput && animSelect && colorReset) {
+                colorInput.removeEventListener('input', updateCustPreview);
+                colorInput.addEventListener('input', updateCustPreview);
+                animSelect.removeEventListener('change', updateCustPreview);
+                animSelect.addEventListener('change', updateCustPreview);
+                colorReset.removeEventListener('change', updateCustPreview);
+                colorReset.addEventListener('change', updateCustPreview);
+            }
+            updateCustPreview();
+        }
+    }
+
+    function closeCustomizeTitleModal() {
+        const modal = document.getElementById('customize-title-modal');
+        if (modal) {
+            modal.classList.add('pointer-events-none', 'opacity-0');
+            modal.querySelector('.relative').classList.remove('scale-100');
+            modal.querySelector('.relative').classList.add('scale-95');
+        }
+    }
+
+    function updateCustPreview() {
+        const colorInput = document.getElementById('cust-color-input');
+        const animSelect = document.getElementById('cust-anim-select');
+        const colorReset = document.getElementById('cust-color-reset');
+        const hiddenColorInput = document.getElementById('cust-color-hidden-input');
+        
+        const previewSpan = document.getElementById('cust-preview-title');
+        
+        const colorCostSpan = document.getElementById('cust-color-cost');
+        const animCostSpan = document.getElementById('cust-anim-cost');
+        const totalCostSpan = document.getElementById('cust-total-cost');
+        const submitBtn = document.getElementById('cust-submit-btn');
+        
+        if (!colorInput || !animSelect || !colorReset || !hiddenColorInput || !previewSpan || !colorCostSpan || !animCostSpan || !totalCostSpan || !submitBtn) return;
+        
+        const threadCurrentColor = @json($thread->title_color);
+        const threadCurrentAnimation = @json($thread->title_animation ?: 'none');
+        const userCoins = @json(Auth::user()->coins);
+        const isAdmin = @json(Auth::user()->isAdmin());
+        
+        let colorChanged = false;
+        let animChanged = false;
+        
+        const isResetChecked = colorReset.checked;
+        if (isResetChecked) {
+            colorInput.disabled = true;
+            colorInput.style.opacity = '0.5';
+            hiddenColorInput.value = '';
+            previewSpan.style.color = '';
+        } else {
+            colorInput.disabled = false;
+            colorInput.style.opacity = '1';
+            hiddenColorInput.value = colorInput.value;
+            previewSpan.style.color = colorInput.value;
+        }
+        
+        const chosenColor = hiddenColorInput.value || null;
+        const chosenAnim = animSelect.value;
+        
+        const normalizedCurrentColor = threadCurrentColor ? threadCurrentColor.toLowerCase() : null;
+        const normalizedChosenColor = chosenColor ? chosenColor.toLowerCase() : null;
+        
+        if (normalizedChosenColor !== normalizedCurrentColor) {
+            colorChanged = true;
+        }
+        
+        const normalizedCurrentAnim = (threadCurrentAnimation && threadCurrentAnimation !== 'none') ? threadCurrentAnimation : 'none';
+        const normalizedChosenAnim = (chosenAnim && chosenAnim !== 'none') ? chosenAnim : 'none';
+        
+        if (normalizedChosenAnim !== normalizedCurrentAnim) {
+            animChanged = true;
+        }
+        
+        const colorCost = colorChanged ? 100 : 0;
+        const animCost = animChanged ? 500 : 0;
+        const totalCost = colorCost + animCost;
+        
+        colorCostSpan.innerText = `${colorCost} Coins`;
+        animCostSpan.innerText = `${animCost} Coins`;
+        totalCostSpan.innerText = `${totalCost} Coins`;
+        
+        // Remove animation classes
+        previewSpan.classList.remove('animate-glow', 'animate-pulse', 'animate-bolt', 'animate-shimmer');
+        
+        // Add selected animation preview
+        if (chosenAnim === 'glow') {
+            previewSpan.classList.add('animate-glow');
+        } else if (chosenAnim === 'pulse') {
+            previewSpan.classList.add('animate-pulse');
+        } else if (chosenAnim === 'crackle') {
+            previewSpan.classList.add('animate-bolt');
+        } else if (chosenAnim === 'shimmer') {
+            previewSpan.classList.add('animate-shimmer');
+        }
+        
+        if (totalCost > userCoins && !isAdmin) {
+            submitBtn.disabled = true;
+            submitBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-750');
+            submitBtn.classList.add('bg-slate-400', 'cursor-not-allowed');
+            submitBtn.innerText = 'Insufficient Coins';
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('bg-slate-400', 'cursor-not-allowed');
+            submitBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-750');
+            submitBtn.innerText = 'Apply Customize';
+        }
+    }
 </script>
 
 @auth
@@ -1187,6 +1312,93 @@ article
                         </button>
                         <button type="submit" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-md transition-all cursor-pointer border-0">
                             Confirm & Promote
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Customize Title Modal -->
+        <div id="customize-title-modal" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300">
+            <!-- Backdrop -->
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeCustomizeTitleModal()"></div>
+            
+            <!-- Modal content -->
+            <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl max-w-md w-full mx-4 overflow-hidden transform transition-all duration-300 scale-95 z-55">
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-slate-950 dark:to-slate-850 px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                    <h3 class="font-black text-slate-850 dark:text-white text-xs flex items-center gap-2">
+                        <span class="material-symbols-outlined text-indigo-500 text-sm">palette</span>
+                        Customize Thread Title
+                    </h3>
+                    <button type="button" onclick="closeCustomizeTitleModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer transition-colors bg-transparent border-0 p-0 flex items-center">
+                        <span class="material-symbols-outlined text-sm">close</span>
+                    </button>
+                </div>
+                
+                <form id="customize-title-form" action="{{ route('threads.customize-title', $thread->id) }}" method="POST" class="p-6 space-y-4 text-left bg-white dark:bg-slate-900">
+                    @csrf
+                    <input type="hidden" name="title_color" id="cust-color-hidden-input" value="{{ $thread->title_color }}">
+                    
+                    <!-- Color selector -->
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Choose Title Color (100 Coins)</label>
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="cust-color-reset" class="rounded border-slate-300 text-indigo-650 focus:ring-indigo-500" {{ !$thread->title_color ? 'checked' : '' }}>
+                                <label for="cust-color-reset" class="text-[10px] text-slate-500 dark:text-slate-400 font-bold cursor-pointer">Use Default Color</label>
+                            </div>
+                            <input type="color" id="cust-color-input" value="{{ $thread->title_color ?: '#4f46e5' }}" class="w-10 h-10 border-0 rounded-lg cursor-pointer bg-transparent">
+                            <div class="text-[10px] text-slate-400 dark:text-slate-500 font-bold">Pick a custom color</div>
+                        </div>
+                    </div>
+
+                    <!-- Animation selector -->
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Choose Title Animation (500 Coins)</label>
+                        <select name="title_animation" id="cust-anim-select" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            <option value="none" {{ !$thread->title_animation || $thread->title_animation === 'none' ? 'selected' : '' }}>None (Static Color)</option>
+                            <option value="glow" {{ $thread->title_animation === 'glow' ? 'selected' : '' }}>Glow (Soft neon pulse)</option>
+                            <option value="pulse" {{ $thread->title_animation === 'pulse' ? 'selected' : '' }}>Pulse (Scale and fade)</option>
+                            <option value="crackle" {{ $thread->title_animation === 'crackle' ? 'selected' : '' }}>Crackle (Lightning glow)</option>
+                            <option value="shimmer" {{ $thread->title_animation === 'shimmer' ? 'selected' : '' }}>Shimmer (Metallic shine)</option>
+                        </select>
+                    </div>
+
+                    <!-- Live Preview Block -->
+                    <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-850 space-y-1">
+                        <span class="block text-[8px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider">Title Live Preview</span>
+                        <div class="text-sm font-bold text-slate-800 dark:text-white py-1">
+                            <span id="cust-preview-title" class="font-black tracking-wide">{{ $thread->title }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Price & Coins Summary -->
+                    <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-850 space-y-1.5 text-xs">
+                        <div class="flex justify-between font-bold text-slate-600 dark:text-slate-400">
+                            <span>Your Balance:</span>
+                            <span class="text-indigo-650 dark:text-indigo-400 font-extrabold">{{ number_format(Auth::user()->coins) }} Coins</span>
+                        </div>
+                        <div class="flex justify-between font-semibold text-slate-500 dark:text-slate-400">
+                            <span>Title Color Cost:</span>
+                            <span id="cust-color-cost" class="font-bold">0 Coins</span>
+                        </div>
+                        <div class="flex justify-between font-semibold text-slate-500 dark:text-slate-400">
+                            <span>Title Animation Cost:</span>
+                            <span id="cust-anim-cost" class="font-bold">0 Coins</span>
+                        </div>
+                        <div class="border-t border-slate-200 dark:border-slate-800 my-1 pt-1 flex justify-between font-black text-slate-800 dark:text-white">
+                            <span>Total Cost:</span>
+                            <span id="cust-total-cost">0 Coins</span>
+                        </div>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <button type="button" onclick="closeCustomizeTitleModal()" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-550 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold text-xs cursor-pointer transition-all bg-transparent">
+                            Cancel
+                        </button>
+                        <button type="submit" id="cust-submit-btn" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-750 text-white font-bold text-xs shadow-md transition-all cursor-pointer border-0">
+                            Apply Customize
                         </button>
                     </div>
                 </form>

@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/threads/{thread:id}', [ThreadController::class, 'destroy'])->name('threads.destroy');
     Route::post('/threads/{thread:id}/feature', [ThreadController::class, 'feature'])->name('threads.feature');
     Route::post('/threads/{thread:id}/pin', [ThreadController::class, 'pin'])->name('threads.pin');
+    Route::post('/threads/{thread:id}/customize-title', [ThreadController::class, 'customizeTitle'])->name('threads.customize-title');
     
     // Post replies
     Route::post('/threads/{thread:slug}/reply', [ForumController::class, 'reply'])->name('threads.reply');
