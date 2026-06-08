@@ -454,14 +454,14 @@ profile
                                     <!-- Custom Title Badge Text Color -->
                                     <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-white transition-all text-left">
                                         <label for="title_color" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
-                                            Title Badge Color
+                                            Title Color
                                             @if($user->title_color_updates_count >= 1 && !$user->isAdmin())
                                                 <span class="text-[8px] text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded font-black">💰 Costs 100 Coins</span>
                                             @endif
                                         </label>
                                         <div class="flex items-center gap-2.5 mt-2.5">
                                             <input type="color" id="title_color" name="title_color" value="{{ old('title_color', $user->title_color ?: '#ffffff') }}" class="w-8 h-8 border-0 rounded-lg cursor-pointer">
-                                            <span class="text-[10px] text-slate-400 font-bold">Pick badge text color</span>
+                                            <span class="text-[10px] text-slate-400 font-bold">Pick title text color</span>
                                         </div>
                                     </div>
                                 </div>
