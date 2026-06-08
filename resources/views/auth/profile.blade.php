@@ -624,9 +624,11 @@ profile
                                     @endif
                                     <div class="bg-slate-100/80 p-1.5 text-[8px] text-slate-500 border-t border-slate-200 flex items-center justify-between">
                                         <span class="truncate pr-2 font-medium">{{ $attach->file_name }}</span>
-                                        <a href="{{ route('threads.show', $attach->thread->slug) }}" class="hover:text-blue-600 transition-colors font-bold">
-                                            🔗
-                                        </a>
+                                        @if($attach->thread)
+                                            <a href="{{ route('threads.show', $attach->thread->slug) }}" class="hover:text-blue-600 transition-colors font-bold" title="View thread">
+                                                🔗
+                                            </a>
+                                        @endif
                                     </div>
                                 </div>
                             @endforeach
