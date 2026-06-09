@@ -94,6 +94,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/bugs/report', [\App\Http\Controllers\BugReportController::class, 'create'])->name('bugs.create');
     Route::post('/bugs/report', [\App\Http\Controllers\BugReportController::class, 'store'])->name('bugs.store');
 
+    // Search History Routes
+    Route::delete('/search/history/clear', [ForumController::class, 'clearSearchHistory'])->name('search.history.clear');
+    Route::delete('/search/history/{history}', [ForumController::class, 'deleteSearchHistory'])->name('search.history.delete');
+
     // User Notification Endpoints
     Route::get('/notifications', [\App\Http\Controllers\AdminController::class, 'notificationsIndex'])->name('notifications.index');
     Route::get('/notifications/{notification}/read', [\App\Http\Controllers\AdminController::class, 'readNotification'])->name('notifications.read');
@@ -114,6 +118,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/users/{user}/notify', [\App\Http\Controllers\AdminController::class, 'notifyUser'])->name('users.notify');
         Route::get('/users/{user}/chats', [\App\Http\Controllers\AdminController::class, 'userChats'])->name('users.chats');
         Route::get('/users/{user}/chats/{conversation}', [\App\Http\Controllers\AdminController::class, 'viewUserChat'])->name('users.chats.view');
+        Route::get('/users/{user}/search-history', [\App\Http\Controllers\AdminController::class, 'userSearchHistory'])->name('users.search-history');
+        Route::delete('/users/{user}/search-history/clear', [\App\Http\Controllers\AdminController::class, 'clearUserSearchHistory'])->name('users.search-history.clear');
 
         // Category Management
         Route::get('/categories', [\App\Http\Controllers\AdminController::class, 'categories'])->name('categories.index');

@@ -364,4 +364,25 @@ class AdminController extends Controller
 
         return redirect()->route('home');
     }
+
+    /**
+     * View the search history log of a specific user.
+     */
+    public function userSearchHistory(\App\Models\User $user)
+    {
+        $history = \App\Models\SearchHistory::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(30);
+
+        return view('admin.users.search_history', compact('user', 'history'));
+    }
+
+    /**
+     * Clear the search history log of a specific user.
+     */
+    public function clearUserSearchHistory(\App\Models\User $user)
+    {
+        \App\Models\SearchHistory::where('user_id', $user->id)->delete();
+        return redirect()->back()->with('success', "Search history for {$user->name} has been cleared.");
+    }
 }

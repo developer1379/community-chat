@@ -37,6 +37,40 @@
         </div>
     </div>
 
+    @auth
+        @if(isset($searchHistory) && $searchHistory->isNotEmpty())
+            <!-- User Recent Searches block -->
+            <div class="px-4 sm:px-0">
+                <div class="flex items-center justify-between mb-3.5 border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <h2 class="text-xs font-black text-slate-700 dark:text-slate-350 uppercase tracking-[0.15em] flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-sm text-slate-550 dark:text-slate-450">history</span> Your Recent Searches
+                    </h2>
+                    <form action="{{ route('search.history.clear') }}" method="POST" class="inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-[10px] font-bold text-rose-600 hover:text-rose-700 dark:text-rose-450 dark:hover:text-rose-400 bg-transparent border-0 cursor-pointer flex items-center gap-0.5">
+                            <span class="material-symbols-outlined text-xs">delete_sweep</span> Clear History
+                        </button>
+                    </form>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    @foreach($searchHistory as $historyItem)
+                        <div class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full pl-3 pr-2.5 py-1 text-xs text-slate-700 dark:text-slate-300 font-semibold shadow-sm hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+                            <a href="{{ route('search') }}?q={{ urlencode($historyItem->query) }}" class="hover:text-blue-650 dark:hover:text-blue-400">{{ $historyItem->query }}</a>
+                            <form action="{{ route('search.history.delete', $historyItem->id) }}" method="POST" class="inline-flex items-center">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="w-4 h-4 rounded-full bg-slate-250 dark:bg-slate-700 hover:bg-rose-600 hover:text-white dark:hover:bg-rose-500/80 text-slate-500 dark:text-slate-450 flex items-center justify-center border-0 cursor-pointer text-[9px] transition-colors leading-none" title="Remove query">
+                                    ✕
+                                </button>
+                            </form>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+    @endauth
+
     <!-- Threads Listing Panel -->
     <div class="rounded-none sm:rounded-2xl overflow-hidden shadow-sm border-y sm:border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
         <!-- Panel Header (Desktop Only) -->

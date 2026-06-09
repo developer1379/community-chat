@@ -83,6 +83,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get search histories for the user.
+     */
+    public function searchHistories(): HasMany
+    {
+        return $this->hasMany(SearchHistory::class);
+    }
+
+    /**
      * Get attachments uploaded by the user.
      */
     public function attachments(): HasMany

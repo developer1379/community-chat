@@ -79,6 +79,11 @@
                                         <span class="material-symbols-outlined text-sm">chat</span>
                                     </a>
 
+                                    <!-- View Search History -->
+                                    <a href="{{ route('admin.users.search-history', $user->id) }}" class="p-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-650 dark:bg-emerald-950/20 dark:hover:bg-emerald-950/40 dark:text-emerald-400 transition-all cursor-pointer" title="Inspect Search History">
+                                        <span class="material-symbols-outlined text-sm">history</span>
+                                    </a>
+
                                     <!-- Block Toggle -->
                                     <form action="{{ route('admin.users.block', $user->id) }}" method="POST" class="inline-block">
                                         @csrf

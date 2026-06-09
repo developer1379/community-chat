@@ -114,9 +114,22 @@ class ForumController extends Controller
 
     public function search(Request $request)
     {
-        $query = $request->input('q');
+        $query = trim($request->input('q'));
         
         if ($query) {
+            if (Auth::check()) {
+                // Check if last search was the same query to avoid consecutive spamming
+                $lastSearch = \App\Models\SearchHistory::where('user_id', Auth::id())
+                    ->latest()
+                    ->first();
+                if (!$lastSearch || $lastSearch->query !== $query) {
+                    \App\Models\SearchHistory::create([
+                        'user_id' => Auth::id(),
+                        'query' => $query,
+                    ]);
+                }
+            }
+
             $threads = Thread::where('title', 'like', "%{$query}%")
                 ->orWhereHas('posts', function($q) use ($query) {
                     $q->where('content', 'like', "%{$query}%");
@@ -128,7 +141,26 @@ class ForumController extends Controller
             $threads = Thread::whereRaw('1=0')->paginate(15);
         }
 
-        return view('forum.search', compact('threads', 'query'));
+        $searchHistory = Auth::check()
+            ? \App\Models\SearchHistory::where('user_id', Auth::id())->latest()->take(10)->get()
+            : collect();
+
+        return view('forum.search', compact('threads', 'query', 'searchHistory'));
+    }
+
+    public function deleteSearchHistory(\App\Models\SearchHistory $history)
+    {
+        if ($history->user_id !== Auth::id()) {
+            abort(403);
+        }
+        $history->delete();
+        return back()->with('success', 'Search query removed from history.');
+    }
+
+    public function clearSearchHistory()
+    {
+        \App\Models\SearchHistory::where('user_id', Auth::id())->delete();
+        return back()->with('success', 'Search history cleared.');
     }
 
     public function category(string $slug)
