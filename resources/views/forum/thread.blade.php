@@ -43,7 +43,7 @@ article
 </script>
 <div class="space-y-6">
     <!-- Thread Breadcrumb Path & Title Header -->
-    <div>
+    <div class="px-4 sm:px-0">
         <div class="flex items-center gap-1.5 text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">
             <a href="{{ route('home') }}" class="hover:text-indigo-600 dark:hover:text-indigo-400">Forums</a>
             <span>/</span>
@@ -147,7 +147,7 @@ article
     <!-- Posts Listing Grid -->
     <div class="space-y-4">
         @foreach($posts as $post)
-            <div id="post-{{ $post->id }}" class="glass-panel rounded-2xl overflow-hidden border border-slate-300/40 dark:border-slate-800/80 shadow-md flex flex-col md:flex-row">
+            <div id="post-{{ $post->id }}" class="glass-panel rounded-none sm:rounded-2xl overflow-hidden border-y sm:border border-slate-300/40 dark:border-slate-800/80 shadow-sm sm:shadow-md flex flex-col md:flex-row">
                 <!-- User Info Panel -->
                 <div class="w-full md:w-48 bg-slate-100/60 dark:bg-slate-900/60 p-3 sm:p-5 flex flex-row md:flex-col items-center gap-3 md:gap-0 border-b md:border-b-0 md:border-r border-slate-300/40 dark:border-slate-800/60 text-left md:text-center flex-shrink-0">
                     <!-- User Avatar -->
@@ -163,7 +163,7 @@ article
                        data-user-banner="{{ $post->user->banner_color }}"
                        data-user-banner-path="{{ $post->user->banner_path }}"
                        class="relative group block flex-shrink-0 md:mb-2">
-                        <div class="w-12 h-12 md:w-16 md:h-16 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 group-hover:border-indigo-500 transition-all duration-300 shadow-sm">
+                        <div class="w-10 h-10 md:w-16 md:h-16 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 group-hover:border-indigo-500 transition-all duration-300 shadow-sm">
                             <img src="{{ $post->user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                         </div>
                         <span class="absolute bottom-0 md:bottom-0.5 right-0 md:right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-950"></span>
@@ -209,7 +209,7 @@ article
                 </div>
 
                 <!-- Post Body Content -->
-                <div class="flex-grow p-5 sm:p-6 flex flex-col justify-between space-y-6">
+                <div class="flex-grow p-3.5 sm:p-6 flex flex-col justify-between space-y-4 sm:space-y-6">
                     <div class="space-y-3">
                         <div class="flex justify-between items-center text-[10px] text-slate-400 dark:text-slate-500 border-b border-slate-200/50 dark:border-slate-800/40 pb-2">
                             <span>{{ $post->created_at->diffForHumans() }}</span>
@@ -370,14 +370,14 @@ article
     <!-- Quick Reply Form -->
     @auth
         @if(!$thread->is_locked)
-            <div class="mui-card rounded-2xl overflow-hidden border border-slate-200 shadow-lg mt-6 bg-white">
-                <div class="bg-slate-50 px-5 py-3 border-b border-slate-200">
-                    <h3 class="font-bold text-slate-800 text-xs flex items-center gap-2">
-                        <span class="material-symbols-outlined text-blue-600 text-sm">reply</span>
+            <div class="mui-card rounded-none sm:rounded-2xl overflow-hidden border-y sm:border border-slate-200 dark:border-slate-800 shadow-sm sm:shadow-lg mt-6 bg-white dark:bg-slate-900">
+                <div class="bg-slate-50 dark:bg-slate-950/40 px-4 py-3 sm:px-5 sm:py-3.5 border-b border-slate-200 dark:border-slate-800">
+                    <h3 class="font-bold text-slate-800 dark:text-slate-200 text-xs flex items-center gap-2">
+                        <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-sm">reply</span>
                         Write a Quick Reply
                     </h3>
                 </div>
-                <form id="reply-form" action="{{ route('threads.reply', $thread->slug) }}" method="POST" enctype="multipart/form-data" class="p-5 space-y-4">
+                <form id="reply-form" action="{{ route('threads.reply', $thread->slug) }}" method="POST" enctype="multipart/form-data" class="p-3.5 sm:p-5 space-y-4">
                     @csrf
                     <!-- Message Content -->
                     <div class="space-y-1.5">
@@ -424,17 +424,17 @@ article
             </div>
 
             <!-- MODERN PROFESSIONAL LIVE PREVIEW SECTION FOR QUICK REPLY -->
-            <div id="live-reply-preview-box" class="hidden space-y-3 mt-6">
+            <div id="live-reply-preview-box" class="hidden space-y-3 mt-6 px-4 sm:px-0">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xs font-extrabold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-blue-600 text-sm">visibility</span> Live Reply Preview
+                        <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-sm">visibility</span> Live Reply Preview
                     </h2>
                     <button onclick="closeLiveReplyPreview()" class="text-xs font-semibold text-rose-600 hover:underline cursor-pointer">Hide Preview</button>
                 </div>
 
-                <div class="mui-card overflow-hidden border border-slate-200 bg-white shadow-md flex flex-col md:flex-row">
+                <div class="mui-card rounded-none sm:rounded-2xl overflow-hidden border-y sm:border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-md flex flex-col md:flex-row">
                     <!-- User Left Sidebar Mockup -->
-                    <div class="w-full md:w-48 bg-slate-50 p-4 flex flex-col items-center border-b md:border-b-0 md:border-r border-slate-200 text-center flex-shrink-0">
+                    <div class="w-full md:w-48 bg-slate-50 dark:bg-slate-950/40 p-4 flex flex-col items-center border-b md:border-b-0 md:border-r border-slate-200 dark:border-slate-800 text-center flex-shrink-0">
                         <div class="w-16 h-16 rounded-xl overflow-hidden border border-slate-300 shadow-sm mb-2 bg-blue-50 flex items-center justify-center font-bold text-blue-600 text-lg">
                             <img src="{{ Auth::user()->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                         </div>

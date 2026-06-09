@@ -41,6 +41,19 @@
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <style type="text/tailwindcss">
         @custom-variant dark (&:where(.dark, .dark *));
+        @theme {
+            --color-slate-50: #fafafa;
+            --color-slate-100: #f4f4f5;
+            --color-slate-200: #e4e4e7;
+            --color-slate-300: #d4d4d8;
+            --color-slate-400: #a1a1aa;
+            --color-slate-500: #71717a;
+            --color-slate-600: #52525b;
+            --color-slate-700: #3f3f46;
+            --color-slate-800: #27272a;
+            --color-slate-900: #18181b;
+            --color-slate-950: #09090b;
+        }
     </style>
     
     <!-- Quill Rich Text Editor CDN -->
@@ -103,12 +116,12 @@
 
         /* Dark Mode support for Quill Editor */
         .dark .ql-toolbar.ql-snow {
-            background-color: #151c2c !important;
-            border-bottom: 1px solid #1e293b !important;
+            background-color: #18181b !important;
+            border-bottom: 1px solid #27272a !important;
         }
         .dark .ql-container.ql-snow {
-            background-color: #0f172a !important;
-            color: #f1f5f9 !important;
+            background-color: #09090b !important;
+            color: #f4f4f5 !important;
         }
         .dark .ql-snow .ql-stroke {
             stroke: #94a3b8 !important;
