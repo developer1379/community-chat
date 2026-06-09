@@ -1180,8 +1180,8 @@ article
         
         const threadCurrentColor = @json($thread->title_color);
         const threadCurrentAnimation = @json($thread->title_animation ?: 'none');
-        const userCoins = @json(Auth::user()->coins);
-        const isAdmin = @json(Auth::user()->isAdmin());
+        const userCoins = @json(Auth::user() ? Auth::user()->coins : 0);
+        const isAdmin = @json(Auth::user() ? Auth::user()->isAdmin() : false);
         
         let colorChanged = false;
         let animChanged = false;
