@@ -4,46 +4,46 @@
 <div class="space-y-6 w-full">
 
     <!-- Quick Features Shortcuts Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10 px-4 sm:px-0">
         <!-- Card 1 -->
-        <a href="{{ route('categories.show', 'general-discussion') }}" class="group relative bg-white rounded-3xl p-6 shadow-sm border border-slate-200 hover:border-blue-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-start gap-5 overflow-hidden">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-transparent rounded-bl-full -z-0 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-            <div class="relative z-10 w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300 flex-shrink-0 shadow-sm">
+        <a href="{{ route('categories.show', 'general-discussion') }}" class="group relative bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-slate-800 hover:border-blue-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-start gap-5 overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-50 to-transparent dark:from-blue-950/10 rounded-bl-full -z-0 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
+            <div class="relative z-10 w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-950/35 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-100 dark:border-blue-900/30 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300 flex-shrink-0 shadow-sm">
                 <span class="material-symbols-outlined text-2xl">forum</span>
             </div>
             <div class="relative z-10 text-left min-w-0 mt-1">
-                <h3 class="text-base font-extrabold text-slate-900 truncate group-hover:text-blue-600 transition-colors">General Discussion</h3>
-                <p class="text-sm text-slate-500 mt-1.5 leading-relaxed">Top-tier coding, frameworks & server discussion.</p>
+                <h3 class="text-base font-extrabold text-slate-900 dark:text-white truncate group-hover:text-blue-600 transition-colors">General Discussion</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-405 mt-1.5 leading-relaxed">Top-tier coding, frameworks & server discussion.</p>
             </div>
         </a>
 
         <!-- Card 2 -->
-        <a href="{{ route('categories.show', 'images-and-gifs') }}" class="group relative bg-white rounded-3xl p-6 shadow-sm border border-slate-200 hover:border-pink-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-start gap-5 overflow-hidden">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-pink-50 to-transparent rounded-bl-full -z-0 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-            <div class="relative z-10 w-14 h-14 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center border border-pink-100 group-hover:bg-pink-600 group-hover:text-white transition-colors duration-300 flex-shrink-0 shadow-sm">
+        <a href="{{ route('categories.show', 'images-and-gifs') }}" class="group relative bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-slate-800 hover:border-pink-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-start gap-5 overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-pink-50 to-transparent dark:from-pink-950/10 rounded-bl-full -z-0 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
+            <div class="relative z-10 w-14 h-14 rounded-2xl bg-pink-50 dark:bg-pink-950/35 text-pink-600 dark:text-pink-400 flex items-center justify-center border border-pink-100 dark:border-pink-900/30 group-hover:bg-pink-600 group-hover:text-white transition-colors duration-300 flex-shrink-0 shadow-sm">
                 <span class="material-symbols-outlined text-2xl">photo_library</span>
             </div>
             <div class="relative z-10 text-left min-w-0 mt-1">
-                <h3 class="text-base font-extrabold text-slate-900 truncate group-hover:text-pink-600 transition-colors">Media Showroom</h3>
-                <p class="text-sm text-slate-500 mt-1.5 leading-relaxed">Upload visual guides & animated memes securely.</p>
+                <h3 class="text-base font-extrabold text-slate-900 dark:text-white truncate group-hover:text-pink-600 transition-colors">Media Showroom</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-405 mt-1.5 leading-relaxed">Upload visual guides & animated memes securely.</p>
             </div>
         </a>
 
         <!-- Card 3 -->
-        <a href="#" onclick="openSearchModal(); return false;" class="group relative bg-white rounded-3xl p-6 shadow-sm border border-slate-200 hover:border-indigo-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-start gap-5 overflow-hidden">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-50 to-transparent rounded-bl-full -z-0 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-            <div class="relative z-10 w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300 flex-shrink-0 shadow-sm">
+        <a href="#" onclick="openSearchModal(); return false;" class="group relative bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-slate-800 hover:border-indigo-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-start gap-5 overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-50 to-transparent dark:from-indigo-950/10 rounded-bl-full -z-0 opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
+            <div class="relative z-10 w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950/35 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-100 dark:border-indigo-900/30 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300 flex-shrink-0 shadow-sm">
                 <span class="material-symbols-outlined text-2xl">shield_person</span>
             </div>
             <div class="relative z-10 text-left min-w-0 mt-1">
-                <h3 class="text-base font-extrabold text-slate-900 truncate group-hover:text-indigo-600 transition-colors">Global Directory</h3>
-                <p class="text-sm text-slate-500 mt-1.5 leading-relaxed">Browse experts, authors & trusted moderators.</p>
+                <h3 class="text-base font-extrabold text-slate-900 dark:text-white truncate group-hover:text-indigo-600 transition-colors">Global Directory</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-405 mt-1.5 leading-relaxed">Browse experts, authors & trusted moderators.</p>
             </div>
         </a>
     </div>
 
     <!-- Header App Bar Area -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 text-left">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 text-left px-4 sm:px-0">
         <div>
             <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">{{ config('app.name', 'XenProfessional') }}</h1>
         </div>
@@ -59,7 +59,7 @@
 
     <!-- Featured Threads Section (Slider Interface) -->
     @if(isset($featuredThreads) && $featuredThreads->isNotEmpty())
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-md text-left mb-8 relative group/slider">
+        <div class="bg-white dark:bg-slate-900 border-y sm:border border-slate-200 dark:border-slate-800 rounded-none sm:rounded-3xl p-4 sm:p-5 shadow-sm text-left mb-8 relative group/slider">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xs font-black text-slate-700 dark:text-slate-350 uppercase tracking-[0.2em] flex items-center gap-1.5">
                     <span class="material-symbols-outlined text-sm text-blue-600 dark:text-blue-400">star</span> Featured Threads
@@ -76,7 +76,7 @@
             </div>
 
             <!-- Slider Viewport Window -->
-            <div class="overflow-hidden w-full rounded-2xl">
+            <div class="overflow-hidden w-full rounded-none sm:rounded-2xl">
                 <div id="featured-slider" class="flex transition-transform duration-500 ease-out gap-5">
                     @foreach($featuredThreads as $thread)
                         @php
@@ -84,7 +84,7 @@
                             $previewUrl = $firstAttachment ? $firstAttachment->file_path : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80';
                             $repliesCount = $thread->posts->count();
                         @endphp
-                        <div class="flex-none w-full md:w-[calc(33.333%-14px)] flex flex-col rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 group hover:shadow-lg transition-all duration-300">
+                        <div class="flex-none w-full md:w-[calc(33.333%-14px)] flex flex-col rounded-xl sm:rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 group hover:shadow-lg transition-all duration-300">
                             <div class="h-40 w-full relative overflow-hidden bg-slate-200 dark:bg-slate-900">
                                 <img src="{{ $previewUrl }}" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500" alt="">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div>
@@ -183,7 +183,7 @@
 
     <!-- Most Reactions Circular Highlights Section -->
     @if(isset($topReactedThreads) && $topReactedThreads->isNotEmpty())
-        <div class="mb-8 text-left bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-md">
+        <div class="mb-8 text-left bg-white dark:bg-slate-900 border-y sm:border border-slate-200 dark:border-slate-800 rounded-none sm:rounded-3xl p-4 sm:p-5 shadow-sm">
             <h2 class="text-xs font-black text-slate-700 dark:text-slate-350 uppercase tracking-[0.2em] mb-4 flex items-center gap-1.5">
                 <span class="material-symbols-outlined text-sm text-pink-600 dark:text-pink-400">local_fire_department</span> Most reactions - Past 7 days
             </h2>
@@ -228,7 +228,7 @@
                            data-user-avatar="{{ $thread->user->avatar_url }}"
                            data-user-banner="{{ $thread->user->banner_color }}"
                            data-user-banner-path="{{ $thread->user->banner_path }}"
-                           class="text-[9px] font-black text-slate-650 dark:text-slate-350 mt-2 truncate w-full hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                           class="text-[9px] font-black text-slate-650 dark:text-slate-355 mt-2 truncate w-full hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                            style="{{ $thread->user->username_style_css }}">
                             {{ $thread->user->name }}
                         </a>
@@ -248,9 +248,9 @@
         <!-- Main Boards Column (8 Cols) -->
         <div class="lg:col-span-8 space-y-6">
             <!-- Unified Community Boards Card -->
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-md overflow-hidden text-left mb-8">
+            <div class="bg-white dark:bg-slate-900 border-y sm:border border-slate-200 dark:border-slate-800 rounded-none sm:rounded-3xl shadow-sm overflow-hidden text-left mb-8">
                 <!-- Section Header -->
-                <div class="bg-slate-50 dark:bg-slate-950/40 px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+                <div class="bg-slate-50 dark:bg-slate-950/40 px-4 py-3 sm:px-6 sm:py-4 border-b border-slate-200 dark:border-slate-800">
                     <h2 class="text-xs font-black text-slate-700 dark:text-slate-350 uppercase tracking-[0.2em] flex items-center gap-2">
                         <span class="material-symbols-outlined text-sm text-blue-600 dark:text-blue-400">forum</span> Discussion Boards
                     </h2>
@@ -289,12 +289,12 @@
                             }
                         @endphp
                         
-                        <div class="px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50/50 dark:hover:bg-slate-950/20 transition-all">
+                        <div class="px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-between gap-4 hover:bg-slate-50/50 dark:hover:bg-slate-950/20 transition-all">
                             
                             <!-- Left: Icon & Category details -->
-                            <div class="flex items-start gap-4 flex-grow min-w-0 md:max-w-[50%]">
+                            <div class="flex items-start gap-3 flex-grow min-w-0 md:max-w-[50%]">
                                 <!-- Category Icon -->
-                                <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30 shadow-sm flex-shrink-0 overflow-hidden mt-0.5">
+                                <div class="w-8.5 h-8.5 sm:w-10 sm:h-10 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30 shadow-sm flex-shrink-0 overflow-hidden mt-0.5">
                                     @if(\Illuminate\Support\Str::startsWith($category->icon, ['http://', 'https://']) || \Illuminate\Support\Str::contains($category->icon, '/'))
                                         <img src="{{ $category->icon }}" alt="{{ $category->name }}" class="w-full h-full object-cover">
                                     @elseif($category->icon == 'chat-bubble-left-right')
@@ -310,16 +310,29 @@
                                     @endif
                                 </div>
                                 <!-- Name & description -->
-                                <div class="min-w-0 leading-tight space-y-1">
+                                <div class="min-w-0 leading-tight space-y-0.5 flex-grow">
                                     <h3 class="font-extrabold text-slate-900 dark:text-white text-sm sm:text-base hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate">
                                         <a href="{{ route('categories.show', $category->slug) }}">{{ $category->name }}</a>
                                     </h3>
                                     <p class="text-xs text-slate-450 dark:text-slate-400 font-medium line-clamp-1 leading-normal">{{ $category->description }}</p>
+                                    
+                                    <!-- Mobile-only inline stats & activity -->
+                                    <div class="md:hidden flex items-center gap-1.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 leading-none pt-0.5 flex-wrap">
+                                        <span>{{ $fmtThreads }} threads</span>
+                                        <span>•</span>
+                                        <span>{{ $fmtPosts }} posts</span>
+                                        @if($latestThread && $lastPostUser)
+                                            <span>•</span>
+                                            <span class="truncate max-w-[130px] sm:max-w-[180px]">
+                                                Last: <a href="{{ route('threads.show', $latestThread->slug) }}" class="text-slate-550 dark:text-slate-455 font-extrabold hover:underline" style="{{ $lastPostUser->username_style_css }}">{{ $latestThread->title }}</a>
+                                            </span>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- Right side: stats & last action (Only visible on MD grids and larger) -->
-                            <div class="flex items-center gap-6 sm:gap-10 md:gap-14 flex-shrink-0 justify-between md:justify-end">
+                            <div class="hidden md:flex items-center gap-6 sm:gap-10 md:gap-14 flex-shrink-0 justify-between md:justify-end">
                                 
                                 <!-- Stats: Threads & Posts -->
                                 <div class="flex items-center gap-6 sm:gap-10">
@@ -349,7 +362,7 @@
                                            data-user-banner="{{ $lastPostUser->banner_color }}"
                                            data-user-banner-path="{{ $lastPostUser->banner_path }}"
                                            class="w-8 h-8 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 shadow-sm block hover:shadow transition-shadow">
-                                            <img src="{{ $lastPostUser->avatar_url }}" class="w-full h-full object-cover">
+                                             <img src="{{ $lastPostUser->avatar_url }}" class="w-full h-full object-cover">
                                         </a>
                                         <div class="min-w-0 leading-none">
                                             <!-- Latest thread title link -->
@@ -389,14 +402,14 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 
                 <!-- Latest Threads Widget -->
-                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-md overflow-hidden text-left flex flex-col">
-                    <div class="bg-slate-50 dark:bg-slate-950/40 px-5 py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
+                <div class="bg-white dark:bg-slate-900 border-y sm:border border-slate-200 dark:border-slate-800 rounded-none sm:rounded-3xl shadow-sm overflow-hidden text-left flex flex-col">
+                    <div class="bg-slate-50 dark:bg-slate-950/40 px-4 py-3 sm:px-5 sm:py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
                         <span class="material-symbols-outlined text-sm text-blue-600 dark:text-blue-400">schedule</span>
                         <h3 class="text-xs font-black text-slate-700 dark:text-slate-350 uppercase tracking-[0.15em]">Latest Threads</h3>
                     </div>
                     <div class="p-4 divide-y divide-slate-100 dark:divide-slate-800 flex-grow">
                         @forelse($latestThreads as $thread)
-                            <div class="py-3 first:pt-0 last:pb-0 flex items-start gap-3">
+                            <div class="py-2.5 first:pt-0 last:pb-0 flex items-start gap-3">
                                 <a href="{{ route('profile.show', $thread->user->name) }}" data-user-hover="true" data-user-name="{{ $thread->user->name }}" class="w-8 h-8 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-850 flex-shrink-0">
                                     <img src="{{ $thread->user->avatar_url }}" class="w-full h-full object-cover">
                                 </a>
@@ -427,14 +440,14 @@
                 </div>
 
                 <!-- Viral Threads Widget -->
-                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-md overflow-hidden text-left flex flex-col">
-                    <div class="bg-slate-50 dark:bg-slate-950/40 px-5 py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
+                <div class="bg-white dark:bg-slate-900 border-y sm:border border-slate-200 dark:border-slate-800 rounded-none sm:rounded-3xl shadow-sm overflow-hidden text-left flex flex-col">
+                    <div class="bg-slate-50 dark:bg-slate-950/40 px-4 py-3 sm:px-5 sm:py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
                         <span class="material-symbols-outlined text-sm text-pink-600 dark:text-pink-400">trending_up</span>
                         <h3 class="text-xs font-black text-slate-700 dark:text-slate-350 uppercase tracking-[0.15em]">Viral Threads</h3>
                     </div>
                     <div class="p-4 divide-y divide-slate-100 dark:divide-slate-800 flex-grow">
                         @forelse($viralThreads as $thread)
-                            <div class="py-3 first:pt-0 last:pb-0 flex items-start gap-3">
+                            <div class="py-2.5 first:pt-0 last:pb-0 flex items-start gap-3">
                                 <a href="{{ route('profile.show', $thread->user->name) }}" data-user-hover="true" data-user-name="{{ $thread->user->name }}" class="w-8 h-8 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-850 flex-shrink-0">
                                     <img src="{{ $thread->user->avatar_url }}" class="w-full h-full object-cover">
                                 </a>
@@ -473,13 +486,13 @@
                     $mostLikedPreviewUrl = $mostLikedAttachment ? $mostLikedAttachment->file_path : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80';
                 @endphp
                 <div class="mt-6 text-left">
-                    <h2 class="text-xs font-black text-slate-700 dark:text-slate-350 uppercase tracking-[0.2em] mb-4 flex items-center gap-1.5">
+                    <h2 class="text-xs font-black text-slate-700 dark:text-slate-350 uppercase tracking-[0.2em] mb-4 flex items-center gap-1.5 px-4 sm:px-0">
                         <span class="material-symbols-outlined text-sm text-amber-500">favorite</span> Most reactions - Past 7 days
                     </h2>
                     
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
                         <!-- Main Thread Left Box (Spans 9 columns in its own white/dark card) -->
-                        <div class="md:col-span-9 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-md flex flex-col justify-between space-y-4">
+                        <div class="md:col-span-9 bg-white dark:bg-slate-900 border-y sm:border border-slate-200 dark:border-slate-800 rounded-none sm:rounded-3xl p-4 sm:p-5 shadow-sm flex flex-col justify-between space-y-4">
                             <div class="space-y-3">
                                 <!-- Category/Forum Name -->
                                 <span class="text-xs font-extrabold uppercase text-blue-600 dark:text-blue-400 tracking-wider block">
@@ -506,7 +519,8 @@
                                         <a href="{{ route('profile.show', $mostLikedThread->user->name) }}"
                                            data-user-hover="true"
                                            data-user-name="{{ $mostLikedThread->user->name }}"
-                                           class="text-red-650 dark:text-red-500 hover:underline font-black">{{ $mostLikedThread->user->name }}</a>
+                                           class="text-red-650 dark:text-red-550 hover:underline font-black"
+                                           style="{{ $mostLikedThread->user->username_style_css }}">{{ $mostLikedThread->user->name }}</a>
                                         <span>• {{ $mostLikedThread->created_at->diffForHumans() }}</span>
                                         <span>• {{ $mostLikedThread->category->name }}</span>
                                         <span>• {{ $mostLikedThread->user->title_badge }}</span>
@@ -547,24 +561,20 @@
                         </div>
                         
                         <!-- Side Images (Spans 3 columns of separate standalone cards) -->
-                        <div class="md:col-span-3 flex flex-row md:flex-col gap-4 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800 scrollbar-track-transparent">
-                            @foreach($featuredThreads->take(3) as $ft)
+                        <div class="md:col-span-3 grid grid-cols-3 md:grid-cols-1 gap-4">
+                            @foreach($topReactedThreads->take(3) as $rt)
                                 @php
-                                    $ftAttachment = \App\Models\Attachment::where('thread_id', $ft->id)->first();
-                                    $ftPreviewUrl = $ftAttachment ? $ftAttachment->file_path : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=600&q=80';
+                                    $rtAttach = $rt->attachments->first();
+                                    $rtPreviewUrl = $rtAttach ? $rtAttach->file_path : 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=150&q=80';
                                 @endphp
-                                <a href="{{ route('threads.show', $ft->slug) }}" class="flex-shrink-0 w-28 md:w-full group block bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2 shadow-sm hover:shadow-md transition-shadow">
-                                    <div class="relative aspect-[16/10] rounded-xl overflow-hidden bg-white dark:bg-slate-950 group-hover:border-blue-500 transition-all">
-                                        <img src="{{ $ftPreviewUrl }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ $ft->title }}">
-                                        <!-- Title Overlay -->
-                                        <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2 text-center">
-                                            <p class="text-[8px] font-extrabold text-white line-clamp-2 leading-tight">{{ $ft->title }}</p>
-                                        </div>
-                                    </div>
-                                    <p class="text-[9px] font-extrabold text-slate-500 dark:text-slate-400 mt-2 px-1 line-clamp-1 group-hover:text-blue-650 dark:group-hover:text-blue-400 transition-colors md:block hidden">
-                                        {{ $ft->title }}
-                                    </p>
-                                </a>
+                                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-2.5 shadow-sm hover:shadow transition-shadow flex flex-col items-center">
+                                    <a href="{{ route('threads.show', $rt->slug) }}" class="block w-full aspect-square rounded-xl overflow-hidden border border-slate-100 dark:border-slate-850">
+                                        <img src="{{ $rtPreviewUrl }}" class="w-full h-full object-cover hover:scale-102 transition-transform">
+                                    </a>
+                                    <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 mt-2 truncate max-w-full text-center">
+                                        {{ $rt->title }}
+                                    </span>
+                                </div>
                             @endforeach
                         </div>
                     </div>
@@ -576,7 +586,7 @@
         <div class="lg:col-span-4 space-y-6">
             @auth
                 <!-- Visitor Panel / Profile Info Card -->
-                <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-md text-left">
+                <div class="border-y sm:border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-none sm:rounded-3xl overflow-hidden shadow-sm text-left">
                     <!-- User Cover Banner (Mini) -->
                     <div class="h-20 w-full relative bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800" style="background-color: {{ auth()->user()->banner_color ?? '#3b82f6' }}; background-image: url('{{ auth()->user()->banner_path }}'); background-size: cover; background-position: center;">
                         <div class="absolute inset-0 bg-black/10"></div>
@@ -624,7 +634,7 @@
                         </div>
 
                         <!-- Stats grid -->
-                        <div class="grid grid-cols-3 gap-2.5 mt-5 pt-4 border-t border-slate-100 dark:border-slate-800/60 text-center">
+                        <div class="grid grid-cols-3 gap-2.5 mt-5 pt-4 border-t border-slate-100 dark:border-slate-805/60 text-center">
                             <div class="space-y-0.5">
                                 <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Threads</span>
                                 <span class="text-xs font-black text-slate-700 dark:text-slate-350 block">{{ auth()->user()->threads()->count() }}</span>
@@ -646,48 +656,48 @@
             @endauth
 
             <!-- Interactive Quick Start Guide Card -->
-            <div class="border border-slate-200 p-6 sm:p-8 bg-white rounded-[2rem] shadow-sm text-left relative overflow-hidden group hover:shadow-md transition-shadow">
+            <div class="border-y sm:border border-slate-250 sm:border-slate-200 p-5 sm:p-8 bg-white dark:bg-slate-900 rounded-none sm:rounded-[2rem] shadow-sm text-left relative overflow-hidden group hover:shadow-md transition-shadow">
                 <div class="absolute -right-10 -top-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-blue-500/20 transition-colors"></div>
-                <h3 class="text-xs font-black tracking-[0.2em] text-slate-400 uppercase mb-4 flex items-center gap-2">
-                    <span class="w-6 h-6 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-100">
+                <h3 class="text-xs font-black tracking-[0.2em] text-slate-400 dark:text-slate-500 uppercase mb-4 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-lg bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-105 dark:border-blue-900/30">
                         <span class="material-symbols-outlined text-[14px]">military_tech</span>
                     </span>
                     Ranking Guide
                 </h3>
-                <p class="text-sm text-slate-500 font-medium leading-relaxed mb-6">
-                    Earn Activity Points to level up your profile tier, unlock custom animated badges, and dominate the global leaderboard!
+                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-6">
+                    Earn Activity Points to level up your profile tier, unlock custom badges, and dominate the global leaderboard!
                 </p>
                 <div class="space-y-3">
-                    <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 hover:bg-white border border-slate-100 hover:border-blue-100 transition-all duration-300 hover:shadow-sm group/item">
-                        <span class="flex items-center gap-3 text-sm font-bold text-slate-700">
-                            <span class="w-8 h-8 rounded-xl bg-white flex items-center justify-center border border-slate-200 shadow-sm text-slate-400 group-hover/item:text-blue-500 transition-colors">
+                    <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/50 hover:bg-white dark:hover:bg-slate-900 border border-slate-100 dark:border-slate-850 hover:border-blue-100 dark:hover:border-blue-900 transition-all duration-300 hover:shadow-sm group/item">
+                        <span class="flex items-center gap-3 text-sm font-bold text-slate-700 dark:text-slate-300">
+                            <span class="w-8 h-8 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center border border-slate-200 dark:border-slate-800 shadow-sm text-slate-400 dark:text-slate-500 group-hover/item:text-blue-500 transition-colors">
                                 <span class="material-symbols-outlined text-sm">edit_document</span>
                             </span>
                             Start a Thread
                         </span>
-                        <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-600 font-extrabold text-xs border border-emerald-100 shadow-sm">+10 pts</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/35 text-emerald-600 dark:text-emerald-400 font-extrabold text-xs border border-emerald-100 dark:border-emerald-900/20 shadow-sm">+10 pts</span>
                     </div>
-                    <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 hover:bg-white border border-slate-100 hover:border-blue-100 transition-all duration-300 hover:shadow-sm group/item">
-                        <span class="flex items-center gap-3 text-sm font-bold text-slate-700">
-                            <span class="w-8 h-8 rounded-xl bg-white flex items-center justify-center border border-slate-200 shadow-sm text-slate-400 group-hover/item:text-blue-500 transition-colors">
+                    <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/50 hover:bg-white dark:hover:bg-slate-900 border border-slate-100 dark:border-slate-850 hover:border-blue-100 dark:hover:border-blue-900 transition-all duration-300 hover:shadow-sm group/item">
+                        <span class="flex items-center gap-3 text-sm font-bold text-slate-700 dark:text-slate-300">
+                            <span class="w-8 h-8 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center border border-slate-200 dark:border-slate-800 shadow-sm text-slate-400 dark:text-slate-500 group-hover/item:text-blue-500 transition-colors">
                                 <span class="material-symbols-outlined text-sm">chat_bubble</span>
                             </span>
                             Post a Reply
                         </span>
-                        <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-600 font-extrabold text-xs border border-emerald-100 shadow-sm">+5 pts</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/35 text-emerald-600 dark:text-emerald-400 font-extrabold text-xs border border-emerald-100 dark:border-emerald-900/20 shadow-sm">+5 pts</span>
                     </div>
-                    <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 hover:bg-white border border-slate-100 hover:border-blue-100 transition-all duration-300 hover:shadow-sm group/item">
-                        <span class="flex items-center gap-3 text-sm font-bold text-slate-700">
-                            <span class="w-8 h-8 rounded-xl bg-white flex items-center justify-center border border-slate-200 shadow-sm text-slate-400 group-hover/item:text-pink-500 transition-colors">
+                    <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/50 hover:bg-white dark:hover:bg-slate-900 border border-slate-100 dark:border-slate-850 hover:border-blue-100 dark:hover:border-blue-900 transition-all duration-300 hover:shadow-sm group/item">
+                        <span class="flex items-center gap-3 text-sm font-bold text-slate-700 dark:text-slate-300">
+                            <span class="w-8 h-8 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-center border border-slate-200 dark:border-slate-800 shadow-sm text-slate-400 dark:text-slate-500 group-hover/item:text-pink-500 transition-colors">
                                 <span class="material-symbols-outlined text-sm">favorite</span>
                             </span>
                             Earn Reaction
                         </span>
-                        <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-600 font-extrabold text-xs border border-emerald-100 shadow-sm">+2 pts</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/35 text-emerald-600 dark:text-emerald-400 font-extrabold text-xs border border-emerald-100 dark:border-emerald-900/20 shadow-sm">+2 pts</span>
                     </div>
                 </div>
-                <div class="mt-6 pt-4 border-t border-slate-100">
-                    <a href="{{ route('rules') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 hover:underline transition-colors">
+                <div class="mt-6 pt-4 border-t border-slate-105 dark:border-slate-800">
+                    <a href="{{ route('rules') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 hover:underline transition-colors">
                         View complete ranking tiers <span class="material-symbols-outlined text-xs">arrow_forward</span>
                     </a>
                 </div>
@@ -702,7 +712,7 @@
                     ->get();
             @endphp
             @if($latestProfilePosts->isNotEmpty())
-                <div class="border border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-slate-900 rounded-3xl shadow-sm text-left">
+                <div class="border-y sm:border border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-slate-900 rounded-none sm:rounded-3xl shadow-sm text-left">
                     <h3 class="text-xs font-black tracking-wider text-slate-400 dark:text-slate-500 uppercase mb-4 flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-blue-600 text-sm">rss_feed</span> Latest profile posts
                     </h3>
@@ -740,12 +750,13 @@
                                            data-user-avatar="{{ $post->user->avatar_url }}"
                                            data-user-banner="{{ $post->user->banner_color }}"
                                            data-user-banner-path="{{ $post->user->banner_path }}"
-                                           class="text-xs font-extrabold text-blue-600 dark:text-blue-450 hover:underline">{{ $post->user->name }}</a>
+                                           class="text-xs font-extrabold text-blue-600 dark:text-blue-450 hover:underline"
+                                           style="{{ $post->user->username_style_css }}">{{ $post->user->name }}</a>
                                         <span class="text-[8px] text-slate-400 font-bold block mt-0.5">{{ $post->created_at->diffForHumans() }}</span>
                                     </div>
                                 </div>
                                 <!-- Post snippet text -->
-                                <p class="text-xs text-slate-650 dark:text-slate-350 leading-relaxed line-clamp-2">
+                                <p class="text-xs text-slate-650 dark:text-slate-355 leading-relaxed line-clamp-2">
                                     {{ strip_tags($post->content) }}
                                 </p>
                                 <!-- Image attachment preview at bottom if exists -->
@@ -761,10 +772,10 @@
             @endif
 
             <!-- Active Members Sidebar -->
-            <div class="border border-slate-200 p-5 bg-white rounded-2xl shadow-sm text-left">
-                <h3 class="text-sm font-extrabold tracking-wider text-slate-500 uppercase mb-4 flex items-center justify-between">
+            <div class="border-y sm:border border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-slate-900 rounded-none sm:rounded-2xl shadow-sm text-left">
+                <h3 class="text-sm font-extrabold tracking-wider text-slate-500 dark:text-slate-400 uppercase mb-4 flex items-center justify-between">
                     <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-blue-600 text-sm">group</span> Active Members</span>
-                    <span class="text-xs px-1.5 py-0.5 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-250 font-bold leading-none">Online</span>
+                    <span class="text-xs px-1.5 py-0.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-250 dark:border-emerald-900/30 font-bold leading-none">Online</span>
                 </h3>
                 <div class="grid grid-cols-2 gap-2">
                     @foreach($onlineUsers as $user)
@@ -779,14 +790,14 @@
                            data-user-avatar="{{ $user->avatar_url }}" 
                            data-user-banner="{{ $user->banner_color }}"
                            data-user-banner-path="{{ $user->banner_path }}"
-                           class="flex items-center gap-1.5 p-1.5 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-200 transition-all group">
-                            <div class="relative w-6 h-6 rounded-2xl overflow-hidden border border-slate-200 flex-shrink-0">
+                           class="flex items-center gap-1.5 p-1.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-950 border border-transparent hover:border-slate-200 dark:hover:border-slate-800 transition-all group">
+                            <div class="relative w-6 h-6 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0">
                                 <img src="{{ $user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
-                                <span class="absolute bottom-0 right-0 w-2 h-2 rounded-2xl bg-emerald-500 border border-white"></span>
+                                <span class="absolute bottom-0 right-0 w-2 h-2 rounded-2xl bg-emerald-500 border border-white dark:border-slate-900"></span>
                             </div>
                             <div class="truncate leading-tight text-left">
-                                <p class="text-xs font-bold text-slate-700 group-hover:text-blue-600 truncate">{{ $user->name }}</p>
-                                <span class="text-[10px] text-blue-600 font-bold truncate leading-none mt-0.5 block">{{ $user->title_badge }}</span>
+                                <p class="text-xs font-bold text-slate-700 dark:text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 truncate">{{ $user->name }}</p>
+                                <span class="text-[10px] text-blue-600 dark:text-blue-400 font-bold truncate leading-none mt-0.5 block">{{ $user->title_badge }}</span>
                             </div>
                         </a>
                     @endforeach
@@ -794,18 +805,18 @@
             </div>
 
             <!-- Recent Activity Sidebar -->
-            <div class="border border-slate-200 p-5 bg-white rounded-2xl shadow-sm text-left">
-                <h3 class="text-sm font-extrabold tracking-wider text-slate-500 uppercase mb-4 flex items-center gap-1.5">
+            <div class="border-y sm:border border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-slate-900 rounded-none sm:rounded-2xl shadow-sm text-left">
+                <h3 class="text-sm font-extrabold tracking-wider text-slate-550 dark:text-slate-400 uppercase mb-4 flex items-center gap-1.5">
                     <span class="material-symbols-outlined text-blue-600 text-sm">electric_bolt</span> Recent Activity
                 </h3>
                 <div class="space-y-3.5">
                     @foreach($activeThreads as $activeThread)
-                        <div class="text-xs leading-normal border-b border-slate-100 pb-3 last:border-0 last:pb-0">
-                            <h4 class="font-bold text-slate-800 hover:text-blue-600 transition-colors text-sm">
+                        <div class="text-xs leading-normal border-b border-slate-100 dark:border-slate-850 pb-3 last:border-0 last:pb-0">
+                            <h4 class="font-bold text-slate-850 dark:text-slate-205 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm">
                                 <a href="{{ route('threads.show', $activeThread->slug) }}">{{ $activeThread->title }}</a>
                             </h4>
-                            <div class="flex items-center gap-2 mt-1.5 text-slate-450 font-bold text-xs">
-                                <span class="px-1.5 py-0.5 rounded-2xl bg-blue-50 text-blue-600 font-bold border border-blue-150">
+                            <div class="flex items-center gap-2 mt-1.5 text-slate-450 dark:text-slate-500 font-bold text-xs">
+                                <span class="px-1.5 py-0.5 rounded-2xl bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-450 font-bold border border-blue-150 dark:border-blue-900/30">
                                     {{ $activeThread->category->name }}
                                 </span>
                                 <span>•</span>
