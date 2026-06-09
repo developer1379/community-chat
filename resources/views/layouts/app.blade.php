@@ -42,17 +42,17 @@
     <style type="text/tailwindcss">
         @custom-variant dark (&:where(.dark, .dark *));
         @theme {
-            --color-slate-50: #fafafa;
-            --color-slate-100: #f4f4f5;
-            --color-slate-200: #e4e4e7;
-            --color-slate-300: #d4d4d8;
-            --color-slate-400: #a1a1aa;
-            --color-slate-500: #71717a;
-            --color-slate-600: #52525b;
-            --color-slate-700: #3f3f46;
-            --color-slate-800: #27272a;
-            --color-slate-900: #18181b;
-            --color-slate-950: #09090b;
+            --color-slate-50: #f8fafc;
+            --color-slate-100: #f1f5f9;
+            --color-slate-200: #e2e8f0;
+            --color-slate-300: #cbd5e1;
+            --color-slate-400: #94a3b8;
+            --color-slate-500: #707a8a;
+            --color-slate-600: #4c566a;
+            --color-slate-700: #3b4252;
+            --color-slate-800: #262a35;
+            --color-slate-900: #1c1f26;
+            --color-slate-950: #12141a;
         }
     </style>
     
@@ -116,12 +116,12 @@
 
         /* Dark Mode support for Quill Editor */
         .dark .ql-toolbar.ql-snow {
-            background-color: #18181b !important;
-            border-bottom: 1px solid #27272a !important;
+            background-color: #1c1f26 !important;
+            border-bottom: 1px solid #262a35 !important;
         }
         .dark .ql-container.ql-snow {
-            background-color: #09090b !important;
-            color: #f4f4f5 !important;
+            background-color: #12141a !important;
+            color: #e2e8f0 !important;
         }
         .dark .ql-snow .ql-stroke {
             stroke: #94a3b8 !important;

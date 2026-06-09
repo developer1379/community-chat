@@ -8,12 +8,12 @@
 }
 
 .dark {
-    --bg-main: #09090b;
-    --bg-card: #18181b;
-    --text-main: #f4f4f5;
-    --text-muted: #a1a1aa;
-    --border-color: #27272a;
-    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
+    --bg-main: #12141a;
+    --bg-card: #1c1f26;
+    --text-main: #e2e8f0;
+    --text-muted: #94a3b8;
+    --border-color: #262a35;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
 }
 
 body {
