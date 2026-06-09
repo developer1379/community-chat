@@ -128,6 +128,16 @@ class ForumController extends Controller
                         'query' => $query,
                     ]);
                 }
+            } else {
+                // Unregistered/guest user search history in session
+                $guestHistory = session()->get('guest_search_history', []);
+                if (empty($guestHistory) || end($guestHistory) !== $query) {
+                    $guestHistory[] = $query;
+                    if (count($guestHistory) > 10) {
+                        array_shift($guestHistory);
+                    }
+                    session()->put('guest_search_history', $guestHistory);
+                }
             }
 
             $threads = Thread::where('title', 'like', "%{$query}%")
@@ -141,25 +151,48 @@ class ForumController extends Controller
             $threads = Thread::whereRaw('1=0')->paginate(15);
         }
 
-        $searchHistory = Auth::check()
-            ? \App\Models\SearchHistory::where('user_id', Auth::id())->latest()->take(10)->get()
-            : collect();
+        if (Auth::check()) {
+            $searchHistory = \App\Models\SearchHistory::where('user_id', Auth::id())->latest()->take(10)->get();
+        } else {
+            $guestQueries = array_reverse(session()->get('guest_search_history', []));
+            $searchHistory = collect();
+            foreach ($guestQueries as $q) {
+                $item = new \App\Models\SearchHistory([
+                    'query' => $q,
+                ]);
+                $item->id = $q;
+                $searchHistory->push($item);
+            }
+        }
 
         return view('forum.search', compact('threads', 'query', 'searchHistory'));
     }
 
-    public function deleteSearchHistory(\App\Models\SearchHistory $history)
+    public function deleteSearchHistory(Request $request, $id)
     {
-        if ($history->user_id !== Auth::id()) {
-            abort(403);
+        if (Auth::check()) {
+            $history = \App\Models\SearchHistory::findOrFail($id);
+            if ($history->user_id !== Auth::id()) {
+                abort(403);
+            }
+            $history->delete();
+        } else {
+            $guestHistory = session()->get('guest_search_history', []);
+            if (($key = array_search($id, $guestHistory)) !== false) {
+                unset($guestHistory[$key]);
+                session()->put('guest_search_history', array_values($guestHistory));
+            }
         }
-        $history->delete();
         return back()->with('success', 'Search query removed from history.');
     }
 
     public function clearSearchHistory()
     {
-        \App\Models\SearchHistory::where('user_id', Auth::id())->delete();
+        if (Auth::check()) {
+            \App\Models\SearchHistory::where('user_id', Auth::id())->delete();
+        } else {
+            session()->forget('guest_search_history');
+        }
         return back()->with('success', 'Search history cleared.');
     }
 

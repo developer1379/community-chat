@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Route;
 // Forum Homepage & Search
 Route::get('/', [ForumController::class, 'home'])->name('home');
 Route::get('/search', [ForumController::class, 'search'])->name('search');
+Route::delete('/search/history/clear', [ForumController::class, 'clearSearchHistory'])->name('search.history.clear');
+Route::delete('/search/history/{id}', [ForumController::class, 'deleteSearchHistory'])->name('search.history.delete');
 Route::get('/media', [ForumController::class, 'mediaIndex'])->name('media.index');
 
 // Authentication Routes
@@ -93,10 +95,6 @@ Route::middleware('auth')->group(function () {
     // Bug Reporting
     Route::get('/bugs/report', [\App\Http\Controllers\BugReportController::class, 'create'])->name('bugs.create');
     Route::post('/bugs/report', [\App\Http\Controllers\BugReportController::class, 'store'])->name('bugs.store');
-
-    // Search History Routes
-    Route::delete('/search/history/clear', [ForumController::class, 'clearSearchHistory'])->name('search.history.clear');
-    Route::delete('/search/history/{history}', [ForumController::class, 'deleteSearchHistory'])->name('search.history.delete');
 
     // User Notification Endpoints
     Route::get('/notifications', [\App\Http\Controllers\AdminController::class, 'notificationsIndex'])->name('notifications.index');

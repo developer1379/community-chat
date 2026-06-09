@@ -37,7 +37,6 @@
         </div>
     </div>
 
-    @auth
         @if(isset($searchHistory) && $searchHistory->isNotEmpty())
             <!-- User Recent Searches block -->
             <div class="px-4 sm:px-0">
@@ -69,7 +68,6 @@
                 </div>
             </div>
         @endif
-    @endauth
 
     <!-- Threads Listing Panel -->
     <div class="rounded-none sm:rounded-2xl overflow-hidden shadow-sm border-y sm:border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">

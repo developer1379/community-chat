@@ -6,27 +6,29 @@ use App\Models\SearchHistory;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-it('does not log search queries for guests', function () {
-    $response = $this->get('/search?q=testquery');
+it('logs search queries in session for guest users', function () {
+    $response = $this->get('/search?q=unregistered%20query');
 
     $response->assertStatus(200);
     expect(SearchHistory::count())->toBe(0);
+    expect(session('guest_search_history'))->toBe(['unregistered query']);
 });
 
-it('logs search queries for authenticated users', function () {
+it('logs search queries for authenticated users in database', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->get('/search?q=php%20framework');
 
     $response->assertStatus(200);
     expect(SearchHistory::count())->toBe(1);
+    expect(session()->has('guest_search_history'))->toBeFalse();
     
     $history = SearchHistory::first();
     expect($history->user_id)->toBe($user->id);
     expect($history->query)->toBe('php framework');
 });
 
-it('does not log consecutive duplicate queries for the same user', function () {
+it('does not log consecutive duplicate queries for the same user or guest', function () {
     $user = User::factory()->create();
 
     $this->actingAs($user)->get('/search?q=laravel');
@@ -35,9 +37,35 @@ it('does not log consecutive duplicate queries for the same user', function () {
 
     expect(SearchHistory::count())->toBe(2);
     expect(SearchHistory::pluck('query')->toArray())->toBe(['laravel', 'php']);
+
+    // Guest duplicate check
+    $this->post(route('logout'));
+    $this->get('/search?q=guest-query');
+    $this->get('/search?q=guest-query');
+    $this->get('/search?q=another-guest');
+
+    expect(session('guest_search_history'))->toBe(['guest-query', 'another-guest']);
 });
 
-it('allows user to delete a single query from their search history', function () {
+it('allows guest user to delete a single query from their search history', function () {
+    session()->put('guest_search_history', ['q1', 'q2', 'q3']);
+
+    $response = $this->delete(route('search.history.delete', 'q2'));
+
+    $response->assertRedirect();
+    expect(session('guest_search_history'))->toBe(['q1', 'q3']);
+});
+
+it('allows guest user to clear their entire search history', function () {
+    session()->put('guest_search_history', ['q1', 'q2']);
+
+    $response = $this->delete(route('search.history.clear'));
+
+    $response->assertRedirect();
+    expect(session()->has('guest_search_history'))->toBeFalse();
+});
+
+it('allows user to delete a single query from their database search history', function () {
     $user = User::factory()->create();
     $history = SearchHistory::create([
         'user_id' => $user->id,
@@ -50,7 +78,7 @@ it('allows user to delete a single query from their search history', function ()
     expect(SearchHistory::count())->toBe(0);
 });
 
-it('allows user to clear their entire search history', function () {
+it('allows user to clear their entire database search history', function () {
     $user = User::factory()->create();
     SearchHistory::create(['user_id' => $user->id, 'query' => 'q1']);
     SearchHistory::create(['user_id' => $user->id, 'query' => 'q2']);
