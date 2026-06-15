@@ -34,7 +34,7 @@ class ForumController extends Controller
         $this->imgBBService = $imgBBService;
     }
 
-    public function home()
+    public function home(Request $request)
     {
         $categories = $this->categoryRepo->getAllWithStats();
 
@@ -109,7 +109,13 @@ class ForumController extends Controller
                 ->get();
         }
 
-        return view('forum.home', compact('categories', 'stats', 'activeThreads', 'onlineUsers', 'featuredThreads', 'latestThreads', 'viralThreads', 'mostLikedThread', 'topReactedThreads'));
+        // Fetch all threads paginated for the main content feed
+        $threads = Thread::with(['user', 'category', 'lastPost.user', 'firstPost'])
+            ->orderBy('is_pinned', 'desc')
+            ->latest('updated_at')
+            ->paginate(15);
+
+        return view('forum.home', compact('categories', 'stats', 'activeThreads', 'onlineUsers', 'featuredThreads', 'latestThreads', 'viralThreads', 'mostLikedThread', 'topReactedThreads', 'threads'));
     }
 
     public function search(Request $request)
