@@ -219,7 +219,11 @@
     <!-- Unified Responsive Grid Card Layout -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @forelse($users as $user)
-            <div class="relative rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 group/card flex flex-col h-[280px] text-left">
+            @php
+                $reactionsCount = \App\Models\React::whereIn('post_id', $user->posts()->pluck('id'))->count();
+                $tier = $user->anime_tier;
+            @endphp
+            <div class="relative rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 group/card flex flex-col h-[320px] text-left">
                 <!-- Top banner decoration -->
                 <div class="h-16 relative bg-cover bg-center shrink-0" style="background: {{ $user->banner_path ? 'url(' . $user->banner_path . ')' : ($user->banner_color ?: 'linear-gradient(135deg, #3b82f6, #8b5cf6)') }}">
                     <!-- Floating Rank Pill -->
@@ -244,39 +248,46 @@
                         <a href="{{ route('profile.show', $user->name) }}"
                            data-user-hover="true"
                            data-user-name="{{ $user->name }}"
-                           class="font-black text-slate-850 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 text-sm truncate block transition-colors leading-tight {{ $user->username_style }}"
+                           class="font-black text-slate-855 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 text-sm truncate block transition-colors leading-tight {{ $user->username_style }}"
                            style="{{ $user->username_style_css }}">
                             {{ $user->name }}
                         </a>
                         
                         <div class="flex items-center justify-center gap-1.5 flex-wrap">
-                            @php
-                                $tier = $user->anime_tier;
-                            @endphp
                             <span class="px-2 py-0.5 text-[8.5px] font-black uppercase rounded text-white shadow-sm leading-none" style="background-color: {{ $tier['color'] }}" title="{{ $tier['name'] }}">
                                 Lvl {{ $tier['level'] ?? 1 }}
                             </span>
                             
-                            <span class="px-2 py-0.5 text-[8.5px] font-extrabold uppercase rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 leading-none">
+                            <span class="px-2 py-0.5 text-[8.5px] font-extrabold uppercase rounded bg-slate-100 dark:bg-slate-800 text-slate-555 dark:text-slate-400 border border-slate-200 dark:border-slate-700 leading-none">
                                 {{ $user->title_badge ?? 'Member' }}
                             </span>
                         </div>
                     </div>
                     
-                    <!-- Metrics row -->
-                    <div class="grid grid-cols-3 gap-1 bg-slate-50 dark:bg-slate-955/40 p-2 rounded-2xl text-[9px] font-bold text-slate-400 dark:text-slate-500 border border-slate-100 dark:border-slate-850/50">
-                        <div class="text-center">
-                            <span class="block text-slate-755 dark:text-slate-300 font-black leading-none mb-1">{{ $user->threads()->count() }}</span>
-                            <span class="leading-none text-[8px]">Threads</span>
+                    <!-- Metrics Grid (2x2 Layout for detailed info) -->
+                    <div class="grid grid-cols-2 gap-2 bg-slate-50/50 dark:bg-slate-950/40 p-2.5 rounded-2xl text-[9px] font-bold text-slate-400 dark:text-slate-500 border border-slate-100 dark:border-slate-850/50">
+                        <div class="text-left pl-1">
+                            <span class="text-[7.5px] font-black text-slate-400 dark:text-slate-500 uppercase block mb-0.5">Threads</span>
+                            <span class="text-slate-700 dark:text-slate-200 font-extrabold text-[11px]">{{ $user->threads()->count() }}</span>
                         </div>
-                        <div class="text-center border-x border-slate-200/50 dark:border-slate-800/50">
-                            <span class="block text-slate-755 dark:text-slate-300 font-black leading-none mb-1">{{ $user->posts()->count() }}</span>
-                            <span class="leading-none text-[8px]">Replies</span>
+                        <div class="text-left pl-1 border-l border-slate-200/50 dark:border-slate-800/50">
+                            <span class="text-[7.5px] font-black text-slate-400 dark:text-slate-500 uppercase block mb-0.5">Replies</span>
+                            <span class="text-slate-700 dark:text-slate-200 font-extrabold text-[11px]">{{ $user->posts()->count() }}</span>
                         </div>
-                        <div class="text-center">
-                            <span class="block text-blue-600 dark:text-blue-400 font-black leading-none mb-1">{{ number_format($user->calculated_points) }}</span>
-                            <span class="leading-none text-[8px]">Points</span>
+                        <div class="text-left pl-1 border-t border-slate-200/50 dark:border-slate-800/50 pt-1">
+                            <span class="text-[7.5px] font-black text-slate-400 dark:text-slate-500 uppercase block mb-0.5">Reactions</span>
+                            <span class="text-slate-700 dark:text-slate-200 font-extrabold text-[11px]">{{ $reactionsCount }}</span>
                         </div>
+                        <div class="text-left pl-1 border-l border-t border-slate-200/50 dark:border-slate-800/50 pt-1">
+                            <span class="text-[7.5px] font-black text-slate-400 dark:text-slate-500 uppercase block mb-0.5">Coins</span>
+                            <span class="text-emerald-600 dark:text-emerald-450 font-extrabold text-[11px]">{{ number_format($user->coins) }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Points display in card footer style -->
+                    <div class="pt-2 border-t border-slate-100 dark:border-slate-850/60 flex items-center justify-between text-[9px] font-extrabold text-slate-400">
+                        <span class="uppercase tracking-widest text-[8px] font-black">Score</span>
+                        <span class="text-blue-600 dark:text-blue-400 font-black text-[11px]">{{ number_format($user->calculated_points) }} pts</span>
                     </div>
                 </div>
             </div>
