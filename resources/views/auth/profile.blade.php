@@ -62,11 +62,11 @@ profile
         </div>
 
         <!-- User Stats & Info Section -->
-        <div class="bg-white p-6 sm:p-8 relative border-t border-slate-200 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-6">
+        <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 relative border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-6 transition-colors duration-300">
             <!-- User Avatar & Core info -->
             <div class="flex flex-col sm:flex-row items-center sm:items-end gap-5 -mt-20 sm:-mt-24 z-10 text-center sm:text-left">
                 <!-- Large Avatar frame -->
-                <div class="w-32 h-32 rounded-3xl overflow-hidden {{ $avatarGlow }} bg-slate-50 shadow-lg relative group/avatar">
+                <div class="w-32 h-32 rounded-3xl overflow-hidden {{ $avatarGlow }} bg-slate-50 dark:bg-slate-800 shadow-lg relative group/avatar">
                     <img id="profile-avatar-img" src="{{ $user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
 
                     @auth
@@ -81,7 +81,7 @@ profile
 
                 <div class="space-y-1.5 pb-2">
                     <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
-                        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight {{ $user->username_style }}" style="{{ $user->username_style_css }}">{{ $user->name }}</h2>
+                        <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight {{ $user->username_style }}" style="{{ $user->username_style_css }}">{{ $user->name }}</h2>
                         <span class="text-xs px-3 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-sm" style="color: #ffffff; background: {{ $user->banner_color }}">
                             {{ $user->title_badge }}
                         </span>
@@ -104,9 +104,9 @@ profile
                             @endif
                         </svg>
                         <span style="color: {{ $tier['color'] }}">{{ $tier['name'] }}</span>
-                        <span class="text-[9px] px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400 uppercase font-black tracking-wide">{{ $tier['badge'] }}</span>
+                        <span class="text-[9px] px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 rounded text-slate-650 dark:text-slate-400 uppercase font-black tracking-wide">{{ $tier['badge'] }}</span>
                     </div>
-                    <p class="text-xs text-slate-500 font-bold">Joined community on {{ $user->created_at->format('M d, Y') }}</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-bold">Joined community on {{ $user->created_at->format('M d, Y') }}</p>
                 </div>
             </div>
 
@@ -114,8 +114,8 @@ profile
             <div class="flex flex-col items-center sm:items-end gap-3 z-10 pb-2 flex-shrink-0">
                 <div class="flex gap-6 sm:gap-8 text-center flex-wrap justify-center sm:justify-end">
                     <div class="w-16 sm:w-20">
-                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{{ $user->posts()->count() }}</span>
-                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">Posts</span>
+                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">{{ $user->posts()->count() }}</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Posts</span>
                     </div>
                     @php
                         $reactionsCount = \App\Models\React::whereIn('post_id', $user->posts()->pluck('id'))->count();
@@ -123,24 +123,24 @@ profile
                         $awardsCount = max(1, min(5, floor($user->coins / 1500) + ($user->isAdmin() ? 3 : 0)));
                     @endphp
                     <div class="w-16 sm:w-20">
-                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{{ $reactionsCount }}</span>
-                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">Reactions</span>
+                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">{{ $reactionsCount }}</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Reactions</span>
                     </div>
                     <div class="w-16 sm:w-20">
-                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{{ $badgesCount }}</span>
-                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">Badges</span>
+                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">{{ $badgesCount }}</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Badges</span>
                     </div>
                     <div class="w-16 sm:w-20">
-                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{{ $user->activity_points }}</span>
-                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">Points</span>
+                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">{{ $user->activity_points }}</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Points</span>
                     </div>
                     <div class="w-20 sm:w-24">
-                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{{ number_format($user->coins, 2) }}</span>
-                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">DF Coins</span>
+                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">{{ number_format($user->coins, 2) }}</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">DF Coins</span>
                     </div>
                     <div class="w-16 sm:w-20">
-                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{{ $awardsCount }}</span>
-                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">Awards</span>
+                        <span class="block text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">{{ $awardsCount }}</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Awards</span>
                     </div>
                 </div>
 
@@ -151,8 +151,8 @@ profile
                                 id="follow-btn-{{ $user->id }}" 
                                 class="w-full sm:w-44 text-xs font-bold py-1.5 px-3 rounded-xl transition-all cursor-pointer border flex items-center justify-center gap-1.5 shadow-sm
                                 {{ Auth::user()->isFollowing($user) 
-                                    ? 'bg-blue-50 border-blue-200 text-blue-700 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 group/follow active:scale-97' 
-                                    : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100 active:scale-97' }}">
+                                    ? 'bg-blue-50 dark:bg-blue-950/35 border-blue-200 dark:border-blue-900 text-blue-700 dark:text-blue-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 hover:text-rose-700 dark:hover:text-rose-400 hover:border-rose-200 dark:hover:border-rose-900 group/follow active:scale-97' 
+                                    : 'bg-white dark:bg-slate-850 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-97' }}">
                             @if(Auth::user()->isFollowing($user))
                                 <span class="material-symbols-outlined text-[11px] group-hover/follow:hidden">check</span>
                                 <span class="group-hover/follow:hidden font-bold">Following</span>
@@ -166,7 +166,7 @@ profile
 
                         <button type="button" 
                                 onclick="startDirectChat('{{ $user->name }}')" 
-                                class="w-full sm:w-44 text-xs font-bold py-1.5 px-3 rounded-xl transition-all cursor-pointer border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 active:scale-97 flex items-center justify-center gap-1.5 shadow-sm">
+                                class="w-full sm:w-44 text-xs font-bold py-1.5 px-3 rounded-xl transition-all cursor-pointer border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-97 flex items-center justify-center gap-1.5 shadow-sm">
                             <span class="material-symbols-outlined text-[11px]">chat</span>
                             <span class="font-bold">Send Message</span>
                         </button>
@@ -176,7 +176,7 @@ profile
                 <!-- Share Profile Button -->
                 <button type="button" 
                         onclick="copyProfileLink()" 
-                        class="w-full sm:w-44 text-xs font-bold py-1.5 px-3 rounded-xl transition-all cursor-pointer border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 active:scale-97 flex items-center justify-center gap-1.5 shadow-sm"
+                        class="w-full sm:w-44 text-xs font-bold py-1.5 px-3 rounded-xl transition-all cursor-pointer border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-97 flex items-center justify-center gap-1.5 shadow-sm"
                         title="Copy profile link to clipboard">
                     <span class="material-symbols-outlined text-[14px]">share</span>
                     <span class="font-bold">Share Profile</span>
@@ -186,7 +186,7 @@ profile
 
         <!-- Signature quote if it exists -->
         @if($user->signature)
-            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 text-xs text-slate-650 italic text-center sm:text-left font-medium">
+            <div class="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400 italic text-center sm:text-left font-medium transition-colors duration-305">
                 💬 "{{ $user->signature }}"
             </div>
         @endif
@@ -302,7 +302,7 @@ profile
                         @endphp
 
                         @if($purchasedItems->isNotEmpty())
-                            <div id="shop-upgrades-card" class="mui-card overflow-hidden bg-white border border-slate-200 shadow-lg rounded-2xl mb-8 text-left">
+                            <div id="shop-upgrades-card" class="mui-card overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg rounded-2xl mb-8 text-left transition-colors duration-300">
                                 <div class="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-slate-900 dark:to-slate-850 px-6 py-4 border-b border-slate-200 dark:border-slate-800">
                                     <h3 class="font-bold text-slate-800 dark:text-white text-xs flex items-center gap-2">
                                         <span class="material-symbols-outlined text-emerald-600 text-sm">shopping_bag</span>
@@ -313,11 +313,11 @@ profile
                                     <!-- List of upgrades -->
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         @foreach($purchasedItems as $purchase)
-                                            <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 dark:bg-slate-950/20 dark:border-slate-850 flex items-start gap-3 justify-between">
+                                            <div class="p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/20 flex items-start gap-3 justify-between">
                                                 <div class="min-w-0">
                                                     <span class="inline-block text-[8px] font-black uppercase bg-emerald-100 dark:bg-emerald-955/50 text-emerald-700 dark:text-emerald-400 px-1.5 py-0.5 rounded leading-none">Active Upgrade</span>
                                                     <h4 class="text-xs font-black text-slate-850 dark:text-white mt-1">{{ $purchase->shopItem->name }}</h4>
-                                                    <p class="text-[10px] text-slate-400 mt-0.5 font-bold">
+                                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-bold">
                                                         Expires: {{ $purchase->expires_at ? $purchase->expires_at->format('M d, Y') : 'Never (Permanent)' }}
                                                     </p>
                                                 </div>
@@ -331,11 +331,11 @@ profile
                                         
                                         @if($hasUsernameChange)
                                             <!-- Username change upgrade action -->
-                                            <form action="{{ route('profile.update_username') }}" method="POST" class="p-4 rounded-xl border border-slate-200 dark:border-slate-850 space-y-3">
+                                            <form action="{{ route('profile.update_username') }}" method="POST" class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
                                                 @csrf
                                                 <div>
-                                                    <label class="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Change Username (Purchased Upgrade)</label>
-                                                    <input type="text" name="name" required value="{{ $user->name }}" class="w-full mt-2 bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-850 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-550">
+                                                    <label class="block text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider">Change Username (Purchased Upgrade)</label>
+                                                    <input type="text" name="name" required value="{{ $user->name }}" class="w-full mt-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-150 focus:outline-none focus:ring-1 focus:ring-blue-500">
                                                 </div>
                                                 <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all cursor-pointer">
                                                     Update Username
@@ -345,16 +345,16 @@ profile
 
                                         @if($hasUsernameStyle)
                                             <!-- Username style customization -->
-                                            <form action="{{ route('profile.update_username_style') }}" method="POST" class="p-4 rounded-xl border border-slate-200 dark:border-slate-850 space-y-4">
+                                            <form action="{{ route('profile.update_username_style') }}" method="POST" class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4">
                                                 @csrf
                                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                     <div>
-                                                        <label class="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Text/Badge Color</label>
+                                                        <label class="block text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider">Text/Badge Color</label>
                                                         <input type="color" name="title_color" value="{{ $user->title_color ?: '#4f46e5' }}" class="w-10 h-10 border-0 rounded-lg cursor-pointer mt-2">
                                                     </div>
                                                     <div>
-                                                        <label class="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Title Badge Text (Custom)</label>
-                                                        <input type="text" name="title_badge" value="{{ $user->title_badge ?: 'VIP Member' }}" class="w-full mt-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                                        <label class="block text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider">Title Badge Text (Custom)</label>
+                                                        <input type="text" name="title_badge" value="{{ $user->title_badge ?: 'VIP Member' }}" class="w-full mt-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-slate-150 focus:outline-none focus:ring-1 focus:ring-blue-500">
                                                     </div>
                                                 </div>
                                                 <button type="submit" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all cursor-pointer">
@@ -365,11 +365,11 @@ profile
 
                                         @if(($hasTitleStyle || $hasHighlight || $hasFeaturedThread || $hasStickyUpgrade) && $threads->isNotEmpty())
                                             <!-- Thread styles upgrade actions -->
-                                            <form action="{{ route('profile.update_thread_upgrades') }}" method="POST" class="p-4 rounded-xl border border-slate-200 dark:border-slate-850 space-y-4">
+                                            <form action="{{ route('profile.update_thread_upgrades') }}" method="POST" class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4">
                                                 @csrf
                                                 <div class="space-y-3">
-                                                    <label class="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Apply Upgrades to Your Threads</label>
-                                                    <select name="thread_id" required class="w-full bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-850 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                                    <label class="block text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-wider">Apply Upgrades to Your Threads</label>
+                                                    <select name="thread_id" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-800 dark:text-slate-150 focus:outline-none focus:ring-1 focus:ring-blue-500">
                                                         <option value="">-- Select one of your threads --</option>
                                                         @foreach($threads as $t)
                                                             <option value="{{ $t->id }}">{{ $t->title }}</option>
@@ -412,25 +412,25 @@ profile
                             </div>
                         @endif
 
-                        <div class="mui-card overflow-hidden bg-white border border-slate-200 shadow-lg rounded-2xl">
-                            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
-                                <h3 class="font-bold text-slate-700 text-xs flex items-center gap-2">
+                        <div class="mui-card overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg rounded-2xl transition-all duration-300">
+                            <div class="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+                                <h3 class="font-bold text-slate-700 dark:text-slate-300 text-xs flex items-center gap-2">
                                     <span class="material-symbols-outlined text-blue-600 text-sm">settings</span>
                                     Customize Profile Card
                                 </h3>
                             </div>
-                            <form id="profile-form" action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-5 bg-white">
+                            <form id="profile-form" action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-5 bg-white dark:bg-slate-900">
                                 @csrf
                                         <!-- Material Design Upload & Input Grid -->
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                                     <!-- Avatar Upload -->
-                                    <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-slate-50/50 hover:bg-slate-50 transition-all flex flex-col justify-center text-left">
-                                        <label for="avatar" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4">Upload New Avatar</label>
+                                    <div class="relative border border-slate-200 dark:border-slate-800 focus-within:border-blue-500 rounded-2xl p-4 bg-slate-50/50 dark:bg-slate-950/20 hover:bg-slate-50 dark:hover:bg-slate-950/40 transition-all flex flex-col justify-center text-left">
+                                        <label for="avatar" class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest absolute top-1.5 left-4">Upload New Avatar</label>
                                         <input type="file" id="avatar" name="avatar" class="block w-full text-xs text-slate-550 mt-2.5 file:mr-3 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                                     </div>
                                     <!-- Banner Upload -->
-                                    <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-slate-50/50 hover:bg-slate-50 transition-all flex flex-col justify-center text-left">
-                                        <label for="banner" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
+                                    <div class="relative border border-slate-200 dark:border-slate-800 focus-within:border-blue-500 rounded-2xl p-4 bg-slate-50/50 dark:bg-slate-950/20 hover:bg-slate-50 dark:hover:bg-slate-950/40 transition-all flex flex-col justify-center text-left">
+                                        <label for="banner" class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
                                             Upload Cover Photo
                                             @if($user->banner_updates_count >= 1 && !$user->isAdmin())
                                                 <span class="text-[8px] text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded font-black">💰 Costs 50 Coins</span>
@@ -439,21 +439,19 @@ profile
                                         <input type="file" id="banner" name="banner" class="block w-full text-xs text-slate-550 mt-2.5 file:mr-3 file:py-1 file:px-2.5 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                                     </div>
                                     <!-- Custom title badge -->
-                                    <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-white transition-all text-left">
-                                        <label for="title_badge" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
+                                    <div class="relative border border-slate-200 dark:border-slate-800 focus-within:border-blue-500 rounded-2xl p-4 bg-white dark:bg-slate-950/10 transition-all text-left">
+                                        <label for="title_badge" class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
                                             Custom Title Badge
                                             @if($tier['level'] < 20 && !$user->isAdmin())
                                                 <span class="text-[8px] text-amber-605 bg-amber-50 px-1 py-0.5 rounded font-black">🔒 PK (Lvl 20)</span>
                                             @endif
                                         </label>
-                                        <input type="text" id="title_badge" name="title_badge" {{ ($tier['level'] < 20 && !$user->isAdmin()) ? 'disabled' : '' }} value="{{ old('title_badge', $user->title_badge) }}" class="w-full mt-2.5 bg-transparent border-0 p-0 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-0 placeholder:text-slate-350" placeholder="{{ ($tier['level'] < 20 && !$user->isAdmin()) ? 'Locked' : 'Guru, Wizard, Ninja...' }}">
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                        <input type="text" id="title_badge" name="title_badge" {{ ($tier['level'] < 20 && !$user->isAdmin()) ? 'disabled' : '' }} value="{{ old('title_badge', $user->title_badge) }}" class="w-full mt-2.5 bg-transparent border-0 p-0 text-slate-805 dark:text-white text-xs font-semibold focus:outline-none focus:ring-0 placeholder:text-slate-350" placeholder="{{ ($tier['level'] < 20 && !$user->isAdmin()) ? 'Locked' : 'Guru, Wizard, Ninja...' }}">
+                                    </div>        </div>
+                                                          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <!-- Username Color -->
-                                    <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-white transition-all text-left">
-                                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
+                                    <div class="relative border border-slate-200 dark:border-slate-800 focus-within:border-blue-500 rounded-2xl p-4 bg-white dark:bg-slate-900 transition-all text-left">
+                                        <label class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
                                             Username Color
                                             @if(!$user->isAdmin())
                                                 <span class="text-[8px] text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded font-black">💰 100 Coins</span>
@@ -462,23 +460,23 @@ profile
                                         <input type="hidden" name="title_color" id="profile-color-hidden-input" value="{{ $user->title_color }}">
                                         <div class="flex items-center gap-2.5 mt-2.5">
                                             <div class="flex items-center gap-1.5">
-                                                <input type="checkbox" id="profile-color-reset" class="rounded border-slate-300 text-indigo-650 focus:ring-indigo-500" {{ !$user->title_color ? 'checked' : '' }}>
-                                                <label for="profile-color-reset" class="text-[10px] text-slate-500 font-bold cursor-pointer">Default</label>
+                                                <input type="checkbox" id="profile-color-reset" class="rounded border-slate-300 text-indigo-650 dark:text-indigo-400 focus:ring-indigo-500" {{ !$user->title_color ? 'checked' : '' }}>
+                                                <label for="profile-color-reset" class="text-[10px] text-slate-500 dark:text-slate-400 font-bold cursor-pointer">Default</label>
                                             </div>
                                             <input type="color" id="profile-color-input" value="{{ $user->title_color ?: '#4f46e5' }}" class="w-8 h-8 border-0 rounded-lg cursor-pointer">
-                                            <span class="text-[10px] text-slate-400 font-bold">Pick color</span>
+                                            <span class="text-[10px] text-slate-400 dark:text-slate-500 font-bold">Pick color</span>
                                         </div>
                                     </div>
 
                                     <!-- Username Animation -->
-                                    <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-white transition-all text-left">
-                                        <label for="username_animation" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
+                                    <div class="relative border border-slate-200 dark:border-slate-800 focus-within:border-blue-500 rounded-2xl p-4 bg-white dark:bg-slate-900 transition-all text-left">
+                                        <label for="username_animation" class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
                                             Username Animation
                                             @if(!$user->isAdmin())
                                                 <span class="text-[8px] text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded font-black">💰 500 Coins</span>
                                             @endif
                                         </label>
-                                        <select name="username_animation" id="profile-anim-select" class="w-full mt-2.5 bg-transparent border-0 p-0 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-0">
+                                        <select name="username_animation" id="profile-anim-select" class="w-full mt-2.5 bg-transparent dark:bg-slate-900 border-0 p-0 text-slate-800 dark:text-slate-100 text-xs font-semibold focus:outline-none focus:ring-0">
                                             <option value="none" {{ !$user->username_animation || $user->username_animation === 'none' ? 'selected' : '' }}>None (Static Color)</option>
                                             <option value="glow" {{ $user->username_animation === 'glow' ? 'selected' : '' }}>Glow (Soft neon pulse)</option>
                                             <option value="pulse" {{ $user->username_animation === 'pulse' ? 'selected' : '' }}>Pulse (Scale and fade)</option>
@@ -489,27 +487,27 @@ profile
                                 </div>
 
                                 <!-- Custom Banner Color (Gradients Preset) -->
-                                <div class="relative border border-slate-200 rounded-2xl p-4 bg-white transition-all text-left">
-                                    <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
+                                <div class="relative border border-slate-200 dark:border-slate-800 rounded-2xl p-4 bg-white dark:bg-slate-900 transition-all text-left">
+                                    <label class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest absolute top-1.5 left-4 flex items-center gap-1">
                                         Choose Profile Theme Gradient
                                     </label>
                                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2.5">
-                                        <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all">
+                                        <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-850 transition-all">
                                             <input type="radio" name="banner_color" value="linear-gradient(135deg, #6366f1, #a855f7)" {{ $user->banner_color === 'linear-gradient(135deg, #6366f1, #a855f7)' ? 'checked' : '' }} class="mr-2 text-blue-600 focus:ring-blue-500">
                                             <span class="w-6 h-6 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 shadow-inner"></span>
                                         </label>
 
-                                        <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all">
+                                        <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-850 transition-all">
                                             <input type="radio" name="banner_color" value="linear-gradient(135deg, #ec4899, #8b5cf6)" {{ $user->banner_color === 'linear-gradient(135deg, #ec4899, #8b5cf6)' ? 'checked' : '' }} class="mr-2 text-pink-600 focus:ring-pink-500">
                                             <span class="w-6 h-6 rounded-lg bg-gradient-to-r from-pink-500 to-violet-500 shadow-inner"></span>
                                         </label>
 
-                                        <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all">
+                                        <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-850 transition-all">
                                             <input type="radio" name="banner_color" value="linear-gradient(135deg, #f97316, #ef4444)" {{ $user->banner_color === 'linear-gradient(135deg, #f97316, #ef4444)' ? 'checked' : '' }} class="mr-2 text-orange-600 focus:ring-orange-500">
                                             <span class="w-6 h-6 rounded-lg bg-gradient-to-r from-orange-500 to-red-500 shadow-inner"></span>
                                         </label>
 
-                                        <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-all">
+                                        <label class="cursor-pointer flex items-center justify-between p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-850 transition-all">
                                             <input type="radio" name="banner_color" value="linear-gradient(135deg, #06b6d4, #3b82f6)" {{ $user->banner_color === 'linear-gradient(135deg, #06b6d4, #3b82f6)' ? 'checked' : '' }} class="mr-2 text-cyan-600 focus:ring-cyan-500">
                                             <span class="w-6 h-6 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 shadow-inner"></span>
                                         </label>
@@ -517,37 +515,37 @@ profile
                                 </div>
 
                                 <!-- Profile Privacy Setting -->
-                                <div class="space-y-1.5 p-4 rounded-2xl border border-slate-100 bg-slate-50/50">
+                                <div class="space-y-1.5 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/20">
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1">
+                                            <h4 class="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-1">
                                                 <span class="material-symbols-outlined text-xs text-blue-600">visibility</span>
                                                 Profile Privacy
                                             </h4>
-                                            <p class="text-[10px] font-medium text-slate-550">When private, other community members won't be able to see your discussions, uploads, and signature.</p>
+                                            <p class="text-[10px] font-medium text-slate-550 dark:text-slate-400">When private, other community members won't be able to see your discussions, uploads, and signature.</p>
                                         </div>
                                         <label class="relative inline-flex items-center cursor-pointer select-none">
                                             <input type="checkbox" name="is_private" value="1" {{ $user->is_private ? 'checked' : '' }} class="sr-only peer">
-                                            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                                            <div class="w-9 h-5 bg-slate-200 dark:bg-slate-850 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                                         </label>
                                     </div>
                                 </div>
 
                                 <!-- Custom Signature -->
-                                <div class="relative border border-slate-200 focus-within:border-blue-500 rounded-2xl p-4 bg-white transition-all text-left">
-                                    <label for="signature" class="text-[9px] font-black text-slate-400 uppercase tracking-widest absolute top-1.5 left-4">Forum Signature Quote</label>
-                                    <textarea id="signature" name="signature" rows="3" class="w-full mt-2.5 bg-transparent border-0 p-0 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-0 placeholder:text-slate-400 resize-none" placeholder="Write a short custom signature to display at the footer of all your posts...">{{ old('signature', $user->signature) }}</textarea>
+                                <div class="relative border border-slate-200 dark:border-slate-800 focus-within:border-blue-500 rounded-2xl p-4 bg-white dark:bg-slate-900 transition-all text-left">
+                                    <label for="signature" class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest absolute top-1.5 left-4">Forum Signature Quote</label>
+                                    <textarea id="signature" name="signature" rows="3" class="w-full mt-2.5 bg-transparent border-0 p-0 text-slate-800 dark:text-white text-xs font-semibold focus:outline-none focus:ring-0 placeholder:text-slate-400 dark:placeholder:text-slate-550 resize-none" placeholder="Write a short custom signature to display at the footer of all your posts...">{{ old('signature', $user->signature) }}</textarea>
                                 </div>
 
                                 @if(Auth::id() === $user->id && $threads->isNotEmpty())
                                     <!-- Feature Thread Section -->
-                                    <div class="border-t border-slate-100 pt-5 space-y-2 text-left">
-                                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1">
+                                    <div class="border-t border-slate-100 dark:border-slate-800 pt-5 space-y-2 text-left">
+                                        <h4 class="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-1">
                                             <span class="material-symbols-outlined text-xs text-amber-500">star</span>
                                             Feature one of your discussions (50 Coins)
                                         </h4>
                                         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                                            <select id="feature_thread_id" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                                            <select id="feature_thread_id" class="flex-grow bg-slate-50 dark:bg-slate-955 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-slate-800 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
                                                 <option value="">-- Choose a thread to feature --</option>
                                                 @foreach($threads as $t)
                                                     @if(!$t->is_featured)
@@ -563,7 +561,7 @@ profile
                                 @endif
 
                                 <!-- Save changes -->
-                                <div class="text-right pt-3 border-t border-slate-100">
+                                <div class="text-right pt-3 border-t border-slate-100 dark:border-slate-800">
                                     <button type="submit" class="xen-button text-xs font-bold text-white px-5 py-2 rounded-xl shadow-md cursor-pointer">
                                         Save Profile Card
                                     </button>
@@ -574,29 +572,29 @@ profile
                 @endauth
 
                 <!-- Recent Discussions list by this user -->
-                <div class="mui-card overflow-hidden shadow-lg border border-slate-200 bg-white rounded-2xl">
-                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
-                        <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">📝 Recent Discussions</h3>
+                <div class="mui-card overflow-hidden shadow-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl transition-colors duration-300">
+                    <div class="bg-slate-50 dark:bg-slate-900/50 px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+                        <h3 class="font-bold text-slate-700 dark:text-slate-300 text-xs uppercase tracking-wider">📝 Recent Discussions</h3>
                     </div>
-                    <div class="divide-y divide-slate-100">
+                    <div class="divide-y divide-slate-100 dark:divide-slate-800">
                         @forelse($threads as $thread)
-                            <div class="px-6 py-4 flex items-center justify-between gap-4 hover:bg-slate-50/50 transition-colors">
-                                <div class="space-y-0.5">
-                                    <h4 class="font-bold text-slate-800 text-xs hover:text-blue-600 transition-colors">
+                            <div class="px-6 py-4 flex items-center justify-between gap-4 hover:bg-slate-50/50 dark:hover:bg-slate-850/30 transition-colors">
+                                <div class="space-y-0.5 text-left">
+                                    <h4 class="font-bold text-slate-800 dark:text-white text-xs hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                                         <a href="{{ route('threads.show', $thread->slug) }}">{{ $thread->title }}</a>
                                     </h4>
-                                    <div class="flex items-center gap-2 text-[10px] text-slate-450">
-                                        <span class="font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-100">{{ $thread->category->name }}</span>
+                                    <div class="flex items-center gap-2 text-[10px] text-slate-450 dark:text-slate-400">
+                                        <span class="font-bold px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50">{{ $thread->category->name }}</span>
                                         <span>•</span>
                                         <span>Created {{ $thread->created_at->diffForHumans() }}</span>
                                     </div>
                                 </div>
-                                <div class="text-xs font-bold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 flex-shrink-0">
+                                <div class="text-xs font-bold text-slate-700 dark:text-slate-350 bg-slate-50 dark:bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 flex-shrink-0">
                                     {{ $thread->views_count }} views
                                 </div>
                             </div>
                         @empty
-                            <div class="px-6 py-8 text-center text-xs text-slate-400">
+                            <div class="px-6 py-8 text-center text-xs text-slate-450">
                                 No threads have been posted by this member yet.
                             </div>
                         @endforelse
@@ -607,8 +605,8 @@ profile
             <!-- Right Section: Media Gallery Grid (4 Cols) -->
             <div class="lg:col-span-4 space-y-6">
                 <!-- Media Upload Gallery grid -->
-                <div class="mui-card p-6 border border-slate-200 bg-white shadow-lg rounded-2xl">
-                    <h3 class="text-xs font-bold tracking-wider text-slate-500 uppercase mb-4 flex items-center gap-2">
+                <div class="mui-card p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-lg rounded-2xl transition-colors duration-300">
+                    <h3 class="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase mb-4 flex items-center gap-2">
                         <span class="material-symbols-outlined text-pink-500 text-sm">photo_library</span>
                         Media Showroom
                     </h3>
@@ -616,7 +614,7 @@ profile
                     @if(count($attachments) > 0)
                         <div class="grid grid-cols-2 gap-3">
                             @foreach($attachments as $attach)
-                                <div class="relative group rounded-xl overflow-hidden bg-slate-50 border border-slate-200 shadow-sm">
+                                <div class="relative group rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-sm">
                                     <!-- Padlock Toggle for Owner -->
                                     @auth
                                         @if(Auth::id() === $user->id)
@@ -640,7 +638,7 @@ profile
                                             GIF
                                         </span>
                                     @endif
-                                    <div class="bg-slate-100/80 p-1.5 text-[8px] text-slate-500 border-t border-slate-200 flex items-center justify-between">
+                                    <div class="bg-slate-100/80 dark:bg-slate-900/80 p-1.5 text-[8px] text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
                                         <span class="truncate pr-2 font-medium">{{ $attach->file_name }}</span>
                                         @if($attach->thread)
                                             <a href="{{ route('threads.show', $attach->thread->slug) }}" class="hover:text-blue-600 transition-colors font-bold" title="View thread">
@@ -652,12 +650,13 @@ profile
                             @endforeach
                         </div>
                     @else
-                        <div class="text-center py-12 border-2 border-slate-200 border-dashed rounded-xl">
+                        <div class="text-center py-12 border-2 border-slate-200 dark:border-slate-800 border-dashed rounded-xl">
                             <span class="text-2xl block mb-2 opacity-50">🖼️</span>
-                            <p class="text-xs text-slate-450 max-w-[200px] mx-auto font-medium">No custom images or GIFs uploaded by this member yet.</p>
+                            <p class="text-xs text-slate-450 dark:text-slate-500 max-w-[200px] mx-auto font-medium">No custom images or GIFs uploaded by this member yet.</p>
                         </div>
                     @endif
                 </div>
+            </div>        </div>
             </div>
         </div>
     @endif
