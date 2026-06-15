@@ -95,18 +95,13 @@
             color: #475569 !important;
         }
         
-        /* Mobile horizontal scrolling toolbar */
+        /* Mobile wrapping toolbar rules to prevent dropdown clipping */
         @media (max-width: 639px) {
             .ql-toolbar.ql-snow {
-                flex-wrap: nowrap !important;
-                overflow-x: auto !important;
-                -webkit-overflow-scrolling: touch !important;
+                flex-wrap: wrap !important;
+                overflow-x: visible !important;
                 padding: 6px 8px !important;
                 gap: 2px !important;
-                scrollbar-width: none; /* Firefox */
-            }
-            .ql-toolbar.ql-snow::-webkit-scrollbar {
-                display: none; /* Safari & Chrome */
             }
             .ql-formats {
                 flex-shrink: 0 !important;
