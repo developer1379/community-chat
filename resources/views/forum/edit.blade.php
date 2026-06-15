@@ -145,19 +145,29 @@
 
 <!-- JavaScript Integration for Tags and Quill editor -->
 <script>
+    // Initialize Quill Editor
+    let quill;
     document.addEventListener('DOMContentLoaded', function() {
         // --- 1. Quill Rich Editor Setup ---
-        const quill = new Quill('#quill-editor', {
+        quill = new Quill('#quill-editor', {
             theme: 'snow',
             modules: {
-                toolbar: [
-                    [{ 'header': [1, 2, 3, false] }],
-                    ['bold', 'italic', 'underline', 'strike'],
-                    ['blockquote', 'code-block'],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                    [{ 'color': [] }, { 'background': [] }],
-                    ['clean']
-                ]
+                toolbar: {
+                    container: [
+                        [{ 'font': [] }],
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        ['blockquote', 'code-block'],
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                        ['link', 'image', 'video'],
+                        ['clean']
+                    ],
+                    handlers: {
+                        image: selectLocalImage,
+                        video: selectVideoOption
+                    }
+                }
             },
             placeholder: 'Draft your updated discussion details here...'
         });
@@ -261,6 +271,155 @@
                     btn.classList.remove('bg-blue-600', 'text-white');
                     btn.classList.add('bg-slate-100', 'text-slate-600');
                 }
+            });
+        }
+
+        function selectVideoOption() {
+            const range = quill.getSelection(true);
+            Swal.fire({
+                title: '🎥 Insert / Upload Video',
+                html: `
+                    <div class="text-left text-xs space-y-3">
+                        <p class="text-slate-500 font-medium">To share videos, upload them to one of these <strong>5 free hosting servers</strong>, then copy and paste the video link below:</p>
+                        <div class="grid grid-cols-2 gap-2.5 pt-1.5 pb-3">
+                            <a href="https://sendvid.com" target="_blank" class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50/50 hover:bg-indigo-50/30 border border-slate-200 text-slate-700 hover:text-indigo-600 font-bold transition-all text-xs">
+                                <span class="material-symbols-outlined text-[18px] text-indigo-500">publish</span> Sendvid
+                            </a>
+                            <a href="https://streamable.com" target="_blank" class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50/50 hover:bg-sky-50/30 border border-slate-200 text-slate-700 hover:text-sky-600 font-bold transition-all text-xs">
+                                <span class="material-symbols-outlined text-[18px] text-sky-500">videocam</span> Streamable
+                            </a>
+                            <a href="https://youtube.com" target="_blank" class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50/50 hover:bg-red-50/30 border border-slate-200 text-slate-700 hover:text-red-650 font-bold transition-all text-xs">
+                                <span class="material-symbols-outlined text-[18px] text-red-500">play_circle</span> YouTube
+                            </a>
+                            <a href="https://vimeo.com" target="_blank" class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50/50 hover:bg-blue-50/30 border border-slate-200 text-slate-700 hover:text-blue-655 font-bold transition-all text-xs">
+                                <span class="material-symbols-outlined text-[18px] text-blue-500">movie</span> Vimeo
+                            </a>
+                            <a href="https://gofile.io" target="_blank" class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50/50 hover:bg-emerald-50/30 border border-slate-200 text-slate-700 hover:text-emerald-600 font-bold transition-all text-xs col-span-2 justify-center">
+                                <span class="material-symbols-outlined text-[18px] text-emerald-500">cloud_upload</span> GoFile Free Storage
+                            </a>
+                        </div>
+                        <label class="block font-black text-slate-700 uppercase tracking-wider">Paste Video Embed / Share Link:</label>
+                    </div>
+                `,
+                input: 'url',
+                inputPlaceholder: 'https://sendvid.com/embed/... or YouTube URL',
+                showCancelButton: true,
+                confirmButtonText: 'Insert Video',
+                confirmButtonColor: '#0f172a',
+                cancelButtonColor: '#e11d48'
+            }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                    let videoUrl = result.value.trim();
+                    if (videoUrl.includes('youtube.com/watch?v=')) {
+                        let parts = videoUrl.split('watch?v=');
+                        if (parts[1]) {
+                            let id = parts[1].split('&')[0];
+                            videoUrl = `https://www.youtube.com/embed/${id}`;
+                        }
+                    } else if (videoUrl.includes('youtu.be/')) {
+                        const id = videoUrl.split('/').pop().split('?')[0];
+                        videoUrl = `https://www.youtube.com/embed/${id}`;
+                    } else if (videoUrl.includes('vimeo.com/') && !videoUrl.includes('player.vimeo.com')) {
+                        const id = videoUrl.split('/').pop().split('?')[0];
+                        videoUrl = `https://player.vimeo.com/video/${id}`;
+                    } else if (videoUrl.includes('sendvid.com/') && !videoUrl.includes('/embed/')) {
+                        const id = videoUrl.split('/').pop().split('?')[0];
+                        videoUrl = `https://sendvid.com/embed/${id}`;
+                    } else if (videoUrl.includes('streamable.com/') && !videoUrl.includes('/e/')) {
+                        const id = videoUrl.split('/').pop().split('?')[0];
+                        videoUrl = `https://streamable.com/e/${id}`;
+                    }
+                    quill.insertEmbed(range.index, 'video', videoUrl);
+                    quill.setSelection(range.index + 1);
+                }
+            });
+        }
+
+        function selectLocalImage() {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/jpeg, image/png, image/jpg, image/gif');
+            input.click();
+
+            input.onchange = () => {
+                const file = input.files[0];
+                if (/^image\//.test(file.type)) {
+                    uploadImageToImgBB(file);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid File',
+                        text: 'Only image files (JPEG, PNG, JPG, GIF) are allowed.',
+                        confirmButtonColor: '#0f172a'
+                    });
+                }
+            };
+        }
+
+        function uploadImageToImgBB(file) {
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('_token', '{{ csrf_token() }}');
+
+            const range = quill.getSelection(true);
+            quill.insertEmbed(range.index, 'image', 'https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif'); // Temp spinner
+
+            fetch('{{ route("media.upload") }}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Upload failed');
+                }
+                return response.json();
+            })
+            .then(data => {
+                quill.deleteText(range.index, 1);
+                if (data.url) {
+                    quill.insertEmbed(range.index, 'image', data.url);
+                    quill.setSelection(range.index + 1);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Upload Failed',
+                        html: 'Failed to upload image to ImgBB.<br><br>Please upload your image directly at <a href="https://imgbb.com/upload" target="_blank" class="text-blue-600 underline font-bold">https://imgbb.com/upload</a>, copy the direct image link, and paste it below:',
+                        input: 'url',
+                        inputPlaceholder: 'https://i.ibb.co/.../image.png',
+                        showCancelButton: true,
+                        confirmButtonText: 'Insert into Editor',
+                        confirmButtonColor: '#0f172a',
+                        cancelButtonColor: '#e11d48'
+                    }).then((result) => {
+                        if (result.isConfirmed && result.value) {
+                            quill.insertEmbed(range.index, 'image', result.value);
+                            quill.setSelection(range.index + 1);
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                quill.deleteText(range.index, 1);
+                console.error('Quill Image Upload Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Upload Error',
+                    html: 'An error occurred during image upload to ImgBB.<br><br>Please upload your image directly at <a href="https://imgbb.com/upload" target="_blank" class="text-blue-600 underline font-bold">https://imgbb.com/upload</a>, copy the direct image link, and paste it below:',
+                    input: 'url',
+                    inputPlaceholder: 'https://i.ibb.co/.../image.png',
+                    showCancelButton: true,
+                    confirmButtonText: 'Insert into Editor',
+                    confirmButtonColor: '#0f172a',
+                    cancelButtonColor: '#e11d48'
+                }).then((result) => {
+                    if (result.isConfirmed && result.value) {
+                        quill.insertEmbed(range.index, 'image', result.value);
+                        quill.setSelection(range.index + 1);
+                    }
+                });
             });
         }
     });
