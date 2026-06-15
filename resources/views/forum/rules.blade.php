@@ -95,7 +95,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 text-left">
         <!-- Left Side: Conduct Guidelines (8 cols) -->
         <div class="lg:col-span-8 space-y-6">
-            <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm">
+            <div class="border-y sm:border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-none sm:rounded-3xl p-4 sm:p-6 shadow-sm">
                 <h2 class="text-lg font-extrabold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
                     <svg class="w-5 h-5 text-teal-600" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2"/>
@@ -165,7 +165,7 @@
 
         <!-- Right Side: Reputation Milestones Almanac (4 cols) -->
         <div class="lg:col-span-4 space-y-6">
-            <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-sm flex flex-col h-full">
+            <div class="border-y sm:border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-none sm:rounded-3xl p-4 sm:p-6 shadow-sm flex flex-col h-full">
                 <h3 class="text-base font-extrabold text-slate-900 dark:text-white mb-3 flex items-center gap-1.5">
                     <svg class="w-5 h-5 text-amber-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-dasharray="3 3"/>

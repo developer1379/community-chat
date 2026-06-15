@@ -3,7 +3,7 @@
 @section('content')
 <div class="space-y-8 max-w-4xl mx-auto text-left">
     <!-- Premium Bug Reporting Header Banner -->
-    <div class="relative rounded-3xl overflow-hidden shadow-lg border border-slate-200 bg-gradient-to-r from-rose-600 via-pink-650 to-indigo-700 p-6 sm:p-10 text-white">
+    <div class="relative rounded-none sm:rounded-3xl overflow-hidden shadow-lg border-y sm:border border-slate-200 dark:border-slate-800 bg-gradient-to-r from-rose-600 via-pink-650 to-indigo-700 p-6 sm:p-10 text-white">
         <div class="absolute -right-16 -top-16 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
         <div class="absolute -left-16 -bottom-16 w-64 h-64 bg-rose-500/25 rounded-full blur-2xl pointer-events-none"></div>
 
@@ -21,7 +21,7 @@
     </div>
 
     <!-- Bug Report Form Container -->
-    <div class="border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-800 rounded-3xl p-6 sm:p-10 shadow-xl space-y-6">
+    <div class="border-y sm:border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-800 rounded-none sm:rounded-3xl p-4 sm:p-10 shadow-xl space-y-6">
         @if ($errors->any())
             <div class="p-4 bg-rose-50 border border-rose-100 text-rose-800 dark:bg-rose-950/20 dark:border-rose-900/50 dark:text-rose-450 rounded-2xl text-xs font-semibold space-y-1">
                 <p class="font-bold">Please correct the following errors:</p>
