@@ -316,6 +316,10 @@
                             </div>
 
                         </div>
+                    @empty
+                        <div class="p-8 text-center text-slate-400 dark:text-slate-500 font-bold">
+                            No threads have been created yet. Be the first to start a discussion!
+                        </div>
                     @endforelse
                 </div>
 
