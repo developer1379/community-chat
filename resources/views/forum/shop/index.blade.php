@@ -83,7 +83,7 @@
             
             <!-- Mobile Wallet and Categories (Visible only on Mobile) -->
             <div class="lg:hidden flex flex-col gap-4 mb-2">
-                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm flex items-center justify-between text-left">
+                <div class="bg-white dark:bg-slate-900 border-y border-slate-200 dark:border-slate-800 rounded-none p-4 shadow-sm flex items-center justify-between text-left">
                     <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">My Balance</span>
                     <div class="flex items-center gap-1.5 text-sm font-black text-slate-900 dark:text-white">
                         <span class="material-symbols-outlined text-amber-500 text-base">monetization_on</span>
@@ -103,20 +103,46 @@
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-md text-left">
+            <div class="bg-white dark:bg-slate-900 border-y sm:border border-slate-200 dark:border-slate-800 rounded-none sm:rounded-3xl p-4 sm:p-6 shadow-md text-left">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 dark:border-slate-850 pb-4 mb-6 gap-3">
                     <div>
-                        <h2 class="text-lg font-black text-slate-850 dark:text-white uppercase tracking-wider">
+                        <h2 class="text-lg font-black text-slate-855 dark:text-white uppercase tracking-wider">
                             {{ $selectedCategory ?: 'All Shop Items' }}
                         </h2>
                         <p class="text-xs text-slate-400 mt-1">Upgrade your account profile style, content visibility, and forum experiences.</p>
                     </div>
                 </div>
 
-                <!-- Products Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Products Grid / Mobile Lists -->
+                <div class="space-y-0 sm:space-y-6 sm:grid sm:grid-cols-2 sm:gap-6">
                     @forelse($shopItems as $item)
-                        <div class="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 hover:shadow-lg transition-all duration-300 flex flex-col justify-between space-y-4">
+                        <!-- Mobile List Layout (Visible on mobile only, flat and compact) -->
+                        <div class="flex sm:hidden items-center justify-between py-3 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-850/60 hover:bg-slate-50 dark:hover:bg-slate-955/20 transition-colors w-full">
+                            <div class="min-w-0 pr-3 text-left">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="inline-block text-[7.5px] font-black uppercase tracking-wider px-1.5 py-0.2 rounded bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400 border border-blue-100/40 dark:border-blue-900/35 leading-none">
+                                        {{ $item->category }}
+                                    </span>
+                                    <span class="text-[7.5px] font-bold text-slate-400">
+                                        {{ $item->stock !== null ? "Stock: {$item->stock}" : 'Unlimited' }}
+                                    </span>
+                                </div>
+                                <h3 class="font-extrabold text-slate-855 dark:text-white text-xs mt-1.5 hover:text-blue-650 dark:hover:text-blue-400 transition-colors">
+                                    <a href="{{ route('shop.show', $item->id) }}">{{ $item->name }}</a>
+                                </h3>
+                                <p class="text-[9.5px] font-black text-emerald-650 dark:text-emerald-455 mt-1">
+                                    {{ number_format($item->price, 2) }} DF Coins
+                                </p>
+                            </div>
+                            <div class="shrink-0">
+                                <a href="{{ route('shop.show', $item->id) }}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-[10px] shadow-sm transition-all">
+                                    <span>Details</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Desktop Card Layout (Visible from sm upwards) -->
+                        <div class="hidden sm:flex bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 hover:shadow-lg transition-all duration-300 flex-col justify-between space-y-4">
                             <div class="space-y-2.5">
                                 <!-- Category Badge -->
                                 <span class="inline-block text-[8px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400 border border-blue-100/40 dark:border-blue-900/35 leading-none">
@@ -127,7 +153,7 @@
                                     <a href="{{ route('shop.show', $item->id) }}">{{ $item->name }}</a>
                                 </h3>
                                 
-                                <p class="text-xs text-slate-450 dark:text-slate-400 leading-relaxed line-clamp-2">
+                                <p class="text-xs text-slate-455 dark:text-slate-400 leading-relaxed line-clamp-2">
                                     {{ $item->description }}
                                 </p>
                             </div>
@@ -148,7 +174,7 @@
                                 <div class="flex items-center justify-between pt-1">
                                     <div class="text-left">
                                         <span class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block leading-none">Price</span>
-                                        <span class="text-sm font-black text-emerald-650 dark:text-emerald-400 block mt-0.5 leading-none">
+                                        <span class="text-sm font-black text-emerald-650 dark:text-emerald-450 block mt-0.5 leading-none">
                                             {{ number_format($item->price, 2) }} DF Coins
                                         </span>
                                         <span class="text-[8.5px] font-bold text-slate-400 block mt-1">
