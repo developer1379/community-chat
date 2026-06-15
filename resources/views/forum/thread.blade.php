@@ -752,6 +752,7 @@ article
                 confirmButtonColor: '#1e293b'
             });
         });
+    }
 
     if (replyMediaInput) {
         replyMediaInput.addEventListener('change', function(e) {

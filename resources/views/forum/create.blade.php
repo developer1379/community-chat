@@ -411,6 +411,7 @@
                 confirmButtonColor: '#0f172a'
             });
         });
+    }
 
     mediaInput.addEventListener('change', function(e) {
         // Append newly selected files to our tracking list
