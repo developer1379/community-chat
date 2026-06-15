@@ -316,10 +316,6 @@
                             </div>
 
                         </div>
-                    @empty
-                        <div class="p-8 text-center text-slate-400 dark:text-slate-500 font-bold">
-                            No threads have been created yet. Be the first to start a discussion!
-                        </div>
                     @endforelse
                 </div>
 
@@ -341,62 +337,62 @@
                 $latestProfilePosts = \App\Models\Post::whereHas('attachments')
                     ->with(['user', 'thread'])
                     ->latest()
-                    ->take(3)
+                    ->take(4)
                     ->get();
             @endphp
             @if($latestProfilePosts->isNotEmpty())
-                <div class="border-y sm:border border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-slate-900 rounded-none sm:rounded-3xl shadow-sm text-left">
-                    <h3 class="text-xs font-black tracking-wider text-slate-400 dark:text-slate-500 uppercase mb-4 flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-blue-600 text-sm">rss_feed</span> Latest profile posts
+                <div class="border-y sm:border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900 rounded-none sm:rounded-2xl shadow-sm text-left">
+                    <h3 class="text-[11px] font-black tracking-[0.15em] text-slate-400 dark:text-slate-500 uppercase mb-3 flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
+                        <span class="material-symbols-outlined text-blue-600 text-[16px]">rss_feed</span> Latest Profile Posts
                     </h3>
-                    <div class="space-y-4">
+                    <div class="space-y-3">
                         @foreach($latestProfilePosts as $post)
                             @php
                                 $firstAttach = $post->attachments->first();
                             @endphp
-                            <div class="space-y-2 border-b border-slate-100 dark:border-slate-850 pb-3.5 last:border-0 last:pb-0">
-                                <!-- User & Title -->
-                                <div class="flex items-center gap-2">
-                                    <a href="{{ route('profile.show', $post->user->name) }}"
-                                       data-user-hover="true"
-                                       data-user-name="{{ $post->user->name }}"
-                                       data-user-badge="{{ $post->user->title_badge }}"
-                                       data-user-joined="{{ $post->user->created_at->format('M d, Y') }}"
-                                       data-user-threads="{{ $post->user->threads()->count() }}"
-                                       data-user-posts="{{ $post->user->posts()->count() }}"
-                                       data-user-uploads="{{ $post->user->attachments()->count() }}"
-                                       data-user-avatar="{{ $post->user->avatar_url }}"
-                                       data-user-banner="{{ $post->user->banner_color }}"
-                                       data-user-banner-path="{{ $post->user->banner_path }}"
-                                       class="w-6 h-6 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 block">
-                                        <img src="{{ $post->user->avatar_url }}" class="w-full h-full object-cover">
-                                    </a>
-                                    <div class="leading-none">
+                            <div class="flex gap-3 items-start border-b border-slate-100/70 dark:border-slate-850 pb-3 last:border-0 last:pb-0">
+                                <!-- User Avatar -->
+                                <a href="{{ route('profile.show', $post->user->name) }}"
+                                   data-user-hover="true"
+                                   data-user-name="{{ $post->user->name }}"
+                                   data-user-badge="{{ $post->user->title_badge }}"
+                                   data-user-joined="{{ $post->user->created_at->format('M d, Y') }}"
+                                   data-user-threads="{{ $post->user->threads()->count() }}"
+                                   data-user-posts="{{ $post->user->posts()->count() }}"
+                                   data-user-uploads="{{ $post->user->attachments()->count() }}"
+                                   data-user-avatar="{{ $post->user->avatar_url }}"
+                                   data-user-banner="{{ $post->user->banner_color }}"
+                                   data-user-banner-path="{{ $post->user->banner_path }}"
+                                   class="w-7 h-7 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 block shadow-sm">
+                                    <img src="{{ $post->user->avatar_url }}" class="w-full h-full object-cover">
+                                </a>
+                                
+                                <!-- Text Content and Title Info -->
+                                <div class="flex-grow min-w-0 space-y-0.5">
+                                    <div class="flex items-center justify-between gap-1 leading-none">
                                         <a href="{{ route('profile.show', $post->user->name) }}"
                                            data-user-hover="true"
                                            data-user-name="{{ $post->user->name }}"
-                                           data-user-badge="{{ $post->user->title_badge }}"
-                                           data-user-joined="{{ $post->user->created_at->format('M d, Y') }}"
-                                           data-user-threads="{{ $post->user->threads()->count() }}"
-                                           data-user-posts="{{ $post->user->posts()->count() }}"
-                                           data-user-uploads="{{ $post->user->attachments()->count() }}"
-                                           data-user-avatar="{{ $post->user->avatar_url }}"
-                                           data-user-banner="{{ $post->user->banner_color }}"
-                                           data-user-banner-path="{{ $post->user->banner_path }}"
-                                           class="text-xs font-extrabold text-blue-600 dark:text-blue-455 hover:underline"
+                                           class="text-[11px] font-extrabold text-slate-800 dark:text-slate-200 hover:text-blue-600 hover:underline truncate"
                                            style="{{ $post->user->username_style_css }}">{{ $post->user->name }}</a>
-                                        <span class="text-[8px] text-slate-400 font-bold block mt-0.5">{{ $post->created_at->diffForHumans() }}</span>
+                                        <span class="text-[9px] text-slate-400 font-bold whitespace-nowrap">{{ $post->created_at->diffForHumans(null, true) }}</span>
+                                    </div>
+                                    <!-- Post Content Snippet -->
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-2">
+                                        {{ strip_tags($post->content) }}
+                                    </p>
+                                    <!-- Embedded small metadata row -->
+                                    <div class="flex items-center gap-1.5 text-[9px] font-bold text-slate-400">
+                                        <span>in</span>
+                                        <a href="{{ route('threads.show', $post->thread->slug) }}" class="text-blue-600 dark:text-blue-400 hover:underline truncate max-w-[120px]">{{ $post->thread->title }}</a>
                                     </div>
                                 </div>
-                                <!-- Post snippet text -->
-                                <p class="text-xs text-slate-650 dark:text-slate-355 leading-relaxed line-clamp-2">
-                                    {{ strip_tags($post->content) }}
-                                </p>
-                                <!-- Image attachment preview at bottom if exists -->
+
+                                <!-- Compact Attachment Thumbnail -->
                                 @if($firstAttach)
-                                    <div class="h-20 w-full rounded-xl overflow-hidden border border-slate-250 dark:border-slate-800 bg-slate-50">
+                                    <a href="#" onclick="openLightbox('{{ $firstAttach->file_path }}', '{{ $post->thread->title }}'); return false;" class="w-10 h-10 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-50 flex-shrink-0 block hover:scale-105 transition-transform shadow-sm">
                                         <img src="{{ $firstAttach->file_path }}" class="w-full h-full object-cover">
-                                    </div>
+                                    </a>
                                 @endif
                             </div>
                         @endforeach
@@ -405,22 +401,58 @@
             @endif
 
             <!-- Recent Activity Sidebar -->
-            <div class="border-y sm:border border-slate-200 dark:border-slate-800 p-5 bg-white dark:bg-slate-900 rounded-none sm:rounded-2xl shadow-sm text-left">
-                <h3 class="text-sm font-extrabold tracking-wider text-slate-550 dark:text-slate-400 uppercase mb-4 flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-blue-600 text-sm">electric_bolt</span> Recent Activity
+            <div class="border-y sm:border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900 rounded-none sm:rounded-2xl shadow-sm text-left">
+                <h3 class="text-[11px] font-black tracking-[0.15em] text-slate-400 dark:text-slate-500 uppercase mb-3 flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <span class="material-symbols-outlined text-blue-600 text-[16px]">electric_bolt</span> Recent Activity
                 </h3>
-                <div class="space-y-3.5">
+                <div class="space-y-3">
                     @foreach($activeThreads as $activeThread)
-                        <div class="text-xs leading-normal border-b border-slate-100 dark:border-slate-850 pb-3 last:border-0 last:pb-0">
-                            <h4 class="font-bold text-slate-850 dark:text-slate-205 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm">
-                                <a href="{{ route('threads.show', $activeThread->slug) }}">{{ $activeThread->title }}</a>
-                            </h4>
-                            <div class="flex items-center gap-2 mt-1.5 text-slate-450 dark:text-slate-500 font-bold text-xs">
-                                <span class="px-1.5 py-0.5 rounded-2xl bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-450 font-bold border border-blue-150 dark:border-blue-900/30">
-                                    {{ $activeThread->category->name }}
-                                </span>
-                                <span>•</span>
-                                <span>{{ $activeThread->posts_count }} replies</span>
+                        @php
+                            $activeLastPost = $activeThread->lastPost;
+                            $activeLastUser = $activeLastPost ? $activeLastPost->user : $activeThread->user;
+                            $activeLastTime = $activeLastPost ? $activeLastPost->created_at->diffForHumans(null, true) : $activeThread->created_at->diffForHumans(null, true);
+                        @endphp
+                        <div class="flex gap-2.5 items-start border-b border-slate-100/70 dark:border-slate-850 pb-2.5 last:border-0 last:pb-0">
+                            <!-- Thread Creator Avatar -->
+                            <a href="{{ route('profile.show', $activeThread->user->name) }}"
+                               data-user-hover="true"
+                               data-user-name="{{ $activeThread->user->name }}"
+                               data-user-badge="{{ $activeThread->user->title_badge }}"
+                               data-user-joined="{{ $activeThread->user->created_at->format('M d, Y') }}"
+                               data-user-threads="{{ $activeThread->user->threads()->count() }}"
+                               data-user-posts="{{ $activeThread->user->posts()->count() }}"
+                               data-user-uploads="{{ $activeThread->user->attachments()->count() }}"
+                               data-user-avatar="{{ $activeThread->user->avatar_url }}"
+                               data-user-banner="{{ $activeThread->user->banner_color }}"
+                               data-user-banner-path="{{ $activeThread->user->banner_path }}"
+                               class="w-7 h-7 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 block shadow-sm mt-0.5">
+                                <img src="{{ $activeThread->user->avatar_url }}" class="w-full h-full object-cover">
+                            </a>
+
+                            <!-- Thread Info -->
+                            <div class="flex-grow min-w-0 space-y-0.5">
+                                <h4 class="font-extrabold text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-xs leading-snug truncate">
+                                    <a href="{{ route('threads.show', $activeThread->slug) }}">{{ $activeThread->title }}</a>
+                                </h4>
+                                
+                                <!-- Detail Row -->
+                                <div class="flex items-center justify-between text-[9px] font-bold text-slate-400 leading-none">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="px-1 py-0.2 rounded bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-extrabold text-[8px] uppercase">
+                                            {{ $activeThread->category->name }}
+                                        </span>
+                                        <span>💬 {{ $activeThread->posts_count }} replies</span>
+                                    </div>
+                                    
+                                    <!-- Last Poster Info -->
+                                    <span class="text-right">
+                                        last: <a href="{{ route('profile.show', $activeLastUser->name) }}"
+                                                 data-user-hover="true"
+                                                 data-user-name="{{ $activeLastUser->name }}"
+                                                 class="text-slate-655 dark:text-slate-355 hover:underline font-extrabold"
+                                                 style="{{ $activeLastUser->username_style_css }}">{{ $activeLastUser->name }}</a> • {{ $activeLastTime }}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     @endforeach
