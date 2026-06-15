@@ -367,11 +367,12 @@
                             [{ 'color': [] }, { 'background': [] }],
                             ['blockquote', 'code-block'],
                             [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                            ['link', 'image'],
+                            ['link', 'image', 'video'],
                             ['clean']
                         ],
                         handlers: {
-                            image: selectLocalImage
+                            image: selectLocalImage,
+                            video: selectVideoOption
                         }
                     }
                 },
@@ -400,6 +401,57 @@
                 });
             }
         });
+
+        function selectVideoOption() {
+            const range = quill.getSelection(true);
+            Swal.fire({
+                title: '🎥 Insert / Upload Video',
+                html: `
+                    <div class="text-left text-xs space-y-3">
+                        <p class="text-slate-500 font-medium">To share videos, upload them to one of these <strong>5 free hosting servers</strong>, then copy and paste the video link below:</p>
+                        <div class="grid grid-cols-2 gap-2 pt-1 pb-3">
+                            <a href="https://sendvid.com" target="_blank" class="flex items-center gap-1.5 p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 text-slate-700 hover:text-blue-600 font-bold transition-all text-[11px]">
+                                <span>📤 Sendvid</span>
+                            </a>
+                            <a href="https://streamable.com" target="_blank" class="flex items-center gap-1.5 p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 text-slate-700 hover:text-blue-600 font-bold transition-all text-[11px]">
+                                <span>📹 Streamable</span>
+                            </a>
+                            <a href="https://youtube.com" target="_blank" class="flex items-center gap-1.5 p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 text-slate-700 hover:text-blue-600 font-bold transition-all text-[11px]">
+                                <span>🔴 YouTube</span>
+                            </a>
+                            <a href="https://vimeo.com" target="_blank" class="flex items-center gap-1.5 p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 text-slate-700 hover:text-blue-600 font-bold transition-all text-[11px]">
+                                <span>🔵 Vimeo</span>
+                            </a>
+                            <a href="https://gofile.io" target="_blank" class="flex items-center gap-1.5 p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 text-slate-700 hover:text-blue-600 font-bold transition-all text-[11px] col-span-2 justify-center">
+                                <span>📁 GoFile Free Storage</span>
+                            </a>
+                        </div>
+                        <label class="block font-black text-slate-700 uppercase tracking-wider">Paste Video Embed / Share Link:</label>
+                    </div>
+                `,
+                input: 'url',
+                inputPlaceholder: 'https://sendvid.com/embed/... or YouTube URL',
+                showCancelButton: true,
+                confirmButtonText: 'Insert Video',
+                confirmButtonColor: '#0f172a',
+                cancelButtonColor: '#e11d48'
+            }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                    let videoUrl = result.value;
+                    if (videoUrl.includes('youtube.com/watch?v=')) {
+                        videoUrl = videoUrl.replace('watch?v=', 'embed/');
+                    } else if (videoUrl.includes('youtu.be/')) {
+                        const id = videoUrl.split('/').pop().split('?')[0];
+                        videoUrl = `https://www.youtube.com/embed/${id}`;
+                    } else if (videoUrl.includes('vimeo.com/') && !videoUrl.includes('player.vimeo.com')) {
+                        const id = videoUrl.split('/').pop().split('?')[0];
+                        videoUrl = `https://player.vimeo.com/video/${id}`;
+                    }
+                    quill.insertEmbed(range.index, 'video', videoUrl);
+                    quill.setSelection(range.index + 1);
+                }
+            });
+        }
 
         // Custom image handler for Quill to upload to ImgBB
         function selectLocalImage() {
