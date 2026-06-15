@@ -385,16 +385,18 @@
                                     <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-snug line-clamp-2">
                                         {{ strip_tags($post->content) }}
                                     </p>
-                                    <!-- Embedded small metadata row -->
-                                    <div class="flex items-center gap-1.5 text-[9px] font-bold text-slate-400">
-                                        <span>in</span>
-                                        <a href="{{ route('threads.show', $post->thread->slug) }}" class="text-blue-600 dark:text-blue-400 hover:underline truncate max-w-[120px]">{{ $post->thread->title }}</a>
-                                    </div>
+                                    
+                                    @if($post->thread)
+                                        <div class="flex items-center gap-1.5 text-[9px] font-bold text-slate-400">
+                                            <span>in</span>
+                                            <a href="{{ route('threads.show', $post->thread->slug) }}" class="text-blue-600 dark:text-blue-400 hover:underline truncate max-w-[120px]">{{ $post->thread->title }}</a>
+                                        </div>
+                                    @endif
                                 </div>
 
                                 <!-- Compact Attachment Thumbnail -->
                                 @if($firstAttach)
-                                    <a href="#" onclick="openLightbox('{{ $firstAttach->file_path }}', '{{ $post->thread->title }}'); return false;" class="w-10 h-10 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-50 flex-shrink-0 block hover:scale-105 transition-transform shadow-sm">
+                                    <a href="#" onclick="openLightbox('{{ $firstAttach->file_path }}', '{{ $post->thread ? $post->thread->title : 'Attachment' }}'); return false;" class="w-10 h-10 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-50 flex-shrink-0 block hover:scale-105 transition-transform shadow-sm">
                                         <img src="{{ $firstAttach->file_path }}" class="w-full h-full object-cover">
                                     </a>
                                 @endif
