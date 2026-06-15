@@ -396,7 +396,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Upload Failed',
-                    text: 'Failed to obtain image URL from ImgBB service.',
+                    html: 'Failed to obtain image URL from ImgBB service. You can upload directly at <a href="https://imgbb.com/upload" target="_blank" class="text-blue-600 underline font-bold">https://imgbb.com/upload</a> and paste the link in your post.',
                     confirmButtonColor: '#0f172a'
                 });
             }
@@ -407,11 +407,10 @@
             Swal.fire({
                 icon: 'error',
                 title: 'Upload Error',
-                text: 'An error occurred during image upload to ImgBB. Please try again.',
+                html: 'An error occurred during image upload to ImgBB. You can upload directly at <a href="https://imgbb.com/upload" target="_blank" class="text-blue-600 underline font-bold">https://imgbb.com/upload</a> and paste the link in your post.',
                 confirmButtonColor: '#0f172a'
             });
         });
-    }
 
     mediaInput.addEventListener('change', function(e) {
         // Append newly selected files to our tracking list
