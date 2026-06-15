@@ -1379,7 +1379,8 @@ article
                     timer: 2000,
                     showConfirmButton: false
                 }).then(() => {
-                    const widgetBtn = document.querySelector('#reply-imgbb-upload-container button');
+                    const container = document.getElementById('reply-imgbb-upload-container');
+                    const widgetBtn = container ? (container.nextElementSibling ? container.nextElementSibling.querySelector('button') : null) : null;
                     if (widgetBtn) {
                         widgetBtn.click();
                     }
@@ -1396,7 +1397,8 @@ article
                 timer: 2000,
                 showConfirmButton: false
             }).then(() => {
-                const widgetBtn = document.querySelector('#reply-imgbb-upload-container button');
+                const container = document.getElementById('reply-imgbb-upload-container');
+                const widgetBtn = container ? (container.nextElementSibling ? container.nextElementSibling.querySelector('button') : null) : null;
                 if (widgetBtn) {
                     widgetBtn.click();
                 }
@@ -1531,7 +1533,8 @@ article
                     timer: 2000,
                     showConfirmButton: false
                 }).then(() => {
-                    const widgetBtn = document.querySelector('#edit-post-imgbb-upload-container button');
+                    const container = document.getElementById('edit-post-imgbb-upload-container');
+                    const widgetBtn = container ? (container.nextElementSibling ? container.nextElementSibling.querySelector('button') : null) : null;
                     if (widgetBtn) {
                         widgetBtn.click();
                     }
@@ -1548,7 +1551,8 @@ article
                 timer: 2000,
                 showConfirmButton: false
             }).then(() => {
-                const widgetBtn = document.querySelector('#edit-post-imgbb-upload-container button');
+                const container = document.getElementById('edit-post-imgbb-upload-container');
+                const widgetBtn = container ? (container.nextElementSibling ? container.nextElementSibling.querySelector('button') : null) : null;
                 if (widgetBtn) {
                     widgetBtn.click();
                 }

@@ -471,7 +471,8 @@
                         timer: 2000,
                         showConfirmButton: false
                     }).then(() => {
-                        const widgetBtn = document.querySelector('#imgbb-upload-container button');
+                        const container = document.getElementById('imgbb-upload-container');
+                        const widgetBtn = container ? (container.nextElementSibling ? container.nextElementSibling.querySelector('button') : null) : null;
                         if (widgetBtn) {
                             widgetBtn.click();
                         }
@@ -488,7 +489,8 @@
                     timer: 2000,
                     showConfirmButton: false
                 }).then(() => {
-                    const widgetBtn = document.querySelector('#imgbb-upload-container button');
+                    const container = document.getElementById('imgbb-upload-container');
+                    const widgetBtn = container ? (container.nextElementSibling ? container.nextElementSibling.querySelector('button') : null) : null;
                     if (widgetBtn) {
                         widgetBtn.click();
                     }
