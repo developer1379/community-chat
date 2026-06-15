@@ -18,7 +18,7 @@
     </div>
 
     <!-- Edit Form Card -->
-    <div class="bg-white rounded-[2rem] border border-slate-200 shadow-xl overflow-hidden relative">
+    <div class="bg-white rounded-none sm:rounded-[2rem] border-y sm:border border-slate-200 shadow-xl overflow-hidden relative">
         <div class="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
         
         <div class="bg-slate-50/80 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
@@ -105,8 +105,18 @@
                 <input type="hidden" id="content-input" name="content" value="{{ old('content', $thread->firstPost?->content) }}">
                 
                 <!-- Quill container with custom HSL overrides -->
-                <div class="rounded-2xl border border-slate-200 overflow-hidden bg-slate-50/50 focus-within:ring-2 focus-within:ring-blue-500/10 focus-within:border-blue-500 transition-all">
-                    <div id="quill-editor" class="bg-white" style="height: 300px; font-size: 13.5px;">{!! old('content', $thread->firstPost?->content) !!}</div>
+                <div class="rounded-2xl border border-slate-200 bg-slate-50/50 focus-within:ring-2 focus-within:ring-blue-500/10 focus-within:border-blue-500 transition-all relative z-30">
+                    <style>
+                        .ql-toolbar.ql-snow {
+                            border-top-left-radius: 1rem !important;
+                            border-top-right-radius: 1rem !important;
+                        }
+                        .ql-container.ql-snow {
+                            border-bottom-left-radius: 1rem !important;
+                            border-bottom-right-radius: 1rem !important;
+                        }
+                    </style>
+                    <div id="quill-editor" class="bg-white rounded-b-2xl" style="height: 300px; font-size: 13.5px;">{!! old('content', $thread->firstPost?->content) !!}</div>
                 </div>
                 
                 @error('content')
