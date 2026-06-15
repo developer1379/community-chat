@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="space-y-6 max-w-7xl mx-auto">
+<div class="space-y-6 w-full mx-auto">
     <!-- Premium Material Welcome Banner with Glowing vector illustration -->
     <div class="relative rounded-[28px] overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-900 dark:bg-slate-950 p-8 sm:p-10 text-white shadow-xl">
         <!-- Background absolute decorative shapes -->
@@ -216,324 +216,78 @@
         </div>
     @endif
 
-    <!-- Desktop List Layout (MD3 List Items in a neat Card surface) -->
-    <div class="hidden md:block space-y-3">
+    <!-- Unified Responsive Grid Card Layout -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @forelse($users as $user)
-            <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 rounded-2xl flex items-center justify-between gap-4 shadow-sm hover:shadow-md hover:border-blue-300 dark:hover:border-blue-800 transition-all duration-200">
-                <!-- Left Section: Rank + Member info -->
-                <div class="flex items-center gap-4 min-w-0">
-                    <!-- Rank Position Medal/Badge (Vector images, not icon font) -->
-                    <div class="w-12 flex-shrink-0 text-center font-extrabold text-slate-800 dark:text-slate-200">
-                        @if($loop->iteration === 1)
-                            <span class="inline-flex w-10 h-10 items-center justify-center cursor-help" title="1st Place Gold Champion">
-                                <svg class="w-9 h-9 drop-shadow-[0_2px_4px_rgba(245,158,11,0.3)]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M16 18H12C9.79 18 8 19.79 8 22V26C8 30.42 11.58 34 16 34H18V18H16Z" fill="url(#goldRowMetallic)"/>
-                                    <path d="M48 18H46V34H48C52.42 34 56 30.42 56 26V22C56 19.79 54.21 18 52 18H48Z" fill="url(#goldRowMetallic)"/>
-                                    <path d="M44 10H20V34C20 40.63 25.37 46 32 46C38.63 46 44 40.63 44 34V10Z" fill="url(#goldRowMetallicAccent)"/>
-                                    <path d="M32 46V54H22V58H42V54H32V46Z" fill="url(#goldRowMetallic)"/>
-                                    <circle cx="32" cy="24" r="8" fill="#ffffff" fill-opacity="0.3"/>
-                                    <path d="M32 18L33.8 21.6L37.8 22.2L34.9 25L35.6 29L32 27.1L28.4 29L29.1 25L26.2 22.2L30.2 21.6L32 18Z" fill="#fff"/>
-                                    <defs>
-                                        <linearGradient id="goldRowMetallic" x1="8" y1="10" x2="56" y2="58" gradientUnits="userSpaceOnUse">
-                                            <stop offset="0%" stop-color="#fef08a" />
-                                            <stop offset="35%" stop-color="#f59e0b" />
-                                            <stop offset="70%" stop-color="#b45309" />
-                                            <stop offset="100%" stop-color="#78350f" />
-                                        </linearGradient>
-                                        <linearGradient id="goldRowMetallicAccent" x1="20" y1="10" x2="44" y2="46" gradientUnits="userSpaceOnUse">
-                                            <stop offset="0%" stop-color="#fef08a" />
-                                            <stop offset="30%" stop-color="#fbbf24" />
-                                            <stop offset="70%" stop-color="#d97706" />
-                                            <stop offset="100%" stop-color="#92400e" />
-                                        </linearGradient>
-                                    </defs>
-                                </svg>
-                            </span>
-                        @elseif($loop->iteration === 2)
-                            <span class="inline-flex w-10 h-10 items-center justify-center cursor-help" title="2nd Place Silver Finalist">
-                                <svg class="w-8 h-8 drop-shadow-[0_2px_4px_rgba(148,163,184,0.25)]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="32" cy="32" r="26" fill="url(#silverRowMetallic)" stroke="#94a3b8" stroke-width="2"/>
-                                    <circle cx="32" cy="32" r="20" fill="url(#silverRowMetallicAccent)"/>
-                                    <path d="M26 44L32 20L38 44L26 44Z" fill="#ffffff" fill-opacity="0.3"/>
-                                    <text x="32" y="38" font-size="18" font-weight="900" fill="#475569" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">2</text>
-                                    <defs>
-                                        <linearGradient id="silverRowMetallic" x1="6" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
-                                            <stop offset="0%" stop-color="#f1f5f9" />
-                                            <stop offset="50%" stop-color="#cbd5e1" />
-                                            <stop offset="100%" stop-color="#64748b" />
-                                        </linearGradient>
-                                        <linearGradient id="silverRowMetallicAccent" x1="12" y1="12" x2="52" y2="52" gradientUnits="userSpaceOnUse">
-                                            <stop offset="0%" stop-color="#ffffff" />
-                                            <stop offset="50%" stop-color="#e2e8f0" />
-                                            <stop offset="100%" stop-color="#94a3b8" />
-                                        </linearGradient>
-                                    </defs>
-                                </svg>
-                            </span>
-                        @elseif($loop->iteration === 3)
-                            <span class="inline-flex w-10 h-10 items-center justify-center cursor-help" title="3rd Place Bronze Medalist">
-                                <svg class="w-8 h-8 drop-shadow-[0_2px_4px_rgba(180,83,9,0.25)]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="32" cy="32" r="26" fill="url(#bronzeRowMetallic)" stroke="#b45309" stroke-width="2"/>
-                                    <circle cx="32" cy="32" r="20" fill="url(#bronzeRowMetallicAccent)"/>
-                                    <text x="32" y="38" font-size="18" font-weight="900" fill="#78350f" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">3</text>
-                                    <defs>
-                                        <linearGradient id="bronzeRowMetallic" x1="6" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
-                                            <stop offset="0%" stop-color="#ffedd5" />
-                                            <stop offset="50%" stop-color="#d97706" />
-                                            <stop offset="100%" stop-color="#78350f" />
-                                        </linearGradient>
-                                        <linearGradient id="bronzeRowMetallicAccent" x1="12" y1="12" x2="52" y2="52" gradientUnits="userSpaceOnUse">
-                                            <stop offset="0%" stop-color="#ffedd5" />
-                                            <stop offset="50%" stop-color="#f59e0b" />
-                                            <stop offset="100%" stop-color="#b45309" />
-                                        </linearGradient>
-                                    </defs>
-                                </svg>
-                            </span>
-                        @else
-                            <span class="text-xs text-slate-600 dark:text-slate-350 font-black bg-slate-100 dark:bg-slate-800 w-8 h-8 inline-flex items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 shadow-inner">#{{ $loop->iteration }}</span>
-                        @endif
-                    </div>
+            <div class="relative rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 group/card flex flex-col h-[280px] text-left">
+                <!-- Top banner decoration -->
+                <div class="h-16 relative bg-cover bg-center shrink-0" style="background: {{ $user->banner_path ? 'url(' . $user->banner_path . ')' : ($user->banner_color ?: 'linear-gradient(135deg, #3b82f6, #8b5cf6)') }}">
+                    <!-- Floating Rank Pill -->
+                    <span class="absolute top-2 right-2 px-2.5 py-1 rounded-xl text-[9px] font-black tracking-wider shadow-sm uppercase leading-none bg-slate-900/60 dark:bg-slate-950/60 text-white backdrop-blur-sm border border-white/20">
+                        Rank #{{ $loop->iteration }}
+                    </span>
+                </div>
 
-                    <!-- Member Avatar -->
-                    <a href="{{ route('profile.show', $user->name) }}"
+                <!-- Avatar overlapping the banner -->
+                <div class="flex justify-center -mt-10 relative z-10 shrink-0">
+                    <a href="{{ route('profile.show', $user->name) }}" 
                        data-user-hover="true"
                        data-user-name="{{ $user->name }}"
-                       data-user-badge="{{ $user->title_badge }}"
-                       data-user-joined="{{ $user->created_at->format('M d, Y') }}"
-                       data-user-threads="{{ $user->threads()->count() }}"
-                       data-user-posts="{{ $user->posts()->count() }}"
-                       data-user-uploads="{{ $user->attachments()->count() }}"
-                       data-user-avatar="{{ $user->avatar_url }}"
-                       data-user-banner="{{ $user->banner_color }}"
-                       data-user-banner-path="{{ $user->banner_path }}"
-                       class="w-11 h-11 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm flex-shrink-0 block hover:ring-2 hover:ring-blue-500 transition-all bg-slate-100">
-                        <img src="{{ $user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
+                       class="w-20 h-20 rounded-2xl overflow-hidden bg-white dark:bg-slate-850 p-1 border-4 border-white dark:border-slate-900 shadow-md group-hover/card:scale-105 transition-transform block">
+                        <img src="{{ $user->avatar_url }}" class="w-full h-full object-cover rounded-xl" alt="avatar">
                     </a>
+                </div>
 
-                    <!-- Username -->
-                    <div class="min-w-0 leading-tight text-left">
+                <!-- Core user details -->
+                <div class="p-4 pt-2 text-center flex-grow flex flex-col justify-between space-y-3">
+                    <div class="space-y-1">
                         <a href="{{ route('profile.show', $user->name) }}"
                            data-user-hover="true"
                            data-user-name="{{ $user->name }}"
-                           data-user-badge="{{ $user->title_badge }}"
-                           data-user-joined="{{ $user->created_at->format('M d, Y') }}"
-                           data-user-threads="{{ $user->threads()->count() }}"
-                           data-user-posts="{{ $user->posts()->count() }}"
-                           data-user-uploads="{{ $user->attachments()->count() }}"
-                           data-user-avatar="{{ $user->avatar_url }}"
-                           data-user-banner="{{ $user->banner_color }}"
-                           data-user-banner-path="{{ $user->banner_path }}"
-                           class="font-bold text-slate-900 dark:text-white hover:text-blue-600 text-sm truncate block transition-colors">{{ $user->name }}</a>
-                        <p class="text-[11px] text-slate-500 font-medium mt-1">Joined {{ $user->created_at->format('M Y') }}</p>
+                           class="font-black text-slate-850 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 text-sm truncate block transition-colors leading-tight {{ $user->username_style }}"
+                           style="{{ $user->username_style_css }}">
+                            {{ $user->name }}
+                        </a>
+                        
+                        <div class="flex items-center justify-center gap-1.5 flex-wrap">
+                            @php
+                                $tier = $user->anime_tier;
+                            @endphp
+                            <span class="px-2 py-0.5 text-[8.5px] font-black uppercase rounded text-white shadow-sm leading-none" style="background-color: {{ $tier['color'] }}" title="{{ $tier['name'] }}">
+                                Lvl {{ $tier['level'] ?? 1 }}
+                            </span>
+                            
+                            <span class="px-2 py-0.5 text-[8.5px] font-extrabold uppercase rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 leading-none">
+                                {{ $user->title_badge ?? 'Member' }}
+                            </span>
+                        </div>
                     </div>
-                </div>
-
-                <!-- Middle Section: Ranks and specialties -->
-                <div class="flex items-center gap-3 flex-shrink-0">
-                    <!-- Otaku Tier -->
-                    @php
-                        $tier = $user->anime_tier;
-                        $tierName = $tier['name'];
-                        $tierColor = $tier['color'];
-                    @endphp
-                    <span class="inline-flex items-center gap-2 px-3.5 py-1.5 text-[11px] font-bold uppercase shadow-sm text-white rounded-full" style="background-color: {{ $tierColor }}">
-                        <span>Level {{ $tier['level'] ?? 1 }}</span>
-                        <span class="opacity-60">•</span>
-                        <span>{{ $tierName }}</span>
-                    </span>
-
-                    <!-- Specialty badge -->
-                    <span class="inline-flex px-3 py-1.5 text-[11px] font-bold uppercase bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm" style="border-left: 3px solid {{ $user->banner_color ?? '#3b82f6' }}">
-                        {{ $user->title_badge ?? 'Otaku Member' }}
-                    </span>
-                </div>
-
-                <!-- Right Section: Stats counters + Points -->
-                <div class="flex items-center gap-6 flex-shrink-0">
-                    <!-- Stats (Custom vector SVG illustrations instead of emojis) -->
-                    <div class="flex items-center gap-2.5 text-xs font-bold text-slate-500">
-                        <span class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 rounded-lg shadow-sm flex items-center gap-1" title="Threads started">
-                            <svg class="w-3.5 h-3.5 text-blue-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4 19.5C4 18.837 4.26339 18.2011 4.73223 17.7322C5.20107 17.2634 5.83696 17 6.5 17H20V3H6.5C5.83696 3 5.20107 3.26339 4.73223 3.73223C4.26339 4.20107 4 4.83696 4 5.5V19.5ZM4 19.5C4 20.163 4.26339 20.7989 4.73223 21.2678C5.20107 21.7366 5.83696 22 6.5 22H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            {{ $user->threads()->count() }}
-                        </span>
-                        <span class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-1.5 rounded-lg shadow-sm flex items-center gap-1" title="Replies posted">
-                            <svg class="w-3.5 h-3.5 text-emerald-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            {{ $user->posts()->count() }}
-                        </span>
+                    
+                    <!-- Metrics row -->
+                    <div class="grid grid-cols-3 gap-1 bg-slate-50 dark:bg-slate-955/40 p-2 rounded-2xl text-[9px] font-bold text-slate-400 dark:text-slate-500 border border-slate-100 dark:border-slate-850/50">
+                        <div class="text-center">
+                            <span class="block text-slate-755 dark:text-slate-300 font-black leading-none mb-1">{{ $user->threads()->count() }}</span>
+                            <span class="leading-none text-[8px]">Threads</span>
+                        </div>
+                        <div class="text-center border-x border-slate-200/50 dark:border-slate-800/50">
+                            <span class="block text-slate-755 dark:text-slate-300 font-black leading-none mb-1">{{ $user->posts()->count() }}</span>
+                            <span class="leading-none text-[8px]">Replies</span>
+                        </div>
+                        <div class="text-center">
+                            <span class="block text-blue-600 dark:text-blue-400 font-black leading-none mb-1">{{ number_format($user->calculated_points) }}</span>
+                            <span class="leading-none text-[8px]">Points</span>
+                        </div>
                     </div>
-
-                    <!-- Points pill -->
-                    <span class="inline-block font-extrabold text-blue-700 dark:text-blue-400 text-xs px-3.5 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-150 dark:border-blue-900/30 shadow-sm w-24 text-center hover:scale-105 transition-transform duration-200">
-                        {{ number_format($user->calculated_points) }} pts
-                    </span>
                 </div>
             </div>
         @empty
-            <!-- Open source style empty state vector graphic/image -->
-            <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 text-center rounded-2xl shadow-sm">
+            <div class="col-span-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 text-center rounded-2xl shadow-sm">
                 <svg class="w-32 h-32 mx-auto mb-4 opacity-75" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="60" cy="60" r="50" fill="url(#emptyStateGrad)" stroke="#E2E8F0" stroke-width="2" stroke-dasharray="4 4" />
                     <path d="M50 50C55.5228 50 60 45.5228 60 40C60 34.4772 55.5228 30 50 30C44.4772 30 40 34.4772 40 40C40 45.5228 44.4772 50 50 50Z" stroke="#94A3B8" stroke-width="3" />
                     <path d="M57 47L72 62" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" />
                     <defs>
                         <linearGradient id="emptyStateGrad" x1="10" y1="10" x2="110" y2="110" gradientUnits="userSpaceOnUse">
-                            <stop offset="0%" stop-color="#F8FAFC" />
-                            <stop offset="100%" stop-color="#F1F5F9" />
-                        </linearGradient>
-                    </defs>
-                </svg>
-                <p class="text-sm text-slate-500 font-medium">No community members matched this rankings filter.</p>
-            </div>
-        @endforelse
-    </div>
-
-    <!-- Mobile Card Layout (MD3 Card List) -->
-    <div class="block md:hidden space-y-4">
-        @forelse($users as $user)
-            <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm hover:shadow transition-all duration-200 flex flex-col gap-4">
-                <!-- Top Row: Rank + User profile info -->
-                <div class="flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <!-- Rank Medal -->
-                        <div class="w-8 flex-shrink-0 text-center font-extrabold text-slate-850 dark:text-slate-200">
-                            @if($loop->iteration === 1)
-                                <span class="inline-flex w-8 h-8 items-center justify-center">
-                                    <svg class="w-7 h-7 drop-shadow-[0_2px_4px_rgba(245,158,11,0.3)]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M16 18H12C9.79 18 8 19.79 8 22V26C8 30.42 11.58 34 16 34H18V18H16Z" fill="url(#goldMobMetallic)"/>
-                                        <path d="M48 18H46V34H48C52.42 34 56 30.42 56 26V22C56 19.79 54.21 18 52 18H48Z" fill="url(#goldMobMetallic)"/>
-                                        <path d="M44 10H20V34C20 40.63 25.37 46 32 46C38.63 46 44 40.63 44 34V10Z" fill="url(#goldMobMetallicAccent)"/>
-                                        <path d="M32 46V54H22V58H42V54H32V46Z" fill="url(#goldMobMetallic)"/>
-                                        <circle cx="32" cy="24" r="8" fill="#ffffff" fill-opacity="0.3"/>
-                                        <path d="M32 18L33.8 21.6L37.8 22.2L34.9 25L35.6 29L32 27.1L28.4 29L29.1 25L26.2 22.2L30.2 21.6L32 18Z" fill="#fff"/>
-                                        <defs>
-                                            <linearGradient id="goldMobMetallic" x1="8" y1="10" x2="56" y2="58" gradientUnits="userSpaceOnUse">
-                                                <stop offset="0%" stop-color="#fef08a" />
-                                                <stop offset="35%" stop-color="#f59e0b" />
-                                                <stop offset="70%" stop-color="#b45309" />
-                                                <stop offset="100%" stop-color="#78350f" />
-                                            </linearGradient>
-                                            <linearGradient id="goldMobMetallicAccent" x1="20" y1="10" x2="44" y2="46" gradientUnits="userSpaceOnUse">
-                                                <stop offset="0%" stop-color="#fef08a" />
-                                                <stop offset="30%" stop-color="#fbbf24" />
-                                                <stop offset="70%" stop-color="#d97706" />
-                                                <stop offset="100%" stop-color="#92400e" />
-                                            </linearGradient>
-                                        </defs>
-                                    </svg>
-                                </span>
-                            @elseif($loop->iteration === 2)
-                                <span class="inline-flex w-8 h-8 items-center justify-center">
-                                    <svg class="w-7 h-7 drop-shadow-[0_2px_4px_rgba(148,163,184,0.25)]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="32" cy="32" r="26" fill="url(#silverMobMetallic)" stroke="#94a3b8" stroke-width="2"/>
-                                        <circle cx="32" cy="32" r="20" fill="url(#silverMobMetallicAccent)"/>
-                                        <path d="M26 44L32 20L38 44L26 44Z" fill="#ffffff" fill-opacity="0.3"/>
-                                        <text x="32" y="38" font-size="18" font-weight="900" fill="#475569" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">2</text>
-                                        <defs>
-                                            <linearGradient id="silverMobMetallic" x1="6" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
-                                                <stop offset="0%" stop-color="#f1f5f9" />
-                                                <stop offset="50%" stop-color="#cbd5e1" />
-                                                <stop offset="100%" stop-color="#64748b" />
-                                            </linearGradient>
-                                            <linearGradient id="silverMobMetallicAccent" x1="12" y1="12" x2="52" y2="52" gradientUnits="userSpaceOnUse">
-                                                <stop offset="0%" stop-color="#ffffff" />
-                                                <stop offset="50%" stop-color="#e2e8f0" />
-                                                <stop offset="100%" stop-color="#94a3b8" />
-                                            </linearGradient>
-                                        </defs>
-                                    </svg>
-                                </span>
-                            @elseif($loop->iteration === 3)
-                                <span class="inline-flex w-8 h-8 items-center justify-center">
-                                    <svg class="w-7 h-7 drop-shadow-[0_2px_4px_rgba(180,83,9,0.25)]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="32" cy="32" r="26" fill="url(#bronzeMobMetallic)" stroke="#b45309" stroke-width="2"/>
-                                        <circle cx="32" cy="32" r="20" fill="url(#bronzeMobMetallicAccent)"/>
-                                        <text x="32" y="38" font-size="18" font-weight="900" fill="#78350f" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">3</text>
-                                        <defs>
-                                            <linearGradient id="bronzeMobMetallic" x1="6" y1="6" x2="58" y2="58" gradientUnits="userSpaceOnUse">
-                                                <stop offset="0%" stop-color="#ffedd5" />
-                                                <stop offset="50%" stop-color="#d97706" />
-                                                <stop offset="100%" stop-color="#78350f" />
-                                            </linearGradient>
-                                            <linearGradient id="bronzeMobMetallicAccent" x1="12" y1="12" x2="52" y2="52" gradientUnits="userSpaceOnUse">
-                                                <stop offset="0%" stop-color="#ffedd5" />
-                                                <stop offset="50%" stop-color="#f59e0b" />
-                                                <stop offset="100%" stop-color="#b45309" />
-                                            </linearGradient>
-                                        </defs>
-                                    </svg>
-                                </span>
-                            @else
-                                <span class="text-[10px] text-slate-500 font-bold bg-slate-50 dark:bg-slate-800 w-7 h-7 inline-flex items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 shadow-sm">#{{ $loop->iteration }}</span>
-                            @endif
-                        </div>
-
-                        <!-- Avatar -->
-                        <a href="{{ route('profile.show', $user->name) }}" class="w-10 h-10 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700 shadow flex-shrink-0 block bg-slate-100">
-                            <img src="{{ $user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
-                        </a>
-
-                        <!-- Username -->
-                        <div class="min-w-0 text-left">
-                            <a href="{{ route('profile.show', $user->name) }}" class="font-bold text-slate-900 dark:text-white hover:text-blue-600 text-sm truncate block">{{ $user->name }}</a>
-                            <p class="text-[10px] text-slate-500 font-medium leading-none mt-1">Joined {{ $user->created_at->format('M Y') }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Points pill -->
-                    <span class="inline-block font-extrabold text-blue-700 dark:text-blue-400 text-[10px] px-2.5 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-150 dark:border-blue-900/30 shadow-sm">
-                        {{ number_format($user->calculated_points) }} pts
-                    </span>
-                </div>
-
-                <!-- Mid Row: Badges side by side -->
-                <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
-                    <!-- Otaku Tier -->
-                    @php
-                        $tier = $user->anime_tier;
-                        $tierName = $tier['name'];
-                        $tierColor = $tier['color'];
-                    @endphp
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase shadow-sm text-white rounded-full" style="background-color: {{ $tierColor }}">
-                        <span>Level {{ $tier['level'] ?? 1 }}</span>
-                        <span class="opacity-60">•</span>
-                        <span>{{ $tierName }}</span>
-                    </span>
-
-                    <!-- Specialty badge -->
-                    <span class="inline-flex px-2.5 py-1 text-[10px] font-bold uppercase bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm" style="border-left: 2px solid {{ $user->banner_color ?? '#3b82f6' }}">
-                        {{ $user->title_badge ?? 'Otaku Member' }}
-                    </span>
-                </div>
-
-                <!-- Bottom Row: Vector Stats Counts -->
-                <div class="flex items-center justify-between border-t border-slate-100/60 dark:border-slate-800/60 pt-3 text-[10px] text-slate-500 font-bold bg-slate-50/20 dark:bg-slate-800/10 px-3 py-2 rounded-xl">
-                    <span class="flex items-center gap-1">
-                        <svg class="w-3.5 h-3.5 text-blue-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M4 19.5C4 18.837 4.26339 18.2011 4.73223 17.7322C5.20107 17.2634 5.83696 17 6.5 17H20V3H6.5C5.83696 3 5.20107 3.26339 4.73223 3.73223C4.26339 4.20107 4 4.83696 4 5.5V19.5ZM4 19.5C4 20.163 4.26339 20.7989 4.73223 21.2678C5.20107 21.7366 5.83696 22 6.5 22H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        {{ $user->threads()->count() }} Threads
-                    </span>
-                    <span class="flex items-center gap-1">
-                        <svg class="w-3.5 h-3.5 text-emerald-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        {{ $user->posts()->count() }} Replies
-                    </span>
-                </div>
-            </div>
-        @empty
-            <div class="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 text-center rounded-2xl shadow-sm flex flex-col items-center">
-                <svg class="w-24 h-24 opacity-60 mb-2" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="60" cy="60" r="50" fill="url(#emptyStateGradMob)" stroke="#E2E8F0" stroke-width="2" stroke-dasharray="4 4" />
-                    <path d="M50 50C55.5228 50 60 45.5228 60 40C60 34.4772 55.5228 30 50 30C44.4772 30 40 34.4772 40 40C40 45.5228 44.4772 50 50 50Z" stroke="#94A3B8" stroke-width="3" />
-                    <path d="M57 47L72 62" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" />
-                    <defs>
-                        <linearGradient id="emptyStateGradMob" x1="10" y1="10" x2="110" y2="110" gradientUnits="userSpaceOnUse">
                             <stop offset="0%" stop-color="#F8FAFC" />
                             <stop offset="100%" stop-color="#F1F5F9" />
                         </linearGradient>
