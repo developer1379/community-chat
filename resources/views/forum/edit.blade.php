@@ -102,7 +102,7 @@
             <div class="space-y-1.5">
                 <label for="quill-editor" class="text-[11px] font-black text-slate-700 uppercase tracking-widest ml-1">Discussion Content</label>
                 <!-- Hidden real field -->
-                <textarea id="content-input" name="content" class="hidden">{{ old('content', $thread->firstPost?->content) }}</textarea>
+                <textarea id="content-input" name="content" class="hidden" readonly>{{ old('content', $thread->firstPost?->content) }}</textarea>
                 
                 <!-- Quill container with custom HSL overrides -->
                 <div class="rounded-2xl border border-slate-200 bg-slate-50/50 focus-within:ring-2 focus-within:ring-blue-500/10 focus-within:border-blue-500 transition-all relative z-30">
@@ -116,6 +116,48 @@
                         .ql-container.ql-snow {
                             border-bottom-left-radius: 1rem !important;
                             border-bottom-right-radius: 1rem !important;
+                        }
+
+                        /* Custom ImgBB Upload Button Styling to match premium theme */
+                        .imgbb-container {
+                            display: inline-block !important;
+                            margin-top: 8px !important;
+                            margin-bottom: 8px !important;
+                        }
+
+                        .imgbb-button {
+                            display: inline-flex !important;
+                            align-items: center !important;
+                            gap: 6px !important;
+                            background-color: #f1f5f9 !important; /* light slate */
+                            color: #334155 !important;
+                            border: 1px solid #cbd5e1 !important;
+                            border-radius: 0.75rem !important; /* rounded-xl */
+                            padding: 0.5rem 1rem !important;
+                            font-size: 11px !important;
+                            font-weight: 700 !important;
+                            font-family: inherit !important;
+                            cursor: pointer !important;
+                            transition: all 0.2s !important;
+                            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+                        }
+
+                        .imgbb-button:hover {
+                            background-color: #e2e8f0 !important;
+                            color: #0f172a !important;
+                            border-color: #94a3b8 !important;
+                        }
+
+                        .dark .imgbb-button {
+                            background-color: #1e293b !important; /* slate-800 */
+                            color: #cbd5e1 !important;
+                            border-color: #334155 !important;
+                        }
+
+                        .dark .imgbb-button:hover {
+                            background-color: #334155 !important; /* slate-700 */
+                            color: #f8fafc !important;
+                            border-color: #475569 !important;
                         }
                     </style>
                     <div id="quill-editor" class="bg-white rounded-b-2xl" style="height: 300px; font-size: 13.5px;">{!! old('content', $thread->firstPost?->content) !!}</div>
@@ -429,7 +471,7 @@
                         timer: 2000,
                         showConfirmButton: false
                     }).then(() => {
-                        const widgetBtn = document.querySelector('#imgbb-upload-container .imgbb-plugin-btn');
+                        const widgetBtn = document.querySelector('#imgbb-upload-container button');
                         if (widgetBtn) {
                             widgetBtn.click();
                         }
@@ -446,7 +488,7 @@
                     timer: 2000,
                     showConfirmButton: false
                 }).then(() => {
-                    const widgetBtn = document.querySelector('#imgbb-upload-container .imgbb-plugin-btn');
+                    const widgetBtn = document.querySelector('#imgbb-upload-container button');
                     if (widgetBtn) {
                         widgetBtn.click();
                     }

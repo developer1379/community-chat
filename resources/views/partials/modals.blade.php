@@ -40,7 +40,7 @@
             @method('PUT')
             <div class="space-y-1.5">
                 <!-- Hidden Quill value storage -->
-                <textarea id="edit-post-content-input" name="content" class="hidden"></textarea>
+                <textarea id="edit-post-content-input" name="content" class="hidden" readonly></textarea>
                 <div class="rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
                     <div id="edit-post-quill-editor" style="height: 200px; font-size: 13px;"></div>
                 </div>

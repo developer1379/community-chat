@@ -383,7 +383,7 @@ article
                     <div class="space-y-1.5">
                         <label for="reply-quill-editor" class="text-[10px] font-bold text-slate-750 uppercase tracking-wider">Reply Message</label>
                         <!-- Hidden real field -->
-                        <textarea id="reply-content-input" name="content" class="hidden">{{ old('content') }}</textarea>
+                        <textarea id="reply-content-input" name="content" class="hidden" readonly>{{ old('content') }}</textarea>
                         
                         <!-- Quill container -->
                         <div class="relative rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
@@ -1379,7 +1379,7 @@ article
                     timer: 2000,
                     showConfirmButton: false
                 }).then(() => {
-                    const widgetBtn = document.querySelector('#reply-imgbb-upload-container .imgbb-plugin-btn');
+                    const widgetBtn = document.querySelector('#reply-imgbb-upload-container button');
                     if (widgetBtn) {
                         widgetBtn.click();
                     }
@@ -1396,7 +1396,7 @@ article
                 timer: 2000,
                 showConfirmButton: false
             }).then(() => {
-                const widgetBtn = document.querySelector('#reply-imgbb-upload-container .imgbb-plugin-btn');
+                const widgetBtn = document.querySelector('#reply-imgbb-upload-container button');
                 if (widgetBtn) {
                     widgetBtn.click();
                 }
@@ -1531,7 +1531,7 @@ article
                     timer: 2000,
                     showConfirmButton: false
                 }).then(() => {
-                    const widgetBtn = document.querySelector('#edit-post-imgbb-upload-container .imgbb-plugin-btn');
+                    const widgetBtn = document.querySelector('#edit-post-imgbb-upload-container button');
                     if (widgetBtn) {
                         widgetBtn.click();
                     }
@@ -1548,7 +1548,7 @@ article
                 timer: 2000,
                 showConfirmButton: false
             }).then(() => {
-                const widgetBtn = document.querySelector('#edit-post-imgbb-upload-container .imgbb-plugin-btn');
+                const widgetBtn = document.querySelector('#edit-post-imgbb-upload-container button');
                 if (widgetBtn) {
                     widgetBtn.click();
                 }
