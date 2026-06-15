@@ -223,7 +223,47 @@
                 $reactionsCount = \App\Models\React::whereIn('post_id', $user->posts()->pluck('id'))->count();
                 $tier = $user->anime_tier;
             @endphp
-            <div class="relative rounded-none sm:rounded-2xl overflow-hidden bg-white dark:bg-slate-900 border-b sm:border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 group/card flex flex-col h-[270px] text-left">
+            <!-- Mobile List Layout (Visible on mobile only, flat and compact) -->
+            <div class="flex sm:hidden items-center justify-between p-3 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-950/20 transition-colors w-full">
+                <div class="flex items-center gap-3 min-w-0">
+                    <!-- Rank Badge/Number -->
+                    <span class="w-6 text-center text-xs font-black text-slate-400 dark:text-slate-500">
+                        #{{ $loop->iteration }}
+                    </span>
+                    <!-- Avatar -->
+                    <a href="{{ route('profile.show', $user->name) }}" data-user-hover="true" data-user-name="{{ $user->name }}" class="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-slate-200 dark:border-slate-800">
+                        <img src="{{ $user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
+                    </a>
+                    <!-- User Info -->
+                    <div class="min-w-0">
+                        <a href="{{ route('profile.show', $user->name) }}"
+                           data-user-hover="true"
+                           data-user-name="{{ $user->name }}"
+                           class="font-black text-xs text-slate-800 dark:text-white truncate block {{ $user->username_style }}"
+                           style="{{ $user->username_style_css }}">
+                            {{ $user->name }}
+                        </a>
+                        <div class="flex items-center gap-1 mt-0.5 flex-wrap">
+                            <span class="px-1.5 py-0.2 text-[7.5px] font-black uppercase rounded text-white shadow-sm leading-none" style="background-color: {{ $tier['color'] }}">
+                                Lvl {{ $tier['level'] ?? 1 }}
+                            </span>
+                            <span class="px-1.5 py-0.2 text-[7.5px] font-extrabold uppercase rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 leading-none">
+                                {{ $user->title_badge ?? 'Member' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right Side Stats / Points -->
+                <div class="text-right shrink-0 flex flex-col items-end gap-0.5">
+                    <span class="text-blue-600 dark:text-blue-400 font-black text-xs">{{ number_format($user->calculated_points) }} pts</span>
+                    <span class="text-[8px] font-bold text-slate-400 dark:text-slate-500">
+                        {{ $user->posts()->count() }} replies · {{ number_format($user->coins) }} coins
+                    </span>
+                </div>
+            </div>
+
+            <!-- Desktop Card Layout (Visible from sm upwards) -->
+            <div class="hidden sm:flex relative rounded-2xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 group/card flex-col h-[270px] text-left">
                 <!-- Top banner decoration -->
                 <div class="h-11 relative bg-cover bg-center shrink-0" style="background: {{ $user->banner_path ? 'url(' . $user->banner_path . ')' : ($user->banner_color ?: 'linear-gradient(135deg, #3b82f6, #8b5cf6)') }}">
                     <!-- Floating Rank Pill -->
