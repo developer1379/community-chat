@@ -99,22 +99,22 @@
 
     @if(count($users) >= 3)
         <!-- Beautiful MD3 Container Card for podium -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end justify-center py-8 px-6 bg-white dark:bg-slate-900 rounded-none sm:rounded-[28px] border-y sm:border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="grid grid-cols-3 gap-2 sm:gap-6 items-end justify-center py-6 px-2 sm:py-8 sm:px-6 bg-white dark:bg-slate-900 rounded-none sm:rounded-[28px] border-y sm:border border-slate-200 dark:border-slate-800 shadow-sm">
             <!-- 2nd Place (Silver) Podium -->
             @if(isset($users[1]))
                 @php $secondUser = $users[1]; @endphp
-                <div class="flex flex-col items-center group">
+                <div class="flex flex-col items-center group min-w-0">
                     <a href="{{ route('profile.show', $secondUser->name) }}" class="relative block shrink-0" data-user-hover="true" data-user-name="{{ $secondUser->name }}" data-user-badge="{{ $secondUser->title_badge }}" data-user-joined="{{ $secondUser->created_at->format('M d, Y') }}" data-user-threads="{{ $secondUser->threads()->count() }}" data-user-posts="{{ $secondUser->posts()->count() }}" data-user-uploads="{{ $secondUser->attachments()->count() }}" data-user-avatar="{{ $secondUser->avatar_url }}" data-user-banner="{{ $secondUser->banner_color }}" data-user-banner-path="{{ $secondUser->banner_path }}">
                         <div class="absolute inset-0 rounded-full bg-slate-400 opacity-20 blur-md animate-pulse"></div>
-                        <div class="w-20 h-20 rounded-full overflow-hidden border-4 border-slate-300 shadow-md relative z-10 transition-transform group-hover:scale-105">
+                        <div class="w-12 h-12 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 sm:border-4 border-slate-300 shadow-md relative z-10 transition-transform group-hover:scale-105">
                             <img src="{{ $secondUser->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                         </div>
                     </a>
-                    <h3 class="font-extrabold text-slate-850 dark:text-slate-200 text-sm mt-4 truncate max-w-[150px]">{{ $secondUser->name }}</h3>
-                    <span class="text-[9px] font-black uppercase tracking-wider text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400 px-2.5 py-1 rounded-full border border-slate-200 dark:border-slate-700 mt-1">{{ $secondUser->title_badge }}</span>
+                    <h3 class="font-extrabold text-slate-850 dark:text-slate-200 text-[10px] sm:text-sm mt-2 sm:mt-4 truncate max-w-[80px] sm:max-w-[150px]">{{ $secondUser->name }}</h3>
+                    <span class="text-[7px] sm:text-[9px] font-black uppercase tracking-wider text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400 px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-full border border-slate-200 dark:border-slate-700 mt-1 truncate max-w-[80px] sm:max-w-none">{{ $secondUser->title_badge }}</span>
                     <!-- Silver Podium Base -->
-                    <div class="w-48 bg-gradient-to-t from-slate-100 to-slate-200/50 dark:from-slate-800 dark:to-slate-900 border-t border-slate-300 dark:border-slate-700 h-24 mt-4 rounded-t-2xl shadow-inner flex flex-col items-center justify-center gap-1.5">
-                        <svg class="w-10 h-10 drop-shadow-[0_2px_4px_rgba(148,163,184,0.3)]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <div class="w-full max-w-[100px] sm:w-48 bg-gradient-to-t from-slate-100 to-slate-200/50 dark:from-slate-800 dark:to-slate-900 border-t border-slate-300 dark:border-slate-700 h-16 sm:h-24 mt-2 sm:mt-4 rounded-t-xl sm:rounded-t-2xl shadow-inner flex flex-col items-center justify-center gap-1">
+                        <svg class="w-6 h-6 sm:w-10 sm:h-10 drop-shadow-[0_2px_4px_rgba(148,163,184,0.3)]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="32" cy="32" r="26" fill="url(#silverMetallic)" stroke="#94a3b8" stroke-width="2"/>
                             <circle cx="32" cy="32" r="20" fill="url(#silverMetallicAccent)"/>
                             <path d="M26 44L32 20L38 44L26 44Z" fill="#ffffff" fill-opacity="0.3"/>
@@ -132,7 +132,7 @@
                                 </linearGradient>
                             </defs>
                         </svg>
-                        <span class="text-[10px] font-black text-slate-500 dark:text-slate-400">{{ number_format($secondUser->calculated_points) }} pts</span>
+                        <span class="text-[8px] sm:text-[10px] font-black text-slate-500 dark:text-slate-400">{{ number_format($secondUser->calculated_points) }} pts</span>
                     </div>
                 </div>
             @endif
@@ -140,18 +140,18 @@
             <!-- 1st Place (Gold) Podium -->
             @if(isset($users[0]))
                 @php $firstUser = $users[0]; @endphp
-                <div class="flex flex-col items-center group -mt-6 z-20">
+                <div class="flex flex-col items-center group -mt-4 sm:-mt-6 z-20 min-w-0">
                     <a href="{{ route('profile.show', $firstUser->name) }}" class="relative block shrink-0" data-user-hover="true" data-user-name="{{ $firstUser->name }}" data-user-badge="{{ $firstUser->title_badge }}" data-user-joined="{{ $firstUser->created_at->format('M d, Y') }}" data-user-threads="{{ $firstUser->threads()->count() }}" data-user-posts="{{ $firstUser->posts()->count() }}" data-user-uploads="{{ $firstUser->attachments()->count() }}" data-user-avatar="{{ $firstUser->avatar_url }}" data-user-banner="{{ $firstUser->banner_color }}" data-user-banner-path="{{ $firstUser->banner_path }}">
                         <div class="absolute inset-0 rounded-full bg-amber-500 opacity-30 blur-lg animate-pulse"></div>
-                        <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-amber-400 shadow-xl relative z-10 transition-transform group-hover:scale-105">
+                        <div class="w-16 h-16 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 sm:border-4 border-amber-400 shadow-xl relative z-10 transition-transform group-hover:scale-105">
                             <img src="{{ $firstUser->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                         </div>
                     </a>
-                    <h3 class="font-extrabold text-slate-900 dark:text-slate-100 text-base mt-4 truncate max-w-[150px]">{{ $firstUser->name }}</h3>
-                    <span class="text-[9px] font-black uppercase tracking-wider text-amber-600 bg-amber-50 dark:bg-amber-950/40 dark:text-amber-400 px-2.5 py-1 rounded-full border border-amber-200 dark:border-amber-900/30 mt-1">{{ $firstUser->title_badge }}</span>
+                    <h3 class="font-extrabold text-slate-900 dark:text-slate-100 text-xs sm:text-base mt-2 sm:mt-4 truncate max-w-[90px] sm:max-w-[150px]">{{ $firstUser->name }}</h3>
+                    <span class="text-[7px] sm:text-[9px] font-black uppercase tracking-wider text-amber-600 bg-amber-50 dark:bg-amber-950/40 dark:text-amber-400 px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-full border border-amber-200 dark:border-amber-900/30 mt-1 truncate max-w-[90px] sm:max-w-none">{{ $firstUser->title_badge }}</span>
                     <!-- Gold Podium Base -->
-                    <div class="w-52 bg-gradient-to-t from-amber-50 to-amber-100/50 dark:from-slate-800 dark:to-slate-900 border-t border-amber-300 dark:border-amber-700 h-32 mt-4 rounded-t-3xl shadow-inner flex flex-col items-center justify-center gap-1.5">
-                        <svg class="w-14 h-14 drop-shadow-[0_4px_10px_rgba(245,158,11,0.4)] animate-bounce" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <div class="w-full max-w-[110px] sm:w-52 bg-gradient-to-t from-amber-50 to-amber-100/50 dark:from-slate-800 dark:to-slate-900 border-t border-amber-300 dark:border-amber-700 h-20 sm:h-32 mt-2 sm:mt-4 rounded-t-xl sm:rounded-t-3xl shadow-inner flex flex-col items-center justify-center gap-1">
+                        <svg class="w-8 h-8 sm:w-14 sm:h-14 drop-shadow-[0_4px_10px_rgba(245,158,11,0.4)] animate-bounce" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M16 18H12C9.79 18 8 19.79 8 22V26C8 30.42 11.58 34 16 34H18V18H16Z" fill="url(#goldMetallic)"/>
                             <path d="M48 18H46V34H48C52.42 34 56 30.42 56 26V22C56 19.79 54.21 18 52 18H48Z" fill="url(#goldMetallic)"/>
                             <path d="M44 10H20V34C20 40.63 25.37 46 32 46C38.63 46 44 40.63 44 34V10Z" fill="url(#goldMetallicAccent)"/>
@@ -173,7 +173,7 @@
                                 </linearGradient>
                             </defs>
                         </svg>
-                        <span class="text-xs font-black text-amber-700 dark:text-amber-500">{{ number_format($firstUser->calculated_points) }} pts</span>
+                        <span class="text-[9px] sm:text-xs font-black text-amber-700 dark:text-amber-500">{{ number_format($firstUser->calculated_points) }} pts</span>
                     </div>
                 </div>
             @endif
@@ -181,18 +181,18 @@
             <!-- 3rd Place (Bronze) Podium -->
             @if(isset($users[2]))
                 @php $thirdUser = $users[2]; @endphp
-                <div class="flex flex-col items-center group">
+                <div class="flex flex-col items-center group min-w-0">
                     <a href="{{ route('profile.show', $thirdUser->name) }}" class="relative block shrink-0" data-user-hover="true" data-user-name="{{ $thirdUser->name }}" data-user-badge="{{ $thirdUser->title_badge }}" data-user-joined="{{ $thirdUser->created_at->format('M d, Y') }}" data-user-threads="{{ $thirdUser->threads()->count() }}" data-user-posts="{{ $thirdUser->posts()->count() }}" data-user-uploads="{{ $thirdUser->attachments()->count() }}" data-user-avatar="{{ $thirdUser->avatar_url }}" data-user-banner="{{ $thirdUser->banner_color }}" data-user-banner-path="{{ $thirdUser->banner_path }}">
                         <div class="absolute inset-0 rounded-full bg-amber-700 opacity-20 blur-md animate-pulse"></div>
-                        <div class="w-20 h-20 rounded-full overflow-hidden border-4 border-amber-600 shadow-md relative z-10 transition-transform group-hover:scale-105">
+                        <div class="w-12 h-12 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 sm:border-4 border-amber-600 shadow-md relative z-10 transition-transform group-hover:scale-105">
                             <img src="{{ $thirdUser->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
                         </div>
                     </a>
-                    <h3 class="font-extrabold text-slate-800 dark:text-slate-200 text-sm mt-4 truncate max-w-[150px]">{{ $thirdUser->name }}</h3>
-                    <span class="text-[9px] font-black uppercase tracking-wider text-amber-700 bg-amber-50 dark:bg-amber-950/40 dark:text-amber-400 px-2.5 py-1 rounded-full border border-amber-250 dark:border-amber-900/30 mt-1">{{ $thirdUser->title_badge }}</span>
+                    <h3 class="font-extrabold text-slate-800 dark:text-slate-200 text-[10px] sm:text-sm mt-2 sm:mt-4 truncate max-w-[80px] sm:max-w-[150px]">{{ $thirdUser->name }}</h3>
+                    <span class="text-[7px] sm:text-[9px] font-black uppercase tracking-wider text-amber-700 bg-amber-50 dark:bg-amber-950/40 dark:text-amber-400 px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-full border border-amber-250 dark:border-amber-900/30 mt-1 truncate max-w-[80px] sm:max-w-none">{{ $thirdUser->title_badge }}</span>
                     <!-- Bronze Podium Base -->
-                    <div class="w-48 bg-gradient-to-t from-amber-50 to-amber-100/30 dark:from-slate-800 dark:to-slate-900 border-t border-amber-200 dark:border-amber-700 h-20 mt-4 rounded-t-2xl shadow-inner flex flex-col items-center justify-center gap-1.5">
-                        <svg class="w-10 h-10 drop-shadow-[0_2px_4px_rgba(180,83,9,0.3)]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <div class="w-full max-w-[100px] sm:w-48 bg-gradient-to-t from-amber-50 to-amber-100/30 dark:from-slate-800 dark:to-slate-900 border-t border-amber-200 dark:border-amber-700 h-12 sm:h-20 mt-2 sm:mt-4 rounded-t-xl sm:rounded-t-2xl shadow-inner flex flex-col items-center justify-center gap-1">
+                        <svg class="w-6 h-6 sm:w-10 sm:h-10 drop-shadow-[0_2px_4px_rgba(180,83,9,0.3)]" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="32" cy="32" r="26" fill="url(#bronzeMetallic)" stroke="#b45309" stroke-width="2"/>
                             <circle cx="32" cy="32" r="20" fill="url(#bronzeMetallicAccent)"/>
                             <text x="32" y="38" font-size="18" font-weight="900" fill="#78350f" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">3</text>
@@ -209,7 +209,7 @@
                                 </linearGradient>
                             </defs>
                         </svg>
-                        <span class="text-[10px] font-black text-amber-700 dark:text-amber-500">{{ number_format($thirdUser->calculated_points) }} pts</span>
+                        <span class="text-[8px] sm:text-[10px] font-black text-amber-700 dark:text-amber-500">{{ number_format($thirdUser->calculated_points) }} pts</span>
                     </div>
                 </div>
             @endif
