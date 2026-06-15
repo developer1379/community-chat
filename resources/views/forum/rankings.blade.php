@@ -3,7 +3,7 @@
 @section('content')
 <div class="space-y-6 w-full mx-auto">
     <!-- Premium Material Welcome Banner with Glowing vector illustration -->
-    <div class="relative rounded-[28px] overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-900 dark:bg-slate-950 p-8 sm:p-10 text-white shadow-xl">
+    <div class="relative rounded-none sm:rounded-[28px] overflow-hidden border-y sm:border border-slate-200 dark:border-slate-800 bg-slate-900 dark:bg-slate-950 p-8 sm:p-10 text-white shadow-xl">
         <!-- Background absolute decorative shapes -->
         <div class="absolute right-0 top-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute left-1/4 bottom-0 w-64 h-64 bg-purple-500/10 rounded-full blur-2xl pointer-events-none"></div>
@@ -57,7 +57,7 @@
     </div>
 
     <!-- Segmented Navigation Control (MD3 Standard with custom SVG Images) -->
-    <div class="flex border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-1.5 rounded-2xl shadow-sm overflow-x-auto hide-scrollbar justify-start items-center gap-2">
+    <div class="flex border-y sm:border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-1.5 rounded-none sm:rounded-2xl shadow-sm overflow-x-auto hide-scrollbar justify-start items-center gap-2">
         <div class="flex items-center gap-1.5 flex-nowrap w-full">
             <a href="{{ route('rankings.index', ['tab' => 'all']) }}" class="px-5 py-3 text-sm font-semibold transition-all duration-200 rounded-xl flex items-center gap-2.5 flex-shrink-0 {{ $currentTab === 'all' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -99,7 +99,7 @@
 
     @if(count($users) >= 3)
         <!-- Beautiful MD3 Container Card for podium -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end justify-center py-8 px-6 bg-white dark:bg-slate-900 rounded-[28px] border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end justify-center py-8 px-6 bg-white dark:bg-slate-900 rounded-none sm:rounded-[28px] border-y sm:border border-slate-200 dark:border-slate-800 shadow-sm">
             <!-- 2nd Place (Silver) Podium -->
             @if(isset($users[1]))
                 @php $secondUser = $users[1]; @endphp
@@ -217,77 +217,77 @@
     @endif
 
     <!-- Unified Responsive Grid Card Layout -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0 sm:gap-6">
         @forelse($users as $user)
             @php
                 $reactionsCount = \App\Models\React::whereIn('post_id', $user->posts()->pluck('id'))->count();
                 $tier = $user->anime_tier;
             @endphp
-            <div class="relative rounded-3xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 group/card flex flex-col h-[320px] text-left">
+            <div class="relative rounded-none sm:rounded-2xl overflow-hidden bg-white dark:bg-slate-900 border-b sm:border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 group/card flex flex-col h-[270px] text-left">
                 <!-- Top banner decoration -->
-                <div class="h-16 relative bg-cover bg-center shrink-0" style="background: {{ $user->banner_path ? 'url(' . $user->banner_path . ')' : ($user->banner_color ?: 'linear-gradient(135deg, #3b82f6, #8b5cf6)') }}">
+                <div class="h-11 relative bg-cover bg-center shrink-0" style="background: {{ $user->banner_path ? 'url(' . $user->banner_path . ')' : ($user->banner_color ?: 'linear-gradient(135deg, #3b82f6, #8b5cf6)') }}">
                     <!-- Floating Rank Pill -->
-                    <span class="absolute top-2 right-2 px-2.5 py-1 rounded-xl text-[9px] font-black tracking-wider shadow-sm uppercase leading-none bg-slate-900/60 dark:bg-slate-950/60 text-white backdrop-blur-sm border border-white/20">
+                    <span class="absolute top-2 right-2 px-2 py-0.5 rounded-lg text-[8.5px] font-black tracking-wider shadow-sm uppercase leading-none bg-slate-900/60 dark:bg-slate-950/60 text-white backdrop-blur-sm border border-white/20">
                         Rank #{{ $loop->iteration }}
                     </span>
                 </div>
 
                 <!-- Avatar overlapping the banner -->
-                <div class="flex justify-center -mt-10 relative z-10 shrink-0">
+                <div class="flex justify-center -mt-8 relative z-10 shrink-0">
                     <a href="{{ route('profile.show', $user->name) }}" 
                        data-user-hover="true"
                        data-user-name="{{ $user->name }}"
-                       class="w-20 h-20 rounded-2xl overflow-hidden bg-white dark:bg-slate-850 p-1 border-4 border-white dark:border-slate-900 shadow-md group-hover/card:scale-105 transition-transform block">
-                        <img src="{{ $user->avatar_url }}" class="w-full h-full object-cover rounded-xl" alt="avatar">
+                       class="w-16 h-16 rounded-xl overflow-hidden bg-white dark:bg-slate-850 p-0.5 border-2 border-white dark:border-slate-900 shadow-md group-hover/card:scale-105 transition-transform block">
+                        <img src="{{ $user->avatar_url }}" class="w-full h-full object-cover rounded-lg" alt="avatar">
                     </a>
                 </div>
 
                 <!-- Core user details -->
-                <div class="p-4 pt-2 text-center flex-grow flex flex-col justify-between space-y-3">
-                    <div class="space-y-1">
+                <div class="p-3 pt-1 text-center flex-grow flex flex-col justify-between space-y-2.5">
+                    <div class="space-y-0.5">
                         <a href="{{ route('profile.show', $user->name) }}"
                            data-user-hover="true"
                            data-user-name="{{ $user->name }}"
-                           class="font-black text-slate-855 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 text-sm truncate block transition-colors leading-tight {{ $user->username_style }}"
+                           class="font-black text-slate-855 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 text-xs truncate block transition-colors leading-tight {{ $user->username_style }}"
                            style="{{ $user->username_style_css }}">
                             {{ $user->name }}
                         </a>
                         
-                        <div class="flex items-center justify-center gap-1.5 flex-wrap">
-                            <span class="px-2 py-0.5 text-[8.5px] font-black uppercase rounded text-white shadow-sm leading-none" style="background-color: {{ $tier['color'] }}" title="{{ $tier['name'] }}">
+                        <div class="flex items-center justify-center gap-1 flex-wrap">
+                            <span class="px-1.5 py-0.2 text-[8px] font-black uppercase rounded text-white shadow-sm leading-none" style="background-color: {{ $tier['color'] }}" title="{{ $tier['name'] }}">
                                 Lvl {{ $tier['level'] ?? 1 }}
                             </span>
                             
-                            <span class="px-2 py-0.5 text-[8.5px] font-extrabold uppercase rounded bg-slate-100 dark:bg-slate-800 text-slate-555 dark:text-slate-400 border border-slate-200 dark:border-slate-700 leading-none">
+                            <span class="px-1.5 py-0.2 text-[8px] font-extrabold uppercase rounded bg-slate-100 dark:bg-slate-800 text-slate-555 dark:text-slate-400 border border-slate-200 dark:border-slate-700 leading-none">
                                 {{ $user->title_badge ?? 'Member' }}
                             </span>
                         </div>
                     </div>
                     
                     <!-- Metrics Grid (2x2 Layout for detailed info) -->
-                    <div class="grid grid-cols-2 gap-2 bg-slate-50/50 dark:bg-slate-950/40 p-2.5 rounded-2xl text-[9px] font-bold text-slate-400 dark:text-slate-500 border border-slate-100 dark:border-slate-850/50">
+                    <div class="grid grid-cols-2 gap-1.5 bg-slate-50/50 dark:bg-slate-955/40 p-2 rounded-xl text-[8.5px] font-bold text-slate-400 dark:text-slate-500 border border-slate-100 dark:border-slate-850/50">
                         <div class="text-left pl-1">
-                            <span class="text-[7.5px] font-black text-slate-400 dark:text-slate-500 uppercase block mb-0.5">Threads</span>
-                            <span class="text-slate-700 dark:text-slate-200 font-extrabold text-[11px]">{{ $user->threads()->count() }}</span>
+                            <span class="text-[7px] font-black text-slate-400 dark:text-slate-500 uppercase block mb-0.2">Threads</span>
+                            <span class="text-slate-700 dark:text-slate-200 font-extrabold text-[10px]">{{ $user->threads()->count() }}</span>
                         </div>
                         <div class="text-left pl-1 border-l border-slate-200/50 dark:border-slate-800/50">
-                            <span class="text-[7.5px] font-black text-slate-400 dark:text-slate-500 uppercase block mb-0.5">Replies</span>
-                            <span class="text-slate-700 dark:text-slate-200 font-extrabold text-[11px]">{{ $user->posts()->count() }}</span>
+                            <span class="text-[7px] font-black text-slate-400 dark:text-slate-500 uppercase block mb-0.2">Replies</span>
+                            <span class="text-slate-700 dark:text-slate-200 font-extrabold text-[10px]">{{ $user->posts()->count() }}</span>
                         </div>
                         <div class="text-left pl-1 border-t border-slate-200/50 dark:border-slate-800/50 pt-1">
-                            <span class="text-[7.5px] font-black text-slate-400 dark:text-slate-500 uppercase block mb-0.5">Reactions</span>
-                            <span class="text-slate-700 dark:text-slate-200 font-extrabold text-[11px]">{{ $reactionsCount }}</span>
+                            <span class="text-[7px] font-black text-slate-400 dark:text-slate-500 uppercase block mb-0.2">Reactions</span>
+                            <span class="text-slate-700 dark:text-slate-200 font-extrabold text-[10px]">{{ $reactionsCount }}</span>
                         </div>
                         <div class="text-left pl-1 border-l border-t border-slate-200/50 dark:border-slate-800/50 pt-1">
-                            <span class="text-[7.5px] font-black text-slate-400 dark:text-slate-500 uppercase block mb-0.5">Coins</span>
-                            <span class="text-emerald-600 dark:text-emerald-450 font-extrabold text-[11px]">{{ number_format($user->coins) }}</span>
+                            <span class="text-[7px] font-black text-slate-400 dark:text-slate-500 uppercase block mb-0.2">Coins</span>
+                            <span class="text-emerald-600 dark:text-emerald-450 font-extrabold text-[10px]">{{ number_format($user->coins) }}</span>
                         </div>
                     </div>
 
                     <!-- Points display in card footer style -->
-                    <div class="pt-2 border-t border-slate-100 dark:border-slate-850/60 flex items-center justify-between text-[9px] font-extrabold text-slate-400">
-                        <span class="uppercase tracking-widest text-[8px] font-black">Score</span>
-                        <span class="text-blue-600 dark:text-blue-400 font-black text-[11px]">{{ number_format($user->calculated_points) }} pts</span>
+                    <div class="pt-1.5 border-t border-slate-100 dark:border-slate-850/60 flex items-center justify-between text-[8px] font-extrabold text-slate-400">
+                        <span class="uppercase tracking-widest text-[7.5px] font-black">Score</span>
+                        <span class="text-blue-600 dark:text-blue-400 font-black text-[10px]">{{ number_format($user->calculated_points) }} pts</span>
                     </div>
                 </div>
             </div>
