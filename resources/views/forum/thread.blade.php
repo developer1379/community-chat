@@ -737,8 +737,18 @@ article
                 Swal.fire({
                     icon: 'error',
                     title: 'Upload Failed',
-                    html: 'Failed to obtain image URL from ImgBB service. You can upload directly at <a href="https://imgbb.com/upload" target="_blank" class="text-blue-600 underline font-bold">https://imgbb.com/upload</a> and paste the link in your post.',
-                    confirmButtonColor: '#1e293b'
+                    html: 'Failed to upload image to ImgBB.<br><br>Please upload your image directly at <a href="https://imgbb.com/upload" target="_blank" class="text-blue-600 underline font-bold">https://imgbb.com/upload</a>, copy the direct image link, and paste it below:',
+                    input: 'url',
+                    inputPlaceholder: 'https://i.ibb.co/.../image.png',
+                    showCancelButton: true,
+                    confirmButtonText: 'Insert into Editor',
+                    confirmButtonColor: '#1e293b',
+                    cancelButtonColor: '#e11d48'
+                }).then((result) => {
+                    if (result.isConfirmed && result.value) {
+                        replyQuill.insertEmbed(range.index, 'image', result.value);
+                        replyQuill.setSelection(range.index + 1);
+                    }
                 });
             }
         })
@@ -748,8 +758,18 @@ article
             Swal.fire({
                 icon: 'error',
                 title: 'Upload Error',
-                html: 'An error occurred during image upload to ImgBB. You can upload directly at <a href="https://imgbb.com/upload" target="_blank" class="text-blue-600 underline font-bold">https://imgbb.com/upload</a> and paste the link in your post.',
-                confirmButtonColor: '#1e293b'
+                html: 'An error occurred during image upload to ImgBB.<br><br>Please upload your image directly at <a href="https://imgbb.com/upload" target="_blank" class="text-blue-600 underline font-bold">https://imgbb.com/upload</a>, copy the direct image link, and paste it below:',
+                input: 'url',
+                inputPlaceholder: 'https://i.ibb.co/.../image.png',
+                showCancelButton: true,
+                confirmButtonText: 'Insert into Editor',
+                confirmButtonColor: '#1e293b',
+                cancelButtonColor: '#e11d48'
+            }).then((result) => {
+                if (result.isConfirmed && result.value) {
+                    replyQuill.insertEmbed(range.index, 'image', result.value);
+                    replyQuill.setSelection(range.index + 1);
+                }
             });
         });
     }
