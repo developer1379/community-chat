@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Thread;
+use App\Models\Post;
 use App\Repositories\Interfaces\CategoryRepositoryInterface;
 use App\Repositories\Interfaces\ThreadRepositoryInterface;
 use App\Repositories\Interfaces\PostRepositoryInterface;
