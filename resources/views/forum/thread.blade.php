@@ -1373,19 +1373,15 @@ article
                 replyQuill.setSelection(range.index + 1);
             } else {
                 Swal.fire({
-                    icon: 'error',
+                    icon: 'warning',
                     title: 'Upload Failed',
-                    html: 'Failed to upload image to ImgBB.<br><br>Please upload your image directly at <a href="https://imgbb.com/upload" target="_blank" class="text-blue-600 underline font-bold">https://imgbb.com/upload</a>, copy the direct image link, and paste it below:',
-                    input: 'url',
-                    inputPlaceholder: 'https://i.ibb.co/.../image.png',
-                    showCancelButton: true,
-                    confirmButtonText: 'Insert into Editor',
-                    confirmButtonColor: '#0f172a',
-                    cancelButtonColor: '#e11d48'
-                }).then((result) => {
-                    if (result.isConfirmed && result.value) {
-                        replyQuill.insertEmbed(range.index, 'image', result.value);
-                        replyQuill.setSelection(range.index + 1);
+                    text: 'Background upload failed. Launching ImgBB upload widget...',
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    const widgetBtn = document.querySelector('#reply-imgbb-upload-container .imgbb-plugin-btn');
+                    if (widgetBtn) {
+                        widgetBtn.click();
                     }
                 });
             }
@@ -1394,19 +1390,15 @@ article
             replyQuill.deleteText(range.index, 1);
             console.error('Quill Image Upload Error:', error);
             Swal.fire({
-                icon: 'error',
-                title: 'Upload Error',
-                html: 'An error occurred during image upload to ImgBB.<br><br>Please upload your image directly at <a href="https://imgbb.com/upload" target="_blank" class="text-blue-600 underline font-bold">https://imgbb.com/upload</a>, copy the direct image link, and paste it below:',
-                input: 'url',
-                inputPlaceholder: 'https://i.ibb.co/.../image.png',
-                showCancelButton: true,
-                confirmButtonText: 'Insert into Editor',
-                confirmButtonColor: '#0f172a',
-                cancelButtonColor: '#e11d48'
-            }).then((result) => {
-                if (result.isConfirmed && result.value) {
-                    replyQuill.insertEmbed(range.index, 'image', result.value);
-                    replyQuill.setSelection(range.index + 1);
+                icon: 'warning',
+                title: 'Upload Failed',
+                text: 'An error occurred during upload. Launching ImgBB upload widget...',
+                timer: 2000,
+                showConfirmButton: false
+            }).then(() => {
+                const widgetBtn = document.querySelector('#reply-imgbb-upload-container .imgbb-plugin-btn');
+                if (widgetBtn) {
+                    widgetBtn.click();
                 }
             });
         });
@@ -1533,19 +1525,15 @@ article
                 editPostQuill.setSelection(range.index + 1);
             } else {
                 Swal.fire({
-                    icon: 'error',
+                    icon: 'warning',
                     title: 'Upload Failed',
-                    html: 'Failed to upload image to ImgBB.<br><br>Please upload your image directly at <a href="https://imgbb.com/upload" target="_blank" class="text-blue-600 underline font-bold">https://imgbb.com/upload</a>, copy the direct image link, and paste it below:',
-                    input: 'url',
-                    inputPlaceholder: 'https://i.ibb.co/.../image.png',
-                    showCancelButton: true,
-                    confirmButtonText: 'Insert into Editor',
-                    confirmButtonColor: '#0f172a',
-                    cancelButtonColor: '#e11d48'
-                }).then((result) => {
-                    if (result.isConfirmed && result.value) {
-                        editPostQuill.insertEmbed(range.index, 'image', result.value);
-                        editPostQuill.setSelection(range.index + 1);
+                    text: 'Background upload failed. Launching ImgBB upload widget...',
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    const widgetBtn = document.querySelector('#edit-post-imgbb-upload-container .imgbb-plugin-btn');
+                    if (widgetBtn) {
+                        widgetBtn.click();
                     }
                 });
             }
@@ -1554,19 +1542,15 @@ article
             editPostQuill.deleteText(range.index, 1);
             console.error('Quill Image Upload Error:', error);
             Swal.fire({
-                icon: 'error',
-                title: 'Upload Error',
-                html: 'An error occurred during image upload to ImgBB.<br><br>Please upload your image directly at <a href="https://imgbb.com/upload" target="_blank" class="text-blue-600 underline font-bold">https://imgbb.com/upload</a>, copy the direct image link, and paste it below:',
-                input: 'url',
-                inputPlaceholder: 'https://i.ibb.co/.../image.png',
-                showCancelButton: true,
-                confirmButtonText: 'Insert into Editor',
-                confirmButtonColor: '#0f172a',
-                cancelButtonColor: '#e11d48'
-            }).then((result) => {
-                if (result.isConfirmed && result.value) {
-                    editPostQuill.insertEmbed(range.index, 'image', result.value);
-                    editPostQuill.setSelection(range.index + 1);
+                icon: 'warning',
+                title: 'Upload Failed',
+                text: 'An error occurred during upload. Launching ImgBB upload widget...',
+                timer: 2000,
+                showConfirmButton: false
+            }).then(() => {
+                const widgetBtn = document.querySelector('#edit-post-imgbb-upload-container .imgbb-plugin-btn');
+                if (widgetBtn) {
+                    widgetBtn.click();
                 }
             });
         });
