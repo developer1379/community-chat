@@ -25,12 +25,11 @@ class ShopController extends Controller
 
         $shopItems = $query->orderBy('created_at', 'desc')->get();
         
-        $categories = [
-            'Feature Updates' => ShopItem::where('category', 'Feature Updates')->count(),
-            'Promot your content' => ShopItem::where('category', 'Promot your content')->count(),
-            'User Access' => ShopItem::where('category', 'User Access')->count(),
-            'Private threads' => ShopItem::where('category', 'Private threads')->count(),
-        ];
+        $categories = ShopItem::select('category')
+            ->selectRaw('count(*) as count')
+            ->groupBy('category')
+            ->pluck('count', 'category')
+            ->toArray();
 
         $topRatedItems = ShopItem::orderBy('rating', 'desc')->take(4)->get();
         $userCoins = Auth::check() ? Auth::user()->coins : 0;
