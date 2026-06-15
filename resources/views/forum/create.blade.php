@@ -409,21 +409,21 @@
                 html: `
                     <div class="text-left text-xs space-y-3">
                         <p class="text-slate-500 font-medium">To share videos, upload them to one of these <strong>5 free hosting servers</strong>, then copy and paste the video link below:</p>
-                        <div class="grid grid-cols-2 gap-2 pt-1 pb-3">
-                            <a href="https://sendvid.com" target="_blank" class="flex items-center gap-1.5 p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 text-slate-700 hover:text-blue-600 font-bold transition-all text-[11px]">
-                                <span>📤 Sendvid</span>
+                        <div class="grid grid-cols-2 gap-2.5 pt-1.5 pb-3">
+                            <a href="https://sendvid.com" target="_blank" class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50/50 hover:bg-indigo-50/30 border border-slate-200 text-slate-700 hover:text-indigo-600 font-bold transition-all text-xs">
+                                <span class="material-symbols-outlined text-[18px] text-indigo-500">publish</span> Sendvid
                             </a>
-                            <a href="https://streamable.com" target="_blank" class="flex items-center gap-1.5 p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 text-slate-700 hover:text-blue-600 font-bold transition-all text-[11px]">
-                                <span>📹 Streamable</span>
+                            <a href="https://streamable.com" target="_blank" class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50/50 hover:bg-sky-50/30 border border-slate-200 text-slate-700 hover:text-sky-600 font-bold transition-all text-xs">
+                                <span class="material-symbols-outlined text-[18px] text-sky-500">videocam</span> Streamable
                             </a>
-                            <a href="https://youtube.com" target="_blank" class="flex items-center gap-1.5 p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 text-slate-700 hover:text-blue-600 font-bold transition-all text-[11px]">
-                                <span>🔴 YouTube</span>
+                            <a href="https://youtube.com" target="_blank" class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50/50 hover:bg-red-50/30 border border-slate-200 text-slate-700 hover:text-red-650 font-bold transition-all text-xs">
+                                <span class="material-symbols-outlined text-[18px] text-red-500">play_circle</span> YouTube
                             </a>
-                            <a href="https://vimeo.com" target="_blank" class="flex items-center gap-1.5 p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 text-slate-700 hover:text-blue-600 font-bold transition-all text-[11px]">
-                                <span>🔵 Vimeo</span>
+                            <a href="https://vimeo.com" target="_blank" class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50/50 hover:bg-blue-50/30 border border-slate-200 text-slate-700 hover:text-blue-650 font-bold transition-all text-xs">
+                                <span class="material-symbols-outlined text-[18px] text-blue-500">movie</span> Vimeo
                             </a>
-                            <a href="https://gofile.io" target="_blank" class="flex items-center gap-1.5 p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 text-slate-700 hover:text-blue-600 font-bold transition-all text-[11px] col-span-2 justify-center">
-                                <span>📁 GoFile Free Storage</span>
+                            <a href="https://gofile.io" target="_blank" class="flex items-center gap-2 p-2.5 rounded-xl bg-slate-50/50 hover:bg-emerald-50/30 border border-slate-200 text-slate-700 hover:text-emerald-600 font-bold transition-all text-xs col-span-2 justify-center">
+                                <span class="material-symbols-outlined text-[18px] text-emerald-500">cloud_upload</span> GoFile Free Storage
                             </a>
                         </div>
                         <label class="block font-black text-slate-700 uppercase tracking-wider">Paste Video Embed / Share Link:</label>
