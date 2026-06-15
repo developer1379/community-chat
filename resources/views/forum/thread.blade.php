@@ -721,16 +721,37 @@ article
             cancelButtonColor: '#e11d48'
         }).then((result) => {
             if (result.isConfirmed && result.value) {
-                let videoUrl = result.value;
+                let videoUrl = result.value.trim();
+                
+                // YouTube watch link
                 if (videoUrl.includes('youtube.com/watch?v=')) {
-                    videoUrl = videoUrl.replace('watch?v=', 'embed/');
-                } else if (videoUrl.includes('youtu.be/')) {
+                    let parts = videoUrl.split('watch?v=');
+                    if (parts[1]) {
+                        let id = parts[1].split('&')[0];
+                        videoUrl = `https://www.youtube.com/embed/${id}`;
+                    }
+                }
+                // YouTube shortened link
+                else if (videoUrl.includes('youtu.be/')) {
                     const id = videoUrl.split('/').pop().split('?')[0];
                     videoUrl = `https://www.youtube.com/embed/${id}`;
-                } else if (videoUrl.includes('vimeo.com/') && !videoUrl.includes('player.vimeo.com')) {
+                }
+                // Vimeo watch link
+                else if (videoUrl.includes('vimeo.com/') && !videoUrl.includes('player.vimeo.com')) {
                     const id = videoUrl.split('/').pop().split('?')[0];
                     videoUrl = `https://player.vimeo.com/video/${id}`;
                 }
+                // Sendvid watch link
+                else if (videoUrl.includes('sendvid.com/') && !videoUrl.includes('/embed/')) {
+                    const id = videoUrl.split('/').pop().split('?')[0];
+                    videoUrl = `https://sendvid.com/embed/${id}`;
+                }
+                // Streamable watch link
+                else if (videoUrl.includes('streamable.com/') && !videoUrl.includes('/e/')) {
+                    const id = videoUrl.split('/').pop().split('?')[0];
+                    videoUrl = `https://streamable.com/e/${id}`;
+                }
+
                 replyQuill.insertEmbed(range.index, 'video', videoUrl);
                 replyQuill.setSelection(range.index + 1);
             }
