@@ -184,7 +184,7 @@
     @include('partials.header')
 
     <!-- Main Container -->
-    <main class="max-w-7xl w-full mx-auto px-0 sm:px-6 lg:px-8 mt-6 flex-grow">
+    <main class="max-w-[1440px] w-full mx-auto px-0 sm:px-6 lg:px-8 mt-6 flex-grow">
         @if(session('success'))
             <div class="mx-4 sm:mx-0 mb-4 p-3 rounded-xl border border-emerald-500/20 bg-emerald-50 text-emerald-800 flex items-center justify-between shadow-sm shadow-emerald-500/5">
                 <div class="flex items-center gap-2.5">

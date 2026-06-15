@@ -3,6 +3,63 @@
 @section('content')
 <div class="space-y-6 w-full">
 
+    <!-- Premium Interactive Hero Welcome Banner -->
+    <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-slate-900 dark:to-slate-800 border border-blue-500/20 dark:border-slate-700/50 shadow-xl px-6 py-10 sm:px-10 sm:py-14 text-white mb-8 group">
+        <!-- Abstract background light highlights -->
+        <div class="absolute -right-16 -bottom-16 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none group-hover:bg-white/20 transition-all duration-700"></div>
+        <div class="absolute -left-16 -top-16 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative z-10 max-w-4xl mx-auto text-center space-y-6">
+            <!-- Badging/Indicator -->
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/25 text-xs font-bold tracking-wide animate-pulse">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Live Developer Community Hub
+            </div>
+
+            <!-- Heading -->
+            <h1 class="text-3xl sm:text-5xl font-black tracking-tight leading-none drop-shadow-md">
+                Welcome to <span class="bg-clip-text text-transparent bg-gradient-to-r from-amber-200 to-amber-400 font-extrabold">Xen Professional</span>
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="text-sm sm:text-base text-blue-100 dark:text-slate-300 font-medium max-w-2xl mx-auto leading-relaxed">
+                The premier social workspace for developers, engineers, and digital creators. Discuss frameworks, share showroom media, level up your profile, and build together.
+            </p>
+
+            <!-- Search input bar inside hero banner -->
+            <form action="{{ route('search') }}" method="GET" class="relative max-w-xl mx-auto mt-4">
+                <span class="material-symbols-outlined absolute left-4.5 top-1/2 -translate-y-1/2 text-slate-450 text-xl">search</span>
+                <input type="text" name="q" class="w-full pl-12 pr-28 py-3.5 sm:py-4 rounded-2xl bg-white text-slate-800 placeholder-slate-400 shadow-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-amber-400 transition-all dark:bg-slate-950 dark:text-slate-200 border-0" placeholder="Search threads, posts, users or code guides...">
+                <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 transition-colors shadow-md">
+                    Search
+                </button>
+            </form>
+
+            <!-- Dynamic Community Counters -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 max-w-3xl mx-auto border-t border-white/10 dark:border-slate-700/50">
+                <div class="flex flex-col items-center p-3 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 dark:bg-slate-950/20 dark:border-slate-800">
+                    <span class="material-symbols-outlined text-amber-350 text-2xl mb-1.5">groups</span>
+                    <span class="text-lg sm:text-xl font-black">{{ number_format($stats['users_count'] ?? 0) }}</span>
+                    <span class="text-[10px] text-blue-200 dark:text-slate-400 uppercase tracking-widest font-bold mt-0.5">Total Members</span>
+                </div>
+                <div class="flex flex-col items-center p-3 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 dark:bg-slate-950/20 dark:border-slate-800">
+                    <span class="material-symbols-outlined text-blue-300 text-2xl mb-1.5">forum</span>
+                    <span class="text-lg sm:text-xl font-black">{{ number_format($stats['threads_count'] ?? 0) }}</span>
+                    <span class="text-[10px] text-blue-200 dark:text-slate-400 uppercase tracking-widest font-bold mt-0.5">Active Threads</span>
+                </div>
+                <div class="flex flex-col items-center p-3 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 dark:bg-slate-950/20 dark:border-slate-800">
+                    <span class="material-symbols-outlined text-emerald-350 text-2xl mb-1.5">chat_bubble</span>
+                    <span class="text-lg sm:text-xl font-black">{{ number_format($stats['posts_count'] ?? 0) }}</span>
+                    <span class="text-[10px] text-blue-200 dark:text-slate-400 uppercase tracking-widest font-bold mt-0.5">Total Replies</span>
+                </div>
+                <div class="flex flex-col items-center p-3 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 dark:bg-slate-950/20 dark:border-slate-800">
+                    <span class="material-symbols-outlined text-rose-350 text-2xl mb-1.5">sensors</span>
+                    <span class="text-lg sm:text-xl font-black">{{ count($onlineUsers ?? []) }}</span>
+                    <span class="text-[10px] text-blue-200 dark:text-slate-400 uppercase tracking-widest font-bold mt-0.5">Online Now</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Quick Features Shortcuts Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10 px-4 sm:px-0">
         <!-- Card 1 -->

@@ -301,7 +301,7 @@ class ChatController extends Controller
             'posts_count' => $user->posts()->count(),
             'uploads_count' => $user->attachments()->count(),
             'banner_color' => $user->banner_color ?? '#2563eb',
-            'banner_path' => $user->banner_path ? asset('storage/' . $user->banner_path) : null,
+            'banner_path' => $user->banner_path ?: null,
             'is_following' => $isFollowing,
             'is_online' => $isOnline,
             'last_active' => $lastActive,

@@ -1,6 +1,6 @@
 <!-- Professional Enterprise App Bar -->
 <header class="w-full bg-white border-b border-slate-200 py-3 px-4 sm:px-6 lg:px-8 shadow-sm flex-shrink-0 dark:bg-slate-900 dark:border-slate-800">
-    <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
+    <div class="max-w-[1440px] mx-auto flex items-center justify-between gap-2 sm:gap-4">
         <!-- Brand Logo -->
         <a href="{{ route('home') }}" class="flex items-center gap-2 group flex-shrink-0">
             <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/10 group-hover:scale-105 transition-transform">
@@ -157,7 +157,7 @@
 
 <!-- Submenu Navigation -->
 <div class="w-full bg-white border-b border-slate-200 shadow-sm flex-shrink-0 relative z-30 dark:bg-slate-900 dark:border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex gap-5 sm:gap-8 overflow-x-auto hide-scrollbar whitespace-nowrap items-center w-full pb-0">
             <a href="{{ route('home') }}" class="group flex items-center py-3 border-b-2 border-transparent hover:border-blue-600 text-xs sm:text-[13px] font-semibold text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 transition-colors flex-shrink-0">
                 <span class="material-symbols-outlined text-[18px] mr-1.5 text-slate-400 group-hover:text-blue-600 transition-colors">forum</span>
