@@ -3,16 +3,16 @@
 @section('content')
 <div class="max-w-7xl mx-auto space-y-6">
     <!-- Header path info -->
-    <div>
+    <div class="px-4 sm:px-0">
         <div class="flex items-center gap-2 text-[10px] sm:text-xs font-semibold text-slate-500 mb-2 flex-wrap">
             <a href="{{ route('home') }}" class="hover:text-blue-600 transition-colors">Forums</a>
-            <span class="text-slate-350">/</span>
+            <span class="text-slate-355">/</span>
             <a href="{{ route('categories.show', $category->slug) }}" id="breadcrumb-category" class="hover:text-blue-600 transition-colors">{{ $category->name }}</a>
-            <span class="text-slate-350">/</span>
+            <span class="text-slate-355">/</span>
             <span class="text-blue-600 font-bold">Create New Thread</span>
         </div>
         <h1 class="text-xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">Post a New Discussion</h1>
-        <p class="text-[11px] sm:text-xs text-slate-500 leading-relaxed mt-1">
+        <p class="text-[11px] sm:text-xs text-slate-555 leading-relaxed mt-1">
             Share your insights, showcase media, or ask questions in the <span id="description-category" class="text-blue-600 font-bold">{{ $category->name }}</span> room.
         </p>
     </div>
@@ -155,6 +155,8 @@
                 <div class="rounded-2xl border border-slate-200 bg-slate-50/50 focus-within:ring-2 focus-within:ring-blue-500/10 focus-within:border-blue-500 transition-all relative z-30">
                     <style>
                         .ql-toolbar.ql-snow {
+                            position: relative;
+                            z-index: 10;
                             border-top-left-radius: 1rem !important;
                             border-top-right-radius: 1rem !important;
                         }
