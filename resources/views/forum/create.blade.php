@@ -180,7 +180,7 @@
                         class="text-[11px] font-black text-slate-700 uppercase tracking-widest ml-1">Discussion
                         Content</label>
                     <!-- Hidden real field -->
-                    <input type="hidden" id="content-input" name="content" value="{{ old('content') }}">
+                    <textarea id="content-input" name="content" class="hidden">{{ old('content') }}</textarea>
 
                     <!-- Quill container with custom HSL overrides -->
                     <div
@@ -201,6 +201,9 @@
                         <div id="quill-editor" class="bg-white rounded-b-2xl" style="height: 300px; font-size: 13.5px;">
                             {!! old('content') !!}</div>
                     </div>
+
+                    <!-- ImgBB Upload Widget target container -->
+                    <div id="imgbb-upload-container" class="mt-2 text-left"></div>
 
                     @error('content')
                         <p class="text-xs text-rose-500 mt-1 font-bold ml-1">{{ $message }}</p>
@@ -378,6 +381,42 @@
                 },
                 placeholder: 'Write your thread discussion, code blocks, or markdown content here...'
             });
+
+            // ImgBB Upload Widget value listener/interceptor
+            const contentInput = document.getElementById('content-input');
+            if (contentInput) {
+                const descriptor = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value');
+                Object.defineProperty(contentInput, 'value', {
+                    get: function() {
+                        return descriptor.get.call(this);
+                    },
+                    set: function(val) {
+                        descriptor.set.call(this, val);
+                        if (val) {
+                            // Extract URL from BBCode [img]URL[/img] or HTML <img> tags
+                            const imgRegex = /\[img\](.*?)\[\/img\]|<img[^>]+src="([^">]+)"/gi;
+                            let match;
+                            let foundUrls = [];
+                            while ((match = imgRegex.exec(val)) !== null) {
+                                const url = match[1] || match[2];
+                                if (url && !foundUrls.includes(url)) {
+                                    foundUrls.push(url);
+                                }
+                            }
+                            
+                            if (foundUrls.length > 0) {
+                                foundUrls.forEach(url => {
+                                    const range = quill.getSelection(true);
+                                    quill.insertEmbed(range.index, 'image', url);
+                                    quill.setSelection(range.index + 1);
+                                });
+                                // Keep the synced editor content as final value
+                                descriptor.set.call(this, quill.root.innerHTML);
+                            }
+                        }
+                    }
+                });
+            }
 
             // Intercept form submit to sync Quill HTML content to the hidden content input
             const form = document.getElementById('thread-form');
@@ -865,5 +904,12 @@
         function closeLivePreview() {
             document.getElementById('live-preview-box').classList.add('hidden');
         }
+    </script>
+
+    <!-- ImgBB Upload Widget Plugin -->
+    <script async src="https://imgbb.com/upload.js" 
+            data-auto-insert="bbcode-embed-medium" 
+            data-sibling-selector="#imgbb-upload-container" 
+            data-sibling-position="after">
     </script>
 @endsection

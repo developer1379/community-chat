@@ -40,10 +40,12 @@
             @method('PUT')
             <div class="space-y-1.5">
                 <!-- Hidden Quill value storage -->
-                <input type="hidden" id="edit-post-content-input" name="content">
+                <textarea id="edit-post-content-input" name="content" class="hidden"></textarea>
                 <div class="rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
                     <div id="edit-post-quill-editor" style="height: 200px; font-size: 13px;"></div>
                 </div>
+                <!-- ImgBB Upload Widget target container -->
+                <div id="edit-post-imgbb-upload-container" class="mt-2 text-left"></div>
             </div>
             <div class="flex justify-end gap-3 pt-3 border-t border-slate-100">
                 <button type="button" onclick="closeEditPostModal()" class="px-5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs cursor-pointer transition-all">Cancel</button>

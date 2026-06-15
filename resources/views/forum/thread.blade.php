@@ -383,7 +383,7 @@ article
                     <div class="space-y-1.5">
                         <label for="reply-quill-editor" class="text-[10px] font-bold text-slate-750 uppercase tracking-wider">Reply Message</label>
                         <!-- Hidden real field -->
-                        <input type="hidden" id="reply-content-input" name="content" value="{{ old('content') }}">
+                        <textarea id="reply-content-input" name="content" class="hidden">{{ old('content') }}</textarea>
                         
                         <!-- Quill container -->
                         <div class="relative rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
@@ -391,6 +391,10 @@ article
                             <!-- Mentions Autocomplete Dropdown -->
                             <div id="mention-dropdown" class="hidden absolute z-50 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl max-h-48 overflow-y-auto w-56 text-left py-1 text-xs"></div>
                         </div>
+
+                        <!-- ImgBB Upload Widget target container -->
+                        <div id="reply-imgbb-upload-container" class="mt-2 text-left"></div>
+
                         @error('content')
                             <p class="text-xs text-rose-500 mt-1 font-medium">{{ $message }}</p>
                         @enderror
@@ -527,6 +531,42 @@ article
                 },
                 placeholder: 'Type your reply message here...'
             });
+
+            // ImgBB Upload Widget value listener/interceptor for reply
+            const replyContentInput = document.getElementById('reply-content-input');
+            if (replyContentInput) {
+                const descriptor = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value');
+                Object.defineProperty(replyContentInput, 'value', {
+                    get: function() {
+                        return descriptor.get.call(this);
+                    },
+                    set: function(val) {
+                        descriptor.set.call(this, val);
+                        if (val) {
+                            // Extract URL from BBCode [img]URL[/img] or HTML <img> tags
+                            const imgRegex = /\[img\](.*?)\[\/img\]|<img[^>]+src="([^">]+)"/gi;
+                            let match;
+                            let foundUrls = [];
+                            while ((match = imgRegex.exec(val)) !== null) {
+                                const url = match[1] || match[2];
+                                if (url && !foundUrls.includes(url)) {
+                                    foundUrls.push(url);
+                                }
+                            }
+                            
+                            if (foundUrls.length > 0) {
+                                foundUrls.forEach(url => {
+                                    const range = replyQuill.getSelection(true);
+                                    replyQuill.insertEmbed(range.index, 'image', url);
+                                    replyQuill.setSelection(range.index + 1);
+                                });
+                                // Keep the synced editor content as final value
+                                descriptor.set.call(this, replyQuill.root.innerHTML);
+                            }
+                        }
+                    }
+                });
+            }
 
             // Mentions Autocomplete logic
             const mentionDropdown = document.getElementById('mention-dropdown');
@@ -1157,6 +1197,42 @@ article
                     }
                 }
             });
+
+            // ImgBB Upload Widget value listener/interceptor for edit post
+            const editPostContentInput = document.getElementById('edit-post-content-input');
+            if (editPostContentInput) {
+                const descriptor = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value');
+                Object.defineProperty(editPostContentInput, 'value', {
+                    get: function() {
+                        return descriptor.get.call(this);
+                    },
+                    set: function(val) {
+                        descriptor.set.call(this, val);
+                        if (val) {
+                            // Extract URL from BBCode [img]URL[/img] or HTML <img> tags
+                            const imgRegex = /\[img\](.*?)\[\/img\]|<img[^>]+src="([^">]+)"/gi;
+                            let match;
+                            let foundUrls = [];
+                            while ((match = imgRegex.exec(val)) !== null) {
+                                const url = match[1] || match[2];
+                                if (url && !foundUrls.includes(url)) {
+                                    foundUrls.push(url);
+                                }
+                            }
+                            
+                            if (foundUrls.length > 0) {
+                                foundUrls.forEach(url => {
+                                    const range = editPostQuill.getSelection(true);
+                                    editPostQuill.insertEmbed(range.index, 'image', url);
+                                    editPostQuill.setSelection(range.index + 1);
+                                });
+                                // Keep the synced editor content as final value
+                                descriptor.set.call(this, editPostQuill.root.innerHTML);
+                            }
+                        }
+                    }
+                });
+            }
 
             form.addEventListener('submit', function(e) {
                 const contentInput = document.getElementById('edit-post-content-input');
@@ -1827,4 +1903,16 @@ article
         </div>
     @endif
 @endauth
+
+<!-- ImgBB Upload Widget Plugins -->
+<script async src="https://imgbb.com/upload.js" 
+        data-auto-insert="bbcode-embed-medium" 
+        data-sibling-selector="#reply-imgbb-upload-container" 
+        data-sibling-position="after">
+</script>
+<script async src="https://imgbb.com/upload.js" 
+        data-auto-insert="bbcode-embed-medium" 
+        data-sibling-selector="#edit-post-imgbb-upload-container" 
+        data-sibling-position="after">
+</script>
 @endsection

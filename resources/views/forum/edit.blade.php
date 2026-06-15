@@ -102,7 +102,7 @@
             <div class="space-y-1.5">
                 <label for="quill-editor" class="text-[11px] font-black text-slate-700 uppercase tracking-widest ml-1">Discussion Content</label>
                 <!-- Hidden real field -->
-                <input type="hidden" id="content-input" name="content" value="{{ old('content', $thread->firstPost?->content) }}">
+                <textarea id="content-input" name="content" class="hidden">{{ old('content', $thread->firstPost?->content) }}</textarea>
                 
                 <!-- Quill container with custom HSL overrides -->
                 <div class="rounded-2xl border border-slate-200 bg-slate-50/50 focus-within:ring-2 focus-within:ring-blue-500/10 focus-within:border-blue-500 transition-all relative z-30">
@@ -120,6 +120,9 @@
                     </style>
                     <div id="quill-editor" class="bg-white rounded-b-2xl" style="height: 300px; font-size: 13.5px;">{!! old('content', $thread->firstPost?->content) !!}</div>
                 </div>
+
+                <!-- ImgBB Upload Widget target container -->
+                <div id="imgbb-upload-container" class="mt-2 text-left"></div>
                 
                 @error('content')
                     <p class="text-xs text-rose-500 mt-1 font-bold ml-1">{{ $message }}</p>
@@ -171,6 +174,42 @@
             },
             placeholder: 'Draft your updated discussion details here...'
         });
+
+        // ImgBB Upload Widget value listener/interceptor
+        const contentInput = document.getElementById('content-input');
+        if (contentInput) {
+            const descriptor = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value');
+            Object.defineProperty(contentInput, 'value', {
+                get: function() {
+                    return descriptor.get.call(this);
+                },
+                set: function(val) {
+                    descriptor.set.call(this, val);
+                    if (val) {
+                        // Extract URL from BBCode [img]URL[/img] or HTML <img> tags
+                        const imgRegex = /\[img\](.*?)\[\/img\]|<img[^>]+src="([^">]+)"/gi;
+                        let match;
+                        let foundUrls = [];
+                        while ((match = imgRegex.exec(val)) !== null) {
+                            const url = match[1] || match[2];
+                            if (url && !foundUrls.includes(url)) {
+                                foundUrls.push(url);
+                            }
+                        }
+                        
+                        if (foundUrls.length > 0) {
+                            foundUrls.forEach(url => {
+                                const range = quill.getSelection(true);
+                                quill.insertEmbed(range.index, 'image', url);
+                                quill.setSelection(range.index + 1);
+                            });
+                            // Keep the synced editor content as final value
+                            descriptor.set.call(this, quill.root.innerHTML);
+                        }
+                    }
+                }
+            });
+        }
 
         // Sync Quill changes to hidden real content field on form submit
         const form = document.getElementById('thread-form');
@@ -434,4 +473,11 @@
         animation: scaleUp 0.15s ease-out forwards;
     }
 </style>
+
+<!-- ImgBB Upload Widget Plugin -->
+<script async src="https://imgbb.com/upload.js" 
+        data-auto-insert="bbcode-embed-medium" 
+        data-sibling-selector="#imgbb-upload-container" 
+        data-sibling-position="after">
+</script>
 @endsection
