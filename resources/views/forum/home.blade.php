@@ -64,14 +64,32 @@
                                     $lastPostTime = $latestThread->created_at->diffForHumans();
                                 }
                             }
+
+                            // Define premium colors
+                            $accentColor = 'border-l-blue-600 dark:border-l-blue-500';
+                            $iconBg = 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-450 border-blue-100 dark:border-blue-900/30';
+                            
+                            if ($category->slug === 'general-discussion') {
+                                $accentColor = 'border-l-indigo-500 dark:border-l-indigo-400';
+                                $iconBg = 'bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 border-indigo-100 dark:border-indigo-900/30';
+                            } elseif ($category->slug === 'images-and-gifs' || $category->slug === 'images-gifs-showroom') {
+                                $accentColor = 'border-l-pink-500 dark:border-l-pink-400';
+                                $iconBg = 'bg-pink-50 dark:bg-pink-950/30 text-pink-600 dark:text-pink-400 border-pink-100 dark:border-pink-900/30';
+                            } elseif ($category->slug === 'web-dev-and-xenforo-styles' || $category->slug === 'web-dev-xenforo-styles') {
+                                $accentColor = 'border-l-sky-500 dark:border-l-sky-400';
+                                $iconBg = 'bg-sky-50 dark:bg-sky-950/30 text-sky-600 dark:text-sky-450 border-sky-100 dark:border-sky-900/30';
+                            } elseif ($category->slug === 'tech-support-inquiries' || $category->slug === 'tech-support') {
+                                $accentColor = 'border-l-emerald-500 dark:border-l-emerald-400';
+                                $iconBg = 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-650 dark:text-emerald-450 border-emerald-100 dark:border-emerald-900/30';
+                            }
                         @endphp
                         
-                        <div class="px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-between gap-4 hover:bg-slate-50/50 dark:hover:bg-slate-950/20 transition-all">
+                        <div class="px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-between gap-4 hover:bg-slate-50/50 dark:hover:bg-slate-950/20 transition-all border-l-4 {{ $accentColor }}">
                             
                             <!-- Left: Icon & Category details -->
                             <div class="flex items-start gap-3 flex-grow min-w-0 md:max-w-[50%]">
                                 <!-- Category Icon -->
-                                <div class="w-8.5 h-8.5 sm:w-10 sm:h-10 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30 shadow-sm flex-shrink-0 overflow-hidden mt-0.5">
+                                <div class="w-8.5 h-8.5 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border shadow-sm flex-shrink-0 overflow-hidden mt-0.5 {{ $iconBg }}">
                                     @if(\Illuminate\Support\Str::startsWith($category->icon, ['http://', 'https://']) || \Illuminate\Support\Str::contains($category->icon, '/'))
                                         <img src="{{ $category->icon }}" alt="{{ $category->name }}" class="w-full h-full object-cover">
                                     @elseif($category->icon == 'chat-bubble-left-right')
@@ -112,19 +130,19 @@
                             <div class="hidden md:flex items-center gap-6 sm:gap-10 md:gap-14 flex-shrink-0 justify-between md:justify-end">
                                 
                                 <!-- Stats: Threads & Posts -->
-                                <div class="flex items-center gap-6 sm:gap-10">
-                                    <div class="text-center w-12 flex-shrink-0">
-                                        <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">Threads</span>
-                                        <span class="text-xs font-black text-slate-700 dark:text-slate-350 mt-0.5 block">{{ $fmtThreads }}</span>
+                                <div class="flex items-center gap-2">
+                                    <div class="flex flex-col items-center justify-center px-2.5 py-1 rounded-xl bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-850 w-14 shadow-inner">
+                                        <span class="text-[10px] font-black text-slate-700 dark:text-slate-300">{{ $fmtThreads }}</span>
+                                        <span class="text-[7.5px] font-black text-slate-400 uppercase tracking-widest leading-none mt-0.5">threads</span>
                                     </div>
-                                    <div class="text-center w-12 flex-shrink-0">
-                                        <span class="text-[10px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">Posts</span>
-                                        <span class="text-xs font-black text-slate-700 dark:text-slate-350 mt-0.5 block">{{ $fmtPosts }}</span>
+                                    <div class="flex flex-col items-center justify-center px-2.5 py-1 rounded-xl bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-850 w-14 shadow-inner">
+                                        <span class="text-[10px] font-black text-slate-700 dark:text-slate-300">{{ $fmtPosts }}</span>
+                                        <span class="text-[7.5px] font-black text-slate-400 uppercase tracking-widest leading-none mt-0.5">posts</span>
                                     </div>
                                 </div>
 
                                 <!-- Last Post Activity -->
-                                <div class="w-48 text-left flex items-center gap-2.5 min-w-0">
+                                <div class="w-48 text-left flex items-center gap-2 px-2 py-1.5 rounded-2xl bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-850 min-w-0 shadow-inner">
                                     @if($latestThread && $lastPostUser)
                                         <!-- Last Post User Avatar -->
                                         <a href="{{ route('profile.show', $lastPostUser->name) }}" 
@@ -138,33 +156,25 @@
                                            data-user-avatar="{{ $lastPostUser->avatar_url }}" 
                                            data-user-banner="{{ $lastPostUser->banner_color }}"
                                            data-user-banner-path="{{ $lastPostUser->banner_path }}"
-                                           class="w-8 h-8 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 shadow-sm block hover:shadow transition-shadow">
+                                           class="w-7 h-7 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 shadow-sm block hover:scale-105 transition-transform">
                                              <img src="{{ $lastPostUser->avatar_url }}" class="w-full h-full object-cover">
                                         </a>
-                                        <div class="min-w-0 leading-none">
+                                        <div class="min-w-0 leading-tight">
                                             <!-- Latest thread title link -->
-                                            <a href="{{ route('threads.show', $latestThread->slug) }}" class="text-xs font-extrabold text-slate-750 dark:text-slate-350 hover:text-blue-600 dark:hover:text-blue-400 truncate block max-w-[130px] sm:max-w-[160px] tracking-tight leading-normal" title="{{ $latestThread->title }}">
+                                            <a href="{{ route('threads.show', $latestThread->slug) }}" class="text-[11px] font-extrabold text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 truncate block max-w-[130px]" title="{{ $latestThread->title }}">
                                                 {{ $latestThread->title }}
                                             </a>
                                             <!-- Timestamp & User -->
-                                            <span class="text-[9px] text-slate-400 dark:text-slate-500 font-bold block mt-0.5 leading-normal">
-                                                {{ $lastPostTime }} • <a href="{{ route('profile.show', $lastPostUser->name) }}" 
+                                            <span class="text-[9px] text-slate-400 dark:text-slate-500 font-semibold block mt-0.5 truncate leading-none">
+                                                <a href="{{ route('profile.show', $lastPostUser->name) }}" 
                                                                        data-user-hover="true" 
                                                                        data-user-name="{{ $lastPostUser->name }}" 
-                                                                       data-user-badge="{{ $lastPostUser->title_badge }}" 
-                                                                       data-user-joined="{{ $lastPostUser->created_at->format('M d, Y') }}" 
-                                                                       data-user-threads="{{ $lastPostUser->threads()->count() }}" 
-                                                                       data-user-posts="{{ $lastPostUser->posts()->count() }}" 
-                                                                       data-user-uploads="{{ $lastPostUser->attachments()->count() }}" 
-                                                                       data-user-avatar="{{ $lastPostUser->avatar_url }}" 
-                                                                       data-user-banner="{{ $lastPostUser->banner_color }}"
-                                                                       data-user-banner-path="{{ $lastPostUser->banner_path }}"
-                                                                       class="hover:underline font-extrabold text-slate-550 dark:text-slate-455"
-                                                                       style="{{ $lastPostUser->username_style_css }}">{{ $lastPostUser->name }}</a>
+                                                                       class="hover:underline font-extrabold text-slate-600 dark:text-slate-400"
+                                                                       style="{{ $lastPostUser->username_style_css }}">{{ $lastPostUser->name }}</a> • {{ $lastPostTime }}
                                             </span>
                                         </div>
                                     @else
-                                        <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium tracking-tight">No activity yet</span>
+                                        <span class="text-[10px] text-slate-400 dark:text-slate-500 font-semibold tracking-tight px-1 py-1">No activity yet</span>
                                     @endif
                                 </div>
 
@@ -197,7 +207,7 @@
                             $lastPostUser = $lastPost ? $lastPost->user : $thread->user;
                             $lastPostTime = $lastPost ? $lastPost->created_at->diffForHumans() : $thread->created_at->diffForHumans();
                         @endphp
-                        <div class="px-4 py-4 sm:px-6 flex items-start gap-4 hover:bg-slate-50/50 dark:hover:bg-slate-950/10 transition-all relative group">
+                        <div class="px-4 py-4 sm:px-6 flex items-start gap-4 hover:bg-slate-50/70 dark:hover:bg-slate-950/20 transition-all relative group hover:shadow-[inset_4px_0_0_0_#3b82f6] dark:hover:shadow-[inset_4px_0_0_0_#3b82f6]">
                             
                             <!-- Avatar Column -->
                             <a href="{{ route('profile.show', $thread->user->name) }}"
@@ -219,18 +229,30 @@
                             <div class="flex-grow min-w-0 space-y-1">
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <!-- Category Badge -->
-                                    <a href="{{ route('categories.show', $thread->category->slug) }}" class="inline-block text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30">
+                                    @php
+                                        $catColor = 'bg-blue-50/80 text-blue-600 border-blue-200/50 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-900/30';
+                                        if ($thread->category->slug === 'general-discussion') {
+                                            $catColor = 'bg-indigo-50/80 text-indigo-650 border-indigo-200/50 dark:bg-indigo-950/30 dark:text-indigo-400 dark:border-indigo-900/30';
+                                        } elseif ($thread->category->slug === 'images-and-gifs' || $thread->category->slug === 'images-gifs-showroom') {
+                                            $catColor = 'bg-pink-50/80 text-pink-650 border-pink-200/50 dark:bg-pink-950/30 dark:text-pink-400 dark:border-pink-900/30';
+                                        } elseif ($thread->category->slug === 'web-dev-and-xenforo-styles' || $thread->category->slug === 'web-dev-xenforo-styles') {
+                                            $catColor = 'bg-sky-50/80 text-sky-655 border-sky-200/50 dark:bg-sky-950/30 dark:text-sky-400 dark:border-sky-900/30';
+                                        } elseif ($thread->category->slug === 'tech-support-inquiries' || $thread->category->slug === 'tech-support') {
+                                            $catColor = 'bg-emerald-50/80 text-emerald-650 border-emerald-200/50 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900/30';
+                                        }
+                                    @endphp
+                                    <a href="{{ route('categories.show', $thread->category->slug) }}" class="inline-block text-[9px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border {{ $catColor }}">
                                         {{ $thread->category->name }}
                                     </a>
                                     
                                     <!-- Status Badges -->
                                     @if($thread->is_pinned)
-                                        <span class="inline-flex items-center gap-0.5 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-250 dark:border-amber-900/30">
+                                        <span class="inline-flex items-center gap-0.5 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm">
                                             📌 Pinned
                                         </span>
                                     @endif
                                     @if($thread->is_locked)
-                                        <span class="inline-flex items-center gap-0.5 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-455 border border-rose-250 dark:border-rose-900/30">
+                                        <span class="inline-flex items-center gap-0.5 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-gradient-to-r from-rose-500 to-red-655 text-white shadow-sm">
                                             🔒 Locked
                                         </span>
                                     @endif
@@ -249,12 +271,12 @@
                                     $colorStyle = ($hasTitleStyle && $thread->title_color) ? 'color: ' . $thread->title_color . ';' : '';
                                     $defaultClass = ($hasTitleStyle && !$thread->title_color) ? 'text-rose-600 dark:text-rose-400 drop-shadow-[0_1px_1px_rgba(244,63,94,0.15)]' : 'text-slate-900 dark:text-white';
                                 @endphp
-                                <h3 class="text-sm sm:text-base font-extrabold tracking-tight hover:text-blue-600 dark:hover:text-blue-400 transition-colors leading-snug {{ $hasHighlight ? 'bg-amber-500/10 px-1 rounded' : '' }} {{ $hasTitleStyle ? 'font-black' : '' }} {{ $defaultClass }} {{ $animClass }}" style="{{ $colorStyle }}">
+                                <h3 class="text-sm sm:text-[15px] font-bold tracking-tight hover:text-blue-600 dark:hover:text-blue-405 hover:underline transition-colors leading-snug {{ $hasHighlight ? 'bg-amber-500/10 px-1 rounded' : '' }} {{ $hasTitleStyle ? 'font-black' : '' }} {{ $defaultClass }} {{ $animClass }}" style="{{ $colorStyle }}">
                                     <a href="{{ route('threads.show', $thread->slug) }}">{{ $thread->title }}</a>
                                 </h3>
 
                                 <!-- First Post Content Snippet (Content Full!) -->
-                                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium line-clamp-2 leading-relaxed pt-0.5">
+                                <p class="text-xs text-slate-550 dark:text-slate-400 font-medium line-clamp-2 leading-relaxed pt-0.5 select-none">
                                     {{ Str::limit(strip_tags($thread->firstPost->content ?? ''), 150) }}
                                 </p>
 
@@ -278,36 +300,44 @@
 
                             <!-- Image Attachment Thumbnail if exists -->
                             @if($firstAttachment)
-                                <div class="hidden sm:block w-16 h-16 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 bg-slate-50">
+                                <a href="#" onclick="openLightbox('{{ $firstAttachment->file_path }}', '{{ $thread->title }}'); return false;" class="hidden sm:block w-14 h-14 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 bg-slate-50 hover:scale-105 hover:shadow-md transition-all duration-300">
                                     <img src="{{ $firstAttachment->file_path }}" class="w-full h-full object-cover">
-                                </div>
+                                </a>
                             @endif
 
                             <!-- Engagement Column (Replies & Views) -->
-                            <div class="hidden sm:flex flex-col items-end justify-center text-right flex-shrink-0 w-20 space-y-1">
-                                <div class="text-xs font-black text-slate-700 dark:text-slate-300">
-                                    💬 {{ $repliesCount }}
-                                    <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 block uppercase tracking-wider">Replies</span>
+                            <div class="hidden sm:flex items-center gap-2 flex-shrink-0 w-24 justify-end text-right px-2">
+                                <div class="flex flex-col items-center justify-center p-1 bg-slate-50/50 dark:bg-slate-950/35 border border-slate-100 dark:border-slate-850 rounded-xl w-10 shadow-inner" title="Replies">
+                                    <span class="text-[10px] font-black text-slate-650 dark:text-slate-300">💬</span>
+                                    <span class="text-[10px] font-extrabold text-slate-700 dark:text-slate-200 leading-none mt-0.5">{{ $repliesCount }}</span>
                                 </div>
-                                <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500">
-                                    👁️ {{ $thread->views_count }}
-                                    <span class="text-[8px] font-bold text-slate-400 dark:text-slate-500 block uppercase tracking-wider">Views</span>
+                                <div class="flex flex-col items-center justify-center p-1 bg-slate-50/50 dark:bg-slate-950/35 border border-slate-100 dark:border-slate-850 rounded-xl w-10 shadow-inner" title="Views">
+                                    <span class="text-[10px] font-black text-slate-650 dark:text-slate-300">👁️</span>
+                                    <span class="text-[10px] font-extrabold text-slate-700 dark:text-slate-200 leading-none mt-0.5">{{ $thread->views_count }}</span>
                                 </div>
                             </div>
 
                             <!-- Last Activity User Column -->
-                            <div class="hidden md:flex items-center gap-2.5 w-40 flex-shrink-0 border-l border-slate-100 dark:border-slate-800 pl-4">
+                            <div class="hidden md:flex items-center gap-2 w-44 flex-shrink-0 border-l border-slate-100 dark:border-slate-850 pl-4">
                                 <a href="{{ route('profile.show', $lastPostUser->name) }}"
                                    data-user-hover="true"
                                    data-user-name="{{ $lastPostUser->name }}"
-                                   class="w-7 h-7 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 shadow-sm block">
+                                   data-user-badge="{{ $lastPostUser->title_badge }}"
+                                   data-user-joined="{{ $lastPostUser->created_at->format('M d, Y') }}"
+                                   data-user-threads="{{ $lastPostUser->threads()->count() }}"
+                                   data-user-posts="{{ $lastPostUser->posts()->count() }}"
+                                   data-user-uploads="{{ $lastPostUser->attachments()->count() }}"
+                                   data-user-avatar="{{ $lastPostUser->avatar_url }}"
+                                   data-user-banner="{{ $lastPostUser->banner_color }}"
+                                   data-user-banner-path="{{ $lastPostUser->banner_path }}"
+                                   class="w-7 h-7 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 shadow-sm block hover:scale-105 transition-transform">
                                     <img src="{{ $lastPostUser->avatar_url }}" class="w-full h-full object-cover">
                                 </a>
-                                <div class="min-w-0 leading-none">
+                                <div class="min-w-0 leading-tight">
                                     <a href="{{ route('profile.show', $lastPostUser->name) }}"
                                        data-user-hover="true"
                                        data-user-name="{{ $lastPostUser->name }}"
-                                       class="text-[11px] font-extrabold text-slate-700 dark:text-slate-300 hover:text-blue-600 truncate block max-w-full"
+                                       class="text-[11px] font-extrabold text-slate-800 dark:text-slate-205 hover:text-blue-600 truncate block max-w-full"
                                        style="{{ $lastPostUser->username_style_css }}">
                                         {{ $lastPostUser->name }}
                                     </a>
