@@ -77,6 +77,11 @@ class ThreadController extends Controller
                         'file_name' => $file->getClientOriginalName(),
                         'file_type' => $file->getMimeType(),
                     ]);
+                } else {
+                    // Clean up newly created thread and post
+                    $post->delete();
+                    $thread->delete();
+                    return back()->withInput()->with('error', 'Image upload failed. Please upload your image to https://imgbb.com/upload and paste the direct image link in your post.');
                 }
             }
         }
