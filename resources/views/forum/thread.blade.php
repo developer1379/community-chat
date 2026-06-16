@@ -223,11 +223,16 @@ article
                         </div>
 
                         <!-- Render Attached Images & GIFs Gallery -->
-                        @if($post->attachments->count() > 0)
+                        @php
+                            $filteredAttachments = $post->attachments->filter(function($attach) use ($post) {
+                                return !str_contains($post->content, $attach->file_path) && !str_contains($post->content, $attach->url);
+                            });
+                        @endphp
+                        @if($filteredAttachments->count() > 0)
                             <div class="mt-4 pt-4 border-t border-slate-200/50 dark:border-slate-800/40 clear-both">
                                 <h4 class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-2">📎 Uploaded Attachments</h4>
                                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                    @foreach($post->attachments as $attach)
+                                    @foreach($filteredAttachments as $attach)
                                         <div class="relative group rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-300/40 dark:border-slate-800/60 shadow-sm">
                                             @if(str_starts_with($attach->file_type, 'image/') || preg_match('/\.(jpe?g|png|gif|webp|bmp)/i', $attach->file_path) || str_contains($attach->file_path, 'ibb.co') || str_contains($attach->file_path, 'imgbb'))
                                                  <button onclick="openLightbox('{{ $attach->url }}', '{{ $attach->file_name }}')" class="block w-full h-24 sm:h-28 overflow-hidden cursor-zoom-in text-left p-0 border-0 outline-none w-full">
