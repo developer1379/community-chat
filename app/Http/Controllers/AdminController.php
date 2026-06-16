@@ -234,7 +234,7 @@ class AdminController extends Controller
      */
     public function categories()
     {
-        $categories = \App\Models\Category::withCount('threads')->orderBy('order')->get();
+        $categories = \App\Models\Category::with(['parent'])->withCount('threads')->orderBy('order')->get();
         return view('admin.categories.index', compact('categories'));
     }
 
@@ -245,6 +245,7 @@ class AdminController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
+            'parent_id' => 'nullable|exists:categories,id',
             'description' => 'nullable|string|max:1000',
             'icon' => 'nullable|string|max:255',
             'icon_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
@@ -253,6 +254,7 @@ class AdminController extends Controller
 
         $validated['slug'] = \Illuminate\Support\Str::slug($validated['name']);
         $validated['is_active'] = true;
+        $validated['parent_id'] = $request->input('parent_id') ?: null;
 
         if ($request->hasFile('icon_image')) {
             $imgBB = app(\App\Services\ImgBBService::class);
@@ -276,6 +278,7 @@ class AdminController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+            'parent_id' => 'nullable|exists:categories,id|different:id',
             'description' => 'nullable|string|max:1000',
             'icon' => 'nullable|string|max:255',
             'icon_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
@@ -283,6 +286,7 @@ class AdminController extends Controller
         ]);
 
         $validated['slug'] = \Illuminate\Support\Str::slug($validated['name']);
+        $validated['parent_id'] = $request->input('parent_id') ?: null;
 
         if ($request->hasFile('icon_image')) {
             $imgBB = app(\App\Services\ImgBBService::class);

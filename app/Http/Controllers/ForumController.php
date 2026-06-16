@@ -344,6 +344,7 @@ class ForumController extends Controller
     public function mediaIndex(Request $request)
     {
         $search = $request->input('q');
+        $selectedCategoryId = $request->input('category_id');
         
         $query = \App\Models\Attachment::where('file_type', 'like', 'image/%')
             ->where('is_private', false)
@@ -355,8 +356,22 @@ class ForumController extends Controller
             $query->where('file_name', 'like', "%{$search}%");
         }
 
-        $media = $query->with(['thread', 'user'])->latest()->paginate(24);
+        if ($selectedCategoryId) {
+            // Find category and its children
+            $categoryIds = Category::where('id', $selectedCategoryId)
+                ->orWhere('parent_id', $selectedCategoryId)
+                ->pluck('id');
+                
+            $query->whereHas('thread', function($q) use ($categoryIds) {
+                $q->whereIn('category_id', $categoryIds);
+            });
+        }
 
-        return view('forum.media', compact('media', 'search'));
+        $media = $query->with(['thread.category', 'user'])->latest()->paginate(24);
+        
+        // Load categories for filter controls
+        $categories = $this->categoryRepo->getAllWithStats();
+
+        return view('forum.media', compact('media', 'search', 'categories', 'selectedCategoryId'));
     }
 }

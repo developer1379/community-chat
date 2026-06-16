@@ -14,6 +14,10 @@ class CategoryRepository implements CategoryRepositoryInterface
     {
         return Cache::remember('forum.categories', 3600, function () {
             $categories = Category::where('is_active', true)
+                ->whereNull('parent_id')
+                ->with(['subcategories' => function ($q) {
+                    $q->where('is_active', true)->orderBy('order');
+                }])
                 ->withCount('threads')
                 ->orderBy('order')
                 ->get();
@@ -21,6 +25,12 @@ class CategoryRepository implements CategoryRepositoryInterface
             foreach ($categories as $cat) {
                 $cat->posts_count = Post::whereIn('thread_id', $cat->threads->pluck('id'))->count();
                 $cat->latest_thread = $cat->threads()->with(['user', 'lastPost.user'])->latest()->first();
+
+                foreach ($cat->subcategories as $subcat) {
+                    $subcat->threads_count = $subcat->threads()->count();
+                    $subcat->posts_count = Post::whereIn('thread_id', $subcat->threads->pluck('id'))->count();
+                    $subcat->latest_thread = $subcat->threads()->with(['user', 'lastPost.user'])->latest()->first();
+                }
             }
 
             return $categories;

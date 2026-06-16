@@ -92,6 +92,180 @@ class DatabaseSeeder extends Seeder
             'order' => 4,
         ]);
 
+        $catNsfwParent = Category::create([
+            'name' => 'NSFW Media Classes',
+            'slug' => 'nsfw-media-classes',
+            'description' => 'Standard classification categories for filtering and moderating NSFW content.',
+            'icon' => 'folder',
+            'order' => 5,
+        ]);
+
+        $catDrawings = Category::create([
+            'parent_id' => $catNsfwParent->id,
+            'name' => 'Drawings',
+            'slug' => 'nsfw-drawings',
+            'description' => 'Safe-for-work (SFW) drawings, including anime, digital art, and illustrations.',
+            'icon' => 'palette',
+            'order' => 1,
+        ]);
+
+        $catHentai = Category::create([
+            'parent_id' => $catNsfwParent->id,
+            'name' => 'Hentai',
+            'slug' => 'nsfw-hentai',
+            'description' => 'Not-safe-for-work (NSFW) cartoon, anime, or illustrated sexual content.',
+            'icon' => 'explicit',
+            'order' => 2,
+        ]);
+
+        $catNeutral = Category::create([
+            'parent_id' => $catNsfwParent->id,
+            'name' => 'Neutral',
+            'slug' => 'nsfw-neutral',
+            'description' => 'Safe-for-work (SFW) everyday images of people, objects, and environments.',
+            'icon' => 'image',
+            'order' => 3,
+        ]);
+
+        $catPorn = Category::create([
+            'parent_id' => $catNsfwParent->id,
+            'name' => 'Porn',
+            'slug' => 'nsfw-porn',
+            'description' => 'Not-safe-for-work (NSFW) explicit photographic media or sexual acts.',
+            'icon' => 'explicit',
+            'order' => 4,
+        ]);
+
+        $catSexy = Category::create([
+            'parent_id' => $catNsfwParent->id,
+            'name' => 'Sexy',
+            'slug' => 'nsfw-sexy',
+            'description' => 'Provocative or suggestive media (e.g. swimwear, underwear) without explicit acts.',
+            'icon' => 'favorite',
+            'order' => 5,
+        ]);
+
+        // Seed Threads and Media for NSFW Categories
+        // Drawings
+        $threadDrawings = Thread::create([
+            'category_id' => $catDrawings->id,
+            'user_id' => $user1->id,
+            'title' => 'Digital illustration and Anime Sketchbook',
+            'slug' => 'digital-illustration-and-anime-sketchbook',
+            'views_count' => 120,
+            'is_featured' => false,
+        ]);
+
+        Post::create([
+            'thread_id' => $threadDrawings->id,
+            'user_id' => $user1->id,
+            'content' => "Welcome to the digital illustration show! Post your latest sketches, tablet work, vector art, and high quality anime character designs here.",
+        ]);
+
+        \App\Models\Attachment::create([
+            'thread_id' => $threadDrawings->id,
+            'user_id' => $user1->id,
+            'file_name' => 'digital-art-drawing.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
+        ]);
+
+        // Hentai
+        $threadHentai = Thread::create([
+            'category_id' => $catHentai->id,
+            'user_id' => $user3->id,
+            'title' => 'Adult Manga Illustration Styles and Anatomy Research',
+            'slug' => 'adult-manga-illustration-styles-and-anatomy-research',
+            'views_count' => 310,
+            'is_featured' => false,
+        ]);
+
+        Post::create([
+            'thread_id' => $threadHentai->id,
+            'user_id' => $user3->id,
+            'content' => "Discussing the complex anatomy, lineart styles, and rendering processes in mature/adult manga illustration workflows. Please share reference concepts for training models.",
+        ]);
+
+        \App\Models\Attachment::create([
+            'thread_id' => $threadHentai->id,
+            'user_id' => $user3->id,
+            'file_name' => 'hentai-style-concept.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
+        ]);
+
+        // Neutral
+        $threadNeutral = Thread::create([
+            'category_id' => $catNeutral->id,
+            'user_id' => $user2->id,
+            'title' => 'Everyday Life and Cityscapes Photography',
+            'slug' => 'everyday-life-and-cityscapes-photography',
+            'views_count' => 95,
+            'is_featured' => false,
+        ]);
+
+        Post::create([
+            'thread_id' => $threadNeutral->id,
+            'user_id' => $user2->id,
+            'content' => "Share your street photography, landscape snapshots, and everyday object captures. Great for model training reference of neutral SFW content.",
+        ]);
+
+        \App\Models\Attachment::create([
+            'thread_id' => $threadNeutral->id,
+            'user_id' => $user2->id,
+            'file_name' => 'neutral-dog-photo.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
+        ]);
+
+        // Porn
+        $threadPorn = Thread::create([
+            'category_id' => $catPorn->id,
+            'user_id' => $admin->id,
+            'title' => 'Explicit Photo Moderation Guidelines and Classification',
+            'slug' => 'explicit-photo-moderation-guidelines-and-classification',
+            'views_count' => 540,
+            'is_featured' => false,
+        ]);
+
+        Post::create([
+            'thread_id' => $threadPorn->id,
+            'user_id' => $admin->id,
+            'content' => "Establishing robust data moderation pipelines for explicit content. We are testing algorithms using classic art references representing human figures.",
+        ]);
+
+        \App\Models\Attachment::create([
+            'thread_id' => $threadPorn->id,
+            'user_id' => $admin->id,
+            'file_name' => 'fine-art-figure.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
+        ]);
+
+        // Sexy
+        $threadSexy = Thread::create([
+            'category_id' => $catSexy->id,
+            'user_id' => $user1->id,
+            'title' => 'Fashion & Glamour Modeling Showcase',
+            'slug' => 'fashion-and-glamour-modeling-showcase',
+            'views_count' => 280,
+            'is_featured' => false,
+        ]);
+
+        Post::create([
+            'thread_id' => $threadSexy->id,
+            'user_id' => $user1->id,
+            'content' => "A gallery dedicated to swimsuit, glamour, and pin-up photography modeling, focused on lighting setups, camera lenses, and post-production techniques.",
+        ]);
+
+        \App\Models\Attachment::create([
+            'thread_id' => $threadSexy->id,
+            'user_id' => $user1->id,
+            'file_name' => 'glamour-pose.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
+        ]);
+
         // 3. Seed Threads & Posts (Replies) inside General Discussion
         $thread1 = Thread::create([
             'category_id' => $catGeneral->id,

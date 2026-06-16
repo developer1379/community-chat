@@ -80,35 +80,75 @@
                             <div id="category-dropdown-options"
                                 class="absolute left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 max-h-64 overflow-y-auto hidden">
                                 <div class="p-1.5 space-y-1">
-                                    @foreach($categories as $cat)
-                                        <div onclick="selectCategory('{{ $cat->id }}', '{{ addslashes($cat->name) }}', '{{ $cat->slug }}', '{{ $cat->icon }}')"
-                                            class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors">
-                                            <div
-                                                class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 border border-slate-150 shadow-sm flex-shrink-0 overflow-hidden">
-                                                @if(\Illuminate\Support\Str::startsWith($cat->icon, ['http://', 'https://']) || \Illuminate\Support\Str::contains($cat->icon, '/'))
-                                                    <img src="{{ $cat->icon }}" alt="" class="w-full h-full object-cover">
-                                                @elseif($cat->icon == 'chat-bubble-left-right')
-                                                    <span class="material-symbols-outlined text-base">forum</span>
-                                                @elseif($cat->icon == 'photo')
-                                                    <span class="material-symbols-outlined text-base">photo_library</span>
-                                                @elseif($cat->icon == 'sparkles')
-                                                    <span class="material-symbols-outlined text-base">auto_awesome</span>
-                                                @elseif(\Illuminate\Support\Str::startsWith($cat->icon, 'fa'))
-                                                    <i class="{{ $cat->icon }} text-xs"></i>
-                                                @else
-                                                    <span
-                                                        class="material-symbols-outlined text-base">{{ $cat->icon ?: 'tag' }}</span>
-                                                @endif
+                                    @foreach($categories as $parentCat)
+                                        @if($parentCat->subcategories->isNotEmpty())
+                                            <!-- Parent Category Header -->
+                                            <div class="px-3 py-2 text-[10px] font-black uppercase tracking-wider text-slate-450 bg-slate-50/50 rounded-xl select-none flex items-center gap-1.5">
+                                                <span class="material-symbols-outlined text-xs">folder</span> {{ $parentCat->name }}
                                             </div>
-                                            <div class="text-left min-w-0">
-                                                <div class="font-bold text-slate-800 text-xs sm:text-sm truncate">
-                                                    {{ $cat->name }}</div>
-                                                @if($cat->description)
-                                                    <div class="text-[10px] text-slate-400 font-medium truncate max-w-xs">
-                                                        {{ $cat->description }}</div>
-                                                @endif
+                                            
+                                            <!-- Subcategories -->
+                                            @foreach($parentCat->subcategories as $childCat)
+                                                <div onclick="selectCategory('{{ $childCat->id }}', '{{ addslashes($childCat->name) }}', '{{ $childCat->slug }}', '{{ $childCat->icon }}')"
+                                                    class="flex items-center gap-3 p-2.5 pl-6 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors">
+                                                    <div class="w-7 h-7 rounded-lg bg-blue-50/70 flex items-center justify-center text-blue-600 border border-slate-150 shadow-sm flex-shrink-0 overflow-hidden">
+                                                        @if(\Illuminate\Support\Str::startsWith($childCat->icon, ['http://', 'https://']) || \Illuminate\Support\Str::contains($childCat->icon, '/'))
+                                                            <img src="{{ $childCat->icon }}" alt="" class="w-full h-full object-cover">
+                                                        @elseif($childCat->icon == 'chat-bubble-left-right')
+                                                            <span class="material-symbols-outlined text-xs">forum</span>
+                                                        @elseif($childCat->icon == 'photo')
+                                                            <span class="material-symbols-outlined text-xs">photo_library</span>
+                                                        @elseif($childCat->icon == 'sparkles')
+                                                            <span class="material-symbols-outlined text-xs">auto_awesome</span>
+                                                        @elseif(\Illuminate\Support\Str::startsWith($childCat->icon, 'fa'))
+                                                            <i class="{{ $childCat->icon }} text-[10px]"></i>
+                                                        @else
+                                                            <span class="material-symbols-outlined text-xs">{{ $childCat->icon ?: 'tag' }}</span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="text-left min-w-0">
+                                                        <div class="font-bold text-slate-705 text-xs sm:text-sm truncate">
+                                                            {{ $childCat->name }}
+                                                        </div>
+                                                        @if($childCat->description)
+                                                            <div class="text-[9px] text-slate-400 font-medium truncate max-w-xs">
+                                                                {{ $childCat->description }}
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <!-- Flat Category -->
+                                            <div onclick="selectCategory('{{ $parentCat->id }}', '{{ addslashes($parentCat->name) }}', '{{ $parentCat->slug }}', '{{ $parentCat->icon }}')"
+                                                class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors">
+                                                <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 border border-slate-150 shadow-sm flex-shrink-0 overflow-hidden">
+                                                    @if(\Illuminate\Support\Str::startsWith($parentCat->icon, ['http://', 'https://']) || \Illuminate\Support\Str::contains($parentCat->icon, '/'))
+                                                        <img src="{{ $parentCat->icon }}" alt="" class="w-full h-full object-cover">
+                                                    @elseif($parentCat->icon == 'chat-bubble-left-right')
+                                                        <span class="material-symbols-outlined text-base">forum</span>
+                                                    @elseif($parentCat->icon == 'photo')
+                                                        <span class="material-symbols-outlined text-base">photo_library</span>
+                                                    @elseif($parentCat->icon == 'sparkles')
+                                                        <span class="material-symbols-outlined text-base">auto_awesome</span>
+                                                    @elseif(\Illuminate\Support\Str::startsWith($parentCat->icon, 'fa'))
+                                                        <i class="{{ $parentCat->icon }} text-xs"></i>
+                                                    @else
+                                                        <span class="material-symbols-outlined text-base">{{ $parentCat->icon ?: 'tag' }}</span>
+                                                    @endif
+                                                </div>
+                                                <div class="text-left min-w-0">
+                                                    <div class="font-bold text-slate-800 text-xs sm:text-sm truncate">
+                                                        {{ $parentCat->name }}
+                                                    </div>
+                                                    @if($parentCat->description)
+                                                        <div class="text-[10px] text-slate-400 font-medium truncate max-w-xs">
+                                                            {{ $parentCat->description }}
+                                                        </div>
+                                                    @endif
+                                                </div>
                                             </div>
-                                        </div>
+                                        @endif
                                     @endforeach
                                 </div>
                             </div>

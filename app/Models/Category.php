@@ -12,6 +12,7 @@ class Category extends Model
     use HasFactory, HasUuids;
 
     protected $fillable = [
+        'parent_id',
         'name',
         'slug',
         'description',
@@ -23,6 +24,22 @@ class Category extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    /**
+     * Get the parent category.
+     */
+    public function parent()
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    /**
+     * Get the subcategories.
+     */
+    public function subcategories()
+    {
+        return $this->hasMany(Category::class, 'parent_id')->orderBy('order');
+    }
 
     /**
      * Get the threads for this category.
