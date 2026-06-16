@@ -610,14 +610,19 @@
                         Swal.fire({
                             icon: 'warning',
                             title: 'Upload Failed',
-                            text: 'Background upload failed. Launching ImgBB upload widget...',
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            const container = document.getElementById('imgbb-upload-container');
-                            const widgetBtn = container ? (container.nextElementSibling ? container.nextElementSibling.querySelector('button') : null) : null;
-                            if (widgetBtn) {
-                                widgetBtn.click();
+                            text: 'Background upload failed. Please click "Upload Manually" to launch the upload widget.',
+                            showCancelButton: true,
+                            confirmButtonText: 'Upload Manually',
+                            confirmButtonColor: '#0f172a',
+                            cancelButtonColor: '#e11d48',
+                            preConfirm: () => {
+                                const container = document.getElementById('imgbb-upload-container');
+                                const widgetBtn = container ? (container.nextElementSibling ? container.nextElementSibling.querySelector('button') : null) : null;
+                                if (widgetBtn) {
+                                    widgetBtn.click();
+                                } else {
+                                    window.open('https://imgbb.com/upload', '_blank');
+                                }
                             }
                         });
                     }
@@ -628,14 +633,19 @@
                     Swal.fire({
                         icon: 'warning',
                         title: 'Upload Failed',
-                        text: 'An error occurred during upload. Launching ImgBB upload widget...',
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(() => {
-                        const container = document.getElementById('imgbb-upload-container');
-                        const widgetBtn = container ? (container.nextElementSibling ? container.nextElementSibling.querySelector('button') : null) : null;
-                        if (widgetBtn) {
-                            widgetBtn.click();
+                        text: 'An error occurred during upload. Please click "Upload Manually" to launch the upload widget.',
+                        showCancelButton: true,
+                        confirmButtonText: 'Upload Manually',
+                        confirmButtonColor: '#0f172a',
+                        cancelButtonColor: '#e11d48',
+                        preConfirm: () => {
+                            const container = document.getElementById('imgbb-upload-container');
+                            const widgetBtn = container ? (container.nextElementSibling ? container.nextElementSibling.querySelector('button') : null) : null;
+                            if (widgetBtn) {
+                                widgetBtn.click();
+                            } else {
+                                window.open('https://imgbb.com/upload', '_blank');
+                            }
                         }
                     });
                 });
