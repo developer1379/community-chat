@@ -109,6 +109,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/bugs/{bug}/resolve', [\App\Http\Controllers\AdminController::class, 'resolveBug'])->name('bugs.resolve');
         Route::get('/settings', [\App\Http\Controllers\AdminController::class, 'settings'])->name('settings');
         Route::put('/settings', [\App\Http\Controllers\AdminController::class, 'updateSettings'])->name('settings.update');
+        Route::put('/settings/imgbb', [\App\Http\Controllers\AdminController::class, 'updateImgBBSettings'])->name('settings.imgbb.update');
+        Route::post('/settings/imgbb/test', [\App\Http\Controllers\AdminController::class, 'testImgBBSettings'])->name('settings.imgbb.test');
         
         // User Management
         Route::get('/users', [\App\Http\Controllers\AdminController::class, 'users'])->name('users.index');

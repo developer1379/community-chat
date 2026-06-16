@@ -41,4 +41,8 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'imgbb' => [
+        'key' => env('IMGBB_API_KEY', 'cd4cbd15d854cce8d541bc9b8ddc56ad'),
+    ],
+
 ];

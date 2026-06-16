@@ -125,7 +125,7 @@ class ChatController extends Controller
         if ($request->hasFile('image')) {
             $url = $this->imgBBService->upload($request->file('image'));
             if (!$url) {
-                return response()->json(['error' => 'Failed to upload image to ImgBB.'], 500);
+                return response()->json(['error' => 'Image upload failed. Please upload your image to https://imgbb.com/upload and paste the direct image link in your message.'], 500);
             }
             $body = $url;
         }

@@ -9,8 +9,65 @@ use Exception;
 
 class ImgBBService
 {
-    protected string $apiKey = 'cd4cbd15d854cce8d541bc9b8ddc56ad';
+    protected string $apiKey;
     protected string $apiUrl = 'https://api.imgbb.com/1/upload';
+
+    public function __construct()
+    {
+        $this->apiKey = config('services.imgbb.key', 'cd4cbd15d854cce8d541bc9b8ddc56ad');
+    }
+
+    /**
+     * Override the API key dynamically.
+     */
+    public function setApiKey(string $key): void
+    {
+        $this->apiKey = $key;
+    }
+
+    /**
+     * Test connection to the ImgBB API using a given API key or the configured one.
+     *
+     * @param string|null $key
+     * @return array Array with success status and optional error details
+     */
+    public function testConnection(?string $key = null): array
+    {
+        $testKey = $key ?: $this->apiKey;
+        
+        try {
+            // A 1x1 transparent pixel PNG base64 encoded data
+            $base64Image = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+
+            $response = Http::asForm()->post($this->apiUrl, [
+                'key' => $testKey,
+                'image' => $base64Image,
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                if (isset($data['data']['url'])) {
+                    return [
+                        'success' => true,
+                        'message' => 'Successfully connected to ImgBB API.',
+                        'url' => $data['data']['url']
+                    ];
+                }
+            }
+
+            $errorData = $response->json();
+            $errorMessage = $errorData['error']['message'] ?? $response->body() ?: 'Unknown ImgBB API response error.';
+            return [
+                'success' => false,
+                'message' => 'ImgBB API Error: ' . $errorMessage
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'success' => false,
+                'message' => 'Connection failed: ' . $e->getMessage()
+            ];
+        }
+    }
 
     /**
      * Upload an image/GIF file to ImgBB.
