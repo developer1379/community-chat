@@ -626,14 +626,15 @@
                                 const swalBtn = document.getElementById('swal-manual-upload-btn');
                                 if (swalBtn) {
                                     swalBtn.addEventListener('click', () => {
-                                        Swal.close();
-                                        const container = document.getElementById('imgbb-upload-container');
-                                        const widgetBtn = container ? (container.nextElementSibling ? container.nextElementSibling.querySelector('button') : null) : null;
+                                        const contentInput = document.getElementById('content-input');
+                                        const targetId = contentInput ? contentInput.getAttribute('data-imgbb-target') : null;
+                                        const widgetBtn = targetId ? document.querySelector(`[data-imgbb-id="${targetId}"]`) : null;
                                         if (widgetBtn) {
                                             widgetBtn.click();
                                         } else {
                                             window.open('https://imgbb.com/upload', '_blank');
                                         }
+                                        Swal.close();
                                     });
                                 }
                             }
@@ -662,14 +663,15 @@
                             const swalBtn = document.getElementById('swal-manual-upload-btn');
                             if (swalBtn) {
                                 swalBtn.addEventListener('click', () => {
-                                    Swal.close();
-                                    const container = document.getElementById('imgbb-upload-container');
-                                    const widgetBtn = container ? (container.nextElementSibling ? container.nextElementSibling.querySelector('button') : null) : null;
+                                    const contentInput = document.getElementById('content-input');
+                                    const targetId = contentInput ? contentInput.getAttribute('data-imgbb-target') : null;
+                                    const widgetBtn = targetId ? document.querySelector(`[data-imgbb-id="${targetId}"]`) : null;
                                     if (widgetBtn) {
                                         widgetBtn.click();
                                     } else {
                                         window.open('https://imgbb.com/upload', '_blank');
                                     }
+                                    Swal.close();
                                 });
                             }
                         }
