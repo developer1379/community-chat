@@ -114,6 +114,7 @@ class ForumController extends Controller
         $latestImages = \Illuminate\Support\Facades\Cache::remember('forum.sidebar.latest_images', 300, function () {
             return \App\Models\Attachment::where('file_type', 'like', 'image/%')
                 ->where('is_private', false)
+                ->whereHas('thread')
                 ->with(['thread'])
                 ->latest()
                 ->take(9)

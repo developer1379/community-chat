@@ -389,8 +389,16 @@
                     @if($trendingImages->isNotEmpty())
                         <div class="grid grid-cols-3 gap-2">
                             @foreach($trendingImages as $img)
-                                <a href="#" 
-                                   onclick="openLightbox('{{ $img->file_path }}', '{{ $img->thread ? $img->thread->title : 'Trending Image' }}'); return false;" 
+                                @php
+                                    $targetUrl = '#';
+                                    if ($img->thread) {
+                                        $targetUrl = route('threads.show', $img->thread->slug);
+                                        if ($img->post_id) {
+                                            $targetUrl .= '#post-' . $img->post_id;
+                                        }
+                                    }
+                                @endphp
+                                <a href="{{ $targetUrl }}" 
                                    class="group relative aspect-square rounded-xl overflow-hidden border border-slate-200 dark:border-slate-850 bg-slate-50 dark:bg-slate-950 flex-shrink-0 block hover:scale-102 hover:shadow-md transition-all duration-300">
                                     <img src="{{ $img->file_path }}" alt="Trending" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                     <!-- Hover Overlay -->
@@ -414,8 +422,16 @@
                     @if($latestImages->isNotEmpty())
                         <div class="grid grid-cols-3 gap-2">
                             @foreach($latestImages as $img)
-                                <a href="#" 
-                                   onclick="openLightbox('{{ $img->file_path }}', '{{ $img->thread ? $img->thread->title : 'Latest Image' }}'); return false;" 
+                                @php
+                                    $targetUrl = '#';
+                                    if ($img->thread) {
+                                        $targetUrl = route('threads.show', $img->thread->slug);
+                                        if ($img->post_id) {
+                                            $targetUrl .= '#post-' . $img->post_id;
+                                        }
+                                    }
+                                @endphp
+                                <a href="{{ $targetUrl }}" 
                                    class="group relative aspect-square rounded-xl overflow-hidden border border-slate-200 dark:border-slate-850 bg-slate-50 dark:bg-slate-950 flex-shrink-0 block hover:scale-102 hover:shadow-md transition-all duration-300">
                                     <img src="{{ $img->file_path }}" alt="Latest" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                     <!-- Hover Overlay -->
