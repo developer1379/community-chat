@@ -40,20 +40,10 @@
                     <label for="category_id" class="text-[11px] font-black text-slate-700 uppercase tracking-widest ml-1">Board Room</label>
                     <div class="relative">
                         <select id="category_id" name="category_id" class="w-full bg-slate-50/50 hover:bg-slate-50 border border-slate-200 rounded-2xl pl-4 pr-10 py-3.5 text-slate-800 text-xs sm:text-sm font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none cursor-pointer shadow-inner shadow-slate-100/50">
-                            @foreach($categories as $parentCat)
-                                @if($parentCat->subcategories->isNotEmpty())
-                                    <optgroup label="📂 {{ $parentCat->name }}">
-                                        @foreach($parentCat->subcategories as $childCat)
-                                            <option value="{{ $childCat->id }}" {{ $childCat->id === $thread->category_id ? 'selected' : '' }}>
-                                                📋 {{ $childCat->name }}
-                                            </option>
-                                        @endforeach
-                                    </optgroup>
-                                @else
-                                    <option value="{{ $parentCat->id }}" {{ $parentCat->id === $thread->category_id ? 'selected' : '' }}>
-                                        🚪 {{ $parentCat->name }}
-                                    </option>
-                                @endif
+                            @foreach($categories as $cat)
+                                <option value="{{ $cat->id }}" {{ $cat->id === $thread->category_id ? 'selected' : '' }}>
+                                    🚪 {{ $cat->name }}
+                                </option>
                             @endforeach
                         </select>
                         <span class="material-symbols-outlined absolute right-4 top-3.5 text-slate-400 pointer-events-none text-[18px]">unfold_more</span>

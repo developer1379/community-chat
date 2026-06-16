@@ -28,95 +28,6 @@
         </div>
     </div>
 
-    <!-- Category Filter Pills -->
-    @php
-        $selectedCat = null;
-        $parentCatOfSelected = null;
-        if ($selectedCategoryId) {
-            foreach ($categories as $pCat) {
-                if ($pCat->id === $selectedCategoryId) {
-                    $selectedCat = $pCat;
-                    break;
-                }
-                $child = $pCat->subcategories->where('id', $selectedCategoryId)->first();
-                if ($child) {
-                    $selectedCat = $child;
-                    $parentCatOfSelected = $pCat;
-                    break;
-                }
-            }
-        }
-        $activeParentId = $parentCatOfSelected ? $parentCatOfSelected->id : ($selectedCat ? $selectedCat->id : null);
-    @endphp
-
-    <div class="px-3 sm:px-0 space-y-3">
-        <!-- Row 1: Parent Categories -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none select-none">
-            <a href="{{ route('media.index', ['q' => $search]) }}"
-               class="px-4 py-2 text-xs font-bold rounded-full border transition-all flex-shrink-0 cursor-pointer {{ !$selectedCategoryId ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-850' }}">
-                All Media
-            </a>
-            @foreach($categories as $parentCat)
-                @php
-                    $isParentActive = $activeParentId === $parentCat->id;
-                    $filterParams = ['category_id' => $parentCat->id];
-                    if ($search) {
-                        $filterParams['q'] = $search;
-                    }
-                @endphp
-                <a href="{{ route('media.index', $filterParams) }}"
-                   class="px-4 py-2 text-xs font-bold rounded-full border transition-all flex-shrink-0 cursor-pointer flex items-center gap-1.5 {{ $isParentActive ? 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-500/50 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-850' }}">
-                    @if(\Illuminate\Support\Str::startsWith($parentCat->icon, ['http://', 'https://']) || \Illuminate\Support\Str::contains($parentCat->icon, '/'))
-                        <img src="{{ $parentCat->icon }}" alt="" class="w-3.5 h-3.5 rounded-full object-cover">
-                    @elseif(\Illuminate\Support\Str::startsWith($parentCat->icon, 'fa'))
-                        <i class="{{ $parentCat->icon }} text-[10px]"></i>
-                    @else
-                        <span class="material-symbols-outlined text-[14px]">{{ $parentCat->icon ?: 'tag' }}</span>
-                    @endif
-                    {{ $parentCat->name }}
-                </a>
-            @endforeach
-        </div>
-
-        <!-- Row 2: Subcategories -->
-        @if($activeParentId && ($targetParent = $categories->where('id', $activeParentId)->first()) && $targetParent->subcategories->isNotEmpty())
-            <div class="flex items-center gap-2 overflow-x-auto pb-2 pl-4 border-l-2 border-slate-200 dark:border-slate-800 scrollbar-none select-none">
-                @php
-                    $isAllParentActive = $selectedCategoryId === $activeParentId;
-                    $allParentParams = ['category_id' => $activeParentId];
-                    if ($search) {
-                        $allParentParams['q'] = $search;
-                    }
-                @endphp
-                <a href="{{ route('media.index', $allParentParams) }}"
-                   class="px-3.5 py-1.5 text-[11px] font-bold rounded-full border transition-all flex-shrink-0 cursor-pointer {{ $isAllParentActive ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm' : 'bg-slate-50 dark:bg-slate-950/40 border-slate-200 dark:border-slate-850 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-850' }}">
-                    All {{ $targetParent->name }}
-                </a>
-
-                @foreach($targetParent->subcategories as $childCat)
-                    @php
-                        $isChildActive = $selectedCategoryId === $childCat->id;
-                        $childParams = ['category_id' => $childCat->id];
-                        if ($search) {
-                            $childParams['q'] = $search;
-                        }
-                    @endphp
-                    <a href="{{ route('media.index', $childParams) }}"
-                       class="px-3.5 py-1.5 text-[11px] font-bold rounded-full border transition-all flex-shrink-0 cursor-pointer flex items-center gap-1.5 {{ $isChildActive ? 'bg-indigo-650 border-indigo-650 text-white shadow-sm' : 'bg-slate-50 dark:bg-slate-950/40 border-slate-200 dark:border-slate-850 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-850' }}">
-                        @if(\Illuminate\Support\Str::startsWith($childCat->icon, ['http://', 'https://']) || \Illuminate\Support\Str::contains($childCat->icon, '/'))
-                            <img src="{{ $childCat->icon }}" alt="" class="w-3 h-3 rounded-full object-cover">
-                        @elseif(\Illuminate\Support\Str::startsWith($childCat->icon, 'fa'))
-                            <i class="{{ $childCat->icon }} text-[9px]"></i>
-                        @else
-                            <span class="material-symbols-outlined text-[12px]">{{ $childCat->icon ?: 'tag' }}</span>
-                        @endif
-                        {{ $childCat->name }}
-                    </a>
-                @endforeach
-            </div>
-        @endif
-    </div>
-
     <!-- Gallery Grid Panel -->
     <div class="space-y-6">
         @if($media->count() > 0)
@@ -148,20 +59,13 @@
                         <!-- Card Footer Details -->
                         <div class="p-3 sm:p-4 flex-grow flex flex-col justify-between gap-2.5 bg-white dark:bg-slate-900">
                             <!-- File Title -->
-                            <div class="space-y-1 min-w-0">
+                            <div class="space-y-0.5 min-w-0">
                                 <p class="text-[11px] font-bold text-slate-800 dark:text-slate-200 truncate" title="{{ $attach->file_name }}">{{ $attach->file_name }}</p>
                                 @if($attach->thread)
-                                    <div class="flex items-center gap-1.5 flex-wrap">
-                                        @if($attach->thread->category)
-                                            <span class="px-1.5 py-0.5 rounded text-[8px] font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                                                {{ $attach->thread->category->name }}
-                                            </span>
-                                        @endif
-                                        <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-0.5">
-                                            <span class="material-symbols-outlined text-[10px] font-bold text-slate-450 dark:text-slate-500">forum</span>
-                                            <a href="{{ route('threads.show', $attach->thread->slug) }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors truncate max-w-[120px] sm:max-w-[160px]">{{ $attach->thread->title }}</a>
-                                        </p>
-                                    </div>
+                                    <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-0.5">
+                                        <span class="material-symbols-outlined text-[10px] font-bold text-slate-450 dark:text-slate-500">forum</span>
+                                        <a href="{{ route('threads.show', $attach->thread->slug) }}" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors truncate max-w-[120px] sm:max-w-[160px]">{{ $attach->thread->title }}</a>
+                                    </p>
                                 @endif
                             </div>
 

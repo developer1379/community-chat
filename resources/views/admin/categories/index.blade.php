@@ -69,7 +69,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-850">
-                            @foreach($categories->whereNull('parent_id') as $category)
+                            @foreach($categories as $category)
                                 <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-colors">
                                     <!-- Name & Icon -->
                                     <td class="p-4 flex items-start gap-3.5">
@@ -126,7 +126,7 @@
                                     <td class="p-4 text-right">
                                         <div class="flex items-center justify-end gap-1">
                                             <!-- Edit Trigger -->
-                                            <button onclick="openEditModal('{{ $category->id }}', '{{ addslashes($category->name) }}', '{{ addslashes($category->description) }}', '{{ addslashes($category->icon) }}', '{{ $category->order }}', '')" class="p-2 rounded-xl text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-450 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer" title="Edit category">
+                                            <button onclick="openEditModal('{{ $category->id }}', '{{ addslashes($category->name) }}', '{{ addslashes($category->description) }}', '{{ addslashes($category->icon) }}', '{{ $category->order }}')" class="p-2 rounded-xl text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-450 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer" title="Edit category">
                                                 <span class="material-symbols-outlined text-[20px]">edit</span>
                                             </button>
 
@@ -151,91 +151,6 @@
                                         </div>
                                     </td>
                                 </tr>
-
-                                @foreach($categories->where('parent_id', $category->id) as $subcategory)
-                                    <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-colors bg-slate-50/30 dark:bg-slate-950/10">
-                                        <!-- Name & Icon (Indented) -->
-                                        <td class="p-4 pl-10 flex items-start gap-2.5">
-                                            <span class="text-slate-400 font-mono select-none mt-2 text-xs">└─</span>
-                                            <div class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center flex-shrink-0 mt-1 overflow-hidden">
-                                                @if(\Illuminate\Support\Str::startsWith($subcategory->icon, ['http://', 'https://']) || \Illuminate\Support\Str::contains($subcategory->icon, '/'))
-                                                    <img src="{{ $subcategory->icon }}" alt="" class="w-full h-full object-cover">
-                                                @elseif(\Illuminate\Support\Str::startsWith($subcategory->icon, 'fa'))
-                                                    <i class="{{ $subcategory->icon }} text-xs"></i>
-                                                @else
-                                                    <span class="material-symbols-outlined text-xs">{{ $subcategory->icon ?: 'tag' }}</span>
-                                                @endif
-                                            </div>
-                                            <div>
-                                                <h3 class="font-semibold text-slate-700 dark:text-slate-300 text-xs mt-1">
-                                                    {{ $subcategory->name }}
-                                                </h3>
-                                                <p class="text-[10px] text-slate-400 dark:text-slate-500">
-                                                    /categories/{{ $subcategory->slug }}
-                                                </p>
-                                                @if($subcategory->description)
-                                                    <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">
-                                                        {{ $subcategory->description }}
-                                                    </p>
-                                                @endif
-                                            </div>
-                                        </td>
-
-                                        <!-- Order -->
-                                        <td class="p-4 text-center font-bold text-xs text-slate-550 dark:text-slate-400">
-                                            {{ $subcategory->order }}
-                                        </td>
-
-                                        <!-- Threads -->
-                                        <td class="p-4 text-center">
-                                            <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-                                                {{ $subcategory->threads_count }}
-                                            </span>
-                                        </td>
-
-                                        <!-- Status -->
-                                        <td class="p-4 text-center">
-                                            @if($subcategory->is_active)
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/30 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/20">
-                                                    <span class="w-1 h-1 rounded-full bg-emerald-500"></span> Active
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold rounded-full bg-slate-100 text-slate-650 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700">
-                                                    <span class="w-1 h-1 rounded-full bg-slate-400"></span> Disabled
-                                                </span>
-                                            @endif
-                                        </td>
-
-                                        <!-- Actions -->
-                                        <td class="p-4 text-right">
-                                            <div class="flex items-center justify-end gap-1">
-                                                <!-- Edit Trigger -->
-                                                <button onclick="openEditModal('{{ $subcategory->id }}', '{{ addslashes($subcategory->name) }}', '{{ addslashes($subcategory->description) }}', '{{ addslashes($subcategory->icon) }}', '{{ $subcategory->order }}', '{{ $subcategory->parent_id }}')" class="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-450 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer" title="Edit subcategory">
-                                                    <span class="material-symbols-outlined text-[18px]">edit</span>
-                                                </button>
-
-                                                <!-- Toggle Status -->
-                                                <form action="{{ route('admin.categories.toggle', $subcategory) }}" method="POST" class="inline">
-                                                    @csrf
-                                                    <button type="submit" class="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-450 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer" title="{{ $subcategory->is_active ? 'Disable subcategory' : 'Enable subcategory' }}">
-                                                        <span class="material-symbols-outlined text-[18px]">
-                                                            {{ $subcategory->is_active ? 'visibility_off' : 'visibility' }}
-                                                        </span>
-                                                    </button>
-                                                </form>
-
-                                                <!-- Delete -->
-                                                <form action="{{ route('admin.categories.destroy', $subcategory) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete the subcategory \'{{ $subcategory->name }}\'? This action cannot be undone.');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-605 dark:hover:text-rose-450 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer" title="Delete subcategory">
-                                                        <span class="material-symbols-outlined text-[18px]">delete</span>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
                             @endforeach
                         </tbody>
                     </table>
@@ -259,22 +174,6 @@
                     </label>
                     <input type="text" name="name" id="name" required placeholder="e.g. General Discussion" value="{{ old('name') }}"
                         class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">
-                </div>
-
-                <!-- Parent Category -->
-                <div class="space-y-1.5 text-left">
-                    <label for="parent_id" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
-                        Parent Category
-                    </label>
-                    <select name="parent_id" id="parent_id"
-                        class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-550 focus:bg-white transition-all font-semibold appearance-none cursor-pointer">
-                        <option value="">-- None (Treat as Top-Level Category) --</option>
-                        @foreach($categories->whereNull('parent_id') as $parentCat)
-                            <option value="{{ $parentCat->id }}" {{ old('parent_id') === $parentCat->id ? 'selected' : '' }}>
-                                {{ $parentCat->name }}
-                            </option>
-                        @endforeach
-                    </select>
                 </div>
 
                 <!-- Description -->
@@ -348,20 +247,6 @@
                     class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">
             </div>
 
-            <!-- Parent Category -->
-            <div class="space-y-1.5 text-left">
-                <label for="edit_parent_id" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
-                    Parent Category
-                </label>
-                <select name="parent_id" id="edit_parent_id"
-                    class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-550 focus:bg-white transition-all font-semibold appearance-none cursor-pointer">
-                    <option value="">-- None (Treat as Top-Level Category) --</option>
-                    @foreach($categories->whereNull('parent_id') as $parentCat)
-                        <option value="{{ $parentCat->id }}" id="edit_parent_option_{{ $parentCat->id }}">{{ $parentCat->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-
             <!-- Description -->
             <div class="space-y-1.5 text-left">
                 <label for="edit_description" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
@@ -413,7 +298,7 @@
 </div>
 
 <script>
-    function openEditModal(id, name, description, icon, order, parentId) {
+    function openEditModal(id, name, description, icon, order) {
         const modal = document.getElementById('editCategoryModal');
         const form = document.getElementById('editCategoryForm');
         
@@ -425,19 +310,6 @@
         document.getElementById('edit_description').value = description;
         document.getElementById('edit_icon').value = icon;
         document.getElementById('edit_order').value = order;
-        
-        // Parent select element
-        const parentSelect = document.getElementById('edit_parent_id');
-        parentSelect.value = parentId || '';
-
-        // Prevent setting parent to itself by disabling that option in the dropdown
-        for (let i = 0; i < parentSelect.options.length; i++) {
-            if (parentSelect.options[i].value === id) {
-                parentSelect.options[i].disabled = true;
-            } else {
-                parentSelect.options[i].disabled = false;
-            }
-        }
 
         // Show Modal
         modal.classList.remove('hidden');
