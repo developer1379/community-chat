@@ -44,6 +44,10 @@ class ThreadController extends Controller
             'content' => ['required', 'string', 'min:10'],
             'tags' => ['nullable', 'string', 'max:255'],
             'attachments.*' => ['nullable', 'file', 'mimes:jpeg,png,jpg,gif', 'max:5120'],
+            'attachment_urls' => ['nullable', 'array'],
+            'attachment_urls.*' => ['nullable', 'url'],
+            'attachment_names' => ['nullable', 'array'],
+            'attachment_names.*' => ['nullable', 'string'],
         ]);
 
         $slug = Str::slug($request->title) . '-' . Str::random(5);
@@ -62,7 +66,22 @@ class ThreadController extends Controller
             'content' => $request->content,
         ]);
 
-        // Handle ImgBB attachment uploads
+        // Handle client-side pre-uploaded ImgBB attachments
+        if ($request->has('attachment_urls')) {
+            foreach ($request->input('attachment_urls') as $index => $url) {
+                $fileName = $request->input('attachment_names')[$index] ?? basename($url);
+                $this->postRepo->createAttachment([
+                    'post_id' => $post->id,
+                    'thread_id' => $thread->id,
+                    'user_id' => Auth::id(),
+                    'file_path' => $url,
+                    'file_name' => $fileName,
+                    'file_type' => 'image/jpeg',
+                ]);
+            }
+        }
+
+        // Handle ImgBB attachment uploads (fallback)
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
                 // Upload to ImgBB instead of local storage!

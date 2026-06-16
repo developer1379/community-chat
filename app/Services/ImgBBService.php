@@ -37,7 +37,7 @@ class ImgBBService
 
             Log::error('ImgBB Upload Error: ' . $response->body());
             return null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('ImgBB Service Exception: ' . $e->getMessage());
             return null;
         }
@@ -70,26 +70,32 @@ class ImgBBService
 
             // Standard conversion using GD library
             $image = null;
-            if ($mime === 'image/jpeg' || $mime === 'image/jpg') {
+            if (function_exists('imagecreatefromjpeg') && ($mime === 'image/jpeg' || $mime === 'image/jpg')) {
                 $image = imagecreatefromjpeg($path);
-            } elseif ($mime === 'image/png') {
+            } elseif (function_exists('imagecreatefrompng') && $mime === 'image/png') {
                 $image = imagecreatefrompng($path);
-                imagepalettetotruecolor($image);
-                imagealphablending($image, true);
-                imagesavealpha($image, true);
+                if (function_exists('imagepalettetotruecolor')) {
+                    imagepalettetotruecolor($image);
+                }
+                if (function_exists('imagealphablending')) {
+                    imagealphablending($image, true);
+                }
+                if (function_exists('imagesavealpha')) {
+                    imagesavealpha($image, true);
+                }
             } elseif ($mime === 'image/gif') {
                 // If Imagick is not available, we return the original GIF to keep animations intact
                 return file_get_contents($path);
             }
 
-            if ($image) {
+            if ($image && function_exists('imagewebp')) {
                 ob_start();
                 imagewebp($image, null, 85);
                 $webpData = ob_get_clean();
                 imagedestroy($image);
                 return $webpData;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             Log::warning('WebP Conversion failed, uploading original: ' . $e->getMessage());
         }
 
@@ -117,7 +123,7 @@ class ImgBBService
 
             Log::error('ImgBB Icon Upload Error: ' . $response->body());
             return null;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('ImgBB Icon Service Exception: ' . $e->getMessage());
             return null;
         }
@@ -133,18 +139,24 @@ class ImgBBService
 
         try {
             $image = null;
-            if ($mime === 'image/jpeg' || $mime === 'image/jpg') {
+            if (function_exists('imagecreatefromjpeg') && ($mime === 'image/jpeg' || $mime === 'image/jpg')) {
                 $image = imagecreatefromjpeg($path);
-            } elseif ($mime === 'image/png') {
+            } elseif (function_exists('imagecreatefrompng') && $mime === 'image/png') {
                 $image = imagecreatefrompng($path);
-                imagepalettetotruecolor($image);
-                imagealphablending($image, true);
-                imagesavealpha($image, true);
-            } elseif ($mime === 'image/webp') {
+                if (function_exists('imagepalettetotruecolor')) {
+                    imagepalettetotruecolor($image);
+                }
+                if (function_exists('imagealphablending')) {
+                    imagealphablending($image, true);
+                }
+                if (function_exists('imagesavealpha')) {
+                    imagesavealpha($image, true);
+                }
+            } elseif (function_exists('imagecreatefromwebp') && $mime === 'image/webp') {
                 $image = imagecreatefromwebp($path);
             }
 
-            if ($image) {
+            if ($image && function_exists('imagecreatetruecolor') && function_exists('imagewebp')) {
                 $origWidth = imagesx($image);
                 $origHeight = imagesy($image);
 
@@ -167,7 +179,7 @@ class ImgBBService
                 imagedestroy($resized);
                 return $webpData;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             Log::warning('Resized WebP Conversion failed, uploading original: ' . $e->getMessage());
         }
 

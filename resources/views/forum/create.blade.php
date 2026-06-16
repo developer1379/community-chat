@@ -563,13 +563,50 @@
         }
 
         mediaInput.addEventListener('change', function (e) {
-            // Append newly selected files to our tracking list
             const files = Array.from(e.target.files);
 
             files.forEach(file => {
-                // Keep unique items
                 if (!selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
-                    selectedFiles.push(file);
+                    const fileObj = {
+                        name: file.name,
+                        size: file.size,
+                        url: '',
+                        isUploading: true,
+                        error: false
+                    };
+                    selectedFiles.push(fileObj);
+
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    formData.append('_token', '{{ csrf_token() }}');
+
+                    fetch('{{ route("media.upload") }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Upload failed');
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.url) {
+                            fileObj.url = data.url;
+                            fileObj.isUploading = false;
+                        } else {
+                            fileObj.error = true;
+                            fileObj.isUploading = false;
+                        }
+                        updatePreviewsAndInput();
+                    })
+                    .catch(err => {
+                        console.error('File upload error:', err);
+                        fileObj.error = true;
+                        fileObj.isUploading = false;
+                        updatePreviewsAndInput();
+                    });
                 }
             });
 
@@ -577,13 +614,10 @@
         });
 
         function updatePreviewsAndInput() {
-            // Sync our local tracking list to the real input element files list!
-            const dt = new DataTransfer();
-            selectedFiles.forEach(file => dt.items.add(file));
-            mediaInput.files = dt.files;
-
-            // Render preview thumbnails
             previewContainer.innerHTML = '';
+
+            const existingInputs = document.querySelectorAll('.dynamic-attachment-input');
+            existingInputs.forEach(el => el.remove());
 
             if (selectedFiles.length === 0) {
                 previewContainer.classList.add('hidden');
@@ -593,19 +627,25 @@
 
             previewContainer.classList.remove('hidden');
 
-            selectedFiles.forEach((file, index) => {
-                const isImage = file.type.startsWith('image/');
+            selectedFiles.forEach((fileObj, index) => {
                 const item = document.createElement('div');
                 item.className = 'relative group rounded-2xl overflow-hidden bg-slate-50 border border-slate-200 shadow-sm transition-transform hover:scale-102';
 
-                if (isImage) {
-                    const objectUrl = URL.createObjectURL(file);
+                if (fileObj.isUploading) {
                     item.innerHTML = `
-                        <div class="w-full h-20 overflow-hidden bg-slate-100">
-                            <img src="${objectUrl}" class="w-full h-full object-cover">
+                        <div class="w-full h-20 flex flex-col items-center justify-center p-2 bg-slate-55">
+                            <div class="w-6 h-6 border-2 border-slate-300 border-t-slate-900 rounded-full animate-spin"></div>
+                            <p class="text-[8px] text-slate-550 truncate w-full text-center mt-2 font-bold animate-pulse">Uploading...</p>
                         </div>
-                        <div class="p-1 text-[9px] text-slate-500 truncate bg-slate-100/50 border-t border-slate-200 flex items-center justify-between">
-                            <span class="truncate pr-1 font-semibold">${file.name}</span>
+                        <button type="button" onclick="removeSelectedFile(${index})" class="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-rose-600 text-white flex items-center justify-center shadow-lg hover:bg-rose-700 cursor-pointer transition-all border border-rose-500 text-[10px] font-black" title="Cancel">
+                            ✕
+                        </button>
+                    `;
+                } else if (fileObj.error) {
+                    item.innerHTML = `
+                        <div class="w-full h-20 flex flex-col items-center justify-center p-2 bg-rose-50 border border-rose-100 text-rose-600">
+                            <span class="material-symbols-outlined text-lg">error</span>
+                            <p class="text-[8px] truncate w-full text-center mt-1 font-bold">Failed</p>
                         </div>
                         <button type="button" onclick="removeSelectedFile(${index})" class="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-rose-600 text-white flex items-center justify-center shadow-lg hover:bg-rose-700 cursor-pointer transition-all border border-rose-500 text-[10px] font-black" title="Delete">
                             ✕
@@ -613,19 +653,36 @@
                     `;
                 } else {
                     item.innerHTML = `
-                        <div class="w-full h-20 flex flex-col items-center justify-center p-2 bg-slate-50">
-                            <span class="material-symbols-outlined text-slate-400 text-lg">description</span>
-                            <p class="text-[8px] text-slate-550 truncate w-full text-center mt-1 font-semibold">${file.name}</p>
+                        <div class="w-full h-20 overflow-hidden bg-slate-100">
+                            <img src="${fileObj.url}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-1 text-[9px] text-slate-550 truncate bg-slate-100/50 border-t border-slate-200 flex items-center justify-between">
+                            <span class="truncate pr-1 font-semibold">${fileObj.name}</span>
                         </div>
                         <button type="button" onclick="removeSelectedFile(${index})" class="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-rose-600 text-white flex items-center justify-center shadow-lg hover:bg-rose-700 cursor-pointer transition-all border border-rose-500 text-[10px] font-black" title="Delete">
                             ✕
                         </button>
                     `;
+
+                    const urlInput = document.createElement('input');
+                    urlInput.type = 'hidden';
+                    urlInput.className = 'dynamic-attachment-input';
+                    urlInput.name = 'attachment_urls[]';
+                    urlInput.value = fileObj.url;
+
+                    const nameInput = document.createElement('input');
+                    nameInput.type = 'hidden';
+                    nameInput.className = 'dynamic-attachment-input';
+                    nameInput.name = 'attachment_names[]';
+                    nameInput.value = fileObj.name;
+
+                    previewContainer.appendChild(urlInput);
+                    previewContainer.appendChild(nameInput);
                 }
+
                 previewContainer.appendChild(item);
             });
 
-            // Also update any live active preview gallery
             renderPreviewGallery();
         }
 
@@ -640,7 +697,7 @@
             if (!galleryGrid || !galleryContainer) return;
             galleryGrid.innerHTML = '';
 
-            const images = selectedFiles.filter(f => f.type.startsWith('image/'));
+            const images = selectedFiles.filter(f => !f.isUploading && !f.error && f.url);
 
             if (images.length === 0) {
                 galleryContainer.classList.add('hidden');
@@ -649,16 +706,15 @@
 
             galleryContainer.classList.remove('hidden');
 
-            images.forEach(file => {
-                const objectUrl = URL.createObjectURL(file);
+            images.forEach(fileObj => {
                 const card = document.createElement('div');
                 card.className = 'relative group rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm';
                 card.innerHTML = `
                     <div class="block w-full h-24 overflow-hidden">
-                        <img src="${objectUrl}" class="w-full h-full object-cover">
+                        <img src="${fileObj.url}" class="w-full h-full object-cover">
                     </div>
-                    <div class="bg-slate-100/85 p-1.5 text-[8px] text-slate-500 border-t border-slate-200 flex items-center justify-between">
-                        <span class="truncate pr-2 font-medium">${file.name}</span>
+                    <div class="bg-slate-100/85 p-1.5 text-[8px] text-slate-550 border-t border-slate-200 flex items-center justify-between">
+                        <span class="truncate pr-2 font-medium">${fileObj.name}</span>
                     </div>
                 `;
                 galleryGrid.appendChild(card);

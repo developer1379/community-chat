@@ -811,7 +811,46 @@ article
             const files = Array.from(e.target.files);
             files.forEach(file => {
                 if (!replySelectedFiles.some(f => f.name === file.name && f.size === file.size)) {
-                    replySelectedFiles.push(file);
+                    const fileObj = {
+                        name: file.name,
+                        size: file.size,
+                        url: '',
+                        isUploading: true,
+                        error: false
+                    };
+                    replySelectedFiles.push(fileObj);
+
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    formData.append('_token', '{{ csrf_token() }}');
+
+                    fetch('{{ route("media.upload") }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Upload failed');
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.url) {
+                            fileObj.url = data.url;
+                            fileObj.isUploading = false;
+                        } else {
+                            fileObj.error = true;
+                            fileObj.isUploading = false;
+                        }
+                        updateReplyPreviewsAndInput();
+                    })
+                    .catch(err => {
+                        console.error('Reply upload error:', err);
+                        fileObj.error = true;
+                        fileObj.isUploading = false;
+                        updateReplyPreviewsAndInput();
+                    });
                 }
             });
             updateReplyPreviewsAndInput();
@@ -819,12 +858,11 @@ article
     }
 
     function updateReplyPreviewsAndInput() {
-        const dt = new DataTransfer();
-        replySelectedFiles.forEach(file => dt.items.add(file));
-        replyMediaInput.files = dt.files;
-
         replyPreviewContainer.innerHTML = '';
         
+        const existingInputs = document.querySelectorAll('.dynamic-reply-attachment-input');
+        existingInputs.forEach(el => el.remove());
+
         if (replySelectedFiles.length === 0) {
             replyPreviewContainer.classList.add('hidden');
             document.getElementById('reply-preview-gallery-container').classList.add('hidden');
@@ -833,19 +871,25 @@ article
 
         replyPreviewContainer.classList.remove('hidden');
 
-        replySelectedFiles.forEach((file, index) => {
-            const isImage = file.type.startsWith('image/');
+        replySelectedFiles.forEach((fileObj, index) => {
             const item = document.createElement('div');
             item.className = 'relative group rounded-xl overflow-hidden bg-slate-50 border border-slate-200 shadow-sm';
             
-            if (isImage) {
-                const objectUrl = URL.createObjectURL(file);
+            if (fileObj.isUploading) {
                 item.innerHTML = `
-                    <div class="w-full h-16 overflow-hidden bg-slate-100">
-                        <img src="${objectUrl}" class="w-full h-full object-cover">
+                    <div class="w-full h-16 flex flex-col items-center justify-center p-2 bg-slate-50">
+                        <div class="w-5 h-5 border-2 border-slate-300 border-t-slate-900 rounded-full animate-spin"></div>
+                        <p class="text-[8px] text-slate-550 truncate w-full text-center mt-2 font-bold animate-pulse">Uploading...</p>
                     </div>
-                    <div class="p-1 text-[8px] text-slate-550 truncate bg-slate-100/50 border-t border-slate-200 flex items-center justify-between">
-                        <span class="truncate pr-1 font-semibold">${file.name}</span>
+                    <button type="button" onclick="removeSelectedReplyFile(${index})" class="absolute top-1 right-1 w-4.5 h-4.5 rounded-full bg-rose-600 text-white flex items-center justify-center shadow hover:bg-rose-700 cursor-pointer transition-all border border-rose-500 text-[10px] font-bold" title="Cancel">
+                        ✕
+                    </button>
+                `;
+            } else if (fileObj.error) {
+                item.innerHTML = `
+                    <div class="w-full h-16 flex flex-col items-center justify-center p-2 bg-rose-50 border border-rose-100 text-rose-600">
+                        <span class="material-symbols-outlined text-sm">error</span>
+                        <p class="text-[8px] truncate w-full text-center mt-1 font-bold">Failed</p>
                     </div>
                     <button type="button" onclick="removeSelectedReplyFile(${index})" class="absolute top-1 right-1 w-4.5 h-4.5 rounded-full bg-rose-600 text-white flex items-center justify-center shadow hover:bg-rose-700 cursor-pointer transition-all border border-rose-500 text-[10px] font-bold" title="Delete">
                         ✕
@@ -853,15 +897,33 @@ article
                 `;
             } else {
                 item.innerHTML = `
-                    <div class="w-full h-16 flex flex-col items-center justify-center p-2 bg-slate-50">
-                        <span class="material-symbols-outlined text-slate-400 text-sm">description</span>
-                        <p class="text-[8px] text-slate-550 truncate w-full text-center mt-1 font-semibold">${file.name}</p>
+                    <div class="w-full h-16 overflow-hidden bg-slate-100">
+                        <img src="${fileObj.url}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-1 text-[8px] text-slate-550 truncate bg-slate-100/50 border-t border-slate-200 flex items-center justify-between">
+                        <span class="truncate pr-1 font-semibold">${fileObj.name}</span>
                     </div>
                     <button type="button" onclick="removeSelectedReplyFile(${index})" class="absolute top-1 right-1 w-4.5 h-4.5 rounded-full bg-rose-600 text-white flex items-center justify-center shadow hover:bg-rose-700 cursor-pointer transition-all border border-rose-500 text-[10px] font-bold" title="Delete">
                         ✕
                     </button>
                 `;
+
+                const urlInput = document.createElement('input');
+                urlInput.type = 'hidden';
+                urlInput.className = 'dynamic-reply-attachment-input';
+                urlInput.name = 'attachment_urls[]';
+                urlInput.value = fileObj.url;
+
+                const nameInput = document.createElement('input');
+                nameInput.type = 'hidden';
+                nameInput.className = 'dynamic-reply-attachment-input';
+                nameInput.name = 'attachment_names[]';
+                nameInput.value = fileObj.name;
+
+                replyPreviewContainer.appendChild(urlInput);
+                replyPreviewContainer.appendChild(nameInput);
             }
+            
             replyPreviewContainer.appendChild(item);
         });
 
@@ -879,7 +941,7 @@ article
         if (!galleryGrid || !galleryContainer) return;
 
         galleryGrid.innerHTML = '';
-        const images = replySelectedFiles.filter(f => f.type.startsWith('image/'));
+        const images = replySelectedFiles.filter(f => !f.isUploading && !f.error && f.url);
         
         if (images.length === 0) {
             galleryContainer.classList.add('hidden');
@@ -888,16 +950,15 @@ article
 
         galleryContainer.classList.remove('hidden');
 
-        images.forEach(file => {
-            const objectUrl = URL.createObjectURL(file);
+        images.forEach(fileObj => {
             const card = document.createElement('div');
             card.className = 'relative group rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm';
             card.innerHTML = `
                 <div class="block w-full h-20 overflow-hidden">
-                    <img src="${objectUrl}" class="w-full h-full object-cover">
+                    <img src="${fileObj.url}" class="w-full h-full object-cover">
                 </div>
                 <div class="bg-slate-100/85 p-1 text-[8px] text-slate-550 border-t border-slate-200 flex items-center justify-between">
-                    <span class="truncate pr-2 font-medium">${file.name}</span>
+                    <span class="truncate pr-2 font-medium">${fileObj.name}</span>
                 </div>
             `;
             galleryGrid.appendChild(card);

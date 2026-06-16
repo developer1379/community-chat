@@ -165,6 +165,11 @@
             animation: titleShimmer 3s linear infinite;
             display: inline;
         }
+
+        /* Hide default ImgBB widget button */
+        .imgbb-container, .imgbb-plugin-button, [data-imgbb-trigger] {
+            display: none !important;
+        }
     </style>
 
     <!-- SweetAlert2 library for premium corporate dialogs -->
