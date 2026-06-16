@@ -667,26 +667,66 @@
             });
         }
 
-        // Custom image handler for Quill to upload to ImgBB
+        // Custom image handler for Quill to upload to ImgBB or insert URL
         function selectLocalImage() {
-            const input = document.createElement('input');
-            input.setAttribute('type', 'file');
-            input.setAttribute('accept', 'image/jpeg, image/png, image/jpg, image/gif');
-            input.click();
+            Swal.fire({
+                title: '🖼️ Insert Image',
+                text: 'Select how you want to add an image to your post:',
+                icon: 'question',
+                showCancelButton: true,
+                showDenyButton: true,
+                confirmButtonText: '📤 Upload File',
+                denyButtonText: '🔗 Paste Image URL',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#0f172a',
+                denyButtonColor: '#4f46e5',
+                cancelButtonColor: '#e11d48',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const input = document.createElement('input');
+                    input.setAttribute('type', 'file');
+                    input.setAttribute('accept', 'image/jpeg, image/png, image/jpg, image/gif');
+                    input.click();
 
-            input.onchange = () => {
-                const file = input.files[0];
-                if (/^image\//.test(file.type)) {
-                    uploadImageToImgBB(file);
-                } else {
+                    input.onchange = () => {
+                        const file = input.files[0];
+                        if (/^image\//.test(file.type)) {
+                            uploadImageToImgBB(file);
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Invalid File',
+                                text: 'Only image files (JPEG, PNG, JPG, GIF) are allowed.',
+                                confirmButtonColor: '#0f172a'
+                            });
+                        }
+                    };
+                } else if (result.isDenied) {
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Invalid File',
-                        text: 'Only image files (JPEG, PNG, JPG, GIF) are allowed.',
-                        confirmButtonColor: '#0f172a'
+                        title: '🔗 Paste Image URL',
+                        input: 'url',
+                        inputPlaceholder: 'https://example.com/image.jpg',
+                        showCancelButton: true,
+                        confirmButtonText: 'Insert Image',
+                        confirmButtonColor: '#0f172a',
+                        cancelButtonColor: '#e11d48',
+                        inputValidator: (value) => {
+                            if (!value) {
+                                return 'You need to write something!';
+                            }
+                            if (!value.match(/^https?:\/\/.+/)) {
+                                return 'Please enter a valid URL!';
+                            }
+                        }
+                    }).then((urlResult) => {
+                        if (urlResult.isConfirmed && urlResult.value) {
+                            const range = quill.getSelection(true);
+                            quill.insertEmbed(range.index, 'image', urlResult.value.trim());
+                            quill.setSelection(range.index + 1);
+                        }
                     });
                 }
-            };
+            });
         }
 
         function uploadImageToImgBB(file) {
