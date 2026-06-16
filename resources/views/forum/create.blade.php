@@ -200,7 +200,7 @@
 
                             /* Custom ImgBB Upload Button Styling to match premium theme */
                             .imgbb-container {
-                                display: inline-block !important;
+                                display: none !important;
                                 margin-top: 8px !important;
                                 margin-bottom: 8px !important;
                             }
