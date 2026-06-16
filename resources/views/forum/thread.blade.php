@@ -500,6 +500,117 @@ article
 
 <!-- JS Controller for Live Selected Replies & Attachments Previewing + Quill Editor -->
 <script>
+    // Trigger programmatic click on ImgBB upload widget button
+    function triggerImgBBWidget(editorId, containerId) {
+        const container = document.getElementById(containerId);
+        let widgetBtn = null;
+        if (container) {
+            let next = container.nextElementSibling;
+            while (next) {
+                if (next.classList.contains('imgbb-container')) {
+                    widgetBtn = next.querySelector('button');
+                    break;
+                }
+                const btn = next.querySelector('button[data-imgbb-trigger]');
+                if (btn) {
+                    widgetBtn = btn;
+                    break;
+                }
+                next = next.nextElementSibling;
+            }
+        }
+        if (!widgetBtn) {
+            const quillContainer = document.getElementById(editorId);
+            if (quillContainer) {
+                let targetId = quillContainer.getAttribute('data-imgbb-target');
+                if (!targetId) {
+                    const qlEditor = quillContainer.querySelector('.ql-editor');
+                    if (qlEditor) {
+                        targetId = qlEditor.getAttribute('data-imgbb-target');
+                    }
+                }
+                if (targetId) {
+                    widgetBtn = document.querySelector(`[data-imgbb-id="${targetId}"]`);
+                }
+            }
+        }
+        if (!widgetBtn) {
+            widgetBtn = document.querySelector(`[data-sibling-selector="#${containerId}"]`) || document.querySelector('button[data-imgbb-trigger]');
+        }
+        if (widgetBtn) {
+            widgetBtn.click();
+        } else {
+            window.open('https://imgbb.com/upload', '_blank');
+        }
+    }
+
+    // Global message interceptor for ImgBB manual uploads
+    window.addEventListener("message", function(event) {
+        if (event.data && typeof event.data === 'object' && event.data.id && event.data.message) {
+            const msg = event.data.message;
+            const imgRegex = /\[img\](.*?)\[\/img\]|<img[^>]+src="([^">]+)"|https?:\/\/[^\s]+(?:\.png|\.jpg|\.jpeg|\.gif)/gi;
+            let match;
+            let foundUrls = [];
+            while ((match = imgRegex.exec(msg)) !== null) {
+                const url = match[1] || match[2] || match[0];
+                if (url && !foundUrls.includes(url)) {
+                    foundUrls.push(url);
+                }
+            }
+            
+            if (foundUrls.length > 0) {
+                const id = event.data.id;
+                let targetEditor = null;
+                
+                const mainEditor = document.getElementById('quill-editor');
+                const mainInput = document.getElementById('content-input');
+                if ((mainEditor && (mainEditor.getAttribute('data-imgbb-target') === id || mainEditor.querySelector('.ql-editor')?.getAttribute('data-imgbb-target') === id)) ||
+                    (mainInput && mainInput.getAttribute('data-imgbb-target') === id)) {
+                    targetEditor = typeof quill !== 'undefined' ? quill : null;
+                }
+                
+                const replyEditor = document.getElementById('reply-quill-editor');
+                const replyInput = document.getElementById('reply-content-input');
+                if ((replyEditor && (replyEditor.getAttribute('data-imgbb-target') === id || replyEditor.querySelector('.ql-editor')?.getAttribute('data-imgbb-target') === id)) ||
+                    (replyInput && replyInput.getAttribute('data-imgbb-target') === id)) {
+                    targetEditor = typeof replyQuill !== 'undefined' ? replyQuill : null;
+                }
+                
+                const editEditor = document.getElementById('edit-post-quill-editor');
+                const editInput = document.getElementById('edit-post-content-input');
+                if ((editEditor && (editEditor.getAttribute('data-imgbb-target') === id || editEditor.querySelector('.ql-editor')?.getAttribute('data-imgbb-target') === id)) ||
+                    (editInput && editInput.getAttribute('data-imgbb-target') === id)) {
+                    targetEditor = typeof editPostQuill !== 'undefined' ? editPostQuill : null;
+                }
+                
+                if (!targetEditor) {
+                    if (typeof quill !== 'undefined') targetEditor = quill;
+                    else if (typeof replyQuill !== 'undefined') targetEditor = replyQuill;
+                    else if (typeof editPostQuill !== 'undefined') targetEditor = editPostQuill;
+                }
+                
+                if (targetEditor) {
+                    foundUrls.forEach(url => {
+                        const range = targetEditor.getSelection(true);
+                        targetEditor.insertEmbed(range.index, 'image', url);
+                        targetEditor.setSelection(range.index + 1);
+                    });
+                    
+                    // Clean up any raw BBCode appended to the editor's innerHTML
+                    setTimeout(() => {
+                        const editorEl = targetEditor.root;
+                        if (editorEl) {
+                            let html = editorEl.innerHTML;
+                            if (html.includes('[img]') || html.includes('[/img]')) {
+                                html = html.replace(/\[url=.*?\]\[img\].*?\[\/img\]\[\/url\]|\[img\].*?\[\/img\]/gi, '');
+                                editorEl.innerHTML = html;
+                            }
+                        }
+                    }, 50);
+                }
+            }
+        });
+
     let replySelectedFiles = [];
     const replyMediaInput = document.getElementById('reply-media-input');
     const replyPreviewContainer = document.getElementById('reply-preview-container');
@@ -866,14 +977,7 @@ article
                         const swalBtn = document.getElementById('swal-manual-upload-btn');
                         if (swalBtn) {
                             swalBtn.addEventListener('click', () => {
-                                const contentInput = document.getElementById('reply-content-input');
-                                const targetId = contentInput ? contentInput.getAttribute('data-imgbb-target') : null;
-                                const widgetBtn = targetId ? document.querySelector(`[data-imgbb-id="${targetId}"]`) : null;
-                                if (widgetBtn) {
-                                    widgetBtn.click();
-                                } else {
-                                    window.open('https://imgbb.com/upload', '_blank');
-                                }
+                                triggerImgBBWidget('reply-quill-editor', 'reply-imgbb-upload-container');
                                 Swal.close();
                             });
                         }
@@ -903,14 +1007,7 @@ article
                     const swalBtn = document.getElementById('swal-manual-upload-btn');
                     if (swalBtn) {
                         swalBtn.addEventListener('click', () => {
-                            const contentInput = document.getElementById('reply-content-input');
-                            const targetId = contentInput ? contentInput.getAttribute('data-imgbb-target') : null;
-                            const widgetBtn = targetId ? document.querySelector(`[data-imgbb-id="${targetId}"]`) : null;
-                            if (widgetBtn) {
-                                widgetBtn.click();
-                            } else {
-                                window.open('https://imgbb.com/upload', '_blank');
-                            }
+                            triggerImgBBWidget('reply-quill-editor', 'reply-imgbb-upload-container');
                             Swal.close();
                         });
                     }
@@ -1423,14 +1520,7 @@ article
                         const swalBtn = document.getElementById('swal-manual-upload-btn');
                         if (swalBtn) {
                             swalBtn.addEventListener('click', () => {
-                                const contentInput = document.getElementById('reply-content-input');
-                                const targetId = contentInput ? contentInput.getAttribute('data-imgbb-target') : null;
-                                const widgetBtn = targetId ? document.querySelector(`[data-imgbb-id="${targetId}"]`) : null;
-                                if (widgetBtn) {
-                                    widgetBtn.click();
-                                } else {
-                                    window.open('https://imgbb.com/upload', '_blank');
-                                }
+                                triggerImgBBWidget('reply-quill-editor', 'reply-imgbb-upload-container');
                                 Swal.close();
                             });
                         }
@@ -1460,14 +1550,7 @@ article
                     const swalBtn = document.getElementById('swal-manual-upload-btn');
                     if (swalBtn) {
                         swalBtn.addEventListener('click', () => {
-                            const contentInput = document.getElementById('reply-content-input');
-                            const targetId = contentInput ? contentInput.getAttribute('data-imgbb-target') : null;
-                            const widgetBtn = targetId ? document.querySelector(`[data-imgbb-id="${targetId}"]`) : null;
-                            if (widgetBtn) {
-                                widgetBtn.click();
-                            } else {
-                                window.open('https://imgbb.com/upload', '_blank');
-                            }
+                            triggerImgBBWidget('reply-quill-editor', 'reply-imgbb-upload-container');
                             Swal.close();
                         });
                     }
@@ -1615,14 +1698,7 @@ article
                         const swalBtn = document.getElementById('swal-manual-upload-btn');
                         if (swalBtn) {
                             swalBtn.addEventListener('click', () => {
-                                const contentInput = document.getElementById('edit-post-content-input');
-                                const targetId = contentInput ? contentInput.getAttribute('data-imgbb-target') : null;
-                                const widgetBtn = targetId ? document.querySelector(`[data-imgbb-id="${targetId}"]`) : null;
-                                if (widgetBtn) {
-                                    widgetBtn.click();
-                                } else {
-                                    window.open('https://imgbb.com/upload', '_blank');
-                                }
+                                triggerImgBBWidget('edit-post-quill-editor', 'edit-post-imgbb-upload-container');
                                 Swal.close();
                             });
                         }
@@ -1652,14 +1728,7 @@ article
                     const swalBtn = document.getElementById('swal-manual-upload-btn');
                     if (swalBtn) {
                         swalBtn.addEventListener('click', () => {
-                            const contentInput = document.getElementById('edit-post-content-input');
-                            const targetId = contentInput ? contentInput.getAttribute('data-imgbb-target') : null;
-                            const widgetBtn = targetId ? document.querySelector(`[data-imgbb-id="${targetId}"]`) : null;
-                            if (widgetBtn) {
-                                widgetBtn.click();
-                            } else {
-                                window.open('https://imgbb.com/upload', '_blank');
-                            }
+                            triggerImgBBWidget('edit-post-quill-editor', 'edit-post-imgbb-upload-container');
                             Swal.close();
                         });
                     }
