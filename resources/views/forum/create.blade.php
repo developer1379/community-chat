@@ -608,19 +608,16 @@
                         quill.setSelection(range.index + 1);
                     } else {
                         Swal.fire({
-                            icon: 'error',
+                            icon: 'warning',
                             title: 'Upload Failed',
-                            html: 'Failed to upload image to ImgBB.<br><br>Please upload your image directly at <a href="https://imgbb.com/upload" target="_blank" class="text-blue-600 underline font-bold">https://imgbb.com/upload</a>, copy the direct image link, and paste it below:',
-                            input: 'url',
-                            inputPlaceholder: 'https://i.ibb.co/.../image.png',
-                            showCancelButton: true,
-                            confirmButtonText: 'Insert into Editor',
-                            confirmButtonColor: '#0f172a',
-                            cancelButtonColor: '#e11d48'
-                        }).then((result) => {
-                            if (result.isConfirmed && result.value) {
-                                quill.insertEmbed(range.index, 'image', result.value);
-                                quill.setSelection(range.index + 1);
+                            text: 'Background upload failed. Launching ImgBB upload widget...',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            const container = document.getElementById('imgbb-upload-container');
+                            const widgetBtn = container ? (container.nextElementSibling ? container.nextElementSibling.querySelector('button') : null) : null;
+                            if (widgetBtn) {
+                                widgetBtn.click();
                             }
                         });
                     }
@@ -629,19 +626,16 @@
                     quill.deleteText(range.index, 1);
                     console.error('Quill Image Upload Error:', error);
                     Swal.fire({
-                        icon: 'error',
-                        title: 'Upload Error',
-                        html: 'An error occurred during image upload.<br><br>Please upload your image directly at <a href="https://imgbb.com/upload" target="_blank" class="text-blue-600 underline font-bold">https://imgbb.com/upload</a>, copy the direct image link, and paste it below:',
-                        input: 'url',
-                        inputPlaceholder: 'https://i.ibb.co/.../image.png',
-                        showCancelButton: true,
-                        confirmButtonText: 'Insert into Editor',
-                        confirmButtonColor: '#0f172a',
-                        cancelButtonColor: '#e11d48'
-                    }).then((result) => {
-                        if (result.isConfirmed && result.value) {
-                            quill.insertEmbed(range.index, 'image', result.value);
-                            quill.setSelection(range.index + 1);
+                        icon: 'warning',
+                        title: 'Upload Failed',
+                        text: 'An error occurred during upload. Launching ImgBB upload widget...',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        const container = document.getElementById('imgbb-upload-container');
+                        const widgetBtn = container ? (container.nextElementSibling ? container.nextElementSibling.querySelector('button') : null) : null;
+                        if (widgetBtn) {
+                            widgetBtn.click();
                         }
                     });
                 });
