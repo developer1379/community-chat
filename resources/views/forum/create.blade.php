@@ -123,13 +123,67 @@
                         <label for="title"
                             class="text-[11px] font-black text-slate-700 uppercase tracking-widest ml-1">Thread
                             Title</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <span class="material-symbols-outlined text-slate-400 text-[18px]">title</span>
-                            </span>
-                            <input type="text" id="title" name="title" value="{{ old('title') }}"
-                                class="w-full bg-slate-50/50 border border-slate-200 rounded-2xl pl-11 pr-4 py-3.5 text-slate-800 text-xs sm:text-sm font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-slate-400 placeholder:font-medium shadow-inner shadow-slate-100/50"
-                                placeholder="Give your thread a clean, descriptive title..." required>
+                        <div class="flex flex-col sm:flex-row gap-2.5">
+                            <!-- Prefix Select Dropdown -->
+                            <div class="relative flex-shrink-0">
+                                <input type="hidden" name="prefix" id="thread_prefix" value="{{ old('prefix') }}">
+                                <button type="button" id="prefix-dropdown-trigger" onclick="togglePrefixDropdown(event)"
+                                    class="w-full sm:w-auto h-[48px] bg-slate-900 border border-slate-750 text-slate-200 hover:bg-slate-850 hover:text-white px-4 rounded-2xl flex items-center justify-between sm:justify-start gap-2 text-xs sm:text-sm font-semibold transition-all select-none cursor-pointer">
+                                    <span id="selected-prefix-display" class="px-2 py-0.5 rounded-lg text-xs font-extrabold uppercase tracking-wider" style="background-color: transparent; color: inherit;">(No prefix)</span>
+                                    <span class="material-symbols-outlined text-[16px] text-slate-400">arrow_drop_down</span>
+                                </button>
+                                
+                                <!-- Prefix Dropdown Options List -->
+                                <div id="prefix-dropdown-options"
+                                    class="absolute left-0 mt-2 bg-slate-900 border border-slate-750 rounded-2xl shadow-2xl z-50 w-72 max-h-[350px] overflow-y-auto hidden p-3.5 space-y-4">
+                                    <style>
+                                        #prefix-dropdown-options::-webkit-scrollbar {
+                                            width: 6px;
+                                        }
+                                        #prefix-dropdown-options::-webkit-scrollbar-track {
+                                            background: transparent;
+                                        }
+                                        #prefix-dropdown-options::-webkit-scrollbar-thumb {
+                                            background-color: rgba(100, 116, 139, 0.4);
+                                            border-radius: 20px;
+                                        }
+                                    </style>
+                                    <div onclick="selectPrefix('', '(No prefix)', '', '')" class="text-slate-400 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-all">
+                                        (No prefix)
+                                    </div>
+                                    @php
+                                        $groupedPrefixes = [];
+                                        foreach(\App\Models\Thread::$prefixes as $pName => $pConfig) {
+                                            $groupedPrefixes[$pConfig['group']][] = array_merge(['name' => $pName], $pConfig);
+                                        }
+                                    @endphp
+                                    @foreach($groupedPrefixes as $groupName => $pList)
+                                        <div class="space-y-2">
+                                            <div class="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1">{{ $groupName }}</div>
+                                            <div class="grid grid-cols-1 gap-1.5">
+                                                @foreach($pList as $p)
+                                                    <button type="button" 
+                                                        onclick="selectPrefix('{{ addslashes($p['name']) }}', '{{ addslashes($p['name']) }}', '{{ $p['bg'] }}', '{{ $p['color'] }}')"
+                                                        style="background-color: {{ $p['bg'] }}; color: {{ $p['color'] }};"
+                                                        class="w-full text-left px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer">
+                                                        {{ $p['name'] }}
+                                                    </button>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <!-- Title Input -->
+                            <div class="relative flex-grow">
+                                <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <span class="material-symbols-outlined text-slate-400 text-[18px]">title</span>
+                                </span>
+                                <input type="text" id="title" name="title" value="{{ old('title') }}"
+                                    class="w-full h-[48px] bg-slate-50/50 border border-slate-200 rounded-2xl pl-11 pr-4 py-3 text-slate-800 text-xs sm:text-sm font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-slate-400 placeholder:font-medium shadow-inner shadow-slate-100/50"
+                                    placeholder="Give your thread a clean, descriptive title..." required>
+                            </div>
                         </div>
                         @error('title')
                             <p class="text-xs text-rose-500 mt-1 font-bold ml-1">{{ $message }}</p>
@@ -482,6 +536,17 @@
                         e.preventDefault();
                     }
                 });
+            }
+            // Initialize old prefix style if set
+            const oldPrefixVal = document.getElementById('thread_prefix').value;
+            if (oldPrefixVal) {
+                // Find matching button in prefix options list to retrieve bg & color
+                const btn = Array.from(document.querySelectorAll('#prefix-dropdown-options button')).find(b => b.textContent.trim() === oldPrefixVal);
+                if (btn) {
+                    const bg = btn.style.backgroundColor;
+                    const color = btn.style.color;
+                    selectPrefix(oldPrefixVal, oldPrefixVal, bg, color);
+                }
             }
         });
 
@@ -862,12 +927,40 @@
             }
         };
 
+        window.togglePrefixDropdown = function (event) {
+            event.stopPropagation();
+            const options = document.getElementById('prefix-dropdown-options');
+            options.classList.toggle('hidden');
+        };
+
+        window.selectPrefix = function (val, name, bg, color) {
+            document.getElementById('thread_prefix').value = val;
+            const display = document.getElementById('selected-prefix-display');
+            display.innerText = name;
+            if (bg && color) {
+                display.style.backgroundColor = bg;
+                display.style.color = color;
+                display.className = "px-2.5 py-1 rounded-xl text-xs font-black uppercase tracking-wider shadow-sm";
+            } else {
+                display.style.backgroundColor = 'transparent';
+                display.style.color = 'inherit';
+                display.className = "px-2 py-0.5 rounded-lg text-xs font-extrabold uppercase tracking-wider";
+            }
+            document.getElementById('prefix-dropdown-options').classList.add('hidden');
+        };
+
         // Close options list if clicked outside
         document.addEventListener('click', function (event) {
             const trigger = document.getElementById('category-dropdown-trigger');
             const options = document.getElementById('category-dropdown-options');
             if (trigger && options && !trigger.contains(event.target) && !options.contains(event.target)) {
                 options.classList.add('hidden');
+            }
+
+            const prefixTrigger = document.getElementById('prefix-dropdown-trigger');
+            const prefixOptions = document.getElementById('prefix-dropdown-options');
+            if (prefixTrigger && prefixOptions && !prefixTrigger.contains(event.target) && !prefixOptions.contains(event.target)) {
+                prefixOptions.classList.add('hidden');
             }
         });
 

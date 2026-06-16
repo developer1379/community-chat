@@ -40,6 +40,7 @@ class ThreadController extends Controller
     {
         $request->validate([
             'category_id' => ['required', 'exists:categories,id'],
+            'prefix' => ['nullable', 'string', 'in:' . implode(',', array_keys(\App\Models\Thread::$prefixes))],
             'title' => ['required', 'string', 'min:5', 'max:255'],
             'content' => ['required', 'string', 'min:10'],
             'tags' => ['nullable', 'string', 'max:255'],
@@ -55,6 +56,7 @@ class ThreadController extends Controller
         $thread = $this->threadRepo->createThread([
             'category_id' => $request->category_id,
             'user_id' => Auth::id(),
+            'prefix' => $request->prefix,
             'title' => $request->title,
             'slug' => $slug,
             'tags' => $request->tags,
@@ -126,6 +128,7 @@ class ThreadController extends Controller
 
         $request->validate([
             'category_id' => ['required', 'exists:categories,id'],
+            'prefix' => ['nullable', 'string', 'in:' . implode(',', array_keys(\App\Models\Thread::$prefixes))],
             'title' => ['required', 'string', 'min:5', 'max:255'],
             'content' => ['required', 'string', 'min:10'],
             'tags' => ['nullable', 'string', 'max:255'],
@@ -133,6 +136,7 @@ class ThreadController extends Controller
 
         $oldData = [
             'title' => $thread->title,
+            'prefix' => $thread->prefix,
             'category_id' => $thread->category_id,
             'tags' => $thread->tags,
             'content' => $thread->firstPost?->content,
@@ -140,6 +144,7 @@ class ThreadController extends Controller
 
         $thread->update([
             'title' => $request->title,
+            'prefix' => $request->prefix,
             'category_id' => $request->category_id,
             'tags' => $request->tags,
         ]);
@@ -150,6 +155,7 @@ class ThreadController extends Controller
 
         $newData = [
             'title' => $request->title,
+            'prefix' => $request->prefix,
             'category_id' => $request->category_id,
             'tags' => $request->tags,
             'content' => $request->content,

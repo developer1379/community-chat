@@ -581,7 +581,7 @@ profile
                             <div class="px-6 py-4 flex items-center justify-between gap-4 hover:bg-slate-50/50 dark:hover:bg-slate-850/30 transition-colors">
                                 <div class="space-y-0.5 text-left">
                                     <h4 class="font-bold text-slate-800 dark:text-white text-xs hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                        <a href="{{ route('threads.show', $thread->slug) }}">{{ $thread->title }}</a>
+                                        <a href="{{ route('threads.show', $thread->slug) }}">{!! $thread->prefix_badge !!}{{ $thread->title }}</a>
                                     </h4>
                                     <div class="flex items-center gap-2 text-[10px] text-slate-450 dark:text-slate-400">
                                         <span class="font-bold px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50">{{ $thread->category->name }}</span>

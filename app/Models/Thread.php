@@ -16,6 +16,7 @@ class Thread extends Model
     protected $fillable = [
         'category_id',
         'user_id',
+        'prefix',
         'title',
         'slug',
         'views_count',
@@ -27,6 +28,124 @@ class Thread extends Model
         'title_color',
         'title_animation',
         'tags',
+    ];
+
+    public static $prefixes = [
+        'AI Fake' => [
+            'group' => 'Thread Type',
+            'bg' => '#f59e0b',
+            'color' => '#1e1b4b',
+        ],
+        'Bollywood Actress' => [
+            'group' => 'Indian',
+            'bg' => '#3b82f6',
+            'color' => '#ffffff',
+        ],
+        'Telugu Actress' => [
+            'group' => 'Indian',
+            'bg' => '#10b981',
+            'color' => '#ffffff',
+        ],
+        'Tamil Actress' => [
+            'group' => 'Indian',
+            'bg' => '#ef4444',
+            'color' => '#ffffff',
+        ],
+        'Kannada Actress' => [
+            'group' => 'Indian',
+            'bg' => '#8b5cf6',
+            'color' => '#ffffff',
+        ],
+        'Punjabi Actress' => [
+            'group' => 'Indian',
+            'bg' => '#f59e0b',
+            'color' => '#ffffff',
+        ],
+        'Odia actress' => [
+            'group' => 'Indian',
+            'bg' => '#06b6d4',
+            'color' => '#ffffff',
+        ],
+        'South Actress' => [
+            'group' => 'Indian',
+            'bg' => '#14b8a6',
+            'color' => '#ffffff',
+        ],
+        'Malayalam Actress' => [
+            'group' => 'Indian',
+            'bg' => '#ec4899',
+            'color' => '#ffffff',
+        ],
+        'Bengali Actress' => [
+            'group' => 'Indian',
+            'bg' => '#2563eb',
+            'color' => '#ffffff',
+        ],
+        'Marathi Actress' => [
+            'group' => 'Indian',
+            'bg' => '#ea580c',
+            'color' => '#ffffff',
+        ],
+        'Bhojpuri Actress' => [
+            'group' => 'Indian',
+            'bg' => '#84cc16',
+            'color' => '#ffffff',
+        ],
+        'Indian Actress' => [
+            'group' => 'Indian',
+            'bg' => '#475569',
+            'color' => '#ffffff',
+        ],
+        'Pakistani Actress' => [
+            'group' => 'Other Countries',
+            'bg' => '#16a34a',
+            'color' => '#ffffff',
+        ],
+        'Srilankan Actress' => [
+            'group' => 'Other Countries',
+            'bg' => '#0284c7',
+            'color' => '#ffffff',
+        ],
+        'Bangladeshi Actress' => [
+            'group' => 'Other Countries',
+            'bg' => '#dc2626',
+            'color' => '#ffffff',
+        ],
+        'Other Celebrity' => [
+            'group' => 'Other Countries',
+            'bg' => '#4b5563',
+            'color' => '#ffffff',
+        ],
+        'Hentai/Cartoon' => [
+            'group' => 'Other theme',
+            'bg' => '#db2777',
+            'color' => '#ffffff',
+        ],
+        'Shemale' => [
+            'group' => 'Other theme',
+            'bg' => '#7c3aed',
+            'color' => '#ffffff',
+        ],
+        'TV Actress' => [
+            'group' => 'Other theme',
+            'bg' => '#2563eb',
+            'color' => '#ffffff',
+        ],
+        'How to' => [
+            'group' => 'Help & Support',
+            'bg' => '#0d9488',
+            'color' => '#ffffff',
+        ],
+        'Suggestion' => [
+            'group' => 'Help & Support',
+            'bg' => '#ca8a04',
+            'color' => '#ffffff',
+        ],
+        'Tips' => [
+            'group' => 'Help & Support',
+            'bg' => '#0891b2',
+            'color' => '#ffffff',
+        ],
     ];
     /**
      * The attributes that should be cast.
@@ -87,5 +206,17 @@ class Thread extends Model
     public function attachments(): HasMany
     {
         return $this->hasMany(Attachment::class);
+    }
+
+    /**
+     * Get the styled prefix badge HTML.
+     */
+    public function getPrefixBadgeAttribute(): string
+    {
+        if (!$this->prefix || !isset(self::$prefixes[$this->prefix])) {
+            return '';
+        }
+        $config = self::$prefixes[$this->prefix];
+        return '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider shadow-sm mr-1.5 align-middle select-none" style="background-color: ' . $config['bg'] . '; color: ' . $config['color'] . ';">' . e($this->prefix) . '</span>';
     }
 }

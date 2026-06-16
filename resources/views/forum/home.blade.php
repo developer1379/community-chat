@@ -272,7 +272,7 @@
                                     $defaultClass = ($hasTitleStyle && !$thread->title_color) ? 'text-rose-600 dark:text-rose-400 drop-shadow-[0_1px_1px_rgba(244,63,94,0.15)]' : 'text-slate-900 dark:text-white';
                                 @endphp
                                 <h3 class="text-sm sm:text-[15px] font-bold tracking-tight hover:text-blue-600 dark:hover:text-blue-405 hover:underline transition-colors leading-snug {{ $hasHighlight ? 'bg-amber-500/10 px-1 rounded' : '' }} {{ $hasTitleStyle ? 'font-black' : '' }} {{ $defaultClass }} {{ $animClass }}" style="{{ $colorStyle }}">
-                                    <a href="{{ route('threads.show', $thread->slug) }}">{{ $thread->title }}</a>
+                                    <a href="{{ route('threads.show', $thread->slug) }}">{!! $thread->prefix_badge !!}{{ $thread->title }}</a>
                                 </h3>
 
                                 <!-- First Post Content Snippet (Content Full!) -->
@@ -468,7 +468,7 @@
                             <!-- Thread Info -->
                             <div class="flex-grow min-w-0 space-y-0.5">
                                 <h4 class="font-extrabold text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-xs leading-snug truncate">
-                                    <a href="{{ route('threads.show', $activeThread->slug) }}">{{ $activeThread->title }}</a>
+                                    <a href="{{ route('threads.show', $activeThread->slug) }}">{!! $activeThread->prefix_badge !!}{{ $activeThread->title }}</a>
                                 </h4>
                                 
                                 <!-- Detail Row -->

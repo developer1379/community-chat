@@ -125,7 +125,7 @@
                                 @endphp
 
                                 <h2 class="font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-base hover:text-blue-600 dark:hover:text-blue-400 transition-colors leading-snug truncate {{ $hasHighlight ? 'px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 dark:bg-amber-500/5 dark:border-amber-550/20' : '' }}">
-                                    <a href="{{ route('threads.show', $thread->slug) }}" class="{{ $hasTitleStyle ? 'font-black tracking-wide' : '' }} {{ $defaultClass }} {{ $animClass }}" style="{{ $colorStyle }}">{{ $thread->title }}</a>
+                                    <a href="{{ route('threads.show', $thread->slug) }}" class="{{ $hasTitleStyle ? 'font-black tracking-wide' : '' }} {{ $defaultClass }} {{ $animClass }}" style="{{ $colorStyle }}">{!! $thread->prefix_badge !!}{{ $thread->title }}</a>
                                 </h2>
                             </div>
                             

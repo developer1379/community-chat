@@ -68,7 +68,7 @@ article
             @if($thread->is_locked)
                 <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-700">🔒 Locked</span>
             @endif
-            <span class="{{ $hasTitleStyle ? 'font-black tracking-wide' : '' }} {{ $defaultClass }} {{ $animClass }}" style="{{ $colorStyle }}">{{ $thread->title }}</span>
+            <span class="{{ $hasTitleStyle ? 'font-black tracking-wide' : '' }} {{ $defaultClass }} {{ $animClass }}" style="{{ $colorStyle }}">{!! $thread->prefix_badge !!}{{ $thread->title }}</span>
         </h1>
         @if($thread->tags)
             <div class="flex flex-wrap gap-1.5 mt-2">

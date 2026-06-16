@@ -123,6 +123,19 @@
         }
 
         document.addEventListener('DOMContentLoaded', updateThemeToggleIcon);
+
+        // Global capture-phase listener to handle broken image loads gracefully with clean SVG placeholders
+        window.addEventListener('error', function (e) {
+            if (e.target && e.target.tagName === 'IMG') {
+                const isAvatar = e.target.classList.contains('avatar') || e.target.src.includes('avatar') || e.target.closest('[data-user-name]');
+                if (isAvatar) {
+                    e.target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%23e2e8f0"/><text x="50%" y="55%" font-family="sans-serif" font-size="36" fill="%2394a3b8" dominant-baseline="middle" text-anchor="middle">👤</text></svg>';
+                } else {
+                    e.target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%23f1f5f9"/><text x="50%" y="50%" font-family="sans-serif" font-size="10" fill="%2394a3b8" dominant-baseline="middle" text-anchor="middle">Image Error</text></svg>';
+                }
+                e.target.onerror = null; // Prevent infinite loop if fallback itself has an error
+            }
+        }, true);
     </script>
 </body>
 </html>
