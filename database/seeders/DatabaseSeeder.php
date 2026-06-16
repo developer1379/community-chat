@@ -237,6 +237,7 @@ class DatabaseSeeder extends Seeder
         $thread1 = Thread::create([
             'category_id' => $catGeneral->id,
             'user_id' => $user3->id,
+            'prefix' => 'Tips',
             'title' => 'Building Future Community Hubs with High-End Aesthetics',
             'slug' => 'building-future-community-hubs-with-high-end-aesthetics',
             'views_count' => 156,
@@ -274,6 +275,7 @@ class DatabaseSeeder extends Seeder
         $thread2 = Thread::create([
             'category_id' => $catWebDev->id,
             'user_id' => $user1->id,
+            'prefix' => 'How to',
             'title' => 'Why TailwindCSS v4 with Zero-Vite Lag is the Next Big Thing',
             'slug' => 'why-tailwindcss-v4-with-zero-vite-lag-is-the-next-big-thing',
             'views_count' => 84,
@@ -304,6 +306,7 @@ class DatabaseSeeder extends Seeder
         $thread3 = Thread::create([
             'category_id' => $catSupport->id,
             'user_id' => $user2->id,
+            'prefix' => 'Suggestion',
             'title' => 'Decoupling Database Access with Repository & Interface Pattern',
             'slug' => 'decoupling-database-access-with-repository-pattern',
             'views_count' => 42,
