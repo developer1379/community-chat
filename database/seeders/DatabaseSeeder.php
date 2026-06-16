@@ -357,6 +357,227 @@ class DatabaseSeeder extends Seeder
             'file_type' => 'image/jpeg',
         ]);
 
+        // Additional seeds for NSFW categories to enrich dataset
+        // Drawings 2
+        $tDraw2 = Thread::create([
+            'category_id' => $catDrawings->id,
+            'user_id' => $user2->id,
+            'title' => 'Retro 90s Anime Aesthetics and Background Art',
+            'slug' => 'retro-90s-anime-aesthetics-and-background-art',
+            'views_count' => 180,
+            'is_featured' => false,
+        ]);
+        Post::create([
+            'thread_id' => $tDraw2->id,
+            'user_id' => $user2->id,
+            'content' => "Let's appreciate the hand-painted cell backgrounds of 90s anime. The color choices and detailed scenery are incredible.",
+        ]);
+        \App\Models\Attachment::create([
+            'thread_id' => $tDraw2->id,
+            'user_id' => $user2->id,
+            'file_name' => 'retro-anime-girl.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
+        ]);
+
+        // Drawings 3
+        $tDraw3 = Thread::create([
+            'category_id' => $catDrawings->id,
+            'user_id' => $user3->id,
+            'title' => 'Concept Art: Cyberpunk City Street View',
+            'slug' => 'concept-art-cyberpunk-city-street-view',
+            'views_count' => 240,
+            'is_featured' => false,
+        ]);
+        Post::create([
+            'thread_id' => $tDraw3->id,
+            'user_id' => $user3->id,
+            'content' => "Sharing some futuristic cyberpunk concept designs and neon street sketches from my latest project.",
+        ]);
+        \App\Models\Attachment::create([
+            'thread_id' => $tDraw3->id,
+            'user_id' => $user3->id,
+            'file_name' => 'cyberpunk-neon-street.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
+        ]);
+
+        // Hentai 2
+        $tHentai2 = Thread::create([
+            'category_id' => $catHentai->id,
+            'user_id' => $user1->id,
+            'title' => 'Adult Webtoon Line Art & Coloring Workflows',
+            'slug' => 'adult-webtoon-line-art-and-coloring-workflows',
+            'views_count' => 380,
+            'is_featured' => false,
+        ]);
+        Post::create([
+            'thread_id' => $tHentai2->id,
+            'user_id' => $user1->id,
+            'content' => "Tips on shading skin and clothing highlights for mature webtoon series. What digital brushes do you prefer?",
+        ]);
+        \App\Models\Attachment::create([
+            'thread_id' => $tHentai2->id,
+            'user_id' => $user1->id,
+            'file_name' => 'stylized-illustration.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1560942485-b2a11cc13456?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
+        ]);
+
+        // Hentai 3
+        $tHentai3 = Thread::create([
+            'category_id' => $catHentai->id,
+            'user_id' => $user2->id,
+            'title' => 'Manga Screen Toning & Shading Techniques',
+            'slug' => 'manga-screen-toning-and-shading-techniques',
+            'views_count' => 290,
+            'is_featured' => false,
+        ]);
+        Post::create([
+            'thread_id' => $tHentai3->id,
+            'user_id' => $user2->id,
+            'content' => "How to apply dot screen tones for adult manga scenes. Here is a sample page study showing the shading.",
+        ]);
+        \App\Models\Attachment::create([
+            'thread_id' => $tHentai3->id,
+            'user_id' => $user2->id,
+            'file_name' => 'abstract-paint-flow.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
+        ]);
+
+        // Neutral 2
+        $tNeut2 = Thread::create([
+            'category_id' => $catNeutral->id,
+            'user_id' => $user3->id,
+            'title' => 'Workspace Setup & Minimalist Desks',
+            'slug' => 'workspace-setup-and-minimalist-desks',
+            'views_count' => 110,
+            'is_featured' => false,
+        ]);
+        Post::create([
+            'thread_id' => $tNeut2->id,
+            'user_id' => $user3->id,
+            'content' => "Show us where you code and design! Here is my current desk setup with a dual monitor setup.",
+        ]);
+        \App\Models\Attachment::create([
+            'thread_id' => $tNeut2->id,
+            'user_id' => $user3->id,
+            'file_name' => 'minimal-desk-workspace.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
+        ]);
+
+        // Neutral 3
+        $tNeut3 = Thread::create([
+            'category_id' => $catNeutral->id,
+            'user_id' => $user1->id,
+            'title' => 'Coffee Art and Local Cafe Discoveries',
+            'slug' => 'coffee-art-and-local-cafe-discoveries',
+            'views_count' => 150,
+            'is_featured' => false,
+        ]);
+        Post::create([
+            'thread_id' => $tNeut3->id,
+            'user_id' => $user1->id,
+            'content' => "Tried a new coffee shop downtown and got this beautiful latte art! Share your local cafe pictures.",
+        ]);
+        \App\Models\Attachment::create([
+            'thread_id' => $tNeut3->id,
+            'user_id' => $user1->id,
+            'file_name' => 'latte-art-coffee.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
+        ]);
+
+        // Porn 2
+        $tPorn2 = Thread::create([
+            'category_id' => $catPorn->id,
+            'user_id' => $user2->id,
+            'title' => 'Chiaroscuro Figure Lighting & Studio Setup',
+            'slug' => 'chiaroscuro-figure-lighting-and-studio-setup',
+            'views_count' => 610,
+            'is_featured' => false,
+        ]);
+        Post::create([
+            'thread_id' => $tPorn2->id,
+            'user_id' => $user2->id,
+            'content' => "Using strong shadows and highlights to emphasize human muscle form in artistic studio shoots.",
+        ]);
+        \App\Models\Attachment::create([
+            'thread_id' => $tPorn2->id,
+            'user_id' => $user2->id,
+            'file_name' => 'abstract-shadow-study.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
+        ]);
+
+        // Porn 3
+        $tPorn3 = Thread::create([
+            'category_id' => $catPorn->id,
+            'user_id' => $user3->id,
+            'title' => 'Fine-Art Sculptures of Classical Antiquity',
+            'slug' => 'fine-art-sculptures-of-classical-antiquity',
+            'views_count' => 450,
+            'is_featured' => false,
+        ]);
+        Post::create([
+            'thread_id' => $tPorn3->id,
+            'user_id' => $user3->id,
+            'content' => "Studying the anatomical accuracy and posture of Renaissance marble statues of figures.",
+        ]);
+        \App\Models\Attachment::create([
+            'thread_id' => $tPorn3->id,
+            'user_id' => $user3->id,
+            'file_name' => 'museum-classical-sculpture.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
+        ]);
+
+        // Sexy 2
+        $tSexy2 = Thread::create([
+            'category_id' => $catSexy->id,
+            'user_id' => $user2->id,
+            'title' => 'Beach Fashion & Summer Swimwear Poses',
+            'slug' => 'beach-fashion-and-summer-swimwear-poses',
+            'views_count' => 310,
+            'is_featured' => false,
+        ]);
+        Post::create([
+            'thread_id' => $tSexy2->id,
+            'user_id' => $user2->id,
+            'content' => "Outdoor summer fashion photography tips. Managing direct sunlight reflections and shadows on swimwear.",
+        ]);
+        \App\Models\Attachment::create([
+            'thread_id' => $tSexy2->id,
+            'user_id' => $user2->id,
+            'file_name' => 'beach-sunset-swimwear.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1504198453319-5ce911bafcde?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
+        ]);
+
+        // Sexy 3
+        $tSexy3 = Thread::create([
+            'category_id' => $catSexy->id,
+            'user_id' => $user3->id,
+            'title' => 'Glamour Editorial Portrait Lighting Guides',
+            'slug' => 'glamour-editorial-portrait-lighting-guides',
+            'views_count' => 420,
+            'is_featured' => false,
+        ]);
+        Post::create([
+            'thread_id' => $tSexy3->id,
+            'user_id' => $user3->id,
+            'content' => "Using softboxes and ring lights to get clean editorial beauty portraits. What setups do you use?",
+        ]);
+        \App\Models\Attachment::create([
+            'thread_id' => $tSexy3->id,
+            'user_id' => $user3->id,
+            'file_name' => 'beauty-portrait-woman.jpg',
+            'file_path' => 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80',
+            'file_type' => 'image/jpeg',
+        ]);
+
         // Call the Shop Seeder to populate catalog items
         $this->call(\Database\Seeders\ShopItemSeeder::class);
     }
