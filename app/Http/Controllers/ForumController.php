@@ -110,13 +110,49 @@ class ForumController extends Controller
                 ->get();
         }
 
+        // Fetch latest images for homepage sidebar widget
+        $latestImages = \Illuminate\Support\Facades\Cache::remember('forum.sidebar.latest_images', 300, function () {
+            return \App\Models\Attachment::where('file_type', 'like', 'image/%')
+                ->where('is_private', false)
+                ->with(['thread'])
+                ->latest()
+                ->take(9)
+                ->get();
+        });
+
+        // Fetch trending images (from threads with highest views) for homepage sidebar widget
+        $trendingImages = \Illuminate\Support\Facades\Cache::remember('forum.sidebar.trending_images', 300, function () {
+            return \App\Models\Attachment::where('file_type', 'like', 'image/%')
+                ->where('is_private', false)
+                ->whereHas('thread')
+                ->join('threads', 'attachments.thread_id', '=', 'threads.id')
+                ->orderBy('threads.views_count', 'desc')
+                ->select('attachments.*')
+                ->with(['thread'])
+                ->take(9)
+                ->get();
+        });
+
         // Fetch all threads paginated for the main content feed
         $threads = Thread::with(['user', 'category', 'lastPost.user', 'firstPost'])
             ->orderBy('is_pinned', 'desc')
             ->latest('updated_at')
             ->paginate(15);
 
-        return view('forum.home', compact('categories', 'stats', 'activeThreads', 'onlineUsers', 'featuredThreads', 'latestThreads', 'viralThreads', 'mostLikedThread', 'topReactedThreads', 'threads'));
+        return view('forum.home', compact(
+            'categories', 
+            'stats', 
+            'activeThreads', 
+            'onlineUsers', 
+            'featuredThreads', 
+            'latestThreads', 
+            'viralThreads', 
+            'mostLikedThread', 
+            'topReactedThreads', 
+            'threads',
+            'latestImages',
+            'trendingImages'
+        ));
     }
 
     public function search(Request $request)

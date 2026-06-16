@@ -366,6 +366,112 @@
         <!-- Sidebar Section (Right - 4 Cols) -->
         <div class="lg:col-span-4 space-y-6">
 
+            <!-- Latest & Trending Media Sidebar Widget -->
+            <div class="border-y sm:border border-slate-200 dark:border-slate-800 p-4 bg-white dark:bg-slate-900 rounded-none sm:rounded-2xl shadow-sm text-left">
+                <!-- Header with Tabs -->
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2 mb-3">
+                    <h3 class="text-[11px] font-black tracking-[0.15em] text-slate-400 dark:text-slate-500 uppercase flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-rose-600 dark:text-rose-400 text-[16px]">photo_library</span> Media Gallery
+                    </h3>
+                    <!-- Tab Switchers -->
+                    <div class="flex gap-2 text-[10px] font-extrabold">
+                        <button id="tab-trending-btn" onclick="switchMediaTab('trending')" class="px-2 py-0.5 rounded-md text-rose-600 bg-rose-50 dark:bg-rose-950/40 transition-colors">
+                            Trending
+                        </button>
+                        <button id="tab-latest-btn" onclick="switchMediaTab('latest')" class="px-2 py-0.5 rounded-md text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors">
+                            Latest
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Trending Images Panel -->
+                <div id="panel-trending" class="space-y-3 block">
+                    @if($trendingImages->isNotEmpty())
+                        <div class="grid grid-cols-3 gap-2">
+                            @foreach($trendingImages as $img)
+                                <a href="#" 
+                                   onclick="openLightbox('{{ $img->file_path }}', '{{ $img->thread ? $img->thread->title : 'Trending Image' }}'); return false;" 
+                                   class="group relative aspect-square rounded-xl overflow-hidden border border-slate-200 dark:border-slate-850 bg-slate-50 dark:bg-slate-950 flex-shrink-0 block hover:scale-102 hover:shadow-md transition-all duration-300">
+                                    <img src="{{ $img->file_path }}" alt="Trending" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                    <!-- Hover Overlay -->
+                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-1.5">
+                                        <span class="text-[8px] font-bold text-white truncate w-full leading-none">
+                                            {{ $img->thread ? $img->thread->title : 'View' }}
+                                        </span>
+                                    </div>
+                                </a>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="py-6 text-center text-xs text-slate-400 dark:text-slate-500 font-bold">
+                            No trending images yet
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Latest Images Panel -->
+                <div id="panel-latest" class="space-y-3 hidden">
+                    @if($latestImages->isNotEmpty())
+                        <div class="grid grid-cols-3 gap-2">
+                            @foreach($latestImages as $img)
+                                <a href="#" 
+                                   onclick="openLightbox('{{ $img->file_path }}', '{{ $img->thread ? $img->thread->title : 'Latest Image' }}'); return false;" 
+                                   class="group relative aspect-square rounded-xl overflow-hidden border border-slate-200 dark:border-slate-850 bg-slate-50 dark:bg-slate-950 flex-shrink-0 block hover:scale-102 hover:shadow-md transition-all duration-300">
+                                    <img src="{{ $img->file_path }}" alt="Latest" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                    <!-- Hover Overlay -->
+                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-1.5">
+                                        <span class="text-[8px] font-bold text-white truncate w-full leading-none">
+                                            {{ $img->thread ? $img->thread->title : 'View' }}
+                                        </span>
+                                    </div>
+                                </a>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="py-6 text-center text-xs text-slate-400 dark:text-slate-500 font-bold">
+                            No latest images yet
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Footer Link to Showroom -->
+                <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-850 flex justify-end">
+                    <a href="{{ route('media.index') }}" class="text-[10px] font-black text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-0.5">
+                        Browse Showroom <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tab Switching Script -->
+            <script>
+                function switchMediaTab(tab) {
+                    const trendingBtn = document.getElementById('tab-trending-btn');
+                    const latestBtn = document.getElementById('tab-latest-btn');
+                    const trendingPanel = document.getElementById('panel-trending');
+                    const latestPanel = document.getElementById('panel-latest');
+
+                    if (tab === 'trending') {
+                        // Activate Trending
+                        trendingBtn.className = 'px-2 py-0.5 rounded-md text-rose-600 bg-rose-50 dark:bg-rose-950/40 transition-colors';
+                        latestBtn.className = 'px-2 py-0.5 rounded-md text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors';
+                        
+                        trendingPanel.classList.remove('hidden');
+                        trendingPanel.classList.add('block');
+                        latestPanel.classList.remove('block');
+                        latestPanel.classList.add('hidden');
+                    } else {
+                        // Activate Latest
+                        latestBtn.className = 'px-2 py-0.5 rounded-md text-rose-600 bg-rose-50 dark:bg-rose-950/40 transition-colors';
+                        trendingBtn.className = 'px-2 py-0.5 rounded-md text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors';
+                        
+                        latestPanel.classList.remove('hidden');
+                        latestPanel.classList.add('block');
+                        trendingPanel.classList.remove('block');
+                        trendingPanel.classList.add('hidden');
+                    }
+                }
+            </script>
+
             <!-- Latest Profile Posts Widget -->
             @php
                 $latestProfilePosts = \App\Models\Post::whereHas('attachments')
