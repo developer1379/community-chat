@@ -141,6 +141,7 @@ class DatabaseSeeder extends Seeder
         $threadAiArt = Thread::create([
             'category_id' => $catAiArt->id,
             'user_id' => $user1->id,
+            'prefix' => 'AI Fake',
             'title' => 'Prompt Engineering and Model Fine-Tuning',
             'slug' => 'prompt-engineering-and-model-fine-tuning',
             'views_count' => 120,
@@ -165,6 +166,7 @@ class DatabaseSeeder extends Seeder
         $threadVideo = Thread::create([
             'category_id' => $catVideoVfx->id,
             'user_id' => $user3->id,
+            'prefix' => 'How to',
             'title' => 'Color Grading Workflows in DaVinci Resolve',
             'slug' => 'color-grading-workflows-in-davinci-resolve',
             'views_count' => 310,
@@ -189,6 +191,7 @@ class DatabaseSeeder extends Seeder
         $threadGraphics = Thread::create([
             'category_id' => $catGraphics->id,
             'user_id' => $user2->id,
+            'prefix' => 'Tips',
             'title' => 'UI/UX Glassmorphism Landing Page Designs',
             'slug' => 'ui-ux-glassmorphism-landing-page-designs',
             'views_count' => 95,
@@ -213,6 +216,7 @@ class DatabaseSeeder extends Seeder
         $threadPhoto = Thread::create([
             'category_id' => $catPhotoLighting->id,
             'user_id' => $admin->id,
+            'prefix' => 'Tips',
             'title' => 'Studio Portrait Lighting Setups',
             'slug' => 'studio-portrait-lighting-setups',
             'views_count' => 540,
@@ -332,6 +336,7 @@ class DatabaseSeeder extends Seeder
         $tDraw2 = Thread::create([
             'category_id' => $catAiArt->id,
             'user_id' => $user2->id,
+            'prefix' => 'Bollywood Actress',
             'title' => 'Generating Consistent Characters in Midjourney',
             'slug' => 'generating-consistent-characters-in-midjourney',
             'views_count' => 180,
@@ -354,6 +359,7 @@ class DatabaseSeeder extends Seeder
         $tDraw3 = Thread::create([
             'category_id' => $catAiArt->id,
             'user_id' => $user3->id,
+            'prefix' => 'Telugu Actress',
             'title' => 'Stable Diffusion WebUI Extensions & Workflow Optimizations',
             'slug' => 'stable-diffusion-webui-extensions-and-optimizations',
             'views_count' => 240,
@@ -376,6 +382,7 @@ class DatabaseSeeder extends Seeder
         $tHentai2 = Thread::create([
             'category_id' => $catVideoVfx->id,
             'user_id' => $user1->id,
+            'prefix' => 'Tamil Actress',
             'title' => '3D Camera Tracking in After Effects',
             'slug' => '3d-camera-tracking-in-after-effects',
             'views_count' => 380,
@@ -398,6 +405,7 @@ class DatabaseSeeder extends Seeder
         $tHentai3 = Thread::create([
             'category_id' => $catVideoVfx->id,
             'user_id' => $user2->id,
+            'prefix' => 'Kannada Actress',
             'title' => 'VFX Compositing and Keying Green Screen Footage',
             'slug' => 'vfx-compositing-and-keying-green-screen-footage',
             'views_count' => 290,
@@ -420,6 +428,7 @@ class DatabaseSeeder extends Seeder
         $tNeut2 = Thread::create([
             'category_id' => $catGraphics->id,
             'user_id' => $user3->id,
+            'prefix' => 'Pakistani Actress',
             'title' => 'Logo Design and Typography Hierarchy',
             'slug' => 'logo-design-and-typography-hierarchy',
             'views_count' => 110,
@@ -442,6 +451,7 @@ class DatabaseSeeder extends Seeder
         $tNeut3 = Thread::create([
             'category_id' => $catGraphics->id,
             'user_id' => $user1->id,
+            'prefix' => 'Srilankan Actress',
             'title' => '3D Blender Hard-Surface Modeling Practices',
             'slug' => '3d-blender-hard-surface-modeling-practices',
             'views_count' => 150,
@@ -464,6 +474,7 @@ class DatabaseSeeder extends Seeder
         $tPorn2 = Thread::create([
             'category_id' => $catPhotoLighting->id,
             'user_id' => $user2->id,
+            'prefix' => 'Bangladeshi Actress',
             'title' => 'Golden Hour Landscape Photography Tips',
             'slug' => 'golden-hour-landscape-photography-tips',
             'views_count' => 610,
@@ -486,6 +497,7 @@ class DatabaseSeeder extends Seeder
         $tPorn3 = Thread::create([
             'category_id' => $catPhotoLighting->id,
             'user_id' => $user3->id,
+            'prefix' => 'Hentai/Cartoon',
             'title' => 'Mirrorless Cameras vs DSLRs in 2026',
             'slug' => 'mirrorless-cameras-vs-dslrs-in-2026',
             'views_count' => 450,
