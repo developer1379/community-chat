@@ -16,6 +16,8 @@ class Message extends Model
         'body',
         'is_read',
         'is_edited',
+        'encrypted_key_sender',
+        'encrypted_key_recipient',
     ];
 
     protected $casts = [

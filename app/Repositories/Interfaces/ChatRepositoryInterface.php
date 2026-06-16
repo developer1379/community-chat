@@ -11,7 +11,7 @@ interface ChatRepositoryInterface
 {
     public function getUserConversations(string $userId): Collection;
     public function getConversationMessages(string $conversationId, int $limit = 50): Collection;
-    public function sendMessage(string $conversationId, string $senderId, string $body): Message;
+    public function sendMessage(string $conversationId, string $senderId, string $body, ?string $encryptedKeySender = null, ?string $encryptedKeyRecipient = null): Message;
     public function startConversation(string $userOneId, string $userTwoId): Conversation;
     public function getOrCreateConversation(string $userOneId, string $userTwoId): Conversation;
     public function getConversation(string $conversationId): ?Conversation;

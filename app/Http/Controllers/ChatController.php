@@ -66,7 +66,7 @@ class ChatController extends Controller
     /**
      * Fetch messages in a conversation.
      */
-    public function show(Conversation $conversation): JsonResponse
+     public function show(Conversation $conversation): JsonResponse
     {
         $userId = Auth::id();
 
@@ -91,11 +91,14 @@ class ChatController extends Controller
                 'is_edited' => (bool)$msg->is_edited,
                 'can_edit' => $msg->sender_id === Auth::id() && $msg->created_at->gte(now()->subMinutes(30)),
                 'can_delete' => $msg->sender_id === Auth::id(),
+                'encrypted_key_sender' => $msg->encrypted_key_sender,
+                'encrypted_key_recipient' => $msg->encrypted_key_recipient,
             ];
         });
 
         return response()->json([
             'conversation_id' => $conversation->id,
+            'partner_public_key' => $conversation->otherUser($userId)->chat_public_key,
             'messages' => $formatted,
         ]);
     }
@@ -112,8 +115,10 @@ class ChatController extends Controller
         }
 
         $request->validate([
-            'body' => 'nullable|string|max:1000',
+            'body' => 'nullable|string|max:5000', // Increased limit since base64 ciphertext is larger than plain text
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:8192',
+            'encrypted_key_sender' => 'nullable|string',
+            'encrypted_key_recipient' => 'nullable|string',
         ]);
 
         if (!$request->filled('body') && !$request->hasFile('image')) {
@@ -130,10 +135,15 @@ class ChatController extends Controller
             $body = $url;
         }
 
+        $encryptedKeySender = $request->input('encrypted_key_sender');
+        $encryptedKeyRecipient = $request->input('encrypted_key_recipient');
+
         $message = $this->chatRepository->sendMessage(
             $conversation->id,
             $userId,
-            $body
+            $body,
+            $encryptedKeySender,
+            $encryptedKeyRecipient
         );
 
         // Broadcast the MessageSent event to the chat channel
@@ -141,9 +151,14 @@ class ChatController extends Controller
 
         // Broadcast the NotificationReceived event to the recipient user's channel
         $recipientId = $conversation->otherUser($userId)->id;
-        $isImg = preg_match('/^https?:\/\/[^\s]+?\.(jpe?g|png|gif|webp|bmp)(?:\?[^\s]*)?$/i', trim($message->body)) || 
-                 str_starts_with(trim($message->body), 'https://i.ibb.co/');
-        $bodyPreview = $isImg ? '📷 Image attachment' : $message->body;
+        
+        if ($encryptedKeySender) {
+            $bodyPreview = '🔒 Encrypted Message';
+        } else {
+            $isImg = preg_match('/^https?:\/\/[^\s]+?\.(jpe?g|png|gif|webp|bmp)(?:\?[^\s]*)?$/i', trim($message->body)) || 
+                     str_starts_with(trim($message->body), 'https://i.ibb.co/');
+            $bodyPreview = $isImg ? '📷 Image attachment' : $message->body;
+        }
 
         broadcast(new \App\Events\NotificationReceived(
             $recipientId,
@@ -163,6 +178,8 @@ class ChatController extends Controller
             'sender_id' => $message->sender_id,
             'created_at' => $message->created_at->diffForHumans(),
             'is_own' => true,
+            'encrypted_key_sender' => $message->encrypted_key_sender,
+            'encrypted_key_recipient' => $message->encrypted_key_recipient,
         ]);
     }
 
@@ -389,5 +406,38 @@ class ChatController extends Controller
         });
 
         return response()->json($formatted);
+    }
+
+    /**
+     * Store the user's E2EE public key.
+     */
+    public function storePublicKey(Request $request): JsonResponse
+    {
+        $request->validate([
+            'public_key' => 'required|string',
+        ]);
+
+        $user = Auth::user();
+        $user->chat_public_key = $request->input('public_key');
+        $user->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Upload an attachment and return its URL.
+     */
+    public function uploadAttachment(Request $request): JsonResponse
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:8192',
+        ]);
+
+        $url = $this->imgBBService->upload($request->file('image'));
+        if (!$url) {
+            return response()->json(['error' => 'Image upload failed.'], 500);
+        }
+
+        return response()->json(['url' => $url]);
     }
 }

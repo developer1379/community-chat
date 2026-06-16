@@ -748,6 +748,22 @@
                 .then(data => {
                     if (isInitial && loader) loader.classList.add('hidden');
 
+                    activePartnerPublicKey = data.partner_public_key;
+
+                    // Update header title to show padlock icon if conversation is E2EE-capable
+                    const titleElement = document.getElementById('chat-title');
+                    const mainTitleElement = document.getElementById('chat-main-title');
+                    
+                    const isE2EE = activePartnerPublicKey && myPrivateKeyObj;
+                    const lockIcon = isE2EE ? ' <span class="material-symbols-outlined text-[12px] text-green-500 font-extrabold align-middle" title="End-to-End Encrypted">lock</span>' : '';
+                    
+                    if (titleElement && activeConversationPartner) {
+                        titleElement.innerHTML = activeConversationPartner + lockIcon;
+                    }
+                    if (mainTitleElement && activeConversationPartner) {
+                        mainTitleElement.innerHTML = activeConversationPartner + lockIcon;
+                    }
+
                     const messages = data.messages || [];
                     if (messages.length === 0) {
                         listContainer.innerHTML = `
@@ -762,33 +778,66 @@
                     // Check if scrolled near bottom to keep scroll
                     const isAtBottom = listContainer.scrollHeight - listContainer.clientHeight - listContainer.scrollTop < 60;
 
-                    let html = '';
-                    messages.forEach(msg => {
+                    const messagePromises = messages.map(async (msg) => {
+                        let decryptedBody = msg.body;
+                        let decryptionError = false;
+                        let isMessageEncrypted = false;
+
+                        const encryptedKey = msg.is_own ? msg.encrypted_key_sender : msg.encrypted_key_recipient;
+
+                        if (encryptedKey && myPrivateKeyObj) {
+                            isMessageEncrypted = true;
+                            try {
+                                // 1. Decrypt the AES key using current user private key
+                                const aesKeyRaw = await decryptAESKeyWithRSA(myPrivateKeyObj, encryptedKey);
+                                // 2. Import the raw AES key
+                                const aesKeyObj = await window.crypto.subtle.importKey(
+                                    "raw",
+                                    aesKeyRaw,
+                                    { name: "AES-GCM" },
+                                    true,
+                                    ["decrypt"]
+                                );
+                                // 3. Parse JSON envelope
+                                const bodyJson = JSON.parse(msg.body);
+                                // 4. Decrypt the text payload
+                                decryptedBody = await decryptMessage(aesKeyObj, bodyJson.ciphertext, bodyJson.iv);
+                            } catch (err) {
+                                console.error('Error decrypting message:', err);
+                                decryptedBody = '⚠️ Unable to decrypt this message.';
+                                decryptionError = true;
+                            }
+                        }
+
                         const bubbleClass = msg.is_own 
                             ? 'bg-blue-600 text-white rounded-t-xl rounded-l-xl self-end' 
                             : 'bg-white text-slate-800 border border-slate-200/80 rounded-t-xl rounded-r-xl self-start dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700';
                         const alignmentClass = msg.is_own ? 'flex flex-col items-end' : 'flex flex-col items-start';
 
-                        const isImage = /^https?:\/\/[^\s]+?\.(jpe?g|png|gif|webp|bmp)(?:\?[^\s]*)?$/i.test(msg.body.trim()) || 
-                                        msg.body.trim().startsWith('https://i.ibb.co/');
+                        const isImage = /^https?:\/\/[^\s]+?\.(jpe?g|png|gif|webp|bmp)(?:\?[^\s]*)?$/i.test(decryptedBody.trim()) || 
+                                        decryptedBody.trim().startsWith('https://i.ibb.co/');
 
                         let bubbleContent = '';
                         if (isImage) {
                             bubbleContent = `
-                                <div onclick="openLightbox('${msg.body.trim()}', 'Image Attachment')" class="block rounded-lg overflow-hidden border border-slate-200 bg-slate-100 max-w-[180px] sm:max-w-[220px] hover:opacity-90 transition-opacity cursor-zoom-in dark:border-slate-700 dark:bg-slate-900">
-                                    <img src="${msg.body.trim()}" class="w-full h-auto object-cover max-h-[140px]" alt="Image attachment" loading="lazy">
+                                <div onclick="openLightbox('${decryptedBody.trim()}', 'Image Attachment')" class="block rounded-lg overflow-hidden border border-slate-200 bg-slate-100 max-w-[180px] sm:max-w-[220px] hover:opacity-90 transition-opacity cursor-zoom-in dark:border-slate-700 dark:bg-slate-900">
+                                    <img src="${decryptedBody.trim()}" class="w-full h-auto object-cover max-h-[140px]" alt="Image attachment" loading="lazy">
                                 </div>
                             `;
                         } else {
-                            bubbleContent = escapeHtml(msg.body);
+                            bubbleContent = escapeHtml(decryptedBody);
                         }
 
-                        html += `
-                            <div class="${alignmentClass} max-w-[85%] ${msg.is_own ? 'ml-auto' : 'mr-auto'} leading-snug animate-fade-in group" id="msg-${msg.id}" data-body="${escapeHtml(msg.body)}">
+                        const lockBadge = isMessageEncrypted 
+                            ? `<span class="material-symbols-outlined text-[10px] text-green-500 font-bold" title="End-to-End Encrypted">${decryptionError ? 'lock_open' : 'lock'}</span>` 
+                            : '';
+
+                        return `
+                            <div class="${alignmentClass} max-w-[85%] ${msg.is_own ? 'ml-auto' : 'mr-auto'} leading-snug animate-fade-in group" id="msg-${msg.id}" data-body="${escapeHtml(decryptedBody)}">
                                 <div class="flex items-center gap-1.5 w-full ${msg.is_own ? 'justify-end' : 'justify-start'}">
                                     ${msg.is_own ? `
                                         <div class="opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 mr-1 flex-shrink-0">
-                                            ${msg.can_edit && !isImage ? `
+                                            ${msg.can_edit && !isImage && !isMessageEncrypted ? `
                                                 <button onclick="startEditMsg('${msg.id}')" class="text-slate-400 hover:text-blue-500 dark:hover:text-blue-400 p-0.5 rounded transition-colors cursor-pointer" title="Edit Message">
                                                     <span class="material-symbols-outlined text-[14px]">edit</span>
                                                 </button>
@@ -805,6 +854,7 @@
                                     </div>
                                 </div>
                                 <span class="text-[8px] text-slate-400 font-bold mt-1 px-1 flex items-center gap-1 select-none">
+                                    ${lockBadge}
                                     ${msg.created_at}
                                     ${msg.is_edited ? '<span class="text-[8px] text-slate-400 font-normal italic dark:text-slate-500">(edited)</span>' : ''}
                                     ${msg.is_own ? (msg.is_read 
@@ -816,11 +866,12 @@
                         `;
                     });
 
-                    listContainer.innerHTML = html;
-
-                    if (isInitial || isAtBottom) {
-                        listContainer.scrollTop = listContainer.scrollHeight;
-                    }
+                    Promise.all(messagePromises).then(htmlArray => {
+                        listContainer.innerHTML = htmlArray.join('');
+                        if (isInitial || isAtBottom) {
+                            listContainer.scrollTop = listContainer.scrollHeight;
+                        }
+                    });
                 })
                 .catch(e => {
                     if (loader) loader.classList.add('hidden');
@@ -829,7 +880,7 @@
         }
 
         // Send new message submit handler
-        function handleSendSubmit(e) {
+        async function handleSendSubmit(e) {
             e.preventDefault();
             if (!activeConversationId) return;
 
@@ -840,6 +891,37 @@
             // Clear input instantly for UI responsiveness
             input.value = '';
 
+            let payload = { body: body };
+
+            if (activePartnerPublicKey && myPrivateKeyObj) {
+                try {
+                    // Generate a random 256-bit AES-GCM key for encrypting the body
+                    const aesKeyObj = await generateAESKey();
+                    const aesKeyRaw = await window.crypto.subtle.exportKey("raw", aesKeyObj);
+
+                    // Encrypt raw AES key with sender's public key (stored locally)
+                    const myPubKeyStr = localStorage.getItem('chat_public_key_' + currentUserId);
+                    const myPubKeyObj = await importPublicKey(myPubKeyStr);
+                    const encKeySender = await encryptAESKeyWithRSA(myPubKeyObj, aesKeyRaw);
+
+                    // Encrypt raw AES key with recipient's public key (fetched from server)
+                    const partnerPubKeyObj = await importPublicKey(activePartnerPublicKey);
+                    const encKeyRecipient = await encryptAESKeyWithRSA(partnerPubKeyObj, aesKeyRaw);
+
+                    // Encrypt the message text body
+                    const encResult = await encryptMessage(aesKeyObj, body);
+
+                    payload = {
+                        body: JSON.stringify(encResult),
+                        encrypted_key_sender: encKeySender,
+                        encrypted_key_recipient: encKeyRecipient
+                    };
+                } catch (err) {
+                    console.error('Encryption failed, sending as plaintext fallback:', err);
+                    payload = { body: body };
+                }
+            }
+
             fetch(`/dms/conversations/${activeConversationId}/send`, {
                 method: 'POST',
                 headers: {
@@ -847,7 +929,7 @@
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
-                body: JSON.stringify({ body: body })
+                body: JSON.stringify(payload)
             })
             .then(r => r.json())
             .then(message => {
@@ -866,7 +948,7 @@
         }
 
         // Handle direct image file selection and upload
-        function handleChatFileSelect(input) {
+        async function handleChatFileSelect(input) {
             if (!activeConversationId) return;
             if (!input.files || input.files.length === 0) return;
 
@@ -925,31 +1007,88 @@
                 listContainer.scrollTop = listContainer.scrollHeight;
             }
 
-            const formData = new FormData();
-            formData.append('image', file);
-
             // Clear file input immediately so same file can be selected again
             input.value = '';
 
-            fetch(`/dms/conversations/${activeConversationId}/send`, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: formData
-            })
-            .then(r => {
-                if (!r.ok) {
-                    return r.json().then(err => { throw new Error(err.error || 'Upload failed') });
+            try {
+                if (activePartnerPublicKey && myPrivateKeyObj) {
+                    // E2EE Image Flow:
+                    // 1. Upload to attachment endpoint to get URL
+                    const uploadData = new FormData();
+                    uploadData.append('image', file);
+
+                    const uploadRes = await fetch('/dms/upload-attachment', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: uploadData
+                    });
+
+                    if (!uploadRes.ok) {
+                        const err = await uploadRes.json();
+                        throw new Error(err.error || 'Attachment upload failed');
+                    }
+
+                    const { url } = await uploadRes.json();
+
+                    // 2. Encrypt the URL on client side
+                    const aesKeyObj = await generateAESKey();
+                    const aesKeyRaw = await window.crypto.subtle.exportKey("raw", aesKeyObj);
+
+                    const myPubKeyStr = localStorage.getItem('chat_public_key_' + currentUserId);
+                    const myPubKeyObj = await importPublicKey(myPubKeyStr);
+                    const encKeySender = await encryptAESKeyWithRSA(myPubKeyObj, aesKeyRaw);
+
+                    const partnerPubKeyObj = await importPublicKey(activePartnerPublicKey);
+                    const encKeyRecipient = await encryptAESKeyWithRSA(partnerPubKeyObj, aesKeyRaw);
+
+                    const encResult = await encryptMessage(aesKeyObj, url);
+
+                    // 3. Send encrypted message JSON
+                    const sendRes = await fetch(`/dms/conversations/${activeConversationId}/send`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            body: JSON.stringify(encResult),
+                            encrypted_key_sender: encKeySender,
+                            encrypted_key_recipient: encKeyRecipient
+                        })
+                    });
+
+                    if (!sendRes.ok) {
+                        const err = await sendRes.json();
+                        throw new Error(err.error || 'Message sending failed');
+                    }
+                } else {
+                    // Plaintext Fallback Flow:
+                    const formData = new FormData();
+                    formData.append('image', file);
+
+                    const sendRes = await fetch(`/dms/conversations/${activeConversationId}/send`, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: formData
+                    });
+
+                    if (!sendRes.ok) {
+                        const err = await sendRes.json();
+                        throw new Error(err.error || 'Message sending failed');
+                    }
                 }
-                return r.json();
-            })
-            .then(message => {
+
                 document.getElementById(tempId)?.remove();
                 loadMessages(false);
-            })
-            .catch(e => {
+
+            } catch (e) {
                 document.getElementById(tempId)?.remove();
                 console.error('Error uploading message attachment:', e);
                 Swal.fire({
@@ -958,7 +1097,7 @@
                     text: e.message || 'Could not upload image. Please try again.',
                     confirmButtonColor: '#2563eb'
                 });
-            });
+            }
         }
 
         // Start chat with user directly
@@ -1080,6 +1219,7 @@
 
         // Register enter search triggers
         document.addEventListener('DOMContentLoaded', () => {
+            initE2EEKeys();
             const searchInput = document.getElementById('chat-search-input');
             if (searchInput) {
                 searchInput.addEventListener('keydown', (e) => {

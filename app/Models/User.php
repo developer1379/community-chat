@@ -38,6 +38,7 @@ class User extends Authenticatable
         'coins',
         'is_blocked',
         'is_onboarded',
+        'chat_public_key',
     ];
 
     /**

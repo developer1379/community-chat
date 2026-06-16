@@ -79,6 +79,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/dms/search-users', [\App\Http\Controllers\ChatController::class, 'searchUsers']);
     Route::put('/dms/messages/{messageId}', [\App\Http\Controllers\ChatController::class, 'updateMessage']);
     Route::delete('/dms/messages/{messageId}', [\App\Http\Controllers\ChatController::class, 'deleteMessage']);
+    Route::post('/dms/public-key', [\App\Http\Controllers\ChatController::class, 'storePublicKey']);
+    Route::post('/dms/upload-attachment', [\App\Http\Controllers\ChatController::class, 'uploadAttachment']);
     Route::post('/posts/{post}/react', [\App\Http\Controllers\ReactController::class, 'react']);
     
     // Wallet Routes

@@ -32,13 +32,15 @@ class ChatRepository implements ChatRepositoryInterface
             ->get();
     }
 
-    public function sendMessage(string $conversationId, string $senderId, string $body): Message
+    public function sendMessage(string $conversationId, string $senderId, string $body, ?string $encryptedKeySender = null, ?string $encryptedKeyRecipient = null): Message
     {
         $message = Message::create([
             'conversation_id' => $conversationId,
             'sender_id' => $senderId,
             'body' => $body,
             'is_read' => false,
+            'encrypted_key_sender' => $encryptedKeySender,
+            'encrypted_key_recipient' => $encryptedKeyRecipient,
         ]);
 
         Conversation::where('id', $conversationId)->update([
