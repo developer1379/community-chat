@@ -180,6 +180,162 @@
         let chatPollingInterval = null;
         let badgePollingInterval = null;
 
+        // E2EE Cryptographic State and Helpers
+        let activePartnerPublicKey = null;
+        let myPrivateKeyObj = null;
+
+        function arrayBufferToBase64(buffer) {
+            let binary = '';
+            const bytes = new Uint8Array(buffer);
+            const len = bytes.byteLength;
+            for (let i = 0; i < len; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return window.btoa(binary);
+        }
+
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        async function initE2EEKeys() {
+            if (!currentUserId) return;
+            try {
+                const privKeyStr = localStorage.getItem('chat_private_key_' + currentUserId);
+                const pubKeyStr = localStorage.getItem('chat_public_key_' + currentUserId);
+
+                if (privKeyStr && pubKeyStr) {
+                    // Import local private key
+                    const privKeyJwk = JSON.parse(privKeyStr);
+                    myPrivateKeyObj = await window.crypto.subtle.importKey(
+                        "jwk",
+                        privKeyJwk,
+                        {
+                            name: "RSA-OAEP",
+                            hash: "SHA-256"
+                        },
+                        true,
+                        ["decrypt"]
+                    );
+                } else {
+                    // Generate new keypair
+                    const keyPair = await window.crypto.subtle.generateKey(
+                        {
+                            name: "RSA-OAEP",
+                            modulusLength: 2048,
+                            publicExponent: new Uint8Array([1, 0, 1]),
+                            hash: "SHA-256"
+                        },
+                        true,
+                        ["encrypt", "decrypt"]
+                    );
+
+                    myPrivateKeyObj = keyPair.privateKey;
+
+                    const pubKeyJwk = await window.crypto.subtle.exportKey("jwk", keyPair.publicKey);
+                    const pubKeyStrNew = JSON.stringify(pubKeyJwk);
+                    localStorage.setItem('chat_public_key_' + currentUserId, pubKeyStrNew);
+
+                    const privKeyJwk = await window.crypto.subtle.exportKey("jwk", keyPair.privateKey);
+                    localStorage.setItem('chat_private_key_' + currentUserId, JSON.stringify(privKeyJwk));
+
+                    // Upload public key to the server
+                    await fetch('/dms/public-key', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ public_key: pubKeyStrNew })
+                    });
+                }
+            } catch (err) {
+                console.error("Failed to initialize E2EE keys:", err);
+            }
+        }
+
+        async function importPublicKey(jwkStr) {
+            if (!jwkStr) return null;
+            const jwk = JSON.parse(jwkStr);
+            return await window.crypto.subtle.importKey(
+                "jwk",
+                jwk,
+                {
+                    name: "RSA-OAEP",
+                    hash: "SHA-256"
+                },
+                true,
+                ["encrypt"]
+            );
+        }
+
+        async function encryptAESKeyWithRSA(publicKeyObj, aesKeyRaw) {
+            const encryptedBuffer = await window.crypto.subtle.encrypt(
+                { name: "RSA-OAEP" },
+                publicKeyObj,
+                aesKeyRaw
+            );
+            return arrayBufferToBase64(encryptedBuffer);
+        }
+
+        async function decryptAESKeyWithRSA(privateKeyObj, encryptedKeyBase64) {
+            const encryptedBuffer = base64ToArrayBuffer(encryptedKeyBase64);
+            return await window.crypto.subtle.decrypt(
+                { name: "RSA-OAEP" },
+                privateKeyObj,
+                encryptedBuffer
+            );
+        }
+
+        async function generateAESKey() {
+            return await window.crypto.subtle.generateKey(
+                {
+                    name: "AES-GCM",
+                    length: 256
+                },
+                true,
+                ["encrypt", "decrypt"]
+            );
+        }
+
+        async function encryptMessage(aesKeyObj, plaintext) {
+            const enc = new TextEncoder();
+            const iv = window.crypto.getRandomValues(new Uint8Array(12));
+            const encryptedBuffer = await window.crypto.subtle.encrypt(
+                {
+                    name: "AES-GCM",
+                    iv: iv
+                },
+                aesKeyObj,
+                enc.encode(plaintext)
+            );
+            return {
+                ciphertext: arrayBufferToBase64(encryptedBuffer),
+                iv: arrayBufferToBase64(iv)
+            };
+        }
+
+        async function decryptMessage(aesKeyObj, ciphertextBase64, ivBase64) {
+            const dec = new TextDecoder();
+            const encryptedBuffer = base64ToArrayBuffer(ciphertextBase64);
+            const iv = new Uint8Array(base64ToArrayBuffer(ivBase64));
+            const decryptedBuffer = await window.crypto.subtle.decrypt(
+                {
+                    name: "AES-GCM",
+                    iv: iv
+                },
+                aesKeyObj,
+                encryptedBuffer
+            );
+            return dec.decode(decryptedBuffer);
+        }
+
         // Toggle visibility of the chat drawer
         function toggleChatDrawer() {
             const drawer = document.getElementById('chat-drawer-container');

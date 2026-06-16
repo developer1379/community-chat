@@ -676,6 +676,7 @@
             });
 
             updatePreviewsAndInput();
+            mediaInput.value = '';
         });
 
         function updatePreviewsAndInput() {

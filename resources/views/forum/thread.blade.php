@@ -854,6 +854,7 @@ article
                 }
             });
             updateReplyPreviewsAndInput();
+            replyMediaInput.value = '';
         });
     }
 
