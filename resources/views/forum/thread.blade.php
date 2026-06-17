@@ -564,9 +564,11 @@ article
                             
                             if (foundUrls.length > 0) {
                                 foundUrls.forEach(url => {
-                                    const range = replyQuill.getSelection(true);
-                                    replyQuill.insertEmbed(range.index, 'image', url);
-                                    replyQuill.setSelection(range.index + 1);
+                                    if (typeof replyQuill !== 'undefined' && !isImageInQuill(replyQuill, url)) {
+                                        const range = replyQuill.getSelection(true);
+                                        replyQuill.insertEmbed(range.index, 'image', url);
+                                        replyQuill.setSelection(range.index + 1);
+                                    }
                                 });
                                 // Keep the synced editor content as final value
                                 descriptor.set.call(this, replyQuill.root.innerHTML);
@@ -1208,9 +1210,11 @@ article
                             
                             if (foundUrls.length > 0) {
                                 foundUrls.forEach(url => {
-                                    const range = editPostQuill.getSelection(true);
-                                    editPostQuill.insertEmbed(range.index, 'image', url);
-                                    editPostQuill.setSelection(range.index + 1);
+                                    if (typeof editPostQuill !== 'undefined' && !isImageInQuill(editPostQuill, url)) {
+                                        const range = editPostQuill.getSelection(true);
+                                        editPostQuill.insertEmbed(range.index, 'image', url);
+                                        editPostQuill.setSelection(range.index + 1);
+                                    }
                                 });
                                 // Keep the synced editor content as final value
                                 descriptor.set.call(this, editPostQuill.root.innerHTML);

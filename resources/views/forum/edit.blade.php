@@ -299,9 +299,11 @@
                         
                         if (foundUrls.length > 0) {
                             foundUrls.forEach(url => {
-                                const range = quill.getSelection(true);
-                                quill.insertEmbed(range.index, 'image', url);
-                                quill.setSelection(range.index + 1);
+                                if (typeof quill !== 'undefined' && !isImageInQuill(quill, url)) {
+                                    const range = quill.getSelection(true);
+                                    quill.insertEmbed(range.index, 'image', url);
+                                    quill.setSelection(range.index + 1);
+                                }
                             });
                             // Keep the synced editor content as final value
                             descriptor.set.call(this, quill.root.innerHTML);

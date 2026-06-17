@@ -1,5 +1,18 @@
 <!-- Quill & ImgBB Global Scripts -->
 <script>
+    // Helper function to check if an image URL is already present in a Quill editor instance
+    function isImageInQuill(quillInstance, url) {
+        if (!quillInstance || !quillInstance.root) return false;
+        const images = quillInstance.root.querySelectorAll('img');
+        for (let img of images) {
+            const src = img.getAttribute('src');
+            if (src === url || img.src === url || (src && src.includes(url)) || (img.src && img.src.includes(url)) || url.includes(src)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Trigger programmatic click on ImgBB upload widget button
     function triggerImgBBWidget(editorId, containerId) {
         const container = document.getElementById(containerId);
@@ -91,9 +104,11 @@
                 
                 if (targetEditor) {
                     foundUrls.forEach(url => {
-                        const range = targetEditor.getSelection(true);
-                        targetEditor.insertEmbed(range.index, 'image', url);
-                        targetEditor.setSelection(range.index + 1);
+                        if (!isImageInQuill(targetEditor, url)) {
+                            const range = targetEditor.getSelection(true);
+                            targetEditor.insertEmbed(range.index, 'image', url);
+                            targetEditor.setSelection(range.index + 1);
+                        }
                     });
                     
                     // Clean up any raw BBCode appended to the editor's innerHTML
