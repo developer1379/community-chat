@@ -62,6 +62,21 @@
     
     <!-- Global Mobile Responsive Overrides -->
     <style>
+        /* Responsive styles for embedded videos (YouTube, Streamable, Sendvid, Vimeo) on mobile devices */
+        .ql-editor iframe.ql-video {
+            width: 100% !important;
+            aspect-ratio: 16 / 9 !important;
+            max-width: 100% !important;
+            border-radius: 12px !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+            margin: 12px 0 !important;
+        }
+        .dark .ql-editor iframe.ql-video {
+            border-color: #262a35 !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4) !important;
+        }
+
         /* Force Quill toolbar to wrap gracefully on desktop, but scroll horizontally on mobile devices */
         .ql-toolbar.ql-snow {
             display: flex;
@@ -677,6 +692,85 @@
                 e.target.onerror = null; // Prevent infinite loop if fallback itself has an error
             }
         }, true);
+        // Robust utility to parse video URLs and extract embeddable URLs for YouTube, Vimeo, Sendvid, and Streamable
+        function getEmbedUrl(videoUrl) {
+            if (!videoUrl) return '';
+            videoUrl = videoUrl.trim();
+            
+            // Remove trailing slash if present to avoid split/pop empty string issues on mobile browsers
+            if (videoUrl.endsWith('/')) {
+                videoUrl = videoUrl.slice(0, -1);
+            }
+            
+            // YouTube Watch URL
+            if (videoUrl.includes('youtube.com/watch')) {
+                try {
+                    const urlObj = new URL(videoUrl);
+                    const id = urlObj.searchParams.get('v');
+                    if (id) {
+                        return `https://www.youtube.com/embed/${id}`;
+                    }
+                } catch (e) {}
+                
+                let parts = videoUrl.split('watch?v=');
+                if (parts.length > 1) {
+                    let id = parts[1].split('&')[0];
+                    return `https://www.youtube.com/embed/${id}`;
+                }
+            }
+            
+            // YouTube Short URL (youtu.be)
+            if (videoUrl.includes('youtu.be/')) {
+                let parts = videoUrl.split('youtu.be/');
+                if (parts.length > 1) {
+                    let id = parts[1].split('?')[0].split('/')[0];
+                    return `https://www.youtube.com/embed/${id}`;
+                }
+            }
+            
+            // YouTube Embed URL (already embed)
+            if (videoUrl.includes('youtube.com/embed/')) {
+                return videoUrl;
+            }
+            
+            // Vimeo
+            if (videoUrl.includes('vimeo.com/')) {
+                if (videoUrl.includes('player.vimeo.com/video/')) {
+                    return videoUrl;
+                }
+                let parts = videoUrl.split('vimeo.com/');
+                if (parts.length > 1) {
+                    let id = parts[1].split('?')[0].split('/')[0];
+                    return `https://player.vimeo.com/video/${id}`;
+                }
+            }
+            
+            // Sendvid
+            if (videoUrl.includes('sendvid.com/')) {
+                if (videoUrl.includes('sendvid.com/embed/')) {
+                    return videoUrl;
+                }
+                let parts = videoUrl.split('sendvid.com/');
+                if (parts.length > 1) {
+                    let id = parts[1].split('?')[0].split('/')[0];
+                    return `https://sendvid.com/embed/${id}`;
+                }
+            }
+            
+            // Streamable
+            if (videoUrl.includes('streamable.com/')) {
+                if (videoUrl.includes('streamable.com/e/')) {
+                    return videoUrl;
+                }
+                let parts = videoUrl.split('streamable.com/');
+                if (parts.length > 1) {
+                    let id = parts[1].split('?')[0].split('/')[0];
+                    return `https://streamable.com/e/${id}`;
+                }
+            }
+            
+            return videoUrl;
+        }
     </script>
 </body>
 </html>
