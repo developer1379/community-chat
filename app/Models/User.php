@@ -35,6 +35,7 @@ class User extends Authenticatable
         'title_color_updates_count',
         'signature',
         'status',
+        'status_image',
         'is_private',
         'coins',
         'is_blocked',

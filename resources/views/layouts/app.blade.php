@@ -393,14 +393,30 @@
                         hoverCardRankBadge.innerText = data.rank_name;
                         hoverCardRankBadge.style.background = data.rank_color;
                     }
+                    const hoverCardStatusContainer = document.getElementById('hover-card-status-container');
                     const hoverCardStatus = document.getElementById('hover-card-status');
-                    if (hoverCardStatus) {
-                        if (data.status) {
-                            hoverCardStatus.innerText = '💬 ' + data.status;
-                            hoverCardStatus.classList.remove('hidden');
+                    const hoverCardStatusImage = document.getElementById('hover-card-status-image');
+                    if (hoverCardStatusContainer) {
+                        if (data.status || data.status_image) {
+                            hoverCardStatusContainer.classList.remove('hidden');
+                            if (hoverCardStatus) {
+                                hoverCardStatus.innerText = data.status || '';
+                                if (data.status) {
+                                    hoverCardStatus.classList.remove('hidden');
+                                } else {
+                                    hoverCardStatus.classList.add('hidden');
+                                }
+                            }
+                            if (hoverCardStatusImage) {
+                                if (data.status_image) {
+                                    hoverCardStatusImage.src = data.status_image;
+                                    hoverCardStatusImage.classList.remove('hidden');
+                                } else {
+                                    hoverCardStatusImage.classList.add('hidden');
+                                }
+                            }
                         } else {
-                            hoverCardStatus.innerText = '';
-                            hoverCardStatus.classList.add('hidden');
+                            hoverCardStatusContainer.classList.add('hidden');
                         }
                     }
                     if (hoverCardJoined) hoverCardJoined.innerText = data.joined;

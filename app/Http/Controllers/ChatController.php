@@ -312,6 +312,7 @@ class ChatController extends Controller
             'id' => $user->id,
             'name' => $user->name,
             'status' => $user->status,
+            'status_image' => $user->status_image,
             'avatar_url' => $user->avatar_url,
             'title_badge' => $user->title_badge ?? 'Member',
             'joined' => $user->created_at->format('M d, Y'),

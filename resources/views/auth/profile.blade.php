@@ -121,10 +121,15 @@ profile
 
                     <!-- Custom Status Section (Compact Pill) -->
                     <div class="mt-1 flex items-center justify-center sm:justify-start">
-                        @if($user->status)
+                        @if($user->status || $user->status_image)
                             <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-slate-50 dark:bg-slate-800/80 rounded-full border border-slate-100 dark:border-slate-800 shadow-sm max-w-full text-[11px] font-semibold text-slate-700 dark:text-slate-300">
                                 <span>💬</span>
-                                <span class="truncate max-w-[200px] sm:max-w-[300px]" id="status-display-text">{{ $user->status }}</span>
+                                @if($user->status)
+                                    <span class="truncate max-w-[200px] sm:max-w-[300px]" id="status-display-text">{{ $user->status }}</span>
+                                @endif
+                                @if($user->status_image)
+                                    <img src="{{ $user->status_image }}" onclick="openLightbox('{{ $user->status_image }}', '{{ $user->name }}\'s status image')" class="w-4 h-4 rounded object-cover cursor-zoom-in hover:scale-110 transition-transform" id="status-display-image">
+                                @endif
                                 @auth
                                     @if(Auth::id() === $user->id)
                                         <button onclick="editStatusInline()" class="hover:text-blue-500 text-slate-400 transition-colors inline-flex items-center ml-0.5" title="Update Status">
@@ -603,6 +608,23 @@ profile
                                             <input type="text" id="status" name="status" value="{{ old('status', $user->status) }}" class="w-full mt-2 bg-transparent border-0 p-0 text-slate-800 dark:text-white text-xs font-semibold focus:outline-none focus:ring-0 placeholder:text-slate-400" placeholder="What are you doing today?">
                                         </div>
 
+                                        <!-- Custom Status Image -->
+                                        <div class="relative border border-slate-200 dark:border-slate-800 focus-within:border-blue-500 rounded-xl p-3 bg-white dark:bg-slate-900 transition-all text-left">
+                                            <label for="status_image" class="text-[8px] font-black text-slate-400 dark:text-slate-550 uppercase tracking-widest absolute top-1.5 left-3">Status Image Attachment</label>
+                                            <div class="mt-2 flex flex-col gap-2">
+                                                <input type="file" id="status_image" name="status_image" accept="image/*" class="block w-full text-[10px] text-slate-550 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all cursor-pointer">
+                                                @if($user->status_image)
+                                                    <div class="flex items-center gap-2 mt-1">
+                                                        <img src="{{ $user->status_image }}" class="w-10 h-10 rounded-lg object-cover border border-slate-200">
+                                                        <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                                                            <input type="checkbox" name="remove_status_image" value="1" class="rounded text-blue-600 focus:ring-blue-500 scale-90">
+                                                            <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Remove Status Image</span>
+                                                        </label>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+
                                         <!-- Custom Signature -->
                                         <div class="relative border border-slate-200 dark:border-slate-800 focus-within:border-blue-500 rounded-xl p-3 bg-white dark:bg-slate-900 transition-all text-left">
                                             <label for="signature" class="text-[8px] font-black text-slate-400 dark:text-slate-550 uppercase tracking-widest absolute top-1.5 left-3">Signature Quote</label>
@@ -802,34 +824,99 @@ profile
     <script>
         function editStatusInline() {
             const currentStatus = @json($user->status);
+            const currentStatusImage = @json($user->status_image);
             
             Swal.fire({
                 title: 'Update Status',
-                input: 'text',
-                inputLabel: 'Set your status message (max 255 chars)',
-                inputValue: currentStatus || '',
-                placeholder: 'What are you doing today?',
+                html: `
+                    <div class="text-left space-y-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Status Message (max 255 chars)</label>
+                            <input id="swal-status-text" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-850 dark:text-white font-semibold" placeholder="What are you doing today?" value="${currentStatus || ''}">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Status Image</label>
+                            <input id="swal-status-image" type="file" accept="image/*" class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                        </div>
+                        <div id="swal-image-preview-container" class="mt-2 ${currentStatusImage ? '' : 'hidden'}">
+                            <span class="block text-[9px] font-black text-slate-450 dark:text-slate-500 uppercase tracking-widest mb-1">Preview</span>
+                            <div class="relative w-24 h-24 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800">
+                                <img id="swal-image-preview" src="${currentStatusImage || ''}" class="w-full h-full object-cover">
+                            </div>
+                            ${currentStatusImage ? `
+                            <label class="inline-flex items-center gap-1.5 mt-2 cursor-pointer select-none">
+                                <input type="checkbox" id="swal-remove-image" class="rounded text-blue-600 focus:ring-blue-500 scale-90">
+                                <span class="text-xs text-slate-500 font-semibold">Remove Image</span>
+                            </label>
+                            ` : ''}
+                        </div>
+                    </div>
+                `,
                 showCancelButton: true,
                 confirmButtonColor: '#3b82f6',
                 cancelButtonColor: '#64748b',
                 confirmButtonText: 'Save Status',
-                inputValidator: (value) => {
-                    if (value.length > 255) {
-                        return 'Status message cannot exceed 255 characters!';
+                didOpen: () => {
+                    const fileInput = document.getElementById('swal-status-image');
+                    const previewContainer = document.getElementById('swal-image-preview-container');
+                    const previewImg = document.getElementById('swal-image-preview');
+                    
+                    fileInput.addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(evt) {
+                                previewImg.src = evt.target.result;
+                                previewContainer.classList.remove('hidden');
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                },
+                preConfirm: () => {
+                    const statusText = document.getElementById('swal-status-text').value;
+                    const fileInput = document.getElementById('swal-status-image');
+                    const removeCheckbox = document.getElementById('swal-remove-image');
+                    
+                    if (statusText.length > 255) {
+                        Swal.showValidationMessage('Status message cannot exceed 255 characters!');
+                        return false;
                     }
+                    
+                    return {
+                        status: statusText,
+                        image: fileInput.files[0],
+                        remove_image: removeCheckbox ? removeCheckbox.checked : false
+                    };
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
+                    const formData = new FormData();
+                    formData.append('status', result.value.status);
+                    if (result.value.image) {
+                        formData.append('status_image', result.value.image);
+                    }
+                    if (result.value.remove_image) {
+                        formData.append('remove_status_image', '1');
+                    }
+                    
+                    // Show updating loader
+                    Swal.fire({
+                        title: 'Updating status...',
+                        didOpen: () => {
+                            Swal.showLoading();
+                        },
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        allowEnterKey: false
+                    });
+                    
                     fetch('{{ route("profile.update_status") }}', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
-                        body: JSON.stringify({
-                            status: result.value
-                        })
+                        body: formData
                     })
                     .then(response => {
                         if (!response.ok) throw new Error('Failed to update status');

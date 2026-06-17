@@ -155,6 +155,7 @@ class AuthController extends Controller
         $request->validate([
             'signature' => ['nullable', 'string', 'max:500'],
             'status' => ['nullable', 'string', 'max:255'],
+            'status_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:8192'],
             'banner_color' => ['required', 'string'],
             'title_badge' => ['nullable', 'string', 'max:50'],
             'title_color' => ['nullable', 'string', 'max:7', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
@@ -234,6 +235,17 @@ class AuthController extends Controller
             $avatarUrl = $this->imgBBService->upload($request->file('avatar'));
             if ($avatarUrl) {
                 $data['avatar_path'] = $avatarUrl;
+            }
+        }
+
+        if ($request->hasFile('status_image')) {
+            $statusImageUrl = $this->imgBBService->upload($request->file('status_image'));
+            if ($statusImageUrl) {
+                $data['status_image'] = $statusImageUrl;
+            }
+        } elseif ($request->has('remove_status_image') || !$request->filled('status')) {
+            if (!$request->filled('status') || $request->remove_status_image) {
+                $data['status_image'] = null;
             }
         }
 
@@ -386,17 +398,33 @@ class AuthController extends Controller
     {
         $request->validate([
             'status' => ['nullable', 'string', 'max:255'],
+            'status_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:8192'],
         ]);
 
         /** @var User $user */
         $user = Auth::user();
-        $user->update([
+        
+        $data = [
             'status' => $request->status ?: null,
-        ]);
+        ];
+
+        if ($request->hasFile('status_image')) {
+            $statusImageUrl = $this->imgBBService->upload($request->file('status_image'));
+            if ($statusImageUrl) {
+                $data['status_image'] = $statusImageUrl;
+            }
+        } elseif ($request->has('remove_status_image') || !$request->filled('status')) {
+            if (!$request->filled('status') || $request->remove_status_image) {
+                $data['status_image'] = null;
+            }
+        }
+
+        $user->update($data);
 
         return response()->json([
             'success' => true,
             'status' => $user->status,
+            'status_image' => $user->status_image,
             'message' => 'Status updated successfully!',
         ]);
     }

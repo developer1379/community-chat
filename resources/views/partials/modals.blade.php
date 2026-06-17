@@ -168,7 +168,11 @@
                 </span>
             </div>
             <!-- Dynamic Status message -->
-            <p id="hover-card-status" class="text-[9px] text-slate-500 dark:text-slate-400 italic font-semibold truncate leading-normal hidden"></p>
+            <div id="hover-card-status-container" class="flex items-center gap-1.5 hidden mt-0.5">
+                <span class="text-[9px] leading-none">💬</span>
+                <p id="hover-card-status" class="text-[9px] text-slate-500 dark:text-slate-400 italic font-semibold truncate leading-normal"></p>
+                <img id="hover-card-status-image" class="w-3.5 h-3.5 rounded object-cover cursor-zoom-in hidden" onclick="event.stopPropagation(); openLightbox(this.src, 'Status update image')">
+            </div>
             <div class="flex flex-wrap items-center gap-1.5 mt-1">
                 <span id="hover-card-badge" class="text-[7.5px] px-1.5 py-0.5 rounded font-extrabold uppercase tracking-wider text-white shadow-sm leading-none"></span>
                 <span id="hover-card-rank-badge" class="text-[7.5px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider text-white shadow-sm leading-none flex items-center gap-0.5"></span>
