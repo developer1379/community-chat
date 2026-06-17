@@ -224,7 +224,15 @@ article
 
                         <!-- Render Attached Images & GIFs Gallery -->
                         @php
-                            $filteredAttachments = $post->attachments->filter(function($attach) use ($post) {
+                            $isFirstPost = ($post->id === $thread->firstPost?->id);
+                            $postAttachments = $post->attachments;
+                            if ($isFirstPost) {
+                                $threadOnlyAttachments = \App\Models\Attachment::where('thread_id', $thread->id)->whereNull('post_id')->get();
+                                if ($threadOnlyAttachments->count() > 0) {
+                                    $postAttachments = $postAttachments->merge($threadOnlyAttachments);
+                                }
+                            }
+                            $filteredAttachments = $postAttachments->filter(function($attach) use ($post) {
                                 return !str_contains($post->content, $attach->file_path) && !str_contains($post->content, $attach->url);
                             });
                         @endphp
