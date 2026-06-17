@@ -154,6 +154,7 @@ class AuthController extends Controller
 
         $request->validate([
             'signature' => ['nullable', 'string', 'max:500'],
+            'status' => ['nullable', 'string', 'max:255'],
             'banner_color' => ['required', 'string'],
             'title_badge' => ['nullable', 'string', 'max:50'],
             'title_color' => ['nullable', 'string', 'max:7', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
@@ -164,6 +165,7 @@ class AuthController extends Controller
 
         $data = [
             'signature' => $request->signature,
+            'status' => $request->status,
             'is_private' => $request->has('is_private'),
         ];
 
@@ -377,6 +379,25 @@ class AuthController extends Controller
             'success' => true,
             'is_private' => $attachment->is_private,
             'message' => $attachment->is_private ? 'Media is now Private.' : 'Media is now Public.'
+        ]);
+    }
+
+    public function updateStatus(Request $request)
+    {
+        $request->validate([
+            'status' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        /** @var User $user */
+        $user = Auth::user();
+        $user->update([
+            'status' => $request->status ?: null,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'status' => $user->status,
+            'message' => 'Status updated successfully!',
         ]);
     }
 

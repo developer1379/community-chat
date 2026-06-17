@@ -393,6 +393,16 @@
                         hoverCardRankBadge.innerText = data.rank_name;
                         hoverCardRankBadge.style.background = data.rank_color;
                     }
+                    const hoverCardStatus = document.getElementById('hover-card-status');
+                    if (hoverCardStatus) {
+                        if (data.status) {
+                            hoverCardStatus.innerText = '💬 ' + data.status;
+                            hoverCardStatus.classList.remove('hidden');
+                        } else {
+                            hoverCardStatus.innerText = '';
+                            hoverCardStatus.classList.add('hidden');
+                        }
+                    }
                     if (hoverCardJoined) hoverCardJoined.innerText = data.joined;
                     if (hoverCardPosts) hoverCardPosts.innerText = data.posts_count;
                     if (hoverCardReactions) hoverCardReactions.innerText = data.reactions_count;

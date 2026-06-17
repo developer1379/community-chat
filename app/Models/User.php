@@ -34,6 +34,7 @@ class User extends Authenticatable
         'username_animation',
         'title_color_updates_count',
         'signature',
+        'status',
         'is_private',
         'coins',
         'is_blocked',

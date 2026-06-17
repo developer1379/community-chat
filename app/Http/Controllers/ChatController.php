@@ -311,6 +311,7 @@ class ChatController extends Controller
         return response()->json([
             'id' => $user->id,
             'name' => $user->name,
+            'status' => $user->status,
             'avatar_url' => $user->avatar_url,
             'title_badge' => $user->title_badge ?? 'Member',
             'joined' => $user->created_at->format('M d, Y'),
