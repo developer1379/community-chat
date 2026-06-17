@@ -138,7 +138,7 @@ class ForumController extends Controller
         $threads = Thread::with(['user', 'category', 'lastPost.user', 'firstPost'])
             ->orderBy('is_pinned', 'desc')
             ->latest('updated_at')
-            ->paginate(15);
+            ->paginate(5);
 
         return view('forum.home', compact(
             'categories', 
