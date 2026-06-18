@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+    $followingIds = Auth::check() ? Auth::user()->following()->pluck('users.id')->toArray() : [];
+@endphp
 <div class="space-y-6 max-w-7xl mx-auto px-0 sm:px-4">
     <!-- Header path info -->
     <div class="mb-6 px-4 sm:px-0">
@@ -91,15 +94,16 @@
 
                 $hasStatus = !empty($user->status) || !empty($user->status_image);
 
-                $latestPost = $user->posts()->with('thread')->latest()->first();
-                $latestThread = $user->threads()->latest()->first();
+                $latestPost = $user->latestPost;
+                $latestThread = $user->latestThread;
+                $isFollowing = in_array($user->id, $followingIds);
 
                 $activityText = null;
                 $activityTime = null;
                 $activityLink = '#';
 
                 if ($latestPost && (!$latestThread || $latestPost->created_at->gt($latestThread->created_at))) {
-                    $activityText = 'Replied: "' . Str::limit(strip_tags($latestPost->body), 45) . '"';
+                    $activityText = 'Replied: "' . Str::limit(strip_tags($latestPost->content), 45) . '"';
                     $activityTime = $latestPost->created_at->diffForHumans();
                     if ($latestPost->thread) {
                         $activityLink = route('threads.show', $latestPost->thread->slug) . '#post-' . $latestPost->id;
@@ -172,10 +176,10 @@
                                         onclick="toggleFollowUser('{{ $user->name }}', '{{ $user->id }}')" 
                                         id="follow-btn-mobile-{{ $user->id }}" 
                                         class="text-[10px] font-bold py-1 px-3 rounded-full transition-all cursor-pointer border text-center min-w-[72px]
-                                        {{ Auth::user()->isFollowing($user) 
+                                        {{ $isFollowing 
                                             ? 'bg-slate-105 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300' 
                                             : 'bg-white dark:bg-slate-900 border-blue-600 text-blue-600 hover:bg-blue-50' }}">
-                                    {{ Auth::user()->isFollowing($user) ? 'Following' : 'Follow' }}
+                                    {{ $isFollowing ? 'Following' : 'Follow' }}
                                 </button>
                                 <button type="button" 
                                         onclick="startDirectChat('{{ $user->name }}')" 
@@ -299,10 +303,10 @@
                                         onclick="toggleFollowUser('{{ $user->name }}', '{{ $user->id }}')" 
                                         id="follow-btn-{{ $user->id }}" 
                                         class="flex-1 text-[11px] font-semibold py-1 px-2.5 rounded-full transition-all cursor-pointer border flex items-center justify-center gap-1 shadow-sm 
-                                        {{ Auth::user()->isFollowing($user) 
+                                        {{ $isFollowing 
                                             ? 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-955/30 hover:text-rose-600 hover:border-rose-200 dark:hover:border-rose-800 group/follow' 
                                             : 'bg-white dark:bg-slate-900 border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30' }}">
-                                    @if(Auth::user()->isFollowing($user))
+                                    @if($isFollowing)
                                         <span class="material-symbols-outlined text-[13px] group-hover/follow:hidden">check</span>
                                         <span class="group-hover/follow:hidden">Following</span>
                                         <span class="material-symbols-outlined text-[13px] hidden group-hover/follow:inline-block">person_remove</span>

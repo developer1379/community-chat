@@ -23,14 +23,11 @@ class RedirectGuestToHomeWithLoginModal
 
         $currentRouteName = $request->route() ? $request->route()->getName() : null;
 
-        // Allow POST requests to login & register
-        if ($request->isMethod('post') && ($currentRouteName === 'login' || $currentRouteName === 'register')) {
-            return $next($request);
-        }
-
-        // Allowed guest routes list
+        // Allowed guest routes list (by route name)
         $allowedRoutes = [
             'home',
+            'login',
+            'register',
             'register.check-username',
             'auth.google.redirect',
             'auth.google.callback',
@@ -45,9 +42,23 @@ class RedirectGuestToHomeWithLoginModal
             return $next($request);
         }
 
-        // Fallback for root path or google auth paths
-        if ($request->is('/') || $request->is('auth/google/*')) {
-            return $next($request);
+        // Path-based whitelist fallback for POST requests or routes without names
+        $allowedPaths = [
+            '/',
+            'login',
+            'register',
+            'register/check-username',
+            'verify-otp',
+            'resend-otp',
+            'auth/google/*',
+            'media/proxy/*',
+            'sitemap',
+        ];
+
+        foreach ($allowedPaths as $path) {
+            if ($request->is($path)) {
+                return $next($request);
+            }
         }
 
         // For any other page, redirect to home page and trigger login modal

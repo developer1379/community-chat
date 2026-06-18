@@ -37,78 +37,98 @@ class ForumController extends Controller
 
     public function home(Request $request)
     {
-        $categories = $this->categoryRepo->getAllWithStats();
+        $categories = \Illuminate\Support\Facades\Cache::remember('forum.homepage.categories', 600, function () {
+            return $this->categoryRepo->getAllWithStats();
+        });
 
         // Fetch featured threads
-        $featuredThreads = Thread::where('is_featured', true)
-            ->with(['user', 'category'])
-            ->latest()
-            ->take(5)
-            ->get();
+        $featuredThreads = \Illuminate\Support\Facades\Cache::remember('forum.homepage.featured_threads', 600, function () {
+            return Thread::where('is_featured', true)
+                ->with(['user', 'category'])
+                ->latest()
+                ->take(5)
+                ->get();
+        });
 
         // Fetch most liked thread of the day (preferring those with attachments)
-        $mostLikedThread = Thread::whereHas('attachments')
-            ->with(['user', 'category', 'attachments'])
-            ->withCount(['posts as total_reacts' => function ($query) {
-                $query->join('reacts', 'posts.id', '=', 'reacts.post_id');
-            }])
-            ->orderBy('total_reacts', 'desc')
-            ->first();
-
-        if (!$mostLikedThread) {
-            $mostLikedThread = Thread::with(['user', 'category', 'attachments'])
+        $mostLikedThread = \Illuminate\Support\Facades\Cache::remember('forum.homepage.most_liked_thread', 600, function () {
+            $thread = Thread::whereHas('attachments')
+                ->with(['user', 'category', 'attachments'])
                 ->withCount(['posts as total_reacts' => function ($query) {
                     $query->join('reacts', 'posts.id', '=', 'reacts.post_id');
                 }])
                 ->orderBy('total_reacts', 'desc')
                 ->first();
-        }
+
+            if (!$thread) {
+                $thread = Thread::with(['user', 'category', 'attachments'])
+                    ->withCount(['posts as total_reacts' => function ($query) {
+                        $query->join('reacts', 'posts.id', '=', 'reacts.post_id');
+                    }])
+                    ->orderBy('total_reacts', 'desc')
+                    ->first();
+            }
+            return $thread;
+        });
 
         // Sidebar stats
-        $stats = [
-            'users_count' => $this->userRepo->getTotalCount(),
-            'threads_count' => $this->threadRepo->getTotalCount(),
-            'posts_count' => $this->postRepo->getTotalCount(),
-            'latest_user' => $this->userRepo->getLatestUser(),
-        ];
+        $stats = \Illuminate\Support\Facades\Cache::remember('forum.homepage.stats', 600, function () {
+            return [
+                'users_count' => $this->userRepo->getTotalCount(),
+                'threads_count' => $this->threadRepo->getTotalCount(),
+                'posts_count' => $this->postRepo->getTotalCount(),
+                'latest_user' => $this->userRepo->getLatestUser(),
+            ];
+        });
 
         // Active threads sidebar
-        $activeThreads = $this->threadRepo->getActiveThreads(5);
+        $activeThreads = \Illuminate\Support\Facades\Cache::remember('forum.homepage.active_threads', 300, function () {
+            return $this->threadRepo->getActiveThreads(5);
+        });
 
         // Online users
-        $onlineUsers = $this->userRepo->getActiveUsers(6);
+        $onlineUsers = \Illuminate\Support\Facades\Cache::remember('forum.homepage.online_users', 60, function () {
+            return $this->userRepo->getActiveUsers(6);
+        });
 
         // Fetch Latest Threads
-        $latestThreads = Thread::with(['user', 'category'])
-            ->latest()
-            ->take(5)
-            ->get();
+        $latestThreads = \Illuminate\Support\Facades\Cache::remember('forum.homepage.latest_threads', 300, function () {
+            return Thread::with(['user', 'category'])
+                ->latest()
+                ->take(5)
+                ->get();
+        });
 
         // Fetch Viral Threads (sorted by views_count desc)
-        $viralThreads = Thread::with(['user', 'category'])
-            ->orderBy('views_count', 'desc')
-            ->take(5)
-            ->get();
+        $viralThreads = \Illuminate\Support\Facades\Cache::remember('forum.homepage.viral_threads', 300, function () {
+            return Thread::with(['user', 'category'])
+                ->orderBy('views_count', 'desc')
+                ->take(5)
+                ->get();
+        });
 
         // Fetch top reacted threads for highlights row (preferring attachments)
-        $topReactedThreads = Thread::whereHas('attachments')
-            ->with(['user', 'category', 'attachments'])
-            ->withCount(['posts as total_reacts' => function ($query) {
-                $query->join('reacts', 'posts.id', '=', 'reacts.post_id');
-            }])
-            ->orderBy('total_reacts', 'desc')
-            ->take(12)
-            ->get();
-
-        if ($topReactedThreads->isEmpty()) {
-            $topReactedThreads = Thread::with(['user', 'category', 'attachments'])
+        $topReactedThreads = \Illuminate\Support\Facades\Cache::remember('forum.homepage.top_reacted_threads', 300, function () {
+            $threads = Thread::whereHas('attachments')
+                ->with(['user', 'category', 'attachments'])
                 ->withCount(['posts as total_reacts' => function ($query) {
                     $query->join('reacts', 'posts.id', '=', 'reacts.post_id');
                 }])
                 ->orderBy('total_reacts', 'desc')
                 ->take(12)
                 ->get();
-        }
+
+            if ($threads->isEmpty()) {
+                $threads = Thread::with(['user', 'category', 'attachments'])
+                    ->withCount(['posts as total_reacts' => function ($query) {
+                        $query->join('reacts', 'posts.id', '=', 'reacts.post_id');
+                    }])
+                    ->orderBy('total_reacts', 'desc')
+                    ->take(12)
+                    ->get();
+            }
+            return $threads;
+        });
 
         // Fetch latest images for homepage sidebar widget
         $latestImages = \Illuminate\Support\Facades\Cache::remember('forum.sidebar.latest_images', 300, function () {

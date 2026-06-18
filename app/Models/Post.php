@@ -17,6 +17,21 @@ class Post extends Model
         'content',
     ];
 
+    protected static function booted()
+    {
+        static::created(function ($post) {
+            Thread::clearHomepageCaches();
+        });
+
+        static::updated(function ($post) {
+            Thread::clearHomepageCaches();
+        });
+
+        static::deleted(function ($post) {
+            Thread::clearHomepageCaches();
+        });
+    }
+
     /**
      * Get the thread that contains the post.
      */

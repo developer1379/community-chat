@@ -43,6 +43,17 @@ class User extends Authenticatable
         'chat_public_key',
     ];
 
+    protected static function booted()
+    {
+        static::created(function ($user) {
+            \Illuminate\Support\Facades\Cache::forget('forum.homepage.stats');
+        });
+
+        static::deleted(function ($user) {
+            \Illuminate\Support\Facades\Cache::forget('forum.homepage.stats');
+        });
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -83,6 +94,22 @@ class User extends Authenticatable
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
+    }
+
+    /**
+     * Get the latest post created by the user.
+     */
+    public function latestPost(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Post::class)->latestOfMany();
+    }
+
+    /**
+     * Get the latest thread created by the user.
+     */
+    public function latestThread(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Thread::class)->latestOfMany();
     }
 
     /**

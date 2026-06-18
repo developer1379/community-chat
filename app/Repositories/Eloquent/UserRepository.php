@@ -35,7 +35,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function getMembersFiltered(string $search = '', string $filter = 'all', ?string $currentUserId = null)
     {
-        $query = User::query();
+        $query = User::query()->with(['latestPost.thread', 'latestThread']);
 
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {

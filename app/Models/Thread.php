@@ -147,6 +147,35 @@ class Thread extends Model
             'color' => '#ffffff',
         ],
     ];
+    protected static function booted()
+    {
+        static::created(function ($thread) {
+            static::clearHomepageCaches();
+        });
+
+        static::updated(function ($thread) {
+            static::clearHomepageCaches();
+        });
+
+        static::deleted(function ($thread) {
+            static::clearHomepageCaches();
+        });
+    }
+
+    public static function clearHomepageCaches()
+    {
+        \Illuminate\Support\Facades\Cache::forget('forum.homepage.categories');
+        \Illuminate\Support\Facades\Cache::forget('forum.homepage.featured_threads');
+        \Illuminate\Support\Facades\Cache::forget('forum.homepage.most_liked_thread');
+        \Illuminate\Support\Facades\Cache::forget('forum.homepage.stats');
+        \Illuminate\Support\Facades\Cache::forget('forum.homepage.active_threads');
+        \Illuminate\Support\Facades\Cache::forget('forum.homepage.latest_threads');
+        \Illuminate\Support\Facades\Cache::forget('forum.homepage.viral_threads');
+        \Illuminate\Support\Facades\Cache::forget('forum.homepage.top_reacted_threads');
+        \Illuminate\Support\Facades\Cache::forget('forum.sidebar.latest_images');
+        \Illuminate\Support\Facades\Cache::forget('forum.sidebar.trending_images');
+    }
+
     /**
      * The attributes that should be cast.
      */
