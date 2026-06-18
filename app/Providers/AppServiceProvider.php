@@ -42,6 +42,8 @@ class AppServiceProvider extends ServiceProvider
                     if (str_starts_with($key, 'firebase_')) {
                         $configKey = 'firebase.' . substr($key, 9);
                         config([$configKey => $value]);
+                    } elseif ($key === 'imgbb_api_key') {
+                        config(['services.imgbb.key' => $value]);
                     }
                 }
             }

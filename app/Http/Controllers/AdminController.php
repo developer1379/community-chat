@@ -33,7 +33,7 @@ class AdminController extends Controller
     public function settings()
     {
         $user = Auth::user();
-        $imgbbKey = config('services.imgbb.key', 'cd4cbd15d854cce8d541bc9b8ddc56ad');
+        $imgbbKey = \App\Models\Setting::get('imgbb_api_key', config('services.imgbb.key', 'cd4cbd15d854cce8d541bc9b8ddc56ad'));
         
         $firebaseSettings = [
             'api_key' => \App\Models\Setting::get('firebase_api_key', config('firebase.api_key')),
@@ -83,7 +83,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Update the ImgBB API Key in .env file.
+     * Update the ImgBB API Key in settings table.
      */
     public function updateImgBBSettings(Request $request)
     {
@@ -91,32 +91,18 @@ class AdminController extends Controller
             'imgbb_api_key' => 'required|string|max:255',
         ]);
 
-        $key = 'IMGBB_API_KEY';
         $val = $request->input('imgbb_api_key');
 
         try {
-            $path = base_path('.env');
-            if (file_exists($path)) {
-                $content = file_get_contents($path);
-
-                if (preg_match("/^{$key}=.*/m", $content)) {
-                    $content = preg_replace("/^{$key}=.*/m", "{$key}={$val}", $content);
-                } else {
-                    $content .= "\n{$key}={$val}";
-                }
-
-                file_put_contents($path, $content);
-                
-                // Clear configuration cache
-                \Illuminate\Support\Facades\Artisan::call('config:clear');
-            } else {
-                return redirect()->back()->with('error', '.env file not found. Could not save settings.');
-            }
+            \App\Models\Setting::set('imgbb_api_key', $val);
+            
+            // Clear configuration cache
+            \Illuminate\Support\Facades\Artisan::call('config:clear');
         } catch (\Throwable $e) {
-            return redirect()->back()->with('error', 'Failed to update .env: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to update ImgBB settings: ' . $e->getMessage());
         }
 
-        return redirect()->back()->with('success', 'ImgBB API key saved to .env and updated successfully!');
+        return redirect()->back()->with('success', 'ImgBB API key saved to settings and updated successfully!');
     }
 
     /**
