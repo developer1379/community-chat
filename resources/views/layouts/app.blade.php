@@ -409,12 +409,12 @@
         });
 
         function setupFallbackNotificationPolling() {
-            // Poll global badge every 10 seconds, but ONLY when tab is focused and active
+            // Poll global badge every 30 seconds, but ONLY when tab is focused and active
             badgePollingInterval = setInterval(() => {
                 if (document.visibilityState === 'visible') {
                     checkUnreadBadge();
                 }
-            }, 10000);
+            }, 30000);
         }
 
         function closeNotificationsModal() {
