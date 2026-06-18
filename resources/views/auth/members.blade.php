@@ -70,8 +70,8 @@
         </form>
     </div>
 
-    <!-- Members Grid / List (List on mobile, Grid Cards on sm+) -->
-    <div class="block sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0 sm:gap-6 divide-y divide-slate-105 dark:divide-slate-850 sm:divide-y-0">
+    <!-- Members Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 px-4 sm:px-0">
         @forelse($users as $user)
             @php
                 $userTier = $user->computed_anime_tier;
@@ -90,119 +90,29 @@
                 }
 
                 $hasStatus = !empty($user->status) || !empty($user->status_image);
-            @endphp
-            
-            <!-- Mobile Row List Item (visible on block, hidden on sm) -->
-            <div class="flex sm:hidden flex-col p-4 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-850 relative gap-3">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <!-- Avatar with status ring or level gradient -->
-                        <div class="relative w-11 h-11 shrink-0 @if($hasStatus) cursor-pointer hover:scale-105 transition-transform duration-200 @endif"
-                             @if($hasStatus) onclick="viewUserStatus('{{ $user->id }}', '{{ addslashes($user->name) }}', '{{ $user->avatar_url }}', '{{ addslashes($user->title_badge ?: 'Community Member') }}', '{{ addslashes($user->status) }}', '{{ $user->status_image }}')" @endif>
-                            <div class="w-full h-full rounded-full @if($hasStatus) p-[2px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-650 animate-[spin_8s_linear_infinite] @else p-[2.5px] {{ $avatarGlow }} @endif overflow-hidden shadow-sm relative">
-                                <div class="w-full h-full rounded-full overflow-hidden bg-white dark:bg-slate-900 p-[0.5px] relative">
-                                    <img src="{{ $user->avatar_url }}" class="w-full h-full object-cover rounded-full" alt="avatar">
-                                </div>
-                            </div>
-                            @if($hasStatus)
-                                <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-650 rounded-full border border-white dark:border-slate-900 flex items-center justify-center text-[7.5px] shadow-sm select-none pointer-events-none">💬</span>
-                            @endif
-                        </div>
-                        
-                        <!-- Member Info -->
-                        <div class="min-w-0 leading-tight">
-                            <div class="flex items-center gap-1.5">
-                                <h3 class="font-semibold text-slate-900 dark:text-white text-sm hover:underline hover:text-blue-600 dark:hover:text-blue-450 transition-colors truncate {{ $user->username_style }}" style="{{ $user->username_style_css }}">
-                                    <a href="{{ route('profile.show', $user->name) }}" data-user-hover="true" data-user-name="{{ $user->name }}">{{ $user->name }}</a>
-                                </h3>
-                                <!-- Coins Badge -->
-                                <div class="flex items-center gap-0.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200/50 dark:border-amber-900/30 px-1.5 py-0.2 rounded-full text-[8px] font-bold text-amber-700 dark:text-amber-400 shrink-0">
-                                    <span class="material-symbols-outlined text-[10px] text-amber-500">monetization_on</span>
-                                    <span>{{ number_format($user->coins) }}</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                                <span class="text-[9px] font-bold text-slate-505 dark:text-slate-400">{{ $user->title_badge ?: 'Community Member' }}</span>
-                                <span class="text-slate-300 dark:text-slate-700">•</span>
-                                <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500">{{ $user->followers()->count() }} followers</span>
-                            </div>
-                            
-                            <!-- Status (if present) -->
-                            @if($user->status)
-                                <div class="mt-1 text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-[170px] cursor-pointer hover:underline" 
-                                     title="View status"
-                                     onclick="viewUserStatus('{{ $user->id }}', '{{ addslashes($user->name) }}', '{{ $user->avatar_url }}', '{{ addslashes($user->title_badge ?: 'Community Member') }}', '{{ addslashes($user->status) }}', '{{ $user->status_image }}')">
-                                    💬 {{ $user->status }}
-                                </div>
-                            @endif
-                        </div>
-                    </div>
 
-                    <!-- Follow / Action Controls for Mobile List -->
-                    <div class="flex items-center gap-1.5 shrink-0">
-                        @auth
-                            @if(Auth::id() !== $user->id)
-                                <button type="button" 
-                                        onclick="toggleFollowUser('{{ $user->name }}', '{{ $user->id }}')" 
-                                        id="follow-btn-mobile-{{ $user->id }}" 
-                                        class="text-[11px] font-bold py-1 px-3 rounded-full transition-all cursor-pointer border
-                                        {{ Auth::user()->isFollowing($user) 
-                                            ? 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300' 
-                                            : 'bg-white dark:bg-slate-900 border-blue-600 text-blue-600' }}">
-                                    {{ Auth::user()->isFollowing($user) ? 'Following' : 'Follow' }}
-                                </button>
-                                <button type="button" 
-                                        onclick="startDirectChat('{{ $user->name }}')" 
-                                        class="text-[11px] font-bold py-1 px-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition-all cursor-pointer">
-                                    DM
-                                </button>
-                            @else
-                                <span class="text-[9px] font-bold uppercase text-slate-400 dark:text-slate-550 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-full">You</span>
-                            @endif
-                        @else
-                            <a href="{{ route('login') }}" class="text-[11px] font-bold py-1 px-3 rounded-full border border-blue-600 text-blue-600 transition-colors">
-                                Login
-                            </a>
-                        @endauth
-                    </div>
-                </div>
+                $latestPost = $user->posts()->with('thread')->latest()->first();
+                $latestThread = $user->threads()->latest()->first();
 
-                @php
-                    $latestPost = $user->posts()->with('thread')->latest()->first();
-                    $latestThread = $user->threads()->latest()->first();
+                $activityText = null;
+                $activityTime = null;
+                $activityLink = '#';
 
-                    $activityText = null;
-                    $activityTime = null;
-                    $activityLink = '#';
-
-                    if ($latestPost && (!$latestThread || $latestPost->created_at->gt($latestThread->created_at))) {
-                        $activityText = 'Replied: "' . Str::limit(strip_tags($latestPost->body), 45) . '"';
-                        $activityTime = $latestPost->created_at->diffForHumans();
-                        if ($latestPost->thread) {
-                            $activityLink = route('threads.show', $latestPost->thread->slug) . '#post-' . $latestPost->id;
-                        }
-                    } elseif ($latestThread) {
-                        $activityText = 'Posted: "' . Str::limit($latestThread->title, 45) . '"';
-                        $activityTime = $latestThread->created_at->diffForHumans();
-                        $activityLink = route('threads.show', $latestThread->slug);
+                if ($latestPost && (!$latestThread || $latestPost->created_at->gt($latestThread->created_at))) {
+                    $activityText = 'Replied: "' . Str::limit(strip_tags($latestPost->body), 45) . '"';
+                    $activityTime = $latestPost->created_at->diffForHumans();
+                    if ($latestPost->thread) {
+                        $activityLink = route('threads.show', $latestPost->thread->slug) . '#post-' . $latestPost->id;
                     }
-                @endphp
+                } elseif ($latestThread) {
+                    $activityText = 'Posted: "' . Str::limit($latestThread->title, 45) . '"';
+                    $activityTime = $latestThread->created_at->diffForHumans();
+                    $activityLink = route('threads.show', $latestThread->slug);
+                }
+            @endphp
 
-                @if($activityText)
-                    <div class="pt-2 border-t border-slate-105 dark:border-slate-850/60 flex flex-col gap-0.5 text-left pl-1">
-                        <div class="flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[10px] text-slate-450 dark:text-slate-500">history</span>
-                            <span class="text-[8px] font-bold text-slate-450 dark:text-slate-500 uppercase tracking-wider">Recent Activity</span>
-                        </div>
-                        <a href="{{ $activityLink }}" class="text-[10px] text-slate-600 dark:text-slate-350 hover:text-blue-600 dark:hover:text-blue-400 truncate block font-medium">
-                            {{ $activityText }} <span class="text-[8.5px] text-slate-400 dark:text-slate-500 ml-1">({{ $activityTime }})</span>
-                        </a>
-                    </div>
-                @endif
-            </div>
-
-            <!-- Tablet/Desktop Card View (hidden on mobile, visible on sm+) -->
-            <div class="hidden sm:flex bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 flex-col group relative {{ $glowClass }}">
+            <!-- Professional Member Card View (visible on all screens) -->
+            <div class="flex bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 flex-col group relative {{ $glowClass }}">
                 <!-- Cover Photo Header -->
                 <div class="h-16 relative w-full bg-cover bg-center" style="background: {{ $user->banner_path ? 'url(' . $user->banner_path . ')' : $user->banner_color }}">
                     <div class="absolute inset-0 bg-black/5 dark:bg-black/10 transition-colors duration-300"></div>
