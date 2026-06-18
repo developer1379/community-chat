@@ -78,7 +78,7 @@ profile
     @endphp
 
     <!-- Professional & Compact Profile Hero Card -->
-    <div class="relative rounded-2xl overflow-hidden bg-white dark:bg-slate-900 transition-all duration-300 {{ $glowClass }}">
+    <div class="relative rounded-none sm:rounded-2xl overflow-hidden bg-white dark:bg-slate-900 border-x-0 border-y sm:border border-slate-200 dark:border-slate-800 transition-all duration-300 {{ $glowClass }}">
         <!-- Dynamic Gradient / Image Cover Banner (Sleek Compact Height) -->
         <div id="profile-banner-bg" class="h-28 sm:h-36 relative bg-cover bg-center" style="background: {{ $user->banner_path ? 'url(' . $user->banner_path . ')' : $user->banner_color }}">
             <div class="absolute inset-0 bg-black/10 backdrop-blur-[0.5px]"></div>
@@ -309,8 +309,8 @@ profile
                 <div id="profile-tab-contents">
                     <!-- Tab 1: Recent Discussions -->
                     <div id="tab-discussions-content" class="profile-tab-content">
-                        <div class="mui-card overflow-hidden shadow-sm border border-slate-250 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl">
-                            <div class="divide-y divide-slate-100 dark:divide-slate-850">
+                        <div class="mui-card overflow-hidden shadow-sm border-x-0 border-y sm:border border-slate-250 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-none sm:rounded-xl">
+                            <div class="divide-y divide-slate-105 dark:divide-slate-850">
                                 @forelse($threads as $thread)
                                     <div class="px-5 py-3.5 flex items-center justify-between gap-4 hover:bg-slate-50/50 dark:hover:bg-slate-850/30 transition-colors">
                                         <div class="space-y-0.5 text-left min-w-0">
@@ -338,7 +338,7 @@ profile
 
                     <!-- Tab 2: Media Showroom -->
                     <div id="tab-media-content" class="profile-tab-content hidden">
-                        <div class="mui-card p-5 border border-slate-250 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm rounded-xl">
+                        <div class="mui-card p-5 border-x-0 border-y sm:border border-slate-250 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm rounded-none sm:rounded-xl">
                             @if(count($attachments) > 0)
                                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                     @foreach($attachments as $attach)
@@ -398,7 +398,7 @@ profile
                                     $hasStickyUpgrade = $user->hasActiveShopItem('sticky_thread');
                                     $hasFeaturedThread = $user->hasActiveShopItem('featured_homepage_thread');
                                     $hasTitleStyle = $user->hasActiveShopItem('thread_title_style');
-                                    $hasHighlight = $user->hasActiveShopItem('thread_highlight');
+                    $hasHighlight = $user->hasActiveShopItem('thread_highlight');
                                     
                                     $purchasedItems = $user->purchases()->with('shopItem')->where(function($q) {
                                         $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
@@ -406,7 +406,7 @@ profile
                                 @endphp
 
                                 @if($purchasedItems->isNotEmpty())
-                                    <div id="shop-upgrades-card" class="mui-card overflow-hidden bg-white dark:bg-slate-900 border border-slate-250 dark:border-slate-800 shadow-sm rounded-xl text-left transition-colors duration-300">
+                                    <div id="shop-upgrades-card" class="mui-card overflow-hidden bg-white dark:bg-slate-900 border-x-0 border-y sm:border border-slate-250 dark:border-slate-800 shadow-sm rounded-none sm:rounded-xl text-left transition-colors duration-300">
                                         <div class="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-slate-900 dark:to-slate-850 px-5 py-3 border-b border-slate-200 dark:border-slate-800">
                                             <h3 class="font-bold text-slate-850 dark:text-white text-xs flex items-center gap-2">
                                                 <span class="material-symbols-outlined text-emerald-600 text-sm">shopping_bag</span>
@@ -504,15 +504,7 @@ profile
                                                         <button type="submit" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all cursor-pointer mt-1">
                                                             Apply Thread Upgrades
                                                         </button>
-                                                    </form>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
-
-                                <!-- Customize Profile Card settings -->
-                                <div class="mui-card overflow-hidden bg-white dark:bg-slate-900 border border-slate-250 dark:border-slate-800 shadow-sm rounded-xl transition-all duration-300">
+                        <div class="mui-card overflow-hidden bg-white dark:bg-slate-900 border-x-0 border-y sm:border border-slate-250 dark:border-slate-800 shadow-sm rounded-none sm:rounded-xl transition-all duration-300">
                                     <div class="bg-slate-50 dark:bg-slate-900/50 px-5 py-3 border-b border-slate-205 dark:border-slate-800">
                                         <h3 class="font-bold text-slate-750 dark:text-slate-300 text-xs flex items-center gap-2">
                                             <span class="material-symbols-outlined text-blue-600 text-sm">settings</span>
