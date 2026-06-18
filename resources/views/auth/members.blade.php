@@ -70,8 +70,8 @@
         </form>
     </div>
 
-    <!-- Members Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 px-4 sm:px-0">
+    <!-- Members Grid / List (List on mobile, Grid Cards on sm+) -->
+    <div class="block sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0 sm:gap-6 divide-y divide-slate-100 dark:divide-slate-850 sm:divide-y-0">
         @forelse($users as $user)
             @php
                 $userTier = $user->computed_anime_tier;
@@ -111,8 +111,104 @@
                 }
             @endphp
 
-            <!-- Professional Member Card View (visible on all screens) -->
-            <div class="flex bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 flex-col group relative {{ $glowClass }}">
+            <!-- Mobile Row List Item (visible on mobile, hidden on sm) -->
+            <div class="flex sm:hidden flex-col p-4 bg-white dark:bg-slate-900 relative gap-2.5">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex items-start gap-3 min-w-0">
+                        <!-- Avatar with status ring -->
+                        <div class="relative w-12 h-12 shrink-0 @if($hasStatus) cursor-pointer hover:scale-105 transition-transform duration-200 @endif"
+                             @if($hasStatus) onclick="viewUserStatus('{{ $user->id }}', '{{ addslashes($user->name) }}', '{{ $user->avatar_url }}', '{{ addslashes($user->title_badge ?: 'Community Member') }}', '{{ addslashes($user->status) }}', '{{ $user->status_image }}')" @endif>
+                            <div class="w-full h-full rounded-full @if($hasStatus) p-[2px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-650 animate-[spin_8s_linear_infinite] @else p-[2.5px] {{ $avatarGlow }} @endif overflow-hidden shadow-sm relative">
+                                <div class="w-full h-full rounded-full overflow-hidden bg-white dark:bg-slate-900 p-[0.5px] relative">
+                                    <img src="{{ $user->avatar_url }}" class="w-full h-full object-cover rounded-full" alt="avatar">
+                                </div>
+                            </div>
+                            @if($hasStatus)
+                                <span class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-650 rounded-full border border-white dark:border-slate-900 flex items-center justify-center text-[8px] shadow-sm select-none pointer-events-none">💬</span>
+                            @endif
+                        </div>
+
+                        <!-- Member Info -->
+                        <div class="min-w-0 leading-tight">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <h3 class="font-bold text-slate-900 dark:text-white text-sm hover:underline hover:text-blue-600 dark:hover:text-blue-450 transition-colors truncate {{ $user->username_style }}" style="{{ $user->username_style_css }}">
+                                    <a href="{{ route('profile.show', $user->name) }}" data-user-hover="true" data-user-name="{{ $user->name }}">{{ $user->name }}</a>
+                                </h3>
+                            </div>
+                            
+                            <!-- Headline (Tier & Level) -->
+                            <div class="flex items-center gap-1.5 mt-0.5 text-[10px] font-bold text-slate-505 dark:text-slate-400">
+                                <span>Lvl {{ $level }}</span>
+                                <span class="text-slate-300 dark:text-slate-700">•</span>
+                                <span style="color: {{ $userTier['color'] }}">{{ $userTier['badge'] }}</span>
+                            </div>
+
+                            <!-- Social / Coins Stats -->
+                            <div class="flex items-center gap-2 mt-1 flex-wrap text-[9px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                                <div class="flex items-center gap-0.5 bg-amber-50 dark:bg-amber-955/25 border border-amber-200/50 dark:border-amber-900/30 px-1.5 py-0.2 rounded text-amber-700 dark:text-amber-400 shrink-0 font-bold">
+                                    <span class="material-symbols-outlined text-[10px] text-amber-505">monetization_on</span>
+                                    <span>{{ number_format($user->coins) }}</span>
+                                </div>
+                                <span>{{ $user->followers()->count() }} followers</span>
+                            </div>
+
+                            <!-- Status Message (if present) -->
+                            @if($user->status)
+                                <div class="mt-1.5 text-[10px] font-medium text-slate-550 dark:text-slate-400 truncate max-w-[170px] sm:max-w-xs cursor-pointer hover:underline flex items-center gap-1" 
+                                     title="View status"
+                                     onclick="viewUserStatus('{{ $user->id }}', '{{ addslashes($user->name) }}', '{{ $user->avatar_url }}', '{{ addslashes($user->title_badge ?: 'Community Member') }}', '{{ addslashes($user->status) }}', '{{ $user->status_image }}')">
+                                    <span class="shrink-0">💬</span>
+                                    <span class="truncate">"{{ $user->status }}"</span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Follow / Action Buttons -->
+                    <div class="flex flex-col gap-1.5 shrink-0 items-end">
+                        @auth
+                            @if(Auth::id() !== $user->id)
+                                <button type="button" 
+                                        onclick="toggleFollowUser('{{ $user->name }}', '{{ $user->id }}')" 
+                                        id="follow-btn-mobile-{{ $user->id }}" 
+                                        class="text-[10px] font-bold py-1 px-3 rounded-full transition-all cursor-pointer border text-center min-w-[72px]
+                                        {{ Auth::user()->isFollowing($user) 
+                                            ? 'bg-slate-105 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300' 
+                                            : 'bg-white dark:bg-slate-900 border-blue-600 text-blue-600 hover:bg-blue-50' }}">
+                                    {{ Auth::user()->isFollowing($user) ? 'Following' : 'Follow' }}
+                                </button>
+                                <button type="button" 
+                                        onclick="startDirectChat('{{ $user->name }}')" 
+                                        class="text-[10px] font-bold py-1 px-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition-all cursor-pointer text-center min-w-[72px]">
+                                    Message
+                                </button>
+                            @else
+                                <span class="text-[9px] font-bold uppercase text-slate-400 dark:text-slate-550 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">You</span>
+                            @endif
+                        @else
+                            <a href="{{ route('login') }}" class="text-[10px] font-bold py-1 px-3 rounded-full border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors text-center min-w-[72px]">
+                                Login
+                            </a>
+                        @endauth
+                    </div>
+                </div>
+
+                <!-- Recent Activity Feed -->
+                @if($activityText)
+                    <div class="mt-1.5 pt-2 border-t border-slate-100 dark:border-slate-850/60 flex flex-col gap-0.5 text-left pl-1">
+                        <div class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[9px] text-slate-400 dark:text-slate-500">history</span>
+                            <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Recent Activity</span>
+                        </div>
+                        <a href="{{ $activityLink }}" class="text-[10px] text-slate-650 dark:text-slate-350 hover:text-blue-600 dark:hover:text-blue-400 truncate block font-semibold">
+                            {{ $activityText }} <span class="text-[8.5px] text-slate-405 dark:text-slate-500 font-normal ml-1">({{ $activityTime }})</span>
+                        </a>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Tablet/Desktop Card View (hidden on mobile, visible on sm+) -->
+            <div class="hidden sm:flex bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 flex-col group relative {{ $glowClass }}">
                 <!-- Cover Photo Header -->
                 <div class="h-16 relative w-full bg-cover bg-center" style="background: {{ $user->banner_path ? 'url(' . $user->banner_path . ')' : $user->banner_color }}">
                     <div class="absolute inset-0 bg-black/5 dark:bg-black/10 transition-colors duration-300"></div>
