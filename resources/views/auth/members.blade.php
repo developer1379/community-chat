@@ -97,7 +97,8 @@
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3 min-w-0">
                         <!-- Avatar with status ring or level gradient -->
-                        <div class="relative w-11 h-11 shrink-0">
+                        <div class="relative w-11 h-11 shrink-0 @if($hasStatus) cursor-pointer hover:scale-105 transition-transform duration-200 @endif"
+                             @if($hasStatus) onclick="viewUserStatus('{{ $user->id }}', '{{ addslashes($user->name) }}', '{{ $user->avatar_url }}', '{{ addslashes($user->title_badge ?: 'Community Member') }}', '{{ addslashes($user->status) }}', '{{ $user->status_image }}')" @endif>
                             <div class="w-full h-full rounded-full @if($hasStatus) p-[2px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-650 animate-[spin_8s_linear_infinite] @else p-[2.5px] {{ $avatarGlow }} @endif overflow-hidden shadow-sm relative">
                                 <div class="w-full h-full rounded-full overflow-hidden bg-white dark:bg-slate-900 p-[0.5px] relative">
                                     <img src="{{ $user->avatar_url }}" class="w-full h-full object-cover rounded-full" alt="avatar">
@@ -128,7 +129,9 @@
                             
                             <!-- Status (if present) -->
                             @if($user->status)
-                                <div class="mt-1 text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-[170px]" title="{{ $user->status }}">
+                                <div class="mt-1 text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-[170px] cursor-pointer hover:underline" 
+                                     title="View status"
+                                     onclick="viewUserStatus('{{ $user->id }}', '{{ addslashes($user->name) }}', '{{ $user->avatar_url }}', '{{ addslashes($user->title_badge ?: 'Community Member') }}', '{{ addslashes($user->status) }}', '{{ $user->status_image }}')">
                                     💬 {{ $user->status }}
                                 </div>
                             @endif
@@ -208,7 +211,8 @@
                 <!-- Member details container -->
                 <div class="px-3 pb-2.5 relative flex flex-col items-center grow">
                     <!-- Avatar -->
-                    <div class="relative w-14 h-14 sm:w-16 sm:h-16 -mt-7 sm:-mt-8 mb-2 block shrink-0 z-10">
+                    <div class="relative w-14 h-14 sm:w-16 sm:h-16 -mt-7 sm:-mt-8 mb-2 block shrink-0 z-10 @if($hasStatus) cursor-pointer hover:scale-110 transition-transform duration-200 @endif"
+                         @if($hasStatus) onclick="viewUserStatus('{{ $user->id }}', '{{ addslashes($user->name) }}', '{{ $user->avatar_url }}', '{{ addslashes($user->title_badge ?: 'Community Member') }}', '{{ addslashes($user->status) }}', '{{ $user->status_image }}')" @endif>
                         <div class="w-full h-full rounded-full @if($hasStatus) p-[2px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-650 animate-[spin_8s_linear_infinite] @else p-[2.5px] {{ $avatarGlow }} @endif overflow-hidden shadow-sm relative transition-transform group-hover:scale-105 duration-300">
                             <div class="w-full h-full rounded-full overflow-hidden bg-white dark:bg-slate-900 p-[1px] relative">
                                 <img src="{{ $user->avatar_url }}" class="w-full h-full object-cover rounded-full" alt="avatar">
@@ -234,7 +238,9 @@
 
                         <!-- Status Bubble (if present) -->
                         @if($user->status)
-                            <div class="mt-1 px-2 py-0.5 bg-slate-50 dark:bg-slate-850/80 rounded-full border border-slate-100 dark:border-slate-800 text-[10px] font-semibold text-slate-500 dark:text-slate-400 max-w-[95%] truncate shadow-sm" title="{{ $user->status }}">
+                            <div class="mt-1 px-2 py-0.5 bg-slate-50 dark:bg-slate-850/80 rounded-full border border-slate-100 dark:border-slate-800 text-[10px] font-semibold text-slate-500 dark:text-slate-400 max-w-[95%] truncate shadow-sm cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" 
+                                 title="View status"
+                                 onclick="viewUserStatus('{{ $user->id }}', '{{ addslashes($user->name) }}', '{{ $user->avatar_url }}', '{{ addslashes($user->title_badge ?: 'Community Member') }}', '{{ addslashes($user->status) }}', '{{ $user->status_image }}')">
                                 💬 {{ $user->status }}
                             </div>
                         @endif
@@ -409,10 +415,128 @@
                     title: 'Action Failed',
                     text: 'Could not toggle follow status. Please try again.',
                     confirmButtonColor: '#0f172a'
-                });
             });
         }
     </script>
 @endauth
+
+<script>
+    function viewUserStatus(userId, userName, avatarUrl, titleBadge, statusText, statusImage) {
+        const currentUserId = "{{ Auth::id() }}";
+        const isOwner = currentUserId === userId;
+
+        // Log status view if viewer is authenticated and not owner
+        if (currentUserId && !isOwner) {
+            fetch(`/profile/${userId}/view-status`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .catch(err => console.error("Error logging status view:", err));
+        }
+
+        // Build viewer information HTML
+        let viewersSection = '';
+        if (isOwner) {
+            viewersSection = `
+                <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-left">
+                    <span class="block text-[10px] font-black text-slate-400 dark:text-slate-505 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[13px]">visibility</span>
+                        Seen by
+                    </span>
+                    <div id="status-viewers-list" class="flex flex-col gap-2 max-h-[120px] overflow-y-auto pr-1">
+                        <div class="text-[11px] text-slate-400 font-semibold italic text-center py-2">Loading viewers...</div>
+                    </div>
+                </div>
+            `;
+
+            // Load viewers list asynchronously
+            setTimeout(() => {
+                fetch(`/profile/${userId}/status-viewers`)
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('status-viewers-list');
+                    if (!container) return;
+                    if (data.success && data.viewers.length > 0) {
+                        let html = '';
+                        data.viewers.forEach(viewer => {
+                            html += `
+                                <div class="flex items-center justify-between py-1 border-b border-slate-50 last:border-0 dark:border-slate-800/40">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-6 h-6 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700">
+                                            <img src="${viewer.avatar_url}" class="w-full h-full object-cover">
+                                        </div>
+                                        <a href="/profile/${encodeURIComponent(viewer.name)}" class="text-xs font-bold text-slate-800 dark:text-slate-200 hover:text-blue-500 hover:underline truncate max-w-[120px]">${viewer.name}</a>
+                                    </div>
+                                    <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-550 font-bold uppercase tracking-wider">${viewer.title_badge}</span>
+                                </div>
+                            `;
+                        });
+                        container.innerHTML = html;
+                    } else {
+                        container.innerHTML = `<div class="text-[11px] text-slate-400 font-semibold italic text-center py-2">No views yet</div>`;
+                    }
+                })
+                .catch(err => {
+                    console.error("Error fetching status viewers:", err);
+                    const container = document.getElementById('status-viewers-list');
+                    if (container) container.innerHTML = `<div class="text-[11px] text-rose-500 font-semibold italic text-center py-2">Failed to load viewers</div>`;
+                });
+            }, 100);
+        }
+
+        Swal.fire({
+            html: `
+                <div class="instagram-story-card relative overflow-hidden rounded-2xl bg-gradient-to-b from-slate-900 via-slate-955 to-black text-white p-6 shadow-2xl border border-slate-800 flex flex-col justify-between min-h-[360px] sm:min-h-[420px] font-sans">
+                    <!-- Progress Bar Header -->
+                    <div class="flex gap-1 mb-4">
+                        <div class="h-1 flex-1 bg-blue-500 rounded-full"></div>
+                    </div>
+
+                    <!-- User Header -->
+                    <div class="flex items-center gap-3 text-left">
+                        <div class="w-10 h-10 rounded-full p-[2px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-650">
+                            <div class="w-full h-full rounded-full overflow-hidden border border-black bg-slate-900">
+                                <img src="${avatarUrl}" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-black tracking-tight text-white">${userName}</h4>
+                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">${titleBadge}</span>
+                        </div>
+                    </div>
+
+                    <!-- Main Story Content -->
+                    <div class="flex-grow flex flex-col justify-center items-center py-6 text-center space-y-4">
+                        ${statusImage ? `
+                            <div class="w-full max-h-[180px] rounded-xl overflow-hidden border border-white/10 shadow-lg bg-black/40">
+                                <img src="${statusImage}" class="w-full h-full object-contain cursor-zoom-in" onclick="window.open('${statusImage}', '_blank')">
+                            </div>
+                        ` : ''}
+
+                        ${statusText ? `
+                            <p class="text-sm sm:text-base font-extrabold text-white leading-relaxed max-w-[280px] drop-shadow-md bg-white/5 backdrop-blur-sm py-3 px-4 rounded-xl border border-white/5">
+                                "${statusText}"
+                            </p>
+                        ` : ''}
+                    </div>
+
+                    <!-- Footer Details -->
+                    ${viewersSection}
+                </div>
+            `,
+            showConfirmButton: false,
+            showCloseButton: true,
+            background: 'transparent',
+            width: '380px',
+            customClass: {
+                popup: 'bg-transparent border-0 shadow-none p-0 overflow-visible',
+                closeButton: 'text-white border-0 bg-transparent hover:text-red-500'
+            }
+        });
+    }
+</script>
 @endsection
 
