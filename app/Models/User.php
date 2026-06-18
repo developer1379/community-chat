@@ -102,6 +102,23 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the status views logged on this user's status.
+     */
+    public function statusViews(): HasMany
+    {
+        return $this->hasMany(StatusView::class, 'status_owner_id');
+    }
+
+    /**
+     * Get the users who viewed this user's status.
+     */
+    public function statusViewers(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'status_views', 'status_owner_id', 'viewer_id')->withTimestamps();
+    }
+
+
+    /**
      * Get the users that follow this user.
      */
     public function followers(): \Illuminate\Database\Eloquent\Relations\BelongsToMany

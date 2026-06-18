@@ -97,19 +97,32 @@ profile
         <div class="bg-white dark:bg-slate-900 p-5 relative border-t border-slate-100 dark:border-slate-850 flex flex-col md:flex-row items-center md:items-start justify-between gap-5 transition-colors duration-300">
             <!-- Avatar & Details -->
             <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 -mt-12 sm:-mt-16 z-10 text-center sm:text-left">
-                <!-- Compact Avatar frame -->
-                <div class="w-24 h-24 rounded-2xl overflow-hidden {{ $avatarGlow }} bg-slate-50 dark:bg-slate-800 shadow-md relative group/avatar flex-shrink-0">
-                    <img id="profile-avatar-img" src="{{ $user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
+                <!-- Compact Avatar frame with Instagram Highlight Ring -->
+                @php
+                    $hasStatus = !empty($user->status) || !empty($user->status_image);
+                @endphp
+                <div class="relative flex-shrink-0 -mt-12 sm:-mt-16 z-10">
+                    <div class="w-24 h-24 rounded-2xl @if($hasStatus) p-[3px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 animate-[spin_8s_linear_infinite] @else {{ $avatarGlow }} @endif shadow-md relative group/avatar flex-shrink-0 cursor-pointer overflow-hidden" 
+                         @if($hasStatus) onclick="viewStatusStory()" title="View Status Story" @endif>
+                        <div class="w-full h-full rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-800 relative @if($hasStatus) p-[1px] bg-white dark:bg-slate-900 @endif">
+                            <img id="profile-avatar-img" src="{{ $user->avatar_url }}" class="w-full h-full object-cover rounded-xl" alt="avatar">
 
-                    @auth
-                        @if(Auth::id() === $user->id)
-                            <div onclick="document.getElementById('avatar').click();" class="absolute inset-0 bg-black/50 opacity-0 group-hover/avatar:opacity-100 transition-all flex flex-col items-center justify-center cursor-pointer text-white z-20 font-bold text-[8px] uppercase tracking-wider" title="Change Avatar">
-                                <span class="material-symbols-outlined text-base mb-0.5">photo_camera</span>
-                                <span>Edit</span>
-                            </div>
-                        @endif
-                    @endauth
+                            @auth
+                                @if(Auth::id() === $user->id)
+                                    <div onclick="event.stopPropagation(); document.getElementById('avatar').click();" class="absolute inset-0 bg-black/50 opacity-0 group-hover/avatar:opacity-100 transition-all flex flex-col items-center justify-center cursor-pointer text-white z-20 font-bold text-[8px] uppercase tracking-wider" title="Change Avatar">
+                                        <span class="material-symbols-outlined text-base mb-0.5">photo_camera</span>
+                                        <span>Edit</span>
+                                    </div>
+                                @endif
+                            @endauth
+                        </div>
+                    </div>
+                    @if($hasStatus)
+                        <!-- Instagram Story Badge/Icon indicator -->
+                        <span class="absolute bottom-1 right-1 w-5 h-5 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-650 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center text-[10px] shadow-sm select-none pointer-events-none">💬</span>
+                    @endif
                 </div>
+
 
                 <div class="space-y-1 pt-1 sm:pt-4">
                     <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
@@ -122,22 +135,23 @@ profile
                     <!-- Custom Status Section (Compact Pill) -->
                     <div class="mt-1 flex items-center justify-center sm:justify-start">
                         @if($user->status || $user->status_image)
-                            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-slate-50 dark:bg-slate-800/80 rounded-full border border-slate-100 dark:border-slate-800 shadow-sm max-w-full text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+                            <div onclick="viewStatusStory()" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-slate-50 dark:bg-slate-800/80 rounded-full border border-slate-100 dark:border-slate-800 shadow-sm max-w-full text-[11px] font-semibold text-slate-700 dark:text-slate-300 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                                 <span>💬</span>
                                 @if($user->status)
                                     <span class="truncate max-w-[200px] sm:max-w-[300px]" id="status-display-text">{{ $user->status }}</span>
                                 @endif
                                 @if($user->status_image)
-                                    <img src="{{ $user->status_image }}" onclick="openLightbox('{{ $user->status_image }}', '{{ $user->name }}\'s status image')" class="w-4 h-4 rounded object-cover cursor-zoom-in hover:scale-110 transition-transform" id="status-display-image">
+                                    <img src="{{ $user->status_image }}" class="w-4 h-4 rounded object-cover cursor-pointer hover:scale-110 transition-transform" id="status-display-image">
                                 @endif
                                 @auth
                                     @if(Auth::id() === $user->id)
-                                        <button onclick="editStatusInline()" class="hover:text-blue-500 text-slate-400 transition-colors inline-flex items-center ml-0.5" title="Update Status">
+                                        <button onclick="event.stopPropagation(); editStatusInline()" class="hover:text-blue-500 text-slate-400 transition-colors inline-flex items-center ml-0.5" title="Update Status">
                                             <span class="material-symbols-outlined text-[12px]">edit</span>
                                         </button>
                                     @endif
                                 @endauth
                             </div>
+
                         @elseif(Auth::check() && Auth::id() === $user->id)
                             <button onclick="editStatusInline()" class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-slate-50/50 dark:bg-slate-850 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-450 dark:text-slate-500 hover:text-blue-500 dark:hover:text-blue-400 rounded-full border border-dashed border-slate-200 dark:border-slate-700 transition-all text-[11px] font-medium">
                                 <span class="material-symbols-outlined text-[10px]">add_circle</span>
@@ -1331,6 +1345,124 @@ profile
             document.body.appendChild(form);
             form.submit();
         }
+    }
+
+    function viewStatusStory() {
+        const statusUser = @json($user);
+        const currentUserId = "{{ Auth::id() }}";
+        const isOwner = currentUserId === statusUser.id;
+
+        // Log status view if viewer is authenticated and not owner
+        if (currentUserId && !isOwner) {
+            fetch(`/profile/${statusUser.id}/view-status`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .catch(err => console.error("Error logging status view:", err));
+        }
+
+        // Build viewer information HTML
+        let viewersSection = '';
+        if (isOwner) {
+            viewersSection = `
+                <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-left">
+                    <span class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-[13px]">visibility</span>
+                        Seen by
+                    </span>
+                    <div id="status-viewers-list" class="flex flex-col gap-2 max-h-[120px] overflow-y-auto pr-1">
+                        <div class="text-[11px] text-slate-400 font-semibold italic text-center py-2">Loading viewers...</div>
+                    </div>
+                </div>
+            `;
+
+            // Load viewers list asynchronously
+            setTimeout(() => {
+                fetch(`/profile/${statusUser.id}/status-viewers`)
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('status-viewers-list');
+                    if (!container) return;
+                    if (data.success && data.viewers.length > 0) {
+                        let html = '';
+                        data.viewers.forEach(viewer => {
+                            html += `
+                                <div class="flex items-center justify-between py-1 border-b border-slate-50 last:border-0 dark:border-slate-800/40">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-6 h-6 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700">
+                                            <img src="${viewer.avatar_url}" class="w-full h-full object-cover">
+                                        </div>
+                                        <a href="/profile/${encodeURIComponent(viewer.name)}" class="text-xs font-bold text-slate-800 dark:text-slate-200 hover:text-blue-500 hover:underline truncate max-w-[120px]">${viewer.name}</a>
+                                    </div>
+                                    <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 font-bold uppercase tracking-wider">${viewer.title_badge}</span>
+                                </div>
+                            `;
+                        });
+                        container.innerHTML = html;
+                    } else {
+                        container.innerHTML = `<div class="text-[11px] text-slate-400 font-semibold italic text-center py-2">No views yet</div>`;
+                    }
+                })
+                .catch(err => {
+                    console.error("Error fetching status viewers:", err);
+                    const container = document.getElementById('status-viewers-list');
+                    if (container) container.innerHTML = `<div class="text-[11px] text-rose-500 font-semibold italic text-center py-2">Failed to load viewers</div>`;
+                });
+            }, 100);
+        }
+
+        Swal.fire({
+            html: `
+                <div class="instagram-story-card relative overflow-hidden rounded-2xl bg-gradient-to-b from-slate-900 via-slate-950 to-black text-white p-6 shadow-2xl border border-slate-800 flex flex-col justify-between min-h-[360px] sm:min-h-[420px] font-sans">
+                    <!-- Progress Bar Header -->
+                    <div class="flex gap-1 mb-4">
+                        <div class="h-1 flex-1 bg-blue-500 rounded-full"></div>
+                    </div>
+
+                    <!-- User Header -->
+                    <div class="flex items-center gap-3 text-left">
+                        <div class="w-10 h-10 rounded-full p-[2px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600">
+                            <div class="w-full h-full rounded-full overflow-hidden border border-black bg-slate-900">
+                                <img src="${statusUser.avatar_url}" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-black tracking-tight text-white">${statusUser.name}</h4>
+                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">${statusUser.title_badge}</span>
+                        </div>
+                    </div>
+
+                    <!-- Main Story Content -->
+                    <div class="flex-grow flex flex-col justify-center items-center py-6 text-center space-y-4">
+                        ${statusUser.status_image ? `
+                            <div class="w-full max-h-[180px] rounded-xl overflow-hidden border border-white/10 shadow-lg bg-black/40">
+                                <img src="${statusUser.status_image}" class="w-full h-full object-contain cursor-zoom-in" onclick="openLightbox('${statusUser.status_image}', '${statusUser.name}\\'s status image')">
+                            </div>
+                        ` : ''}
+
+                        ${statusUser.status ? `
+                            <p class="text-sm sm:text-base font-extrabold text-white leading-relaxed max-w-[280px] drop-shadow-md bg-white/5 backdrop-blur-sm py-3 px-4 rounded-xl border border-white/5">
+                                "${statusUser.status}"
+                            </p>
+                        ` : ''}
+                    </div>
+
+                    <!-- Footer Details -->
+                    ${viewersSection}
+                </div>
+            `,
+            showConfirmButton: false,
+            showCloseButton: true,
+            background: 'transparent',
+            width: '380px',
+            customClass: {
+                popup: 'bg-transparent border-0 shadow-none p-0 overflow-visible',
+                closeButton: 'text-white border-0 bg-transparent hover:text-red-500'
+            }
+        });
     }
 </script>
 @endsection

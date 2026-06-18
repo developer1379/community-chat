@@ -419,6 +419,15 @@ class AuthController extends Controller
             }
         }
 
+        // Detect if the status or status_image is actually changing to reset views
+        $isChanging = ($data['status'] !== $user->status) || 
+                      (array_key_exists('status_image', $data) && $data['status_image'] !== $user->status_image) ||
+                      ($request->has('remove_status_image') && $user->status_image !== null);
+
+        if ($isChanging) {
+            $user->statusViews()->delete();
+        }
+
         $user->update($data);
 
         return response()->json([
@@ -428,6 +437,53 @@ class AuthController extends Controller
             'message' => 'Status updated successfully!',
         ]);
     }
+
+    public function viewStatus(Request $request, User $user)
+    {
+        $viewer = Auth::user();
+        if (!$viewer) {
+            return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
+        }
+
+        // Only log views if viewing someone else's status and they have a status
+        if ($viewer->id !== $user->id && ($user->status || $user->status_image)) {
+            \App\Models\StatusView::firstOrCreate([
+                'status_owner_id' => $user->id,
+                'viewer_id' => $viewer->id,
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'viewers_count' => $user->statusViews()->count()
+        ]);
+    }
+
+    public function statusViewers(User $user)
+    {
+        // Only the owner of the status should see the viewer list
+        if (Auth::id() !== $user->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $viewers = $user->statusViewers()
+            ->select('users.id', 'users.name', 'users.avatar_path', 'users.title_badge')
+            ->get()
+            ->map(function ($v) {
+                return [
+                    'id' => $v->id,
+                    'name' => $v->name,
+                    'avatar_url' => $v->avatar_url,
+                    'title_badge' => $v->title_badge
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'viewers' => $viewers
+        ]);
+    }
+
 
     public function updateUsername(Request $request)
     {

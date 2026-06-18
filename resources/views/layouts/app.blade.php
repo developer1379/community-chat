@@ -185,7 +185,13 @@
         .imgbb-container, .imgbb-plugin-button, [data-imgbb-trigger] {
             display: none !important;
         }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
+
 
     <!-- SweetAlert2 library for premium corporate dialogs -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
