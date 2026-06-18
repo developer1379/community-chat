@@ -80,8 +80,9 @@ profile
     <!-- Professional & Compact Profile Hero Card -->
     <div class="relative rounded-none sm:rounded-2xl overflow-hidden bg-white dark:bg-slate-900 border-x-0 border-y sm:border border-slate-200 dark:border-slate-800 transition-all duration-300 {{ $glowClass }}">
         <!-- Dynamic Gradient / Image Cover Banner (Sleek Compact Height) -->
-        <div id="profile-banner-bg" class="h-28 sm:h-36 relative bg-cover bg-center" style="background: {{ $user->banner_path ? 'url(' . $user->banner_path . ')' : $user->banner_color }}">
-            <div class="absolute inset-0 bg-black/10 backdrop-blur-[0.5px]"></div>
+        <div id="profile-banner-bg" class="h-28 sm:h-36 relative bg-cover bg-center" style="background: {{ $user->banner_path ? 'url(' . $user->banner_path . ')' : ($user->banner_color ?: 'linear-gradient(135deg, #4f46e5, #06b6d4)') }}">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+            <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:16px_24px]"></div>
             
             @auth
                 @if(Auth::id() === $user->id)
@@ -188,39 +189,36 @@ profile
             <!-- Stats & Actions Block -->
             <div class="flex flex-col items-center md:items-end gap-3 z-10 w-full md:w-auto flex-shrink-0">
                 <!-- Dashboard Metrics -->
-                <div class="flex items-center gap-3 text-center bg-slate-50 dark:bg-slate-955 p-2.5 rounded-none sm:rounded-xl border-x-0 border-y sm:border border-slate-100 dark:border-slate-850 w-full sm:w-auto justify-around">
-                    <div class="px-2">
+                <div class="grid grid-cols-4 gap-2 w-full sm:w-auto text-center">
+                    <div class="bg-slate-50/70 dark:bg-slate-900/60 backdrop-blur-sm p-2 rounded-none sm:rounded-xl border border-slate-100 dark:border-slate-800/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:border-indigo-500/30 transition-all duration-300">
                         <span class="block text-base font-black text-slate-900 dark:text-white leading-tight">{{ $user->posts()->count() }}</span>
-                        <span class="text-[9px] font-bold text-slate-450 uppercase tracking-wider">Posts</span>
+                        <span class="text-[8px] font-extrabold text-slate-450 dark:text-slate-500 uppercase tracking-widest mt-0.5">Posts</span>
                     </div>
-                    <div class="w-px h-5 bg-slate-200 dark:bg-slate-800"></div>
-                    <div class="px-2">
+                    <div class="bg-slate-50/70 dark:bg-slate-900/60 backdrop-blur-sm p-2 rounded-none sm:rounded-xl border border-slate-100 dark:border-slate-800/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:border-pink-500/30 transition-all duration-300">
                         <span class="block text-base font-black text-slate-900 dark:text-white leading-tight">{{ $reactionsCount }}</span>
-                        <span class="text-[9px] font-bold text-slate-450 uppercase tracking-wider">Reacts</span>
+                        <span class="text-[8px] font-extrabold text-slate-450 dark:text-slate-500 uppercase tracking-widest mt-0.5">Reacts</span>
                     </div>
-                    <div class="w-px h-5 bg-slate-200 dark:bg-slate-800"></div>
-                    <div class="px-2">
+                    <div class="bg-slate-50/70 dark:bg-slate-900/60 backdrop-blur-sm p-2 rounded-none sm:rounded-xl border border-slate-100 dark:border-slate-800/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:border-amber-500/30 transition-all duration-300">
                         <span class="block text-base font-black text-slate-900 dark:text-white leading-tight">{{ $badgesCount }}</span>
-                        <span class="text-[9px] font-bold text-slate-450 uppercase tracking-wider">Badges</span>
+                        <span class="text-[8px] font-extrabold text-slate-450 dark:text-slate-500 uppercase tracking-widest mt-0.5">Badges</span>
                     </div>
-                    <div class="w-px h-5 bg-slate-200 dark:bg-slate-800"></div>
-                    <div class="px-2">
+                    <div class="bg-slate-50/70 dark:bg-slate-900/60 backdrop-blur-sm p-2 rounded-none sm:rounded-xl border border-slate-100 dark:border-slate-800/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] hover:border-blue-500/30 transition-all duration-300">
                         <span class="block text-base font-black text-slate-900 dark:text-white leading-tight">{{ $user->activity_points }}</span>
-                        <span class="text-[9px] font-bold text-slate-450 uppercase tracking-wider">Points</span>
+                        <span class="text-[8px] font-extrabold text-slate-450 dark:text-slate-500 uppercase tracking-widest mt-0.5">Points</span>
                     </div>
                 </div>
 
                 <!-- Action Button Row -->
-                <div class="flex gap-2 w-full justify-center md:justify-end">
+                <div class="flex gap-2 w-full justify-center md:justify-end mt-1">
                     @auth
                         @if(Auth::id() !== $user->id)
                             <button type="button" 
                                     onclick="toggleFollowUser('{{ $user->name }}', '{{ $user->id }}')" 
                                     id="follow-btn-{{ $user->id }}" 
-                                    class="flex-1 sm:flex-none text-xs font-bold py-1.5 px-3.5 rounded-lg transition-all cursor-pointer border flex items-center justify-center gap-1 shadow-sm
+                                    class="flex-1 sm:flex-none text-xs font-bold py-2 px-4 rounded-xl transition-all duration-300 cursor-pointer border flex items-center justify-center gap-1.5 shadow-sm active:scale-95
                                     {{ Auth::user()->isFollowing($user) 
-                                        ? 'bg-blue-50 dark:bg-blue-955/30 border-blue-200 dark:border-blue-900 text-blue-700 dark:text-blue-400 hover:bg-rose-50 dark:hover:bg-rose-955/20 hover:text-rose-700 dark:hover:text-rose-450 hover:border-rose-200 dark:hover:border-rose-900 group/follow active:scale-97' 
-                                        : 'bg-white dark:bg-slate-850 border-slate-250 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-97' }}">
+                                        ? 'bg-blue-50 dark:bg-blue-955/30 border-blue-200 dark:border-blue-900/50 text-blue-700 dark:text-blue-400 hover:bg-rose-50 dark:hover:bg-rose-955/20 hover:text-rose-700 dark:hover:text-rose-405 hover:border-rose-200 dark:hover:border-rose-900 group/follow' 
+                                        : 'bg-white dark:bg-slate-850 border-slate-205 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-97' }}">
                                 @if(Auth::user()->isFollowing($user))
                                     <span class="material-symbols-outlined text-[13px] group-hover/follow:hidden">check</span>
                                     <span class="group-hover/follow:hidden">Following</span>
@@ -234,7 +232,7 @@ profile
 
                             <button type="button" 
                                     onclick="startDirectChat('{{ $user->name }}')" 
-                                    class="flex-1 sm:flex-none text-xs font-bold py-1.5 px-3.5 rounded-lg transition-all cursor-pointer border border-slate-250 dark:border-slate-800 bg-white dark:bg-slate-850 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-97 flex items-center justify-center gap-1 shadow-sm">
+                                    class="flex-1 sm:flex-none text-xs font-bold py-2 px-4 rounded-xl transition-all duration-300 cursor-pointer border border-slate-205 dark:border-slate-800 bg-white dark:bg-slate-855 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-97 flex items-center justify-center gap-1.5 shadow-sm">
                                 <span class="material-symbols-outlined text-[13px]">chat</span>
                                 <span>Message</span>
                             </button>
@@ -243,7 +241,7 @@ profile
 
                     <button type="button" 
                             onclick="copyProfileLink()" 
-                            class="flex-1 sm:flex-none text-xs font-bold py-1.5 px-3.5 rounded-lg transition-all cursor-pointer border border-slate-250 dark:border-slate-800 bg-white dark:bg-slate-850 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-97 flex items-center justify-center gap-1 shadow-sm"
+                            class="flex-1 sm:flex-none text-xs font-bold py-2 px-4 rounded-xl transition-all duration-300 cursor-pointer border border-slate-205 dark:border-slate-800 bg-white dark:bg-slate-855 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-97 flex items-center justify-center gap-1.5 shadow-sm"
                             title="Copy profile link">
                         <span class="material-symbols-outlined text-[14px]">share</span>
                         <span>Share</span>
@@ -254,8 +252,9 @@ profile
 
         <!-- Signature quote footer -->
         @if($user->signature)
-            <div class="bg-slate-50 dark:bg-slate-900/50 px-5 py-2.5 border-t border-slate-100 dark:border-slate-850 text-xs text-slate-650 dark:text-slate-400 italic text-center sm:text-left font-medium transition-colors">
-                💬 "{{ $user->signature }}"
+            <div class="bg-gradient-to-r from-slate-55 to-slate-100/50 dark:from-slate-900/40 dark:to-slate-950/20 px-6 py-3 border-t border-slate-100 dark:border-slate-850/60 text-xs text-slate-600 dark:text-slate-450 text-center sm:text-left font-medium transition-colors flex items-center justify-center sm:justify-start gap-2">
+                <span class="material-symbols-outlined text-slate-405 dark:text-slate-600 text-sm">format_quote</span>
+                <span class="italic font-serif">"{{ $user->signature }}"</span>
             </div>
         @endif
     </div>
@@ -312,19 +311,23 @@ profile
                         <div class="mui-card overflow-hidden shadow-sm border-x-0 border-y sm:border border-slate-250 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-none sm:rounded-xl">
                             <div class="divide-y divide-slate-105 dark:divide-slate-850">
                                 @forelse($threads as $thread)
-                                    <div class="px-5 py-3.5 flex items-center justify-between gap-4 hover:bg-slate-50/50 dark:hover:bg-slate-850/30 transition-colors">
-                                        <div class="space-y-0.5 text-left min-w-0">
-                                            <h4 class="font-bold text-slate-800 dark:text-white text-xs hover:text-blue-600 dark:hover:text-blue-450 transition-colors truncate">
+                                    <div class="px-5 py-4 flex items-center justify-between gap-4 hover:bg-slate-50/60 dark:hover:bg-slate-850/40 transition-all border-l-4 border-transparent hover:border-blue-500">
+                                        <div class="space-y-1 text-left min-w-0">
+                                            <h4 class="font-black text-slate-800 dark:text-white text-[13px] tracking-tight hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate">
                                                 <a href="{{ route('threads.show', $thread->slug) }}">{!! $thread->prefix_badge !!}{{ $thread->title }}</a>
                                             </h4>
-                                            <div class="flex items-center gap-1.5 text-[10px] text-slate-450 dark:text-slate-400">
-                                                <span class="font-bold px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/50">{{ $thread->category->name }}</span>
-                                                <span>•</span>
-                                                <span>Created {{ $thread->created_at->diffForHumans() }}</span>
+                                            <div class="flex items-center gap-2 text-[10px] text-slate-450 dark:text-slate-500">
+                                                <span class="font-extrabold px-2 py-0.5 rounded bg-blue-50/80 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/40">{{ $thread->category->name }}</span>
+                                                <span class="text-slate-300 dark:text-slate-700">•</span>
+                                                <span class="font-semibold flex items-center gap-0.5">
+                                                    <span class="material-symbols-outlined text-[10px]">schedule</span>
+                                                    {{ $thread->created_at->diffForHumans() }}
+                                                </span>
                                             </div>
                                         </div>
-                                        <div class="text-[10px] font-bold text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950 px-2 py-1 rounded border border-slate-205 dark:border-slate-800 flex-shrink-0">
-                                            {{ $thread->views_count }} views
+                                        <div class="text-[10px] font-extrabold text-slate-550 dark:text-slate-400 bg-slate-50 dark:bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center gap-1 flex-shrink-0 shadow-sm">
+                                            <span class="material-symbols-outlined text-[11px] text-slate-400">visibility</span>
+                                            <span>{{ $thread->views_count }}</span>
                                         </div>
                                     </div>
                                 @empty
