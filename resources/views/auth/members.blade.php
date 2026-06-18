@@ -196,136 +196,118 @@
                         </a>
                     </div>
                 @endif
-            </div>
-
-            <!-- Tablet/Desktop Card View (hidden on mobile, visible on sm+) -->
+                        <!-- Tablet/Desktop Card View (hidden on mobile, visible on sm+) -->
             <div class="hidden sm:flex bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 flex-col group relative {{ $glowClass }}">
                 <!-- Cover Photo Header -->
-                <div class="h-20 sm:h-24 relative w-full bg-cover bg-center" style="background: {{ $user->banner_path ? 'url(' . $user->banner_path . ')' : $user->banner_color }}">
+                <div class="h-16 relative w-full bg-cover bg-center" style="background: {{ $user->banner_path ? 'url(' . $user->banner_path . ')' : $user->banner_color }}">
                     <div class="absolute inset-0 bg-black/5 dark:bg-black/10 transition-colors duration-300"></div>
                 </div>
 
                 <!-- Member details container -->
-                <div class="px-4 pb-4 relative flex flex-col items-center grow">
+                <div class="px-3 pb-2.5 relative flex flex-col items-center grow">
                     <!-- Avatar -->
-                    <div class="relative w-20 h-20 sm:w-22 sm:h-22 -mt-10 sm:-mt-11 mb-3 block shrink-0 z-10">
-                        <div class="w-full h-full rounded-full @if($hasStatus) p-[2.5px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-650 animate-[spin_8s_linear_infinite] @else p-[3px] {{ $avatarGlow }} @endif overflow-hidden shadow-sm relative transition-transform group-hover:scale-105 duration-300">
+                    <div class="relative w-14 h-14 sm:w-16 sm:h-16 -mt-7 sm:-mt-8 mb-2 block shrink-0 z-10">
+                        <div class="w-full h-full rounded-full @if($hasStatus) p-[2px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-650 animate-[spin_8s_linear_infinite] @else p-[2.5px] {{ $avatarGlow }} @endif overflow-hidden shadow-sm relative transition-transform group-hover:scale-105 duration-300">
                             <div class="w-full h-full rounded-full overflow-hidden bg-white dark:bg-slate-900 p-[1px] relative">
                                 <img src="{{ $user->avatar_url }}" class="w-full h-full object-cover rounded-full" alt="avatar">
                             </div>
                         </div>
                         @if($hasStatus)
-                            <span class="absolute bottom-1 right-1 w-5 h-5 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-650 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center text-[10px] shadow-md select-none pointer-events-none">💬</span>
+                            <span class="absolute bottom-0.5 right-0.5 w-4.5 h-4.5 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-650 rounded-full border border-white dark:border-slate-900 flex items-center justify-center text-[9px] shadow-md select-none pointer-events-none">💬</span>
                         @endif
                     </div>
 
                     <!-- Name and Badge -->
                     <div class="w-full flex flex-col items-center text-center">
-                        <h3 class="font-semibold text-slate-900 dark:text-white text-base hover:underline hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate w-full mb-0.5 {{ $user->username_style }}" style="{{ $user->username_style_css }}">
+                        <h3 class="font-semibold text-slate-900 dark:text-white text-sm hover:underline hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate w-full mb-0.5 {{ $user->username_style }}" style="{{ $user->username_style_css }}">
                             <a href="{{ route('profile.show', $user->name) }}"
                                data-user-hover="true" 
                                data-user-name="{{ $user->name }}">{{ $user->name }}</a>
                         </h3>
                         
                         <!-- Headline / Title -->
-                        <p class="text-xs text-slate-500 dark:text-slate-400 font-normal line-clamp-2 min-h-[32px] px-3 text-center leading-normal">
+                        <p class="text-[11px] text-slate-500 dark:text-slate-405 font-normal truncate w-full px-2 text-center mt-0.5">
                             {{ $user->title_badge ?: 'Community Member' }}
                         </p>
 
                         <!-- Status Bubble (if present) -->
                         @if($user->status)
-                            <div class="mt-1.5 px-2.5 py-0.5 bg-slate-50 dark:bg-slate-850/80 rounded-full border border-slate-100 dark:border-slate-800 text-[10px] font-semibold text-slate-600 dark:text-slate-350 max-w-[90%] truncate shadow-sm" title="{{ $user->status }}">
+                            <div class="mt-1 px-2 py-0.5 bg-slate-50 dark:bg-slate-850/80 rounded-full border border-slate-100 dark:border-slate-800 text-[10px] font-semibold text-slate-500 dark:text-slate-400 max-w-[95%] truncate shadow-sm" title="{{ $user->status }}">
                                 💬 {{ $user->status }}
                             </div>
                         @endif
                     </div>
                     
-                    <div class="flex items-center gap-1.5 mt-2 flex-wrap justify-center">
-                        <span class="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                    <div class="flex items-center gap-1 mt-1.5 flex-wrap justify-center text-[9px] font-bold">
+                        <span class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
                             Lvl {{ $level }}
                         </span>
-                        <span class="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider" style="background: {{ $userTier['color'] }}20; color: {{ $userTier['color'] }}">
+                        <span class="px-1.5 py-0.5 rounded" style="background: {{ $userTier['color'] }}20; color: {{ $userTier['color'] }}">
                             {{ $userTier['badge'] }}
                         </span>
                         <!-- Coins Pill -->
-                        <div class="flex items-center gap-0.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200/50 dark:border-amber-900/30 px-2 py-0.5 rounded-full text-[9px] font-bold text-amber-700 dark:text-amber-400 shadow-sm shrink-0">
+                        <div class="flex items-center gap-0.5 bg-amber-50 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-900/30 px-1.5 py-0.5 rounded text-[9px] font-bold text-amber-700 dark:text-amber-400 shadow-sm shrink-0">
                             <span class="material-symbols-outlined text-[11px] text-amber-500">monetization_on</span>
                             <span>{{ number_format($user->coins) }}</span>
                         </div>
                     </div>
 
-                    <!-- Social Proof / Connections (replacing the grid) -->
-                    <div class="mt-4 pt-3 border-t border-slate-105 dark:border-slate-850 w-full flex flex-col gap-1 items-center justify-center text-[11px] text-slate-400 dark:text-slate-505">
-                        <div class="flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[13px] text-slate-400">group</span>
-                            <span id="follower-count-{{ $user->id }}" class="font-semibold text-slate-600 dark:text-slate-350">{{ $user->followers()->count() }}</span>
-                            <span>followers</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[13px] text-slate-400">forum</span>
-                            <span class="font-semibold text-slate-600 dark:text-slate-350">{{ $user->threads()->count() }}</span>
-                            <span>threads</span>
-                            <span class="text-slate-300 dark:text-slate-700">•</span>
-                            <span class="font-semibold text-slate-600 dark:text-slate-350">{{ $user->posts()->count() }}</span>
-                            <span>replies</span>
-                        </div>
+                    <!-- Social Proof / Connections -->
+                    <div class="mt-2.5 pt-2 border-t border-slate-105 dark:border-slate-850 w-full flex justify-center text-[10px] text-slate-400 dark:text-slate-505 font-medium">
+                        <span><span id="follower-count-{{ $user->id }}" class="font-semibold text-slate-605 dark:text-slate-300">{{ number_format($user->followers()->count()) }}</span> followers</span>
+                        <span class="mx-1.5 text-slate-300 dark:text-slate-700">•</span>
+                        <span><span class="font-semibold text-slate-605 dark:text-slate-300">{{ number_format($user->threads()->count()) }}</span> threads</span>
+                        <span class="mx-1.5 text-slate-300 dark:text-slate-700">•</span>
+                        <span><span class="font-semibold text-slate-655 dark:text-slate-300">{{ number_format($user->posts()->count()) }}</span> replies</span>
                     </div>
 
                     <!-- Recent Activity -->
-                    <div class="mt-3.5 pt-3 border-t border-slate-105 dark:border-slate-850 w-full text-left px-2">
-                        <div class="flex items-center gap-1 mb-1">
-                            <span class="material-symbols-outlined text-[11px] text-slate-400 dark:text-slate-500">history</span>
-                            <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Recent Activity</span>
-                        </div>
-                        @if($activityText)
-                            <a href="{{ $activityLink }}" class="block group/act">
-                                <p class="text-[11px] text-slate-600 dark:text-slate-350 leading-snug font-medium line-clamp-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                                    {{ $activityText }}
-                                </p>
-                                <span class="text-[9px] text-slate-405 dark:text-slate-500 block mt-0.5">{{ $activityTime }}</span>
+                    @if($activityText)
+                        <div class="mt-2 pt-2 border-t border-slate-105 dark:border-slate-850 w-full text-center">
+                            <a href="{{ $activityLink }}" class="block text-[10px] text-slate-550 dark:text-slate-405 truncate hover:text-blue-500 dark:hover:text-blue-400 transition-colors font-medium" title="{{ $activityText }}">
+                                <span class="font-bold text-[8.5px] uppercase tracking-wider text-slate-400 dark:text-slate-500 mr-0.5">Latest:</span>
+                                {{ $activityText }}
                             </a>
-                        @else
-                            <p class="text-[10px] text-slate-405 dark:text-slate-550 font-medium italic">No recent activity</p>
-                        @endif
-                    </div>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Action Footer -->
-                <div class="p-4 bg-white dark:bg-slate-900 mt-auto w-full border-t border-slate-100 dark:border-slate-850">
+                <div class="p-2.5 bg-white dark:bg-slate-900 mt-auto w-full border-t border-slate-100 dark:border-slate-850">
                     @auth
                         @if(Auth::id() === $user->id)
-                            <div class="w-full py-1.5 text-center text-xs font-semibold text-slate-505 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 rounded-full border border-transparent">
+                            <div class="w-full py-1 text-center text-xs font-semibold text-slate-505 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 rounded-full border border-transparent">
                                 This is you
                             </div>
                         @else
-                            <div class="flex flex-col gap-2 w-full">
+                            <div class="flex gap-1.5 w-full">
                                 <button type="button" 
                                         onclick="toggleFollowUser('{{ $user->name }}', '{{ $user->id }}')" 
                                         id="follow-btn-{{ $user->id }}" 
-                                        class="w-full text-xs font-semibold py-1.5 px-3 rounded-full transition-all cursor-pointer border flex items-center justify-center gap-1.5 shadow-sm 
+                                        class="flex-1 text-[11px] font-semibold py-1 px-2.5 rounded-full transition-all cursor-pointer border flex items-center justify-center gap-1 shadow-sm 
                                         {{ Auth::user()->isFollowing($user) 
                                             ? 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-955/30 hover:text-rose-600 hover:border-rose-200 dark:hover:border-rose-800 group/follow' 
                                             : 'bg-white dark:bg-slate-900 border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30' }}">
                                     @if(Auth::user()->isFollowing($user))
-                                        <span class="material-symbols-outlined text-[14px] group-hover/follow:hidden">check</span>
+                                        <span class="material-symbols-outlined text-[13px] group-hover/follow:hidden">check</span>
                                         <span class="group-hover/follow:hidden">Following</span>
-                                        <span class="material-symbols-outlined text-[14px] hidden group-hover/follow:inline-block">person_remove</span>
+                                        <span class="material-symbols-outlined text-[13px] hidden group-hover/follow:inline-block">person_remove</span>
                                         <span class="hidden group-hover/follow:inline">Unfollow</span>
                                     @else
-                                        <span class="material-symbols-outlined text-[14px]">person_add</span>
+                                        <span class="material-symbols-outlined text-[13px]">person_add</span>
                                         <span>Follow</span>
                                     @endif
                                 </button>
                                 <button type="button" 
                                         onclick="startDirectChat('{{ $user->name }}')" 
-                                        class="w-full text-xs font-semibold py-1.5 px-3 rounded-full transition-all cursor-pointer bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-1.5 shadow-sm">
-                                    <span class="material-symbols-outlined text-[14px]">chat</span>
+                                        class="flex-1 text-[11px] font-semibold py-1 px-2.5 rounded-full transition-all cursor-pointer bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-1 shadow-sm">
+                                    <span class="material-symbols-outlined text-[13px]">chat</span>
                                     <span>Message</span>
                                 </button>
                             </div>
                         @endif
                     @else
-                        <a href="{{ route('login') }}" class="w-full block text-center border border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 font-semibold text-xs py-1.5 px-3 rounded-full transition-colors">
+                        <a href="{{ route('login') }}" class="w-full block text-center border border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 font-semibold text-[11px] py-1 px-2.5 rounded-full transition-colors">
                             Login to Interact
                         </a>
                     @endauth
@@ -391,15 +373,15 @@
                         if (!b) return;
                         if (data.following) {
                             if (b.id.includes('mobile')) {
-                                b.className = "text-[11px] font-bold py-1 px-3 rounded-full transition-all cursor-pointer border bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200";
+                                b.className = "text-[11px] font-bold py-1 px-3 rounded-full transition-all cursor-pointer border bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-350 hover:bg-slate-200";
                                 b.innerText = 'Following';
                             } else {
-                                b.className = "w-full text-xs font-semibold py-1.5 px-3 rounded-full transition-all cursor-pointer border flex items-center justify-center gap-1.5 shadow-sm bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-955/20 hover:text-rose-600 hover:border-rose-200 dark:hover:border-rose-900 group/follow";
+                                b.className = "flex-1 text-[11px] font-semibold py-1 px-2.5 rounded-full transition-all cursor-pointer border flex items-center justify-center gap-1 shadow-sm bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-955/20 hover:text-rose-600 hover:border-rose-200 dark:hover:border-rose-900 group/follow";
                                 b.innerHTML = `
-                                    <span class="material-symbols-outlined text-[14px] group-hover/follow:hidden">check</span>
-                                    <span class="group-hover/follow:hidden">Following</span>
-                                    <span class="material-symbols-outlined text-[14px] hidden group-hover/follow:inline-block">person_remove</span>
-                                    <span class="hidden group-hover/follow:inline">Unfollow</span>
+                                    <span class="material-symbols-outlined text-[13px] group-hover/follow:hidden">check</span>
+                                    <span class="group-hover/follow:hidden text-[11px]">Following</span>
+                                    <span class="material-symbols-outlined text-[13px] hidden group-hover/follow:inline-block">person_remove</span>
+                                    <span class="hidden group-hover/follow:inline text-[11px]">Unfollow</span>
                                 `;
                             }
                         } else {
@@ -407,9 +389,9 @@
                                 b.className = "text-[11px] font-bold py-1 px-3 rounded-full transition-all cursor-pointer border bg-white dark:bg-slate-900 border-blue-600 text-blue-600 hover:bg-blue-50";
                                 b.innerText = 'Follow';
                             } else {
-                                b.className = "w-full text-xs font-semibold py-1.5 px-3 rounded-full transition-all cursor-pointer border flex items-center justify-center gap-1.5 shadow-sm bg-white dark:bg-slate-900 border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30";
+                                b.className = "flex-1 text-[11px] font-semibold py-1 px-2.5 rounded-full transition-all cursor-pointer border flex items-center justify-center gap-1 shadow-sm bg-white dark:bg-slate-900 border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-955/30";
                                 b.innerHTML = `
-                                    <span class="material-symbols-outlined text-[14px]">person_add</span>
+                                    <span class="material-symbols-outlined text-[13px]">person_add</span>
                                     <span>Follow</span>
                                 `;
                             }
