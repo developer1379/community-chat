@@ -63,6 +63,8 @@ class ReactController extends Controller
                     'link' => route('threads.show', $post->thread->slug) . '#post-' . $post->id,
                     'show_alert' => true,
                 ]);
+
+                app(\App\Services\FirebaseService::class)->triggerNotificationPing($post->user_id);
             }
         }
 

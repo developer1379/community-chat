@@ -238,6 +238,10 @@
     </style>
 
 
+    <!-- Firebase SDK compat libraries -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
     <!-- SweetAlert2 library for premium corporate dialogs -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -275,6 +279,29 @@
 
     <!-- Reusable Javascript Controllers & Dynamic Engines -->
     <script>
+        // Firebase Client-side Config (Loads from Blade/Laravel config)
+        const firebaseConfig = {
+            apiKey: "{{ config('firebase.api_key') }}",
+            authDomain: "{{ config('firebase.auth_domain') }}",
+            databaseURL: "{{ config('firebase.database_url') }}",
+            projectId: "{{ config('firebase.project_id') }}",
+            storageBucket: "{{ config('firebase.storage_bucket') }}",
+            messagingSenderId: "{{ config('firebase.messaging_sender_id') }}",
+            appId: "{{ config('firebase.app_id') }}"
+        };
+
+        let firebaseDatabase = null;
+        let firebaseApp = null;
+
+        if (firebaseConfig.databaseURL) {
+            try {
+                firebaseApp = firebase.initializeApp(firebaseConfig);
+                firebaseDatabase = firebase.database();
+            } catch (e) {
+                console.warn("Firebase failed to initialize:", e);
+            }
+        }
+
         function updateThemeToggleIcon() {
             const icon = document.getElementById('theme-toggle-icon');
             if (!icon) return;
@@ -352,6 +379,35 @@
                     checkUnreadBadge();
                 }
             }
+        }
+        
+        // Initialize unread check and set recurring schedule
+        document.addEventListener('DOMContentLoaded', () => {
+            checkUnreadBadge();
+            
+            if (firebaseDatabase && currentUserId) {
+                // Real-time Event-Driven Notifications via Firebase Database Pings
+                try {
+                    const notifRef = firebaseDatabase.ref('users/' + currentUserId + '/notification');
+                    notifRef.on('value', (snapshot) => {
+                        checkUnreadBadge();
+                    });
+                } catch (e) {
+                    console.error("Firebase notification listener failed, falling back to polling:", e);
+                    setupFallbackNotificationPolling();
+                }
+            } else {
+                setupFallbackNotificationPolling();
+            }
+        });
+
+        function setupFallbackNotificationPolling() {
+            // Poll global badge every 10 seconds, but ONLY when tab is focused and active
+            badgePollingInterval = setInterval(() => {
+                if (document.visibilityState === 'visible') {
+                    checkUnreadBadge();
+                }
+            }, 10000);
         }
 
         function closeNotificationsModal() {

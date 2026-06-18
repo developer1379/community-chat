@@ -185,6 +185,8 @@ class AdminController extends Controller
             'show_alert' => $request->boolean('show_alert'),
         ]);
 
+        app(\App\Services\FirebaseService::class)->triggerNotificationPing($user->id);
+
         return redirect()->back()->with('success', "Alert notification sent to {$user->name} successfully.");
     }
 

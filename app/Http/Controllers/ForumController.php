@@ -327,6 +327,8 @@ class ForumController extends Controller
                 'link' => route('threads.show', $thread->slug) . '#post-' . $post->id,
                 'show_alert' => true,
             ]);
+
+            app(\App\Services\FirebaseService::class)->triggerNotificationPing($thread->user_id);
         }
 
         // Reward user with 5 coins for posting a reply

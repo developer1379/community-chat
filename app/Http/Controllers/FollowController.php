@@ -61,6 +61,8 @@ class FollowController extends Controller
                 'link' => route('profile.show', $currentUser->name),
                 'show_alert' => true,
             ]);
+
+            app(\App\Services\FirebaseService::class)->triggerNotificationPing($user->id);
         }
 
         // Return the updated follower statistics

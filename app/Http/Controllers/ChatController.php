@@ -17,15 +17,18 @@ class ChatController extends Controller
     protected ChatRepositoryInterface $chatRepository;
     protected UserRepositoryInterface $userRepository;
     protected ImgBBService $imgBBService;
+    protected \App\Services\FirebaseService $firebaseService;
 
     public function __construct(
         ChatRepositoryInterface $chatRepository,
         UserRepositoryInterface $userRepository,
-        ImgBBService $imgBBService
+        ImgBBService $imgBBService,
+        \App\Services\FirebaseService $firebaseService
     ) {
         $this->chatRepository = $chatRepository;
         $this->userRepository = $userRepository;
         $this->imgBBService = $imgBBService;
+        $this->firebaseService = $firebaseService;
     }
 
     /**
@@ -77,6 +80,10 @@ class ChatController extends Controller
 
         // Mark messages as read
         $this->chatRepository->markAsRead($conversation->id, $userId);
+
+        // Notify partner that messages have been read
+        $recipientId = $conversation->otherUser($userId)->id;
+        $this->firebaseService->triggerChatPing($recipientId, $conversation->id);
 
         $messages = $this->chatRepository->getConversationMessages($conversation->id);
 
@@ -145,6 +152,10 @@ class ChatController extends Controller
             $encryptedKeySender,
             $encryptedKeyRecipient
         );
+
+        // Ping recipient on Firebase
+        $recipientId = $conversation->otherUser($userId)->id;
+        $this->firebaseService->triggerChatPing($recipientId, $conversation->id);
 
         // Broadcast the MessageSent event to the chat channel
         broadcast(new \App\Events\MessageSent($message, $conversation->id))->toOthers();
@@ -218,6 +229,10 @@ class ChatController extends Controller
         }
 
         $this->chatRepository->markAsRead($conversation->id, $userId);
+
+        // Notify partner that messages have been read
+        $recipientId = $conversation->otherUser($userId)->id;
+        $this->firebaseService->triggerChatPing($recipientId, $conversation->id);
 
         return response()->json(['success' => true]);
     }
@@ -360,6 +375,10 @@ class ChatController extends Controller
 
         $updated = $this->chatRepository->updateMessage($messageId, $request->input('body'));
 
+        // Notify partner of message update
+        $recipientId = $message->conversation->otherUser(Auth::id())->id;
+        $this->firebaseService->triggerChatPing($recipientId, $message->conversation_id);
+
         return response()->json([
             'id' => $updated->id,
             'body' => $updated->body,
@@ -384,6 +403,10 @@ class ChatController extends Controller
         }
 
         $this->chatRepository->deleteMessage($messageId);
+
+        // Notify partner of message deletion
+        $recipientId = $message->conversation->otherUser(Auth::id())->id;
+        $this->firebaseService->triggerChatPing($recipientId, $message->conversation_id);
 
         return response()->json(['success' => true]);
     }

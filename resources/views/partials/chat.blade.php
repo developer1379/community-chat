@@ -1388,11 +1388,32 @@
 
         let chatPollCycleCount = 0;
 
-        // Toggle recurring message pollers
+        let firebaseChatListener = null;
+
+        // Toggle recurring message pollers or Firebase listeners
         function startChatPolling() {
             stopChatPolling();
+
+            if (firebaseDatabase && currentUserId) {
+                try {
+                    // Listen to current user's chat ping node on Firebase
+                    const chatPingRef = firebaseDatabase.ref('users/' + currentUserId + '/chat');
+                    firebaseChatListener = chatPingRef.on('value', (snapshot) => {
+                        const data = snapshot.val();
+                        if (activeConversationId) {
+                            loadMessages(false);
+                            updateChatHeaderPresence(activeConversationPartner);
+                        } else {
+                            loadConversations();
+                        }
+                    });
+                    return;
+                } catch (e) {
+                    console.error("Firebase chat listener subscription failed, falling back to HTTP polling:", e);
+                }
+            }
             
-            // Determine dynamic interval: fast 3s for active thread, slower 10s for conversation overview listing
+            // Fallback: Determine dynamic interval: fast 3s for active thread, slower 10s for conversation overview listing
             const interval = activeConversationId ? 3000 : 10000;
             chatPollCycleCount = 0;
             
@@ -1416,6 +1437,14 @@
         }
 
         function stopChatPolling() {
+            if (firebaseDatabase && firebaseChatListener && currentUserId) {
+                try {
+                    firebaseDatabase.ref('users/' + currentUserId + '/chat').off('value', firebaseChatListener);
+                    firebaseChatListener = null;
+                } catch (e) {
+                    console.error("Firebase listener unsubscribe failed:", e);
+                }
+            }
             if (chatPollingInterval) {
                 clearInterval(chatPollingInterval);
                 chatPollingInterval = null;
