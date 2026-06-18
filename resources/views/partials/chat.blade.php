@@ -111,7 +111,7 @@
         </div>
 
         <!-- Thread Messages View (Hidden initially, but side-by-side in fullscreen mode) -->
-        <div id="chat-messages-view" class="hidden flex-grow flex flex-col overflow-hidden bg-slate-50/50 dark:bg-slate-950/20">
+        <div id="chat-messages-view" class="hidden relative flex-grow flex flex-col overflow-hidden bg-slate-50/50 dark:bg-slate-950/20">
             <!-- Local Main Chat Header (Visible only in fullscreen) -->
             <div class="chat-local-header hidden px-4 py-3 bg-blue-600 text-white items-center justify-between flex-shrink-0">
                 <div class="flex items-center gap-2">
@@ -131,8 +131,12 @@
             </div>
 
             <!-- Loading Indicator -->
-            <div id="chat-messages-loading" class="hidden absolute inset-0 bg-white/80 z-10 flex items-center justify-center dark:bg-slate-900/80">
-                <span class="animate-pulse text-xs font-bold text-blue-600 dark:text-blue-400">Retrieving messages...</span>
+            <div id="chat-messages-loading" class="hidden absolute inset-0 bg-white/70 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center gap-2 dark:bg-slate-950/70">
+                <svg class="animate-spin h-6 w-6 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 dark:text-slate-400">Retrieving messages...</span>
             </div>
 
             <!-- No Conversation Selected Fallback Box -->
@@ -897,7 +901,11 @@
 
             const loader = document.getElementById('chat-messages-loading');
             const listContainer = document.getElementById('chat-messages-list');
-            if (isInitial && loader) loader.classList.remove('hidden');
+            
+            if (isInitial) {
+                if (loader) loader.classList.remove('hidden');
+                if (listContainer) listContainer.innerHTML = '';
+            }
 
             fetch(`/dms/conversations/${activeConversationId}`)
                 .then(r => r.json())
