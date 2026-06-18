@@ -426,6 +426,8 @@ class AuthController extends Controller
 
         if ($isChanging) {
             $user->statusViews()->delete();
+            \DB::table('status_likes')->where('status_owner_id', $user->id)->delete();
+            \DB::table('status_comments')->where('status_owner_id', $user->id)->delete();
         }
 
         $user->update($data);
@@ -482,6 +484,129 @@ class AuthController extends Controller
             'success' => true,
             'viewers' => $viewers
         ]);
+    }
+
+    public function likeStatus(Request $request, User $user)
+    {
+        $me = Auth::user();
+        if (!$me) {
+            return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
+        }
+
+        $like = \DB::table('status_likes')
+            ->where('status_owner_id', $user->id)
+            ->where('user_id', $me->id)
+            ->first();
+
+        if ($like) {
+            \DB::table('status_likes')
+                ->where('status_owner_id', $user->id)
+                ->where('user_id', $me->id)
+                ->delete();
+            $liked = false;
+        } else {
+            \DB::table('status_likes')->insert([
+                'status_owner_id' => $user->id,
+                'user_id' => $me->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            $liked = true;
+        }
+
+        $likesCount = \DB::table('status_likes')
+            ->where('status_owner_id', $user->id)
+            ->count();
+
+        return response()->json([
+            'success' => true,
+            'liked' => $liked,
+            'likes_count' => $likesCount
+        ]);
+    }
+
+    public function commentStatus(Request $request, User $user)
+    {
+        $me = Auth::user();
+        if (!$me) {
+            return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
+        }
+
+        $request->validate([
+            'comment' => ['required', 'string', 'max:500'],
+        ]);
+
+        \DB::table('status_comments')->insert([
+            'status_owner_id' => $user->id,
+            'user_id' => $me->id,
+            'comment' => $request->comment,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $comments = $this->getStatusCommentsList($user->id);
+
+        return response()->json([
+            'success' => true,
+            'comments' => $comments,
+            'message' => 'Comment posted successfully!'
+        ]);
+    }
+
+    public function statusInteractions(User $user)
+    {
+        $me = Auth::user();
+        $likesCount = \DB::table('status_likes')
+            ->where('status_owner_id', $user->id)
+            ->count();
+
+        $hasLiked = false;
+        if ($me) {
+            $hasLiked = \DB::table('status_likes')
+                ->where('status_owner_id', $user->id)
+                ->where('user_id', $me->id)
+                ->exists();
+        }
+
+        $comments = $this->getStatusCommentsList($user->id);
+
+        return response()->json([
+            'success' => true,
+            'likes_count' => $likesCount,
+            'has_liked' => $hasLiked,
+            'comments' => $comments
+        ]);
+    }
+
+    private function getStatusCommentsList($ownerId)
+    {
+        return \DB::table('status_comments')
+            ->join('users', 'status_comments.user_id', '=', 'users.id')
+            ->where('status_comments.status_owner_id', $ownerId)
+            ->select(
+                'status_comments.id',
+                'status_comments.comment',
+                'status_comments.created_at',
+                'users.name',
+                'users.avatar_path',
+                'users.title_badge'
+            )
+            ->orderBy('status_comments.created_at', 'asc')
+            ->get()
+            ->map(function ($c) {
+                $avatarUrl = $c->avatar_path ?: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=' . urlencode($c->name);
+                if ($c->avatar_path && !str_starts_with($c->avatar_path, 'http')) {
+                    $avatarUrl = asset('storage/' . $c->avatar_path);
+                }
+                return [
+                    'id' => $c->id,
+                    'comment' => $c->comment,
+                    'name' => $c->name,
+                    'avatar_url' => $avatarUrl,
+                    'title_badge' => $c->title_badge,
+                    'time_ago' => \Carbon\Carbon::parse($c->created_at)->diffForHumans()
+                ];
+            });
     }
 
 

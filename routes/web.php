@@ -63,6 +63,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/update-status', [AuthController::class, 'updateStatus'])->name('profile.update_status');
     Route::post('/profile/{user}/view-status', [AuthController::class, 'viewStatus'])->name('profile.view_status');
     Route::get('/profile/{user}/status-viewers', [AuthController::class, 'statusViewers'])->name('profile.status_viewers');
+    Route::post('/profile/{user}/like-status', [AuthController::class, 'likeStatus'])->name('profile.like_status');
+    Route::post('/profile/{user}/comment-status', [AuthController::class, 'commentStatus'])->name('profile.comment_status');
+    Route::get('/profile/{user}/status-interactions', [AuthController::class, 'statusInteractions'])->name('profile.status_interactions');
 
     
     // Direct Quill uploads endpoint to ImgBB

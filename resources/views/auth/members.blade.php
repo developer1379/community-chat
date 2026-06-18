@@ -495,10 +495,10 @@
 
         Swal.fire({
             html: `
-                <div class="instagram-story-card relative overflow-hidden rounded-2xl bg-gradient-to-b from-slate-900 via-slate-955 to-black text-white p-6 shadow-2xl border border-slate-800 flex flex-col justify-between min-h-[360px] sm:min-h-[420px] font-sans">
+                <div class="instagram-story-card relative overflow-hidden rounded-2xl bg-gradient-to-b from-slate-900 via-slate-955 to-black text-white p-5 shadow-2xl border border-slate-800 flex flex-col justify-between min-h-[460px] font-sans">
                     <!-- Progress Bar Header -->
-                    <div class="flex gap-1 mb-4">
-                        <div class="h-1 flex-1 bg-blue-500 rounded-full"></div>
+                    <div class="flex gap-1 mb-3">
+                        <div class="h-1 flex-1 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"></div>
                     </div>
 
                     <!-- User Header -->
@@ -515,21 +515,60 @@
                     </div>
 
                     <!-- Main Story Content -->
-                    <div class="flex-grow flex flex-col justify-center items-center py-6 text-center space-y-4">
+                    <div class="flex-grow flex flex-col justify-center items-center py-4 text-center space-y-3">
                         ${statusImage ? `
-                            <div class="w-full max-h-[180px] rounded-xl overflow-hidden border border-white/10 shadow-lg bg-black/40">
+                            <div class="w-full max-h-[160px] rounded-xl overflow-hidden border border-white/10 shadow-lg bg-black/40">
                                 <img src="${statusImage}" class="w-full h-full object-contain cursor-zoom-in" onclick="window.open('${statusImage}', '_blank')">
                             </div>
                         ` : ''}
 
                         ${statusText ? `
-                            <p class="text-sm sm:text-base font-extrabold text-white leading-relaxed max-w-[280px] drop-shadow-md bg-white/5 backdrop-blur-sm py-3 px-4 rounded-xl border border-white/5">
+                            <p class="text-sm font-extrabold text-white leading-relaxed max-w-[280px] drop-shadow-md bg-white/5 backdrop-blur-sm py-2 px-3 rounded-xl border border-white/5">
                                 "${statusText}"
                             </p>
                         ` : ''}
                     </div>
 
-                    <!-- Footer Details -->
+                    <!-- Interaction Actions Bar -->
+                    <div class="flex items-center justify-between border-t border-white/5 pt-3 pb-2 px-1">
+                        <div class="flex items-center gap-4">
+                            <!-- Like Button -->
+                            <button id="status-like-btn" class="flex items-center gap-1.5 focus:outline-none group transition-transform active:scale-95 cursor-pointer bg-transparent border-0 text-left">
+                                <span id="status-like-icon" class="material-symbols-outlined text-[20px] transition-colors duration-250 text-slate-450 hover:text-rose-500">favorite</span>
+                                <span id="status-likes-count" class="text-xs font-bold text-slate-400">0</span>
+                            </button>
+
+                            <!-- Comment Count Display -->
+                            <div class="flex items-center gap-1.5 text-slate-450">
+                                <span class="material-symbols-outlined text-[20px]">chat_bubble</span>
+                                <span id="status-comments-count" class="text-xs font-bold">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comments List Container -->
+                    <div class="border-t border-white/5 pt-2 text-left">
+                        <span class="block text-[9px] font-black text-slate-450 uppercase tracking-wider mb-1.5">Comments</span>
+                        <div id="status-comments-list" class="flex flex-col gap-1.5 max-h-[90px] overflow-y-auto pr-1">
+                            <div class="text-[10px] text-slate-500 font-semibold italic text-center py-2">No comments yet</div>
+                        </div>
+                    </div>
+
+                    <!-- Comment Input Box -->
+                    <div class="mt-2.5">
+                        @auth
+                            <div class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full py-1 px-3">
+                                <input type="text" id="status-comment-input" placeholder="Type a comment..." class="bg-transparent border-0 text-xs text-white focus:outline-none focus:ring-0 flex-1 placeholder-slate-500" minlength="1" maxlength="500">
+                                <button id="status-comment-submit" class="text-xs font-bold text-blue-500 hover:text-blue-450 focus:outline-none active:scale-95 transition-transform cursor-pointer bg-transparent border-0">Send</button>
+                            </div>
+                        @else
+                            <div class="text-center py-1.5 text-[10px] text-slate-500 bg-white/5 rounded-full font-bold">
+                                <a href="{{ route('login') }}" class="text-blue-450 hover:underline">Login</a> to like or comment
+                            </div>
+                        @endauth
+                    </div>
+
+                    <!-- Footer Details (Viewers) -->
                     ${viewersSection}
                 </div>
             `,
@@ -540,6 +579,131 @@
             customClass: {
                 popup: 'bg-transparent border-0 shadow-none p-0 overflow-visible',
                 closeButton: 'text-white border-0 bg-transparent hover:text-red-500'
+            },
+            didOpen: () => {
+                const likeIcon = document.getElementById('status-like-icon');
+                const likesCountSpan = document.getElementById('status-likes-count');
+                const commentsCountSpan = document.getElementById('status-comments-count');
+                const commentsList = document.getElementById('status-comments-list');
+                const commentInput = document.getElementById('status-comment-input');
+                const commentSubmit = document.getElementById('status-comment-submit');
+                const likeBtn = document.getElementById('status-like-btn');
+
+                function updateLikesUI(count, hasLiked) {
+                    if (likesCountSpan) likesCountSpan.textContent = count;
+                    if (likeIcon) {
+                        if (hasLiked) {
+                            likeIcon.style.fontVariationSettings = "'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 20";
+                            likeIcon.classList.remove('text-slate-455');
+                            likeIcon.classList.add('text-rose-500');
+                        } else {
+                            likeIcon.style.fontVariationSettings = "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20";
+                            likeIcon.classList.remove('text-rose-500');
+                            likeIcon.classList.add('text-slate-455');
+                        }
+                    }
+                }
+
+                function updateCommentsUI(comments) {
+                    if (commentsCountSpan) commentsCountSpan.textContent = comments.length;
+                    if (!commentsList) return;
+
+                    if (comments.length > 0) {
+                        let html = '';
+                        comments.forEach(c => {
+                            html += `
+                                <div class="flex items-start gap-2 py-1.5 border-b border-white/5 last:border-0">
+                                    <div class="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-white/10">
+                                        <img src="${c.avatar_url}" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-[9.5px] font-black text-slate-350 truncate">${c.name}</span>
+                                            <span class="text-[8px] text-slate-500">${c.time_ago}</span>
+                                        </div>
+                                        <p class="text-[10px] text-slate-200 break-words mt-0.5 leading-normal font-semibold">${c.comment}</p>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        commentsList.innerHTML = html;
+                    } else {
+                        commentsList.innerHTML = `<div class="text-[10px] text-slate-500 font-semibold italic text-center py-2">No comments yet</div>`;
+                    }
+                }
+
+                // Fetch initial status interactions
+                fetch(`/profile/${userId}/status-interactions`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateLikesUI(data.likes_count, data.has_liked);
+                            updateCommentsUI(data.comments);
+                        }
+                    })
+                    .catch(err => console.error("Error loading interactions:", err));
+
+                // Like status action
+                if (likeBtn) {
+                    likeBtn.onclick = () => {
+                        fetch(`/profile/${userId}/like-status`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            }
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                updateLikesUI(data.likes_count, data.liked);
+                            }
+                        })
+                        .catch(err => console.error("Error liking status:", err));
+                    };
+                }
+
+                // Comment status action
+                if (commentSubmit && commentInput) {
+                    const submitComment = () => {
+                        const text = commentInput.value.trim();
+                        if (!text) return;
+
+                        commentSubmit.disabled = true;
+                        commentSubmit.textContent = '...';
+
+                        fetch(`/profile/${userId}/comment-status`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({ comment: text })
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            commentSubmit.disabled = false;
+                            commentSubmit.textContent = 'Send';
+                            if (data.success) {
+                                commentInput.value = '';
+                                updateCommentsUI(data.comments);
+                                commentsList.scrollTop = commentsList.scrollHeight;
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Error posting comment:", err);
+                            commentSubmit.disabled = false;
+                            commentSubmit.textContent = 'Send';
+                        });
+                    };
+
+                    commentSubmit.onclick = submitComment;
+                    commentInput.onkeydown = (e) => {
+                        if (e.key === 'Enter') {
+                            submitComment();
+                        }
+                    };
+                }
             }
         });
     }
