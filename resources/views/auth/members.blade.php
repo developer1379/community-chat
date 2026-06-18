@@ -70,8 +70,8 @@
         </form>
     </div>
 
-    <!-- Members Grid (Remove borders & border-radius on mobile) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0 sm:gap-6">
+    <!-- Members Grid / List (List on mobile, Grid Cards on sm+) -->
+    <div class="block sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0 sm:gap-6 divide-y divide-slate-100 dark:divide-slate-850 sm:divide-y-0">
         @forelse($users as $user)
             @php
                 $userTier = $user->computed_anime_tier;
@@ -85,11 +85,69 @@
                     $glowClass = 'border-rose-500/30 dark:border-rose-500/20 shadow-[0_0_15px_rgba(225,29,72,0.15)] ring-1 ring-rose-500/5';
                     $avatarGlow = 'border-4 border-rose-500 shadow-[0_0_8px_rgba(225,29,72,0.3)] ring-1 ring-rose-500/20';
                 } elseif ($level >= 16) {
-                    $glowClass = 'border-purple-500/30 dark:border-purple-500/20 shadow-[0_0_12px_rgba(124,58,237,0.1)]';
+                    $glowClass = 'border-purple-500/30 dark:border-purple-500/20 shadow-[0_0_12px_rgba(124,58,237,0.15)]';
                     $avatarGlow = 'border-4 border-purple-500 shadow-[0_0_6px_rgba(124,58,237,0.25)]';
                 }
+
+                $hasStatus = !empty($user->status) || !empty($user->status_image);
             @endphp
-            <div class="bg-white dark:bg-slate-900 border-b sm:border border-slate-200 dark:border-slate-850 rounded-none sm:rounded-2xl overflow-hidden hover:shadow-md transition-shadow duration-300 flex flex-col group relative {{ $glowClass }}">
+            
+            <!-- Mobile Row List Item (visible on block, hidden on sm) -->
+            <div class="flex sm:hidden items-center justify-between p-4 bg-white dark:bg-slate-900 relative">
+                <div class="flex items-center gap-3 min-w-0">
+                    <!-- Avatar with Instagram status ring -->
+                    <div class="relative w-11 h-11 shrink-0">
+                        <div class="w-full h-full rounded-xl @if($hasStatus) p-[2px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 animate-[spin_8s_linear_infinite] @endif overflow-hidden bg-slate-100 dark:bg-slate-800 shadow-sm relative">
+                            <div class="w-full h-full rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-800 relative @if($hasStatus) p-[0.5px] bg-white dark:bg-slate-900 @endif">
+                                <img src="{{ $user->avatar_url }}" class="w-full h-full object-cover rounded-lg" alt="avatar">
+                            </div>
+                        </div>
+                        @if($hasStatus)
+                            <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-650 rounded-full border border-white dark:border-slate-900 flex items-center justify-center text-[7.5px] shadow-sm select-none pointer-events-none">💬</span>
+                        @endif
+                    </div>
+                    
+                    <!-- Member Info -->
+                    <div class="min-w-0 leading-tight">
+                        <h3 class="font-extrabold text-slate-900 dark:text-white text-sm hover:text-blue-600 dark:hover:text-blue-450 transition-colors truncate {{ $user->username_style }}" style="{{ $user->username_style_css }}">
+                            <a href="{{ route('profile.show', $user->name) }}" data-user-hover="true" data-user-name="{{ $user->name }}">{{ $user->name }}</a>
+                        </h3>
+                        <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                            <span class="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ $user->title_badge }}</span>
+                            <span class="text-[8px] text-slate-400 dark:text-slate-500 font-extrabold">Level {{ $level }}</span>
+                            <span class="text-[8.5px] font-bold text-slate-400 dark:text-slate-500">{{ $user->followers()->count() }} followers</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Follow / Action Controls for Mobile List -->
+                <div class="flex items-center gap-1.5 shrink-0">
+                    @auth
+                        @if(Auth::id() !== $user->id)
+                            <button type="button" 
+                                    onclick="toggleFollowUser('{{ $user->name }}', '{{ $user->id }}')" 
+                                    id="follow-btn-mobile-{{ $user->id }}" 
+                                    class="text-[10px] font-bold py-1 px-2.5 rounded bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 transition-all cursor-pointer">
+                                {{ Auth::user()->isFollowing($user) ? 'Following' : 'Follow' }}
+                            </button>
+                            <button type="button" 
+                                    onclick="startDirectChat('{{ $user->name }}')" 
+                                    class="text-[10px] font-bold py-1 px-2.5 rounded bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition-all cursor-pointer">
+                                DM
+                            </button>
+                        @else
+                            <span class="text-[9px] font-black uppercase text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-950 px-2 py-0.5 rounded">You</span>
+                        @endif
+                    @else
+                        <a href="{{ route('login') }}" class="text-[10px] font-bold py-1 px-2.5 rounded bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 transition-colors">
+                            Login
+                        </a>
+                    @endauth
+                </div>
+            </div>
+
+            <!-- Tablet/Desktop Card View (hidden on mobile, visible on sm+) -->
+            <div class="hidden sm:flex bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-2xl overflow-hidden hover:shadow-md transition-shadow duration-300 flex-col group relative {{ $glowClass }}">
                 <!-- Cover Photo Header -->
                 <div class="h-20 sm:h-24 relative w-full bg-cover bg-center" style="background: {{ $user->banner_path ? 'url(' . $user->banner_path . ')' : $user->banner_color }}">
                     <div class="absolute inset-0 bg-black/10 dark:bg-black/20 group-hover:bg-transparent transition-colors duration-300"></div>
@@ -98,9 +156,6 @@
                 <!-- Member details container -->
                 <div class="px-5 pb-4 relative flex flex-col items-center text-center grow">
                     <!-- Avatar -->
-                    @php
-                        $hasStatus = !empty($user->status) || !empty($user->status_image);
-                    @endphp
                     <div class="relative w-18 h-18 sm:w-20 sm:h-20 -mt-9 sm:-mt-10 mb-3 block shrink-0 z-15">
                         <div class="w-full h-full rounded-2xl @if($hasStatus) p-[2.5px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 animate-[spin_8s_linear_infinite] @else {{ $avatarGlow }} @endif overflow-hidden bg-slate-100 dark:bg-slate-800 shadow-sm relative transition-transform group-hover:scale-103 duration-300">
                             <div class="w-full h-full rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-800 relative @if($hasStatus) p-[1px] bg-white dark:bg-slate-900 @endif">
@@ -134,15 +189,15 @@
                 <!-- Stats -->
                 <div class="grid grid-cols-3 border-t border-slate-100 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-950/30 p-3 text-center divide-x divide-slate-200/50 dark:divide-slate-800">
                     <div class="flex flex-col">
-                        <span class="text-xs font-black text-slate-800 dark:text-slate-200">{{ $user->threads()->count() }}</span>
+                        <span class="text-xs font-black text-slate-800 dark:text-slate-205">{{ $user->threads()->count() }}</span>
                         <span class="text-[8.5px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">Threads</span>
                     </div>
                     <div class="flex flex-col">
-                        <span class="text-xs font-black text-slate-800 dark:text-slate-200">{{ $user->posts()->count() }}</span>
+                        <span class="text-xs font-black text-slate-800 dark:text-slate-205">{{ $user->posts()->count() }}</span>
                         <span class="text-[8.5px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">Replies</span>
                     </div>
                     <div class="flex flex-col">
-                        <span class="text-xs font-black text-slate-800 dark:text-slate-200" id="follower-count-{{ $user->id }}">{{ $user->followers()->count() }}</span>
+                        <span class="text-xs font-black text-slate-800 dark:text-slate-205" id="follower-count-{{ $user->id }}">{{ $user->followers()->count() }}</span>
                         <span class="text-[8.5px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">Followers</span>
                     </div>
                 </div>
@@ -161,7 +216,7 @@
                                         id="follow-btn-{{ $user->id }}" 
                                         class="flex-1 text-[11px] font-bold py-1.5 px-2.5 rounded-lg transition-all cursor-pointer border flex items-center justify-center gap-1 shadow-sm 
                                         {{ Auth::user()->isFollowing($user) 
-                                            ? 'bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-955/20 hover:text-rose-600 hover:border-rose-200 dark:hover:border-rose-900 group/follow' 
+                                            ? 'bg-slate-50 dark:bg-slate-955/30 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-350 hover:bg-rose-50 dark:hover:bg-rose-955/20 hover:text-rose-600 hover:border-rose-200 dark:hover:border-rose-900 group/follow' 
                                             : 'bg-white dark:bg-slate-850 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                                     @if(Auth::user()->isFollowing($user))
                                         <span class="material-symbols-outlined text-[13px] group-hover/follow:hidden">check</span>
@@ -182,7 +237,7 @@
                             </div>
                         @endif
                     @else
-                        <a href="{{ route('login') }}" class="w-full block text-center bg-slate-50 dark:bg-slate-950/50 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs py-1.5 px-3 rounded-lg transition-colors">
+                        <a href="{{ route('login') }}" class="w-full block text-center bg-slate-50 dark:bg-slate-955/45 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs py-1.5 px-3 rounded-lg transition-colors">
                             Login to Interact
                         </a>
                     @endauth
