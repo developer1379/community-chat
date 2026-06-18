@@ -52,7 +52,7 @@ class ChatController extends Controller
                     'title_badge' => $otherUser->title_badge,
                 ],
                 'last_message' => $lastMessage ? [
-                    'body' => $lastMessage->body,
+                    'body' => $lastMessage->encrypted_key_sender ? '🔒 Encrypted Message' : $lastMessage->body,
                     'created_at' => $lastMessage->created_at->diffForHumans(),
                     'sender_id' => $lastMessage->sender_id,
                 ] : null,
