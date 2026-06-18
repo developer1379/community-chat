@@ -188,7 +188,7 @@ profile
             <!-- Stats & Actions Block -->
             <div class="flex flex-col items-center md:items-end gap-3 z-10 w-full md:w-auto flex-shrink-0">
                 <!-- Dashboard Metrics -->
-                <div class="flex items-center gap-3 text-center bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-100 dark:border-slate-850 w-full sm:w-auto justify-around">
+                <div class="flex items-center gap-3 text-center bg-slate-50 dark:bg-slate-955 p-2.5 rounded-none sm:rounded-xl border-x-0 border-y sm:border border-slate-100 dark:border-slate-850 w-full sm:w-auto justify-around">
                     <div class="px-2">
                         <span class="block text-base font-black text-slate-900 dark:text-white leading-tight">{{ $user->posts()->count() }}</span>
                         <span class="text-[9px] font-bold text-slate-450 uppercase tracking-wider">Posts</span>
@@ -262,7 +262,7 @@ profile
 
     <!-- Main Content Tabbed Panels (Grid Layout) -->
     @if($isProfilePrivate)
-        <div class="max-w-xl mx-auto my-12 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg overflow-hidden p-8 sm:p-12 text-center space-y-6">
+        <div class="max-w-xl mx-auto my-6 sm:my-12 bg-white dark:bg-slate-900 rounded-none sm:rounded-2xl border-x-0 border-y sm:border border-slate-200 dark:border-slate-800 shadow-sm sm:shadow-lg overflow-hidden p-6 sm:p-12 text-center space-y-6">
             <div class="w-16 h-16 mx-auto bg-slate-105 dark:bg-slate-800 text-slate-400 rounded-2xl flex items-center justify-center shadow-inner">
                 <span class="material-symbols-outlined text-3xl">lock</span>
             </div>
@@ -280,11 +280,11 @@ profile
             </div>
         </div>
     @else
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
             <!-- Left Column: Tabbed Content Areas (8 Cols) -->
-            <div class="lg:col-span-8 space-y-6">
+            <div class="lg:col-span-8 space-y-4 sm:space-y-6">
                 <!-- Navigation Tabs bar -->
-                <div class="border-b border-slate-200 dark:border-slate-800 flex items-center justify-between pb-px">
+                <div class="border-b border-slate-200 dark:border-slate-800 flex items-center justify-between pb-px px-4 sm:px-0">
                     <div class="flex gap-1 overflow-x-auto no-scrollbar scroll-smooth">
                         <button onclick="switchTab('discussions')" id="tab-discussions-btn" class="profile-tab-btn px-4 py-2.5 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-855 dark:hover:text-slate-300 transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
                             <span class="material-symbols-outlined text-sm">forum</span>
@@ -338,7 +338,7 @@ profile
 
                     <!-- Tab 2: Media Showroom -->
                     <div id="tab-media-content" class="profile-tab-content hidden">
-                        <div class="mui-card p-5 border-x-0 border-y sm:border border-slate-250 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm rounded-none sm:rounded-xl">
+                        <div class="mui-card px-4 py-5 sm:p-5 border-x-0 border-y sm:border border-slate-250 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm rounded-none sm:rounded-xl">
                             @if(count($attachments) > 0)
                                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                     @foreach($attachments as $attach)
@@ -432,7 +432,7 @@ profile
                                                 <h4 class="text-xs font-extrabold text-slate-800 dark:text-white uppercase tracking-wider">Configure Upgrades</h4>
                                                 
                                                 @if($hasUsernameChange)
-                                                    <form action="{{ route('profile.update_username') }}" method="POST" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
+                                                    <form action="{{ route('profile.update_username') }}" method="POST" class="p-3.5 rounded-none sm:rounded-xl border-x-0 border-y sm:border border-slate-200 dark:border-slate-800 space-y-3">
                                                         @csrf
                                                         <div>
                                                             <label class="block text-[9px] font-black uppercase text-slate-400 dark:text-slate-550 tracking-wider">Change Username (Purchased Upgrade)</label>
@@ -445,7 +445,7 @@ profile
                                                 @endif
 
                                                 @if($hasUsernameStyle)
-                                                    <form action="{{ route('profile.update_username_style') }}" method="POST" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
+                                                    <form action="{{ route('profile.update_username_style') }}" method="POST" class="p-3.5 rounded-none sm:rounded-xl border-x-0 border-y sm:border border-slate-200 dark:border-slate-800 space-y-3">
                                                         @csrf
                                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                             <div>
@@ -464,7 +464,7 @@ profile
                                                 @endif
 
                                                 @if(($hasTitleStyle || $hasHighlight || $hasFeaturedThread || $hasStickyUpgrade) && $threads->isNotEmpty())
-                                                    <form action="{{ route('profile.update_thread_upgrades') }}" method="POST" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
+                                                    <form action="{{ route('profile.update_thread_upgrades') }}" method="POST" class="p-3.5 rounded-none sm:rounded-xl border-x-0 border-y sm:border border-slate-200 dark:border-slate-800 space-y-3">
                                                         @csrf
                                                         <div class="space-y-2">
                                                             <label class="block text-[9px] font-black uppercase text-slate-400 dark:text-slate-550 tracking-wider">Apply Upgrades to Your Threads</label>
@@ -646,7 +646,7 @@ profile
                                         </div>
 
                                         <!-- Profile Privacy -->
-                                        <div class="p-3.5 rounded-xl border border-slate-100 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-950/20">
+                                        <div class="p-3.5 rounded-none sm:rounded-xl border-x-0 border-y sm:border border-slate-100 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-950/20">
                                             <div class="flex items-center justify-between">
                                                 <div class="text-left">
                                                     <h4 class="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-1">
@@ -700,9 +700,9 @@ profile
             </div>
 
             <!-- Right Column: Reputation Rank & Social Grid (4 Cols) -->
-            <div class="lg:col-span-4 space-y-6">
+            <div class="lg:col-span-4 space-y-4 sm:space-y-6">
                 <!-- Premium Clickable Rank Progress Widget -->
-                <div onclick="openRoadmapModal()" class="border border-slate-250 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl p-5 shadow-sm relative overflow-hidden text-left cursor-pointer hover:shadow-md hover:border-blue-300 dark:hover:border-blue-800 transition-all group">
+                <div onclick="openRoadmapModal()" class="border-x-0 border-y sm:border border-slate-250 dark:border-slate-850 bg-white dark:bg-slate-900 rounded-none sm:rounded-xl p-4 sm:p-5 shadow-sm relative overflow-hidden text-left cursor-pointer hover:shadow-md hover:border-blue-300 dark:hover:border-blue-800 transition-all group">
                     <div class="absolute -right-8 -top-8 w-20 h-20 rounded-full blur-xl pointer-events-none opacity-10" style="background-color: {{ $tier['color'] }}"></div>
                     <div class="space-y-3">
                         <div>
@@ -742,7 +742,7 @@ profile
                 </div>
 
                 <!-- Community Connections Widget -->
-                <div class="border border-slate-250 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-xl p-5 shadow-sm space-y-4">
+                <div class="border-x-0 border-y sm:border border-slate-250 dark:border-slate-850 bg-white dark:bg-slate-900 rounded-none sm:rounded-xl p-4 sm:p-5 shadow-sm space-y-4">
                     <div>
                         <h4 class="text-xs font-bold text-slate-800 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                             <span class="material-symbols-outlined text-sm text-blue-500">group</span>
