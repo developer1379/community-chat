@@ -736,7 +736,6 @@
                     </div>
                 </form>
             </div>
-            </div>
         </div>
 
         <!-- Footer -->
