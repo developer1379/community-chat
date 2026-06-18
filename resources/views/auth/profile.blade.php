@@ -101,7 +101,7 @@ profile
                 @php
                     $hasStatus = !empty($user->status) || !empty($user->status_image);
                 @endphp
-                <div class="relative flex-shrink-0 -mt-12 sm:-mt-16 z-10">
+                <div class="relative flex-shrink-0 z-10">
                     <div class="w-24 h-24 rounded-2xl @if($hasStatus) p-[3px] bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 animate-[spin_8s_linear_infinite] @else {{ $avatarGlow }} @endif shadow-md relative group/avatar flex-shrink-0 cursor-pointer overflow-hidden" 
                          @if($hasStatus) onclick="viewStatusStory()" title="View Status Story" @endif>
                         <div class="w-full h-full rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-800 relative @if($hasStatus) p-[1px] bg-white dark:bg-slate-900 @endif">
