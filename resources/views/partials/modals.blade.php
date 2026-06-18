@@ -485,7 +485,7 @@
 
 <!-- Reusable Login & Register Modal -->
 <div id="login-auth-modal" onclick="closeAuthModal()" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
-    <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden relative transform scale-95 transition-all duration-300" id="login-auth-modal-content" onclick="event.stopPropagation()">
+    <div class="w-full max-w-md max-h-[calc(100vh-2rem)] md:max-h-[90vh] flex flex-col bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden relative transform scale-95 transition-all duration-300" id="login-auth-modal-content" onclick="event.stopPropagation()">
         <div class="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
         
         <!-- Modal Header -->
@@ -502,7 +502,7 @@
         </div>
 
         <!-- Tabs Container -->
-        <div class="px-8 pt-4 pb-6">
+        <div class="px-8 pt-4 pb-6 overflow-y-auto flex-1">
             <!-- Tabs Navigation -->
             <div class="flex border-b border-slate-150 dark:border-slate-800 mb-6">
                 <button onclick="switchAuthTab('login')" id="tab-btn-login" class="flex-1 pb-3 text-sm font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none transition-all cursor-pointer bg-transparent">Sign In</button>
