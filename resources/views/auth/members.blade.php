@@ -262,7 +262,7 @@
     <!-- Follow System Asynchronous API Controller -->
     <script>
         function toggleFollowUser(username, userId) {
-            const btn = document.getElementById(`follow-btn-${userId}`);
+            const btn = document.getElementById(`follow-btn-${userId}`) || document.getElementById(`follow-btn-mobile-${userId}`);
             const followerCount = document.getElementById(`follower-count-${userId}`);
             if (!btn) return;
 
@@ -293,22 +293,40 @@
                         followerCount.innerText = data.followers_count;
                     }
 
-                    // Redesign button style on-the-fly
-                    if (data.following) {
-                        btn.className = "flex-1 text-[11px] font-bold py-1.5 px-2.5 rounded-lg transition-all cursor-pointer border flex items-center justify-center gap-1 shadow-sm bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-955/20 hover:text-rose-600 hover:border-rose-200 dark:hover:border-rose-900 group/follow";
-                        btn.innerHTML = `
-                            <span class="material-symbols-outlined text-[13px] group-hover/follow:hidden">check</span>
-                            <span class="group-hover/follow:hidden">Following</span>
-                            <span class="material-symbols-outlined text-[13px] hidden group-hover/follow:inline-block">person_remove</span>
-                            <span class="hidden group-hover/follow:inline">Unfollow</span>
-                        `;
-                    } else {
-                        btn.className = "flex-1 text-[11px] font-bold py-1.5 px-2.5 rounded-lg transition-all cursor-pointer border flex items-center justify-center gap-1 shadow-sm bg-white dark:bg-slate-850 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800";
-                        btn.innerHTML = `
-                            <span class="material-symbols-outlined text-[13px]">person_add</span>
-                            <span>Follow</span>
-                        `;
-                    }
+                    // Update BOTH mobile and desktop button displays if they exist on the page
+                    const buttons = [
+                        document.getElementById(`follow-btn-${userId}`),
+                        document.getElementById(`follow-btn-mobile-${userId}`)
+                    ];
+
+                    buttons.forEach(b => {
+                        if (!b) return;
+                        if (data.following) {
+                            if (b.id.includes('mobile')) {
+                                b.className = "text-[10px] font-bold py-1 px-2.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-350 hover:bg-slate-200 transition-all cursor-pointer";
+                                b.innerText = 'Following';
+                            } else {
+                                b.className = "flex-1 text-[11px] font-bold py-1.5 px-2.5 rounded-lg transition-all cursor-pointer border flex items-center justify-center gap-1 shadow-sm bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-955/20 hover:text-rose-600 hover:border-rose-200 dark:hover:border-rose-900 group/follow";
+                                b.innerHTML = `
+                                    <span class="material-symbols-outlined text-[13px] group-hover/follow:hidden">check</span>
+                                    <span class="group-hover/follow:hidden">Following</span>
+                                    <span class="material-symbols-outlined text-[13px] hidden group-hover/follow:inline-block">person_remove</span>
+                                    <span class="hidden group-hover/follow:inline">Unfollow</span>
+                                `;
+                            }
+                        } else {
+                            if (b.id.includes('mobile')) {
+                                b.className = "text-[10px] font-bold py-1 px-2.5 rounded bg-slate-55 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 transition-all cursor-pointer";
+                                b.innerText = 'Follow';
+                            } else {
+                                b.className = "flex-1 text-[11px] font-bold py-1.5 px-2.5 rounded-lg transition-all cursor-pointer border flex items-center justify-center gap-1 shadow-sm bg-white dark:bg-slate-850 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800";
+                                b.innerHTML = `
+                                    <span class="material-symbols-outlined text-[13px]">person_add</span>
+                                    <span>Follow</span>
+                                `;
+                            }
+                        }
+                    });
                 }
             })
             .catch(error => {
