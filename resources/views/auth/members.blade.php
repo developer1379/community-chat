@@ -196,7 +196,9 @@
                         </a>
                     </div>
                 @endif
-                        <!-- Tablet/Desktop Card View (hidden on mobile, visible on sm+) -->
+            </div>
+
+            <!-- Tablet/Desktop Card View (hidden on mobile, visible on sm+) -->
             <div class="hidden sm:flex bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 flex-col group relative {{ $glowClass }}">
                 <!-- Cover Photo Header -->
                 <div class="h-16 relative w-full bg-cover bg-center" style="background: {{ $user->banner_path ? 'url(' . $user->banner_path . ')' : $user->banner_color }}">
