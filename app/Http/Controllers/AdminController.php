@@ -34,7 +34,19 @@ class AdminController extends Controller
     {
         $user = Auth::user();
         $imgbbKey = config('services.imgbb.key', 'cd4cbd15d854cce8d541bc9b8ddc56ad');
-        return view('admin.settings', compact('user', 'imgbbKey'));
+        
+        $firebaseSettings = [
+            'api_key' => \App\Models\Setting::get('firebase_api_key', config('firebase.api_key')),
+            'auth_domain' => \App\Models\Setting::get('firebase_auth_domain', config('firebase.auth_domain')),
+            'database_url' => \App\Models\Setting::get('firebase_database_url', config('firebase.database_url')),
+            'project_id' => \App\Models\Setting::get('firebase_project_id', config('firebase.project_id')),
+            'storage_bucket' => \App\Models\Setting::get('firebase_storage_bucket', config('firebase.storage_bucket')),
+            'messaging_sender_id' => \App\Models\Setting::get('firebase_messaging_sender_id', config('firebase.messaging_sender_id')),
+            'app_id' => \App\Models\Setting::get('firebase_app_id', config('firebase.app_id')),
+            'secret' => \App\Models\Setting::get('firebase_secret', env('FIREBASE_DATABASE_SECRET')),
+        ];
+
+        return view('admin.settings', compact('user', 'imgbbKey', 'firebaseSettings'));
     }
 
     /**
@@ -188,6 +200,32 @@ class AdminController extends Controller
         app(\App\Services\FirebaseService::class)->triggerNotificationPing($user->id);
 
         return redirect()->back()->with('success', "Alert notification sent to {$user->name} successfully.");
+    }
+
+    /**
+     * Save dynamic Firebase database credentials.
+     */
+    public function updateFirebaseSettings(Request $request)
+    {
+        $validated = $request->validate([
+            'api_key' => 'nullable|string|max:255',
+            'auth_domain' => 'nullable|string|max:255',
+            'database_url' => 'nullable|url|max:255',
+            'project_id' => 'nullable|string|max:255',
+            'storage_bucket' => 'nullable|string|max:255',
+            'messaging_sender_id' => 'nullable|string|max:255',
+            'app_id' => 'nullable|string|max:255',
+            'secret' => 'nullable|string|max:255',
+        ]);
+
+        foreach ($validated as $key => $value) {
+            \App\Models\Setting::set('firebase_' . $key, $value);
+        }
+
+        // Clear config cache to force reloading from database
+        \Illuminate\Support\Facades\Artisan::call('config:clear');
+
+        return redirect()->back()->with('success', 'Firebase configuration settings updated successfully!');
     }
 
     /**

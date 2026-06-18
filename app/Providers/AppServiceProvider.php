@@ -33,11 +33,20 @@ class AppServiceProvider extends ServiceProvider
         );
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        //
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
+                $settings = \Illuminate\Support\Facades\DB::table('settings')->pluck('value', 'key');
+                foreach ($settings as $key => $value) {
+                    if (str_starts_with($key, 'firebase_')) {
+                        $configKey = 'firebase.' . substr($key, 9);
+                        config([$configKey => $value]);
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            // Silence exception if database/table is not ready during console executions
+        }
     }
 }

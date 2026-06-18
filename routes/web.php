@@ -117,6 +117,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/settings', [\App\Http\Controllers\AdminController::class, 'updateSettings'])->name('settings.update');
         Route::put('/settings/imgbb', [\App\Http\Controllers\AdminController::class, 'updateImgBBSettings'])->name('settings.imgbb.update');
         Route::post('/settings/imgbb/test', [\App\Http\Controllers\AdminController::class, 'testImgBBSettings'])->name('settings.imgbb.test');
+        Route::put('/settings/firebase', [\App\Http\Controllers\AdminController::class, 'updateFirebaseSettings'])->name('settings.firebase.update');
         
         // User Management
         Route::get('/users', [\App\Http\Controllers\AdminController::class, 'users'])->name('users.index');

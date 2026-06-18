@@ -149,6 +149,110 @@
             </div>
         </form>
     </div>
+
+    <!-- Firebase Realtime Database Settings Card -->
+    <div class="border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-800 rounded-3xl p-6 sm:p-10 shadow-xl space-y-6">
+        <div class="space-y-1">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 uppercase tracking-wider">
+                <span class="material-symbols-outlined text-xs">database</span> Real-time Engine
+            </span>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">Firebase Realtime Database Settings</h2>
+            <p class="text-xs text-slate-505 dark:text-slate-400 font-medium">Configure credentials to publish notifications and instant messaging updates dynamically through Firebase Web Sockets.</p>
+        </div>
+
+        <form action="{{ route('admin.settings.firebase.update') }}" method="POST" class="space-y-6">
+            @csrf
+            @method('PUT')
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Database URL -->
+                <div class="space-y-2 md:col-span-2">
+                    <label for="database_url" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
+                        Firebase Database URL
+                    </label>
+                    <input type="url" name="database_url" id="database_url" value="{{ old('database_url', $firebaseSettings['database_url']) }}" 
+                        placeholder="https://your-project-default-rtdb.firebaseio.com"
+                        class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">
+                </div>
+
+                <!-- API Key -->
+                <div class="space-y-2">
+                    <label for="api_key" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
+                        API Key
+                    </label>
+                    <input type="password" name="api_key" id="api_key" value="{{ old('api_key', $firebaseSettings['api_key']) }}" 
+                        placeholder="AIzaSy..."
+                        class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">
+                </div>
+
+                <!-- Auth Domain -->
+                <div class="space-y-2">
+                    <label for="auth_domain" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
+                        Auth Domain
+                    </label>
+                    <input type="text" name="auth_domain" id="auth_domain" value="{{ old('auth_domain', $firebaseSettings['auth_domain']) }}" 
+                        placeholder="project.firebaseapp.com"
+                        class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-955/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">
+                </div>
+
+                <!-- Project ID -->
+                <div class="space-y-2">
+                    <label for="project_id" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
+                        Project ID
+                    </label>
+                    <input type="text" name="project_id" id="project_id" value="{{ old('project_id', $firebaseSettings['project_id']) }}" 
+                        placeholder="project-id"
+                        class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-955/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">
+                </div>
+
+                <!-- Storage Bucket -->
+                <div class="space-y-2">
+                    <label for="storage_bucket" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
+                        Storage Bucket
+                    </label>
+                    <input type="text" name="storage_bucket" id="storage_bucket" value="{{ old('storage_bucket', $firebaseSettings['storage_bucket']) }}" 
+                        placeholder="project.appspot.com"
+                        class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-955/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">
+                </div>
+
+                <!-- Messaging Sender ID -->
+                <div class="space-y-2">
+                    <label for="messaging_sender_id" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
+                        Messaging Sender ID
+                    </label>
+                    <input type="text" name="messaging_sender_id" id="messaging_sender_id" value="{{ old('messaging_sender_id', $firebaseSettings['messaging_sender_id']) }}" 
+                        placeholder="1234567890"
+                        class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-955/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">
+                </div>
+
+                <!-- App ID -->
+                <div class="space-y-2">
+                    <label for="app_id" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
+                        App ID
+                    </label>
+                    <input type="text" name="app_id" id="app_id" value="{{ old('app_id', $firebaseSettings['app_id']) }}" 
+                        placeholder="1:123:web:abc"
+                        class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-955/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">
+                </div>
+
+                <!-- Legacy Database Secret -->
+                <div class="space-y-2 md:col-span-2">
+                    <label for="secret" class="block text-xs font-extrabold uppercase tracking-widest text-slate-505 dark:text-slate-400">
+                        Database Secret (Legacy Token - Optional)
+                    </label>
+                    <input type="password" name="secret" id="secret" value="{{ old('secret', $firebaseSettings['secret']) }}" 
+                        placeholder="Database Secret Auth Token for secure REST pings"
+                        class="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-955/50 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all font-semibold">
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-indigo-650 hover:bg-indigo-700 text-white font-extrabold text-sm shadow-lg shadow-indigo-500/25 transition-all duration-205 cursor-pointer flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-base">save_as</span> Save Firebase Config
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- Script to run AJAX test connection -->

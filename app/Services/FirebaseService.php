@@ -13,7 +13,7 @@ class FirebaseService
     public function __construct()
     {
         $this->databaseUrl = config('firebase.database_url');
-        $this->secret = env('FIREBASE_DATABASE_SECRET');
+        $this->secret = config('firebase.secret');
     }
 
     /**
