@@ -504,7 +504,15 @@ profile
                                                         <button type="submit" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all cursor-pointer mt-1">
                                                             Apply Thread Upgrades
                                                         </button>
-                        <div class="mui-card overflow-hidden bg-white dark:bg-slate-900 border-x-0 border-y sm:border border-slate-250 dark:border-slate-800 shadow-sm rounded-none sm:rounded-xl transition-all duration-300">
+                                                    </form>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <!-- Customize Profile Card settings -->
+                                <div class="mui-card overflow-hidden bg-white dark:bg-slate-900 border-x-0 border-y sm:border border-slate-250 dark:border-slate-800 shadow-sm rounded-none sm:rounded-xl transition-all duration-300">
                                     <div class="bg-slate-50 dark:bg-slate-900/50 px-5 py-3 border-b border-slate-205 dark:border-slate-800">
                                         <h3 class="font-bold text-slate-750 dark:text-slate-300 text-xs flex items-center gap-2">
                                             <span class="material-symbols-outlined text-blue-600 text-sm">settings</span>
