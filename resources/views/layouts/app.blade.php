@@ -190,6 +190,51 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+
+        /* Premium CSS Overrides for SweetAlert2 Toasts */
+        body .swal2-container.swal2-toast-shown .swal2-popup.swal2-toast {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            border: 1px solid rgba(226, 232, 240, 0.8) !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+            border-radius: 16px !important;
+            padding: 12px 16px !important;
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif !important;
+        }
+        
+        .dark body .swal2-container.swal2-toast-shown .swal2-popup.swal2-toast {
+            background-color: rgba(28, 31, 38, 0.95) !important;
+            border: 1px solid rgba(38, 42, 53, 0.8) !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        body .swal2-popup.swal2-toast .swal2-title {
+            color: #0f172a !important;
+            font-size: 13px !important;
+            font-weight: 700 !important;
+            margin-bottom: 2px !important;
+        }
+
+        .dark body .swal2-popup.swal2-toast .swal2-title {
+            color: #f8fafc !important;
+        }
+
+        body .swal2-popup.swal2-toast .swal2-html-container {
+            color: #64748b !important;
+            font-size: 11px !important;
+            font-weight: 500 !important;
+            margin-top: 2px !important;
+        }
+
+        .dark body .swal2-popup.swal2-toast .swal2-html-container {
+            color: #94a3b8 !important;
+        }
+
+        body .swal2-popup.swal2-toast .swal2-timer-progress-bar {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa) !important;
+            height: 3px !important;
+        }
     </style>
 
 
