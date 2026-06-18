@@ -1396,10 +1396,11 @@
 
             if (firebaseDatabase && currentUserId) {
                 try {
+                    console.log("[Firebase] Registering real-time chat listener for user:", currentUserId);
                     // Listen to current user's chat ping node on Firebase
                     const chatPingRef = firebaseDatabase.ref('users/' + currentUserId + '/chat');
                     firebaseChatListener = chatPingRef.on('value', (snapshot) => {
-                        const data = snapshot.val();
+                        console.log("[Firebase] Real-time chat ping received.");
                         if (activeConversationId) {
                             loadMessages(false);
                             updateChatHeaderPresence(activeConversationPartner);
@@ -1409,9 +1410,11 @@
                     });
                     return;
                 } catch (e) {
-                    console.error("Firebase chat listener subscription failed, falling back to HTTP polling:", e);
+                    console.error("[Firebase] Chat listener subscription failed, falling back to HTTP polling:", e);
                 }
             }
+            
+            console.log("[Firebase] Real-time chat listener not registered (no database or guest). Starting fallback HTTP polling interval.");
             
             // Fallback: Determine dynamic interval: fast 3s for active thread, slower 10s for conversation overview listing
             const interval = activeConversationId ? 3000 : 10000;

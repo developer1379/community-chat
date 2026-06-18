@@ -295,11 +295,15 @@
 
         if (firebaseConfig.databaseURL) {
             try {
+                console.log("[Firebase] Initializing database with URL:", firebaseConfig.databaseURL);
                 firebaseApp = firebase.initializeApp(firebaseConfig);
                 firebaseDatabase = firebase.database();
+                console.log("[Firebase] Database initialized successfully.");
             } catch (e) {
-                console.warn("Firebase failed to initialize:", e);
+                console.warn("[Firebase] Failed to initialize:", e);
             }
+        } else {
+            console.log("[Firebase] databaseURL is empty, Firebase database disabled.");
         }
 
         function updateThemeToggleIcon() {
@@ -386,17 +390,20 @@
             checkUnreadBadge();
             
             if (firebaseDatabase && currentUserId) {
+                console.log("[Firebase] Registering real-time notification listener for user:", currentUserId);
                 // Real-time Event-Driven Notifications via Firebase Database Pings
                 try {
                     const notifRef = firebaseDatabase.ref('users/' + currentUserId + '/notification');
                     notifRef.on('value', (snapshot) => {
+                        console.log("[Firebase] Real-time notification ping received.");
                         checkUnreadBadge();
                     });
                 } catch (e) {
-                    console.error("Firebase notification listener failed, falling back to polling:", e);
+                    console.error("[Firebase] Notification listener failed, falling back to polling:", e);
                     setupFallbackNotificationPolling();
                 }
             } else {
+                console.log("[Firebase] Real-time notifications disabled (no database or guest). Falling back to HTTP polling.");
                 setupFallbackNotificationPolling();
             }
         });
