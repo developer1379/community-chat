@@ -439,12 +439,65 @@
             if (modal) modal.classList.add('opacity-0', 'pointer-events-none');
         }
 
+        function openAuthModal(tab = 'login') {
+            const modal = document.getElementById('login-auth-modal');
+            const content = document.getElementById('login-auth-modal-content');
+            if (modal) {
+                switchAuthTab(tab);
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                if (content) {
+                    content.classList.remove('scale-95');
+                    content.classList.add('scale-100');
+                }
+            }
+        }
+
+        function closeAuthModal() {
+            const modal = document.getElementById('login-auth-modal');
+            const content = document.getElementById('login-auth-modal-content');
+            if (modal) {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+                if (content) {
+                    content.classList.remove('scale-100');
+                    content.classList.add('scale-95');
+                }
+            }
+        }
+
+        function switchAuthTab(tab) {
+            const tabBtnLogin = document.getElementById('tab-btn-login');
+            const tabBtnRegister = document.getElementById('tab-btn-register');
+            const viewLogin = document.getElementById('auth-view-login');
+            const viewRegister = document.getElementById('auth-view-register');
+
+            if (tab === 'login') {
+                if (tabBtnLogin) tabBtnLogin.className = "flex-1 pb-3 text-sm font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none transition-all cursor-pointer bg-transparent border-0";
+                if (tabBtnRegister) tabBtnRegister.className = "flex-1 pb-3 text-sm font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-655 focus:outline-none transition-all cursor-pointer bg-transparent border-0";
+                if (viewLogin) viewLogin.classList.remove('hidden');
+                if (viewRegister) viewRegister.classList.add('hidden');
+            } else {
+                if (tabBtnRegister) tabBtnRegister.className = "flex-1 pb-3 text-sm font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none transition-all cursor-pointer bg-transparent border-0";
+                if (tabBtnLogin) tabBtnLogin.className = "flex-1 pb-3 text-sm font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-655 focus:outline-none transition-all cursor-pointer bg-transparent border-0";
+                if (viewRegister) viewRegister.classList.remove('hidden');
+                if (viewLogin) viewLogin.classList.add('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            @if(session('show_login_modal_redirect') || $errors->has('email') || $errors->has('password'))
+                openAuthModal('login');
+            @elseif($errors->has('name') || $errors->has('email') || $errors->has('password') || $errors->has('register_email') || $errors->has('register_password'))
+                openAuthModal('register');
+            @endif
+        });
+
         window.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeSearchModal();
                 closeSignatureModal();
                 closeLightbox();
                 closeNotificationsModal();
+                closeAuthModal();
                 if (typeof chatOpen !== 'undefined' && chatOpen) {
                     toggleChatDrawer();
                 }

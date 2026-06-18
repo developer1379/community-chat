@@ -144,10 +144,10 @@
                 </div>
             @else
                 <!-- Guest Options (HTML Material Style) -->
-                <a href="{{ route('login') }}" class="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs transition-all cursor-pointer">
+                <a href="{{ route('login') }}" onclick="event.preventDefault(); openAuthModal('login');" class="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs transition-all cursor-pointer">
                     Sign In
                 </a>
-                <a href="{{ route('register') }}" class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-all shadow-md shadow-blue-500/10 cursor-pointer">
+                <a href="{{ route('register') }}" onclick="event.preventDefault(); openAuthModal('register');" class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-all shadow-md shadow-blue-500/10 cursor-pointer">
                     Register
                 </a>
             @endauth

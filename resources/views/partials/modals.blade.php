@@ -482,3 +482,171 @@
         });
     </script>
 @endauth
+
+<!-- Reusable Login & Register Modal -->
+<div id="login-auth-modal" onclick="closeAuthModal()" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden relative transform scale-95 transition-all duration-300" id="login-auth-modal-content" onclick="event.stopPropagation()">
+        <div class="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+        
+        <!-- Modal Header -->
+        <div class="px-6 pt-6 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/10">
+                    <span class="material-symbols-outlined text-white text-base">forum</span>
+                </div>
+                <h3 class="text-xs font-black uppercase text-slate-500 tracking-wider">XenProfessional</h3>
+            </div>
+            <button type="button" onclick="closeAuthModal()" class="w-8 h-8 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-850 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 cursor-pointer transition-colors bg-transparent border-0">
+                <span class="material-symbols-outlined text-lg">close</span>
+            </button>
+        </div>
+
+        <!-- Tabs Container -->
+        <div class="px-8 pt-4 pb-6">
+            <!-- Tabs Navigation -->
+            <div class="flex border-b border-slate-150 dark:border-slate-800 mb-6">
+                <button onclick="switchAuthTab('login')" id="tab-btn-login" class="flex-1 pb-3 text-sm font-bold text-blue-600 border-b-2 border-blue-600 focus:outline-none transition-all cursor-pointer bg-transparent">Sign In</button>
+                <button onclick="switchAuthTab('register')" id="tab-btn-register" class="flex-1 pb-3 text-sm font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-600 dark:hover:text-slate-300 focus:outline-none transition-all cursor-pointer bg-transparent">Register</button>
+            </div>
+
+            <!-- Login View -->
+            <div id="auth-view-login" class="space-y-4">
+                <div class="text-center mb-4">
+                    <h4 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Welcome Back</h4>
+                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1">Please sign in to proceed with XenProfessional</p>
+                </div>
+
+                @if ($errors->has('email') || $errors->has('password'))
+                    <div class="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/20 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold leading-normal">
+                        {{ $errors->first('email') ?: $errors->first('password') }}
+                    </div>
+                @endif
+
+                <!-- Google Button -->
+                <a href="{{ route('auth.google.redirect') }}" class="w-full flex items-center justify-center gap-3 px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-slate-350 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-2xl text-xs font-bold text-slate-700 dark:text-slate-300 transition-all focus:outline-none shadow-sm no-underline">
+                    <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Continue with Google
+                </a>
+
+                <!-- Divider -->
+                <div class="relative flex items-center py-1">
+                    <div class="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+                    <span class="flex-shrink-0 mx-3 text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Or</span>
+                    <div class="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+                </div>
+
+                <form action="{{ route('login') }}" method="POST" class="space-y-4">
+                    @csrf
+                    <!-- Email -->
+                    <div class="space-y-1.5 text-left">
+                        <label for="modal-login-email" class="text-[10px] font-black text-slate-700 dark:text-slate-350 uppercase tracking-widest">Email Address</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                <span class="material-symbols-outlined text-slate-400 text-[16px]">mail</span>
+                            </span>
+                            <input type="email" id="modal-login-email" name="email" class="w-full bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-slate-850 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="name@domain.com" required>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="space-y-1.5 text-left">
+                        <label for="modal-login-password" class="text-[10px] font-black text-slate-700 dark:text-slate-350 uppercase tracking-widest">Password</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                <span class="material-symbols-outlined text-slate-400 text-[16px]">lock</span>
+                            </span>
+                            <input type="password" id="modal-login-password" name="password" class="w-full bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-slate-850 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <!-- Remember -->
+                    <div class="flex items-center">
+                        <input type="checkbox" id="modal-login-remember" name="remember" class="w-4 h-4 rounded bg-slate-50 dark:bg-slate-950 border-slate-300 dark:border-slate-800 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                        <label for="modal-login-remember" class="text-[10px] text-slate-500 dark:text-slate-400 ml-2 font-bold cursor-pointer">Remember me next time</label>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-3 rounded-xl shadow-md transition-all cursor-pointer border-0">
+                        Sign In to Account
+                    </button>
+                </form>
+            </div>
+
+            <!-- Register View -->
+            <div id="auth-view-register" class="space-y-4 hidden">
+                <div class="text-center mb-4">
+                    <h4 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Create Account</h4>
+                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1">Join XenProfessional community today</p>
+                </div>
+
+                @if ($errors->has('name') || $errors->has('register_email') || $errors->has('register_password'))
+                    <div class="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/20 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold leading-normal">
+                        {{ $errors->first('name') ?: ($errors->first('register_email') ?: $errors->first('register_password')) }}
+                    </div>
+                @endif
+
+                <form action="{{ route('register') }}" method="POST" class="space-y-4">
+                    @csrf
+                    <!-- Username -->
+                    <div class="space-y-1.5 text-left">
+                        <label for="modal-register-name" class="text-[10px] font-black text-slate-700 dark:text-slate-350 uppercase tracking-widest">Username</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                <span class="material-symbols-outlined text-slate-400 text-[16px]">person</span>
+                            </span>
+                            <input type="text" id="modal-register-name" name="name" class="w-full bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-slate-850 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="johndoe" required>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="space-y-1.5 text-left">
+                        <label for="modal-register-email" class="text-[10px] font-black text-slate-700 dark:text-slate-350 uppercase tracking-widest">Email Address</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                <span class="material-symbols-outlined text-slate-400 text-[16px]">mail</span>
+                            </span>
+                            <input type="email" id="modal-register-email" name="email" class="w-full bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-slate-850 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="name@domain.com" required>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="space-y-1.5 text-left">
+                        <label for="modal-register-password" class="text-[10px] font-black text-slate-700 dark:text-slate-350 uppercase tracking-widest">Password</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                <span class="material-symbols-outlined text-slate-400 text-[16px]">lock</span>
+                            </span>
+                            <input type="password" id="modal-register-password" name="password" class="w-full bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-slate-850 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <!-- Password Confirm -->
+                    <div class="space-y-1.5 text-left">
+                        <label for="modal-register-password-confirm" class="text-[10px] font-black text-slate-700 dark:text-slate-350 uppercase tracking-widest">Confirm Password</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                <span class="material-symbols-outlined text-slate-400 text-[16px]">lock_reset</span>
+                            </span>
+                            <input type="password" id="modal-register-password-confirm" name="password_confirmation" class="w-full bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-slate-850 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••" required>
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-3 rounded-xl shadow-md transition-all cursor-pointer border-0">
+                        Create New Account
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-slate-50 dark:bg-slate-950/45 p-4 text-center border-t border-slate-100 dark:border-slate-850">
+            <span class="text-[9px] font-bold text-slate-450 uppercase tracking-widest">By logging in, you agree to our <a href="{{ route('rules') }}" class="text-blue-600 dark:text-blue-400 hover:underline">Community Rules</a></span>
+        </div>
+    </div>
+</div>
