@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendOtpMail;
 
 class AuthController extends Controller
 {
@@ -65,17 +67,27 @@ class AuthController extends Controller
             $avatarPath = $request->avatar_preset;
         }
 
+        $otp = sprintf("%06d", mt_rand(100000, 999999));
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'avatar_path' => $avatarPath,
             'title_badge' => 'New Member',
+            'otp_code' => $otp,
+            'otp_expires_at' => now()->addMinutes(15),
         ]);
 
-        Auth::login($user);
+        try {
+            Mail::to($user->email)->send(new SendOtpMail($otp, $user->name));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Mail sending failed during registration: ' . $e->getMessage());
+        }
 
-        return redirect()->route('home')->with('success', 'Welcome to the community! Your registration was successful.');
+        session(['verify_email' => $user->email]);
+
+        return redirect()->route('verify.otp')->with('success', 'Verification OTP code has been sent to your email.');
     }
 
     public function showLogin()
@@ -91,7 +103,30 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            if (Auth::user()->is_blocked) {
+            $user = Auth::user();
+
+            if (!$user->email_verified_at) {
+                $otp = sprintf("%06d", mt_rand(100000, 999999));
+                $user->otp_code = $otp;
+                $user->otp_expires_at = now()->addMinutes(15);
+                $user->save();
+
+                try {
+                    Mail::to($user->email)->send(new SendOtpMail($otp, $user->name));
+                } catch (\Throwable $e) {
+                    \Illuminate\Support\Facades\Log::error('Mail sending failed during login intercept: ' . $e->getMessage());
+                }
+
+                session(['verify_email' => $user->email]);
+
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return redirect()->route('verify.otp')->with('error', 'Your email is not verified yet. A new verification OTP code has been sent.');
+            }
+
+            if ($user->is_blocked) {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
@@ -121,6 +156,75 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('home')->with('success', 'You have been logged out.');
+    }
+
+    public function showVerifyOtp(Request $request)
+    {
+        $email = session('verify_email');
+        if (!$email) {
+            return redirect()->route('home');
+        }
+
+        return view('auth.verify-otp', compact('email'));
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'email' => ['required', 'string', 'email'],
+            'otp' => ['required', 'string', 'size:6'],
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->with('error', 'User not found.');
+        }
+
+        if ($user->otp_code !== $request->otp) {
+            return back()->with('error', 'Invalid verification OTP code.');
+        }
+
+        if (!$user->otp_expires_at || \Carbon\Carbon::parse($user->otp_expires_at)->isPast()) {
+            return back()->with('error', 'Verification OTP code has expired. Please request a new one.');
+        }
+
+        $user->email_verified_at = now();
+        $user->otp_code = null;
+        $user->otp_expires_at = null;
+        $user->save();
+
+        Auth::login($user);
+        session()->forget('verify_email');
+
+        return redirect()->route('home')->with('success', 'Email verified successfully! Welcome to the community.');
+    }
+
+    public function resendOtp(Request $request)
+    {
+        $request->validate([
+            'email' => ['required', 'string', 'email'],
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->with('error', 'User not found.');
+        }
+
+        $otp = sprintf("%06d", mt_rand(100000, 999999));
+        $user->otp_code = $otp;
+        $user->otp_expires_at = now()->addMinutes(15);
+        $user->save();
+
+        try {
+            Mail::to($user->email)->send(new SendOtpMail($otp, $user->name));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Mail sending failed during OTP resend: ' . $e->getMessage());
+            return back()->with('error', 'Failed to send OTP email. Please check your SMTP configuration.');
+        }
+
+        return back()->with('success', 'A new verification OTP code has been sent to your email.');
     }
 
     public function profile(string $name)

@@ -44,6 +44,22 @@ class AppServiceProvider extends ServiceProvider
                         config([$configKey => $value]);
                     } elseif ($key === 'imgbb_api_key') {
                         config(['services.imgbb.key' => $value]);
+                    } elseif ($key === 'mail_mailer') {
+                        config(['mail.default' => $value]);
+                    } elseif ($key === 'mail_host') {
+                        config(['mail.mailers.smtp.host' => $value]);
+                    } elseif ($key === 'mail_port') {
+                        config(['mail.mailers.smtp.port' => (int) $value]);
+                    } elseif ($key === 'mail_username') {
+                        config(['mail.mailers.smtp.username' => $value]);
+                    } elseif ($key === 'mail_password') {
+                        config(['mail.mailers.smtp.password' => $value]);
+                    } elseif ($key === 'mail_encryption') {
+                        config(['mail.mailers.smtp.encryption' => $value]);
+                    } elseif ($key === 'mail_from_address') {
+                        config(['mail.from.address' => $value]);
+                    } elseif ($key === 'mail_from_name') {
+                        config(['mail.from.name' => $value]);
                     }
                 }
             }

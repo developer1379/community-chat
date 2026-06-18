@@ -37,6 +37,8 @@ class RedirectGuestToHomeWithLoginModal
             'media.proxy.attachment',
             'media.proxy.avatar',
             'sitemap',
+            'verify.otp',
+            'resend.otp',
         ];
 
         if ($currentRouteName && in_array($currentRouteName, $allowedRoutes)) {

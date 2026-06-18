@@ -23,6 +23,11 @@ Route::middleware('guest')->group(function () {
     // Google Authentication
     Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle'])->name('auth.google.redirect');
     Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+
+    // OTP Email Verification
+    Route::get('/verify-otp', [AuthController::class, 'showVerifyOtp'])->name('verify.otp');
+    Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
+    Route::post('/resend-otp', [AuthController::class, 'resendOtp'])->name('resend.otp');
 });
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
