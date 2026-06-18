@@ -579,68 +579,163 @@
 
             <!-- Register View -->
             <div id="auth-view-register" class="space-y-4 hidden">
-                <div class="text-center mb-4">
-                    <h4 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Create Account</h4>
-                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-1">Join XenProfessional community today</p>
+                <!-- Step Indicator -->
+                <div class="flex items-center justify-between">
+                    <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                        Setup Progress
+                    </span>
+                    <div class="flex items-center gap-1.5">
+                        <span id="modal-step-dot-1" class="w-2 h-2 rounded-full transition-all duration-300 bg-blue-600 shadow-sm shadow-blue-500/50"></span>
+                        <span class="h-0.5 w-3 bg-slate-200 dark:bg-slate-800"></span>
+                        <span id="modal-step-dot-2" class="w-2 h-2 rounded-full transition-all duration-300 bg-slate-200 dark:bg-slate-850"></span>
+                    </div>
                 </div>
 
-                @if ($errors->has('name') || $errors->has('register_email') || $errors->has('register_password'))
+                @if ($errors->has('name') || $errors->has('email') || $errors->has('password'))
                     <div class="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/20 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold leading-normal">
-                        {{ $errors->first('name') ?: ($errors->first('register_email') ?: $errors->first('register_password')) }}
+                        {{ $errors->first('name') ?: ($errors->first('email') ?: $errors->first('password')) }}
                     </div>
                 @endif
 
-                <form action="{{ route('register') }}" method="POST" class="space-y-4">
+                <form id="modal-registration-form" action="{{ route('register') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                     @csrf
-                    <!-- Username -->
-                    <div class="space-y-1.5 text-left">
-                        <label for="modal-register-name" class="text-[10px] font-black text-slate-700 dark:text-slate-350 uppercase tracking-widest">Username</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                <span class="material-symbols-outlined text-slate-400 text-[16px]">person</span>
-                            </span>
-                            <input type="text" id="modal-register-name" name="name" class="w-full bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-slate-850 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="johndoe" required>
+
+                    <!-- STEP 1: Username & Profile Setup -->
+                    <div id="modal-step-panel-1" class="space-y-4 transition-all duration-300">
+                        <!-- Username -->
+                        <div class="space-y-1.5 text-left">
+                            <label for="modal-name" class="text-[10px] font-black text-slate-700 dark:text-slate-350 uppercase tracking-widest ml-1">Username</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="material-symbols-outlined text-slate-400 text-[16px]">person</span>
+                                </span>
+                                <input type="text" id="modal-name" name="name" value="{{ old('name') }}" class="w-full bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 rounded-xl pl-9 pr-10 py-2.5 text-slate-850 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Choose a display name" required>
+                                
+                                <span class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                    <span id="modal-username-spinner" class="hidden animate-spin h-3.5 w-3.5 border-2 border-blue-500 border-t-transparent rounded-full"></span>
+                                    <span id="modal-username-ok-badge" class="hidden material-symbols-outlined text-emerald-500 text-[18px] font-bold">check_circle</span>
+                                    <span id="modal-username-err-badge" class="hidden material-symbols-outlined text-rose-500 text-[18px] font-bold">cancel</span>
+                                </span>
+                            </div>
+                            
+                            <p id="modal-username-feedback" class="text-[10px] font-bold mt-1 ml-1 text-slate-400 dark:text-slate-500">
+                                Usernames must be unique and contain no special characters.
+                            </p>
+                        </div>
+
+                        <!-- Profile Avatar Selection -->
+                        <div class="space-y-3 text-left border-t border-slate-100 dark:border-slate-850 pt-3">
+                            <label class="text-[10px] font-black text-slate-700 dark:text-slate-350 uppercase tracking-widest ml-1">Profile Avatar</label>
+                            
+                            <!-- Active preview of avatar -->
+                            <div class="flex items-center gap-3 p-3 border border-slate-150 dark:border-slate-800 rounded-xl bg-slate-50/30 dark:bg-slate-950/20">
+                                <div class="relative w-10 h-10 rounded-full overflow-hidden border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-900 flex-shrink-0">
+                                    <img id="modal-avatar-preview" src="https://api.dicebear.com/7.x/bottts/svg?seed=Felix" class="w-full h-full object-cover" alt="Avatar preview">
+                                </div>
+                                <div>
+                                    <h4 class="text-[11px] font-bold text-slate-800 dark:text-slate-250">Avatar Preview</h4>
+                                    <p class="text-[9px] text-slate-550 dark:text-slate-400 mt-0.5">Choose a preset or upload an image file.</p>
+                                </div>
+                            </div>
+
+                            <!-- Option A: File Upload -->
+                            <div class="space-y-1">
+                                <span class="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Option A: Upload custom image</span>
+                                <div class="relative">
+                                    <input type="file" id="modal-avatar_file" name="avatar_file" accept="image/*" class="hidden" onchange="previewModalUploadedFile(this)">
+                                    <label for="modal-avatar_file" class="flex items-center justify-center gap-1.5 w-full px-3 py-2 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-850 hover:border-blue-400 transition-all font-bold text-[10px] text-slate-600 dark:text-slate-350">
+                                        <span class="material-symbols-outlined text-[14px]">cloud_upload</span>
+                                        Choose custom file...
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Option B: Presets -->
+                            <div class="space-y-1.5">
+                                <span class="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ml-1">Option B: Select preset</span>
+                                <input type="hidden" id="modal-selected-preset" name="avatar_preset" value="https://api.dicebear.com/7.x/bottts/svg?seed=Felix">
+                                
+                                <div class="grid grid-cols-4 gap-1.5">
+                                    @php
+                                        $presets = [
+                                            'https://api.dicebear.com/7.x/bottts/svg?seed=Felix',
+                                            'https://api.dicebear.com/7.x/bottts/svg?seed=Aneka',
+                                            'https://api.dicebear.com/7.x/adventurer/svg?seed=Nala',
+                                            'https://api.dicebear.com/7.x/adventurer/svg?seed=Buster',
+                                            'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Gizmo',
+                                            'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Maggie',
+                                            'https://api.dicebear.com/7.x/pixel-art/svg?seed=Luna',
+                                            'https://api.dicebear.com/7.x/pixel-art/svg?seed=Cooper'
+                                        ];
+                                    @endphp
+                                    @foreach($presets as $index => $preset)
+                                        <div onclick="selectModalPreset('{{ $preset }}', this)" class="modal-avatar-option-item relative aspect-square rounded-full overflow-hidden border {{ $index === 0 ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-slate-200 dark:border-slate-850' }} hover:border-blue-400 cursor-pointer hover:scale-105 transition-all select-none bg-slate-50 dark:bg-slate-950">
+                                            <img src="{{ $preset }}" class="w-full h-full object-cover" alt="Preset">
+                                            <div class="modal-checkmark-overlay {{ $index === 0 ? '' : 'hidden' }} absolute inset-0 bg-blue-500/10 flex items-center justify-center">
+                                                <span class="material-symbols-outlined text-white text-[10px] bg-blue-500 rounded-full p-0.5 font-bold">done</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 1 Button -->
+                        <div class="pt-1">
+                            <button type="button" id="modal-btn-next-step" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-3 rounded-xl shadow-md transition-all cursor-pointer border-0">
+                                Continue to Account Details
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Email -->
-                    <div class="space-y-1.5 text-left">
-                        <label for="modal-register-email" class="text-[10px] font-black text-slate-700 dark:text-slate-350 uppercase tracking-widest">Email Address</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                <span class="material-symbols-outlined text-slate-400 text-[16px]">mail</span>
-                            </span>
-                            <input type="email" id="modal-register-email" name="email" class="w-full bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-slate-850 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="name@domain.com" required>
+                    <!-- STEP 2: Credentials (Email / Passwords) -->
+                    <div id="modal-step-panel-2" class="hidden space-y-4 transition-all duration-300">
+                        <!-- Email Field -->
+                        <div class="space-y-1.5 text-left">
+                            <label for="modal-email" class="text-[10px] font-black text-slate-700 dark:text-slate-350 uppercase tracking-widest ml-1">Email Address</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="material-symbols-outlined text-slate-400 text-[16px]">mail</span>
+                                </span>
+                                <input type="email" id="modal-email" name="email" class="w-full bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-slate-850 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="name@domain.com">
+                            </div>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="space-y-1.5 text-left">
+                            <label for="modal-password" class="text-[10px] font-black text-slate-700 dark:text-slate-350 uppercase tracking-widest ml-1">Password</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="material-symbols-outlined text-slate-400 text-[16px]">lock</span>
+                                </span>
+                                <input type="password" id="modal-password" name="password" class="w-full bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-slate-850 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••">
+                            </div>
+                        </div>
+
+                        <!-- Password Confirmation Field -->
+                        <div class="space-y-1.5 text-left">
+                            <label for="modal-password-confirm" class="text-[10px] font-black text-slate-700 dark:text-slate-350 uppercase tracking-widest ml-1">Confirm Password</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="material-symbols-outlined text-slate-400 text-[16px]">lock_reset</span>
+                                </span>
+                                <input type="password" id="modal-password-confirm" name="password_confirmation" class="w-full bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-slate-850 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••">
+                            </div>
+                        </div>
+
+                        <!-- Step 2 Buttons -->
+                        <div class="grid grid-cols-3 gap-2.5 pt-1">
+                            <button type="button" id="modal-btn-prev-step" class="col-span-1 border border-slate-250 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850 text-[10px] font-bold text-slate-600 dark:text-slate-300 py-3 rounded-xl cursor-pointer bg-transparent">
+                                Back
+                            </button>
+                            
+                            <button type="submit" class="col-span-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-3 rounded-xl shadow-md transition-all cursor-pointer border-0">
+                                Register Account
+                            </button>
                         </div>
                     </div>
-
-                    <!-- Password -->
-                    <div class="space-y-1.5 text-left">
-                        <label for="modal-register-password" class="text-[10px] font-black text-slate-700 dark:text-slate-350 uppercase tracking-widest">Password</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                <span class="material-symbols-outlined text-slate-400 text-[16px]">lock</span>
-                            </span>
-                            <input type="password" id="modal-register-password" name="password" class="w-full bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-slate-850 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••" required>
-                        </div>
-                    </div>
-
-                    <!-- Password Confirm -->
-                    <div class="space-y-1.5 text-left">
-                        <label for="modal-register-password-confirm" class="text-[10px] font-black text-slate-700 dark:text-slate-350 uppercase tracking-widest">Confirm Password</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                <span class="material-symbols-outlined text-slate-400 text-[16px]">lock_reset</span>
-                            </span>
-                            <input type="password" id="modal-register-password-confirm" name="password_confirmation" class="w-full bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-slate-850 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••" required>
-                        </div>
-                    </div>
-
-                    <!-- Submit -->
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-3 rounded-xl shadow-md transition-all cursor-pointer border-0">
-                        Create New Account
-                    </button>
                 </form>
+            </div>
             </div>
         </div>
 
@@ -650,3 +745,205 @@
         </div>
     </div>
 </div>
+
+<script>
+function selectModalPreset(url, element) {
+    document.getElementById('modal-selected-preset').value = url;
+    document.getElementById('modal-avatar_file').value = '';
+    
+    document.querySelectorAll('.modal-avatar-option-item').forEach(item => {
+        item.classList.remove('border-blue-500', 'ring-2', 'ring-blue-500/20');
+        item.classList.add('border-slate-200', 'dark:border-slate-850');
+        const overlay = item.querySelector('.modal-checkmark-overlay');
+        if (overlay) overlay.classList.add('hidden');
+    });
+
+    element.classList.add('border-blue-500', 'ring-2', 'ring-blue-500/20');
+    element.classList.remove('border-slate-200', 'dark:border-slate-850');
+    const overlay = element.querySelector('.modal-checkmark-overlay');
+    if (overlay) overlay.classList.remove('hidden');
+
+    document.getElementById('modal-avatar-preview').src = url;
+}
+
+function previewModalUploadedFile(input) {
+    if (input.files && input.files[0]) {
+        document.getElementById('modal-selected-preset').value = '';
+        document.querySelectorAll('.modal-avatar-option-item').forEach(item => {
+            item.classList.remove('border-blue-500', 'ring-2', 'ring-blue-500/20');
+            item.classList.add('border-slate-200', 'dark:border-slate-850');
+            const overlay = item.querySelector('.modal-checkmark-overlay');
+            if (overlay) overlay.classList.add('hidden');
+        });
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('modal-avatar-preview').src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const modalNameInput = document.getElementById('modal-name');
+    const modalFeedbackText = document.getElementById('modal-username-feedback');
+    const modalSpinner = document.getElementById('modal-username-spinner');
+    const modalBadgeOk = document.getElementById('modal-username-ok-badge');
+    const modalBadgeErr = document.getElementById('modal-username-err-badge');
+    
+    const modalBtnNext = document.getElementById('modal-btn-next-step');
+    const modalBtnPrev = document.getElementById('modal-btn-prev-step');
+    const modalStepPanel1 = document.getElementById('modal-step-panel-1');
+    const modalStepPanel2 = document.getElementById('modal-step-panel-2');
+    const modalStepDot1 = document.getElementById('modal-step-dot-1');
+    const modalStepDot2 = document.getElementById('modal-step-dot-2');
+    
+    let isModalUsernameAvailable = false;
+    let modalCheckTimeout = null;
+
+    let activeModalStep = 1;
+    @if(old('name') && ($errors->has('email') || $errors->has('password')))
+        activeModalStep = 2;
+    @endif
+
+    function goToModalStep(step) {
+        if (step === 2) {
+            modalStepPanel1.classList.add('hidden');
+            modalStepPanel2.classList.remove('hidden');
+            
+            modalStepDot1.classList.remove('bg-blue-600', 'shadow-blue-500/50');
+            modalStepDot1.classList.add('bg-slate-200', 'dark:bg-slate-800');
+            modalStepDot2.classList.add('bg-blue-600', 'shadow-blue-500/50');
+            modalStepDot2.classList.remove('bg-slate-200', 'dark:bg-slate-800');
+            
+            document.getElementById('modal-email').required = true;
+            document.getElementById('modal-password').required = true;
+            document.getElementById('modal-password-confirm').required = true;
+            
+            activeModalStep = 2;
+        } else {
+            modalStepPanel1.classList.remove('hidden');
+            modalStepPanel2.classList.add('hidden');
+            
+            modalStepDot1.classList.add('bg-blue-600', 'shadow-blue-500/50');
+            modalStepDot1.classList.remove('bg-slate-200', 'dark:bg-slate-800');
+            modalStepDot2.classList.remove('bg-blue-600', 'shadow-blue-500/50');
+            modalStepDot2.classList.add('bg-slate-200', 'dark:bg-slate-800');
+            
+            document.getElementById('modal-email').required = false;
+            document.getElementById('modal-password').required = false;
+            document.getElementById('modal-password-confirm').required = false;
+            
+            activeModalStep = 1;
+        }
+    }
+
+    if (activeModalStep === 2) {
+        goToModalStep(2);
+    }
+
+    function checkModalUsername(username) {
+        if (!username || username.trim().length < 3) {
+            if (modalFeedbackText) {
+                modalFeedbackText.innerText = "Username must be at least 3 characters.";
+                modalFeedbackText.className = "text-[10px] font-bold mt-1 ml-1 text-rose-500";
+            }
+            if (modalBadgeOk) modalBadgeOk.classList.add('hidden');
+            if (modalBadgeErr) modalBadgeErr.classList.remove('hidden');
+            if (modalSpinner) modalSpinner.classList.add('hidden');
+            isModalUsernameAvailable = false;
+            return;
+        }
+
+        const cleanRegex = /^[A-Za-z0-9\s-_]+$/;
+        if (!cleanRegex.test(username)) {
+            if (modalFeedbackText) {
+                modalFeedbackText.innerText = "No special characters allowed (letters, numbers, space, dash, underscore only).";
+                modalFeedbackText.className = "text-[10px] font-bold mt-1 ml-1 text-rose-500";
+            }
+            if (modalBadgeOk) modalBadgeOk.classList.add('hidden');
+            if (modalBadgeErr) modalBadgeErr.classList.remove('hidden');
+            if (modalSpinner) modalSpinner.classList.add('hidden');
+            isModalUsernameAvailable = false;
+            return;
+        }
+
+        if (modalSpinner) modalSpinner.classList.remove('hidden');
+        if (modalBadgeOk) modalBadgeOk.classList.add('hidden');
+        if (modalBadgeErr) modalBadgeErr.classList.add('hidden');
+
+        fetch("{{ route('register.check-username') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ name: username })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (modalSpinner) modalSpinner.classList.add('hidden');
+            if (data.available) {
+                if (modalFeedbackText) {
+                    modalFeedbackText.innerText = "Awesome, that username is available!";
+                    modalFeedbackText.className = "text-[10px] font-bold mt-1 ml-1 text-emerald-500";
+                }
+                if (modalBadgeOk) modalBadgeOk.classList.remove('hidden');
+                if (modalBadgeErr) modalBadgeErr.classList.add('hidden');
+                isModalUsernameAvailable = true;
+            } else {
+                if (modalFeedbackText) {
+                    modalFeedbackText.innerText = "Sorry, that username is already taken.";
+                    modalFeedbackText.className = "text-[10px] font-bold mt-1 ml-1 text-rose-500";
+                }
+                if (modalBadgeOk) modalBadgeOk.classList.add('hidden');
+                if (modalBadgeErr) modalBadgeErr.classList.remove('hidden');
+                isModalUsernameAvailable = false;
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            if (modalSpinner) modalSpinner.classList.add('hidden');
+        });
+    }
+
+    if (modalNameInput) {
+        modalNameInput.addEventListener('input', (e) => {
+            clearTimeout(modalCheckTimeout);
+            const val = e.target.value;
+            modalCheckTimeout = setTimeout(() => {
+                checkModalUsername(val);
+            }, 400);
+        });
+
+        // Initial check if there's an old value loaded
+        if (modalNameInput.value.trim().length > 0) {
+            checkModalUsername(modalNameInput.value);
+        }
+    }
+
+    if (modalBtnNext) {
+        modalBtnNext.addEventListener('click', () => {
+            const val = modalNameInput.value.trim();
+            
+            if (!val) {
+                modalNameInput.reportValidity();
+                return;
+            }
+
+            if (isModalUsernameAvailable) {
+                goToModalStep(2);
+            } else {
+                checkModalUsername(val);
+                modalNameInput.focus();
+            }
+        });
+    }
+
+    if (modalBtnPrev) {
+        modalBtnPrev.addEventListener('click', () => {
+            goToModalStep(1);
+        });
+    }
+});
+</script>

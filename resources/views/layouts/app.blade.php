@@ -484,10 +484,10 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            @if(session('show_login_modal_redirect') || $errors->has('email') || $errors->has('password'))
-                openAuthModal('login');
-            @elseif($errors->has('name') || $errors->has('email') || $errors->has('password') || $errors->has('register_email') || $errors->has('register_password'))
+            @if(old('name') || $errors->has('name') || $errors->has('avatar_file') || $errors->has('avatar_preset'))
                 openAuthModal('register');
+            @elseif(session('show_login_modal_redirect') || $errors->has('email') || $errors->has('password'))
+                openAuthModal('login');
             @endif
         });
 
