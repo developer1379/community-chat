@@ -1456,29 +1456,57 @@ article
 
     function setupCollapsibleQuotes() {
         document.querySelectorAll('.ql-editor blockquote').forEach(bq => {
-            if (bq.dataset.quoteInitialized) return;
-            bq.dataset.quoteInitialized = "true";
-
-            // If blockquote is long, collapse it and add expand button
+            // Keep checking scrollHeight if it hasn't been collapsed yet
+            if (bq.dataset.quoteInitialized && bq.classList.contains('quote-collapsed')) return;
+            
+            // Check if blockquote is long, collapse it and add expand button
             if (bq.scrollHeight > 110) {
+                bq.dataset.quoteInitialized = "true";
                 bq.classList.add('quote-collapsed');
+                bq.style.maxHeight = '95px';
+                
+                // Prevent duplicate buttons
+                if (bq.querySelector('.quote-expand-btn')) return;
                 
                 const btn = document.createElement('button');
                 btn.className = 'quote-expand-btn';
                 btn.type = 'button';
-                btn.innerText = 'Click to expand...';
+                btn.innerHTML = '<span class="material-symbols-outlined text-[10px] align-middle mr-1">unfold_more</span> Expand Quote';
                 
                 btn.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    bq.classList.remove('quote-collapsed');
-                    btn.remove();
+                    
+                    // Smooth transition to full height
+                    bq.style.transition = 'max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                    bq.style.maxHeight = bq.scrollHeight + 'px';
+                    btn.innerHTML = '<span class="animate-spin inline-block mr-1 text-[9px]">⏳</span> Expanding...';
+                    
+                    setTimeout(() => {
+                        bq.classList.remove('quote-collapsed');
+                        bq.style.maxHeight = '';
+                        bq.style.transition = '';
+                        btn.remove();
+                    }, 400);
                 });
                 
                 bq.appendChild(btn);
             }
         });
+
+        // Ensure quotes with images collapse properly once images load
+        document.querySelectorAll('.ql-editor blockquote img').forEach(img => {
+            if (img.dataset.quoteLoadAttached) return;
+            img.dataset.quoteLoadAttached = "true";
+            img.addEventListener('load', function() {
+                setupCollapsibleQuotes();
+            });
+        });
     }
+
+    // Attach to global window load and DOM ready events to ensure proper scrollHeight measurements
+    document.addEventListener('DOMContentLoaded', setupCollapsibleQuotes);
+    window.addEventListener('load', setupCollapsibleQuotes);
 
     function addMultiQuote(username, postId) {
         if (!replyQuill) return;
@@ -1707,21 +1735,37 @@ article
 <style>
 /* Custom blockquote collapse & expand */
 .ql-editor blockquote {
-    background: rgba(241, 245, 249, 0.4) !important;
-    border-left: 3px solid #cbd5e1 !important;
+    background: rgba(248, 250, 252, 0.6) !important;
+    border-left: 3.5px solid #3b82f6 !important; /* Premium Blue primary left line */
     padding: 10px 14px !important;
     margin: 8px 0 !important;
     font-size: 11px !important;
     color: #475569 !important;
     position: relative;
     overflow: hidden;
-    transition: max-height 0.3s ease-out;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .dark .ql-editor blockquote {
     background: rgba(15, 23, 42, 0.35) !important;
-    border-left: 3px solid #334155 !important;
+    border-left: 3.5px solid #2563eb !important; /* Premium Indigo/Blue left line in dark mode */
     color: #94a3b8 !important;
 }
+
+/* Nested quote layout (Reply on Reply) with multiple left vertical lines */
+.ql-editor blockquote blockquote {
+    background: rgba(241, 245, 249, 0.3) !important;
+    border-left: 2.5px solid #93c5fd !important; /* Lighter blue nested line showing hierarchy */
+    margin: 6px 0 6px 6px !important;
+    padding: 8px 10px !important;
+    font-size: 10.5px !important;
+    color: #64748b !important;
+}
+.dark .ql-editor blockquote blockquote {
+    background: rgba(30, 41, 59, 0.2) !important;
+    border-left: 2.5px solid #1d4ed8 !important;
+    color: #64748b !important;
+}
+
 .quote-collapsed {
     max-height: 95px !important;
     padding-bottom: 24px !important;
