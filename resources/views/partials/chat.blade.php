@@ -242,72 +242,8 @@
         }
 
         async function initE2EEKeys() {
-            if (!currentUserId) return;
-            try {
-                const privKeyStr = localStorage.getItem('chat_private_key_' + currentUserId);
-                const pubKeyStr = localStorage.getItem('chat_public_key_' + currentUserId);
-
-                if (privKeyStr && pubKeyStr) {
-                    // Import local private key
-                    const privKeyJwk = JSON.parse(privKeyStr);
-                    myPrivateKeyObj = await window.crypto.subtle.importKey(
-                        "jwk",
-                        privKeyJwk,
-                        {
-                            name: "RSA-OAEP",
-                            hash: "SHA-256"
-                        },
-                        true,
-                        ["decrypt"]
-                    );
-
-                    // Sync local key with the server in case of database reset, seeding, or other mismatches.
-                    if (!serverPublicKey || serverPublicKey !== pubKeyStr) {
-                        console.log("[E2EE] Syncing client public key to the server...");
-                        await fetch('/dms/public-key', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({ public_key: pubKeyStr })
-                        });
-                    }
-                } else {
-                    // Generate new keypair
-                    const keyPair = await window.crypto.subtle.generateKey(
-                        {
-                            name: "RSA-OAEP",
-                            modulusLength: 2048,
-                            publicExponent: new Uint8Array([1, 0, 1]),
-                            hash: "SHA-256"
-                        },
-                        true,
-                        ["encrypt", "decrypt"]
-                    );
-
-                    myPrivateKeyObj = keyPair.privateKey;
-
-                    const pubKeyJwk = await window.crypto.subtle.exportKey("jwk", keyPair.publicKey);
-                    const pubKeyStrNew = JSON.stringify(pubKeyJwk);
-                    localStorage.setItem('chat_public_key_' + currentUserId, pubKeyStrNew);
-
-                    const privKeyJwk = await window.crypto.subtle.exportKey("jwk", keyPair.privateKey);
-                    localStorage.setItem('chat_private_key_' + currentUserId, JSON.stringify(privKeyJwk));
-
-                    // Upload public key to the server
-                    await fetch('/dms/public-key', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({ public_key: pubKeyStrNew })
-                    });
-                }
-            } catch (err) {
-                console.error("Failed to initialize E2EE keys:", err);
-            }
+            // E2EE is disabled for now.
+            return;
         }
 
         async function importPublicKey(jwkStr) {
@@ -995,26 +931,31 @@
 
                         const encryptedKey = msg.is_own ? msg.encrypted_key_sender : msg.encrypted_key_recipient;
 
-                        if (encryptedKey && myPrivateKeyObj) {
+                        if (encryptedKey) {
                             isMessageEncrypted = true;
-                            try {
-                                // 1. Decrypt the AES key using current user private key
-                                const aesKeyRaw = await decryptAESKeyWithRSA(myPrivateKeyObj, encryptedKey);
-                                // 2. Import the raw AES key
-                                const aesKeyObj = await window.crypto.subtle.importKey(
-                                    "raw",
-                                    aesKeyRaw,
-                                    { name: "AES-GCM" },
-                                    true,
-                                    ["decrypt"]
-                                );
-                                // 3. Parse JSON envelope
-                                const bodyJson = JSON.parse(msg.body);
-                                // 4. Decrypt the text payload
-                                decryptedBody = await decryptMessage(aesKeyObj, bodyJson.ciphertext, bodyJson.iv);
-                            } catch (err) {
-                                console.error('Error decrypting message:', err);
-                                decryptedBody = '⚠️ Unable to decrypt this message.';
+                            if (myPrivateKeyObj) {
+                                try {
+                                    // 1. Decrypt the AES key using current user private key
+                                    const aesKeyRaw = await decryptAESKeyWithRSA(myPrivateKeyObj, encryptedKey);
+                                    // 2. Import the raw AES key
+                                    const aesKeyObj = await window.crypto.subtle.importKey(
+                                        "raw",
+                                        aesKeyRaw,
+                                        { name: "AES-GCM" },
+                                        true,
+                                        ["decrypt"]
+                                    );
+                                    // 3. Parse JSON envelope
+                                    const bodyJson = JSON.parse(msg.body);
+                                    // 4. Decrypt the text payload
+                                    decryptedBody = await decryptMessage(aesKeyObj, bodyJson.ciphertext, bodyJson.iv);
+                                } catch (err) {
+                                    console.error('Error decrypting message:', err);
+                                    decryptedBody = '⚠️ Unable to decrypt this message.';
+                                    decryptionError = true;
+                                }
+                            } else {
+                                decryptedBody = '⚠️ Unable to decrypt this message (Keys cleared/session reset).';
                                 decryptionError = true;
                             }
                         }
