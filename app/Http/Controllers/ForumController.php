@@ -426,7 +426,7 @@ class ForumController extends Controller
             });
         }
 
-        $media = $query->with(['thread.category', 'user'])->latest()->paginate(24);
+        $media = $query->with(['thread.category', 'user', 'post.reacts'])->latest()->paginate(24);
         
         // Load categories for filter controls
         $categories = $this->categoryRepo->getAllWithStats();

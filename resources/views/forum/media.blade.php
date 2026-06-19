@@ -44,9 +44,9 @@ media showroom, image gallery, photos, gifs, community uploads
             <!-- Masonry-style Grid -->
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 px-3 sm:px-0">
                 @foreach($media as $attach)
-                    <div class="group relative rounded-none sm:rounded-2xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
+                    <div class="group relative rounded-none sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
                         <!-- Thumbnail Area -->
-                        <div class="relative h-36 sm:h-52 overflow-hidden bg-slate-50 dark:bg-slate-950 flex-shrink-0">
+                        <div class="relative h-36 sm:h-52 overflow-hidden rounded-t-none sm:rounded-t-2xl bg-slate-50 dark:bg-slate-950 flex-shrink-0">
                             <!-- Overlay Shadow -->
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none"></div>
 
@@ -67,7 +67,7 @@ media showroom, image gallery, photos, gifs, community uploads
                         </div>
 
                         <!-- Card Footer Details -->
-                        <div class="p-3 sm:p-4 flex-grow flex flex-col justify-between gap-2.5 bg-white dark:bg-slate-900">
+                        <div class="p-3 sm:p-4 flex-grow flex flex-col justify-between gap-2.5 bg-white dark:bg-slate-900 rounded-b-none sm:rounded-b-2xl">
                             <!-- File Title -->
                             <div class="space-y-0.5 min-w-0">
                                 <p class="text-[11px] font-bold text-slate-800 dark:text-slate-200 truncate" title="{{ $attach->file_name }}">{{ $attach->file_name }}</p>
@@ -78,6 +78,77 @@ media showroom, image gallery, photos, gifs, community uploads
                                     </p>
                                 @endif
                             </div>
+
+                            <!-- Reaction Section -->
+                            @if($attach->post)
+                                <div class="flex items-center justify-between gap-1 py-1.5 border-t border-slate-100/50 dark:border-slate-800/40">
+                                    @auth
+                                        <div class="relative group/react flex items-center" onclick="handleReactContainerClick(event, this)">
+                                            @php
+                                                $userReact = $attach->post->reacts->where('user_id', Auth::id())->first();
+                                                $activeType = $userReact ? $userReact->type : null;
+                                                
+                                                $label = 'React';
+                                                $colorClass = 'text-slate-500 hover:text-blue-600 dark:text-slate-400';
+                                                $icon = 'thumb_up';
+
+                                                if ($activeType === 'like') { $label = 'Like'; $colorClass = 'text-blue-600 font-bold'; }
+                                                elseif ($activeType === 'love') { $label = 'Love'; $colorClass = 'text-pink-600 font-bold'; $icon = 'favorite'; }
+                                                elseif ($activeType === 'haha') { $label = 'Haha'; $colorClass = 'text-amber-500 font-bold'; $icon = 'sentiment_very_satisfied'; }
+                                                elseif ($activeType === 'wow') { $label = 'Wow'; $colorClass = 'text-indigo-500 font-bold'; $icon = 'sentiment_satisfied'; }
+                                                elseif ($activeType === 'sad') { $label = 'Sad'; $colorClass = 'text-sky-500 font-bold'; $icon = 'sentiment_dissatisfied'; }
+                                                elseif ($activeType === 'angry') { $label = 'Angry'; $colorClass = 'text-rose-600 font-bold'; $icon = 'sentiment_extremely_dissatisfied'; }
+                                            @endphp
+                                            
+                                            <!-- Primary trigger button -->
+                                            <button id="react-btn-{{ $attach->post->id }}" onclick="toggleReaction('{{ $attach->post->id }}', 'like')" class="flex items-center justify-center gap-1 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 text-[10px] font-bold transition-all cursor-pointer shadow-sm border border-slate-200 dark:border-slate-800 {{ $colorClass }}">
+                                                <span class="material-symbols-outlined text-[11px]">{{ $icon }}</span>
+                                                <span class="font-bold">{{ $label }}</span>
+                                            </button>
+
+                                            <!-- Floating Reactions selector tray -->
+                                            <div class="reaction-tray">
+                                                <button onclick="toggleReaction('{{ $attach->post->id }}', 'like')" class="reaction-emoji" title="Like">👍</button>
+                                                <button onclick="toggleReaction('{{ $attach->post->id }}', 'love')" class="reaction-emoji" title="Love">❤️</button>
+                                                <button onclick="toggleReaction('{{ $attach->post->id }}', 'haha')" class="reaction-emoji" title="Haha">😆</button>
+                                                <button onclick="toggleReaction('{{ $attach->post->id }}', 'wow')" class="reaction-emoji" title="Wow">😮</button>
+                                                <button onclick="toggleReaction('{{ $attach->post->id }}', 'sad')" class="reaction-emoji" title="Sad">😢</button>
+                                                <button onclick="toggleReaction('{{ $attach->post->id }}', 'angry')" class="reaction-emoji" title="Angry">😡</button>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <a href="{{ route('login') }}" class="flex items-center justify-center gap-1 px-2 py-1 rounded-lg bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-[10px] text-slate-500 font-bold border border-slate-200 dark:border-slate-800 transition-all shadow-sm">
+                                            <span class="material-symbols-outlined text-[11px]">thumb_up</span>
+                                            <span>React</span>
+                                        </a>
+                                    @endauth
+
+                                    <!-- Reactions Count display -->
+                                    <div id="reactions-count-{{ $attach->post->id }}" class="flex items-center gap-1 text-[9px] font-bold text-slate-450 dark:text-slate-400">
+                                        @php
+                                            $reactStats = $attach->post->reacts
+                                                ->groupBy('type')
+                                                ->map(fn($item) => $item->count())
+                                                ->toArray();
+                                            $totalReactsCount = array_sum($reactStats);
+                                        @endphp
+                                        
+                                        @if($totalReactsCount > 0)
+                                            <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-800 shadow-sm leading-none">
+                                                <div class="flex items-center gap-0.5">
+                                                    @if(isset($reactStats['like'])) 👍 @endif
+                                                    @if(isset($reactStats['love'])) ❤️ @endif
+                                                    @if(isset($reactStats['haha'])) 😆 @endif
+                                                    @if(isset($reactStats['wow'])) 😮 @endif
+                                                    @if(isset($reactStats['sad'])) 😢 @endif
+                                                    @if(isset($reactStats['angry'])) 😡 @endif
+                                                </div>
+                                                <span class="text-[8.5px] font-extrabold text-slate-600 dark:text-slate-300">{{ $totalReactsCount }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
 
                             <!-- Divider -->
                             <div class="border-t border-slate-100 dark:border-slate-800/80 pt-2 flex items-center justify-between">
@@ -132,5 +203,117 @@ media showroom, image gallery, photos, gifs, community uploads
         @endif
     </div>
 </div>
+
+<script>
+    // Handle tap-to-toggle reaction tray on mobile interfaces
+    function handleReactContainerClick(e, container) {
+        // Only run on mobile/touch interfaces (screen widths <= 768px)
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            // Prevent instantly Liked action if the reactions tray is closed
+            if (!container.classList.contains('active')) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Close any other open reaction trays on the page
+                document.querySelectorAll('.group\\/react').forEach(c => {
+                    if (c !== container) c.classList.remove('active');
+                });
+                
+                container.classList.add('active');
+            }
+        }
+    }
+
+    // Dismiss active mobile reaction trays when clicking anywhere else
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.group\\/react')) {
+            document.querySelectorAll('.group\\/react').forEach(c => c.classList.remove('active'));
+        }
+    });
+
+    // High-End Multi-Reaction System AJAX Controller
+    function toggleReaction(postId, reactionType) {
+        const btn = document.getElementById(`react-btn-${postId}`);
+        const countBox = document.getElementById(`reactions-count-${postId}`);
+        if (!btn) return;
+
+        // Temporarily disable button to prevent race clicks
+        btn.disabled = true;
+
+        fetch(`/posts/${postId}/react`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ type: reactionType })
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Reaction failed.');
+            return res.json();
+        })
+        .then(data => {
+            btn.disabled = false;
+            
+            // Close active mobile reaction trays
+            document.querySelectorAll('.group\\/react').forEach(c => c.classList.remove('active'));
+            
+            // 1. Re-render button visual states dynamically
+            let iconText = 'thumb_up';
+            let labelText = 'React';
+            let activeColorClass = 'text-slate-500 hover:text-blue-600 dark:text-slate-400';
+
+            if (data.active_type === 'like') { labelText = 'Like'; activeColorClass = 'text-blue-600 font-bold'; }
+            else if (data.active_type === 'love') { labelText = 'Love'; activeColorClass = 'text-pink-600 font-bold'; iconText = 'favorite'; }
+            else if (data.active_type === 'haha') { labelText = 'Haha'; activeColorClass = 'text-amber-500 font-bold'; iconText = 'sentiment_very_satisfied'; }
+            else if (data.active_type === 'wow') { labelText = 'Wow'; activeColorClass = 'text-indigo-500 font-bold'; iconText = 'sentiment_satisfied'; }
+            else if (data.active_type === 'sad') { labelText = 'Sad'; activeColorClass = 'text-sky-500 font-bold'; iconText = 'sentiment_dissatisfied'; }
+            else if (data.active_type === 'angry') { labelText = 'Angry'; activeColorClass = 'text-rose-600 font-bold'; iconText = 'sentiment_extremely_dissatisfied'; }
+
+            btn.className = `flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 text-[10px] font-bold transition-all cursor-pointer shadow-sm border border-slate-200 dark:border-slate-800 ${activeColorClass}`;
+            btn.innerHTML = `
+                <span class="material-symbols-outlined text-[11px]">${iconText}</span>
+                <span class="font-bold">${labelText}</span>
+            `;
+
+            // 2. Re-render Aggregate reaction status counts dynamically
+            if (countBox) {
+                const total = data.total_count || 0;
+                if (total === 0) {
+                    countBox.innerHTML = '';
+                    return;
+                }
+
+                let iconsHtml = '';
+                if (data.stats.like) iconsHtml += '👍';
+                if (data.stats.love) iconsHtml += '❤️';
+                if (data.stats.haha) iconsHtml += '😆';
+                if (data.stats.wow) iconsHtml += '😮';
+                if (data.stats.sad) iconsHtml += '😢';
+                if (data.stats.angry) iconsHtml += '😡';
+
+                countBox.innerHTML = `
+                    <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-800 shadow-sm leading-none">
+                        <div class="flex items-center gap-0.5">
+                            ${iconsHtml}
+                        </div>
+                        <span class="text-[8.5px] font-extrabold text-slate-600 dark:text-slate-300">${total}</span>
+                    </div>
+                `;
+            }
+        })
+        .catch(err => {
+            btn.disabled = false;
+            console.error('Reaction error:', err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Could not record reaction. Please try again.',
+                confirmButtonColor: '#1e293b'
+            });
+        });
+    }
+</script>
 @endsection
 
