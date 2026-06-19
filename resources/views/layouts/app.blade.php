@@ -523,6 +523,7 @@
                 trigger.addEventListener('click', handleTriggerClick);
             });
         }
+        window.setupHoverCardListeners = setupHoverCardListeners;
 
         function showCardForTrigger(trigger) {
             const name = trigger.getAttribute('data-user-name');

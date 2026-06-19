@@ -159,244 +159,19 @@ article
                     </form>
                 @endif
             @endauth
+         <!-- Posts Listing Grid -->
+    <div id="posts-list-container" class="space-y-4">
+        @include('forum.partials.post_list')
+    </div>
+
+    <!-- Dynamic Expansion Loader -->
+    @if($posts->hasMorePages())
+        <div id="load-more-container" class="mt-6 text-center">
+            <button id="load-more-btn" onclick="loadMoreReplies()" class="px-5 py-2.5 rounded-none border border-slate-350 dark:border-slate-800 text-xs font-bold text-slate-550 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900 transition-all cursor-pointer select-none bg-transparent">
+                Show Older/More Replies...
+            </button>
         </div>
-    </div>
-
-    <!-- Posts Listing Grid -->
-    <div class="space-y-4">
-        @foreach($posts as $post)
-            <div id="post-{{ $post->id }}" class="glass-panel rounded-none sm:rounded-2xl overflow-hidden border-y sm:border border-slate-300/40 dark:border-slate-800/80 shadow-sm sm:shadow-md flex flex-col md:flex-row">
-                <!-- User Info Panel -->
-                <div class="w-full md:w-48 bg-slate-100/60 dark:bg-slate-900/60 p-3 sm:p-5 flex flex-row md:flex-col items-center gap-3 md:gap-0 border-b md:border-b-0 md:border-r border-slate-300/40 dark:border-slate-800/60 text-left md:text-center flex-shrink-0">
-                    <!-- User Avatar -->
-                    <a href="{{ route('profile.show', $post->user->name) }}" 
-                       data-user-hover="true" 
-                       data-user-name="{{ $post->user->name }}" 
-                       data-user-badge="{{ $post->user->title_badge }}" 
-                       data-user-joined="{{ $post->user->created_at->format('M d, Y') }}" 
-                       data-user-threads="{{ $post->user->threads()->count() }}" 
-                       data-user-posts="{{ $post->user->posts()->count() }}" 
-                       data-user-uploads="{{ $post->user->attachments()->count() }}" 
-                       data-user-avatar="{{ $post->user->avatar_url }}" 
-                       data-user-banner="{{ $post->user->banner_color }}"
-                       data-user-banner-path="{{ $post->user->banner_path }}"
-                       class="relative group block flex-shrink-0 md:mb-2">
-                        <div class="w-10 h-10 md:w-16 md:h-16 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 group-hover:border-indigo-500 transition-all duration-300 shadow-sm">
-                            <img src="{{ $post->user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
-                        </div>
-                        <span class="absolute bottom-0 md:bottom-0.5 right-0 md:right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-950"></span>
-                    </a>
-
-                    <!-- Mobile Info Stack -->
-                    <div class="flex-grow md:w-full flex flex-col md:items-center">
-                        <h3 class="font-bold text-slate-800 dark:text-slate-200 text-sm md:text-xs hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                            <a href="{{ route('profile.show', $post->user->name) }}"
-                               class="{{ $post->user->username_style }}"
-                               style="{{ $post->user->username_style_css }}"
-                               data-user-hover="true" 
-                               data-user-name="{{ $post->user->name }}" 
-                               data-user-badge="{{ $post->user->title_badge }}" 
-                               data-user-joined="{{ $post->user->created_at->format('M d, Y') }}" 
-                               data-user-threads="{{ $post->user->threads()->count() }}" 
-                               data-user-posts="{{ $post->user->posts()->count() }}" 
-                               data-user-uploads="{{ $post->user->attachments()->count() }}" 
-                               data-user-avatar="{{ $post->user->avatar_url }}" 
-                               data-user-banner="{{ $post->user->banner_color }}"
-                               data-user-banner-path="{{ $post->user->banner_path }}">{{ $post->user->name }}</a>
-                        </h3>
-                        <span class="text-[8px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider mt-1 border border-slate-700/40 shadow-sm w-max md:w-auto" style="color: {{ $post->user->title_color ?: '#e2e8f0' }}; background: {{ $post->user->banner_color }}">
-                            {{ $post->user->title_badge }}
-                        </span>
-                        
-                        <!-- Desktop Statistics Block -->
-                        <div class="hidden md:block mt-3 w-full pt-3 border-t border-slate-300/40 dark:border-slate-800/40 text-[9px] text-slate-500 dark:text-slate-400 space-y-1 text-left">
-                            <div class="flex justify-between">
-                                <span>Joined:</span>
-                                <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $post->user->created_at->format('M Y') }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Threads:</span>
-                                <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $post->user->threads()->count() }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Messages:</span>
-                                <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $post->user->posts()->count() }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Post Body Content -->
-                <div class="flex-grow p-3.5 sm:p-6 flex flex-col justify-between space-y-4 sm:space-y-6">
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center text-[10px] text-slate-400 dark:text-slate-500 border-b border-slate-200/50 dark:border-slate-800/40 pb-2">
-                            <span>{{ $post->created_at->diffForHumans() }}</span>
-                            <span class="font-bold text-indigo-500/60 dark:text-indigo-400/60">#{{ ($posts->currentPage() - 1) * $posts->perPage() + $loop->iteration }}</span>
-                        </div>
-                        <!-- Content text -->
-                        <div class="text-slate-700 dark:text-slate-200 text-xs leading-relaxed font-sans ql-snow">
-                            <div class="ql-editor" style="min-height: auto; height: auto; overflow: visible; padding: 0 !important; white-space: normal;">
-                                {!! $post->content !!}
-                            </div>
-                        </div>
-
-                        <!-- Render Attached Images & GIFs Gallery -->
-                        @php
-                            $isFirstPost = ($post->id === $thread->firstPost?->id);
-                            $postAttachments = $post->attachments;
-                            if ($isFirstPost) {
-                                $threadOnlyAttachments = \App\Models\Attachment::where('thread_id', $thread->id)->whereNull('post_id')->get();
-                                if ($threadOnlyAttachments->count() > 0) {
-                                    $postAttachments = $postAttachments->merge($threadOnlyAttachments);
-                                }
-                            }
-                            $filteredAttachments = $postAttachments->filter(function($attach) use ($post) {
-                                return !str_contains($post->content, $attach->file_path) && !str_contains($post->content, $attach->url);
-                            });
-                        @endphp
-                        @if($filteredAttachments->count() > 0)
-                            <div class="mt-4 pt-4 border-t border-slate-200/50 dark:border-slate-800/40 clear-both">
-                                <h4 class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-2">📎 Uploaded Attachments</h4>
-                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                    @foreach($filteredAttachments as $attach)
-                                        <div class="relative group rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-300/40 dark:border-slate-800/60 shadow-sm">
-                                            @if(str_starts_with($attach->file_type, 'image/') || preg_match('/\.(jpe?g|png|gif|webp|bmp)/i', $attach->file_path) || str_contains($attach->file_path, 'ibb.co') || str_contains($attach->file_path, 'imgbb'))
-                                                 <button onclick="openLightbox('{{ $attach->url }}', '{{ $attach->file_name }}')" class="block w-full h-24 sm:h-28 overflow-hidden cursor-zoom-in text-left p-0 border-0 outline-none w-full">
-                                                     <img src="{{ $attach->url }}" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-200" alt="attached image">
-                                                 </button>
-                                                <!-- Media Tag Badge (e.g. GIF) -->
-                                                @if(str_contains($attach->file_name, '.gif') || str_contains($attach->file_type, 'gif'))
-                                                    <span class="absolute top-1.5 right-1.5 px-1 py-0.5 rounded text-[7px] font-bold bg-pink-500 text-white uppercase tracking-widest shadow">
-                                                        GIF
-                                                    </span>
-                                                @endif
-                                            @else
-                                                <div class="w-full h-24 flex flex-col items-center justify-center p-3">
-                                                    <svg class="w-6 h-6 text-slate-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12h9m9 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                                                    </svg>
-                                                    <p class="text-[8px] text-slate-500 truncate w-full text-center">{{ $attach->file_name }}</p>
-                                                </div>
-                                            @endif
-                                            <div class="bg-slate-200/60 dark:bg-slate-950/80 p-1.5 text-[8px] text-slate-500 dark:text-slate-400 border-t border-slate-300/30 dark:border-slate-800/40 flex items-center justify-between">
-                                                <span class="truncate pr-2 font-medium">{{ $attach->file_name }}</span>
-                                                @if(!str_starts_with($attach->file_type, 'image/'))
-                                                    <a href="{{ $attach->url }}" download class="hover:text-slate-800 dark:hover:text-white transition-colors" title="Download">
-                                                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                                                        </svg>
-                                                    </a>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-
-                    <!-- High-End Multi-Reaction System Bar -->
-                    <div class="mt-4 pt-3 border-t border-slate-200/50 dark:border-slate-800/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-                        <!-- Left: Interactive Emoticon reactions buttons group -->
-                        <div class="flex items-center gap-1.5 flex-wrap">
-                            @auth
-                                <div class="relative group/react flex items-center" onclick="handleReactContainerClick(event, this)">
-                                    @php
-                                        $userReact = $post->reacts()->where('user_id', Auth::id())->first();
-                                        $activeType = $userReact ? $userReact->type : null;
-                                        
-                                        $label = 'React';
-                                        $colorClass = 'text-slate-500 hover:text-blue-600 dark:text-slate-400';
-                                        $icon = 'thumb_up';
-
-                                        if ($activeType === 'like') { $label = 'Like'; $colorClass = 'text-blue-600 font-bold'; }
-                                        elseif ($activeType === 'love') { $label = 'Love'; $colorClass = 'text-pink-600 font-bold'; $icon = 'favorite'; }
-                                        elseif ($activeType === 'haha') { $label = 'Haha'; $colorClass = 'text-amber-500 font-bold'; $icon = 'sentiment_very_satisfied'; }
-                                        elseif ($activeType === 'wow') { $label = 'Wow'; $colorClass = 'text-indigo-500 font-bold'; $icon = 'sentiment_satisfied'; }
-                                        elseif ($activeType === 'sad') { $label = 'Sad'; $colorClass = 'text-sky-500 font-bold'; $icon = 'sentiment_dissatisfied'; }
-                                        elseif ($activeType === 'angry') { $label = 'Angry'; $colorClass = 'text-rose-600 font-bold'; $icon = 'sentiment_extremely_dissatisfied'; }
-                                    @endphp
-                                    
-                                    <!-- Primary trigger button -->
-                                    <button id="react-btn-{{ $post->id }}" onclick="toggleReaction('{{ $post->id }}', 'like')" class="flex items-center justify-center w-full sm:w-auto gap-1 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 text-xs font-bold transition-all cursor-pointer shadow-sm border border-slate-200 dark:border-slate-800 {{ $colorClass }}">
-                                        <span class="material-symbols-outlined text-sm">{{ $icon }}</span>
-                                        <span class="font-bold">{{ $label }}</span>
-                                    </button>
-
-                                    <!-- Floating Reactions selector tray -->
-                                    <div class="reaction-tray">
-                                        <button onclick="toggleReaction('{{ $post->id }}', 'like')" class="reaction-emoji" title="Like">👍</button>
-                                        <button onclick="toggleReaction('{{ $post->id }}', 'love')" class="reaction-emoji" title="Love">❤️</button>
-                                        <button onclick="toggleReaction('{{ $post->id }}', 'haha')" class="reaction-emoji" title="Haha">😆</button>
-                                        <button onclick="toggleReaction('{{ $post->id }}', 'wow')" class="reaction-emoji" title="Wow">😮</button>
-                                        <button onclick="toggleReaction('{{ $post->id }}', 'sad')" class="reaction-emoji" title="Sad">😢</button>
-                                        <button onclick="toggleReaction('{{ $post->id }}', 'angry')" class="reaction-emoji" title="Angry">😡</button>
-                                    </div>
-                                </div>
-                                
-                                <!-- Edit Button for Auth User -->
-                                @if(Auth::id() === $post->user_id)
-                                    <button onclick="openEditPostModal('{{ $post->id }}')" class="flex items-center gap-1 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 text-xs font-bold text-slate-500 hover:text-blue-600 dark:text-slate-450 transition-all cursor-pointer shadow-sm border border-slate-200 dark:border-slate-800">
-                                        <span class="material-symbols-outlined text-sm">edit</span>
-                                        <span>Edit</span>
-                                    </button>
-                                @endif
-
-                                <!-- Quote / Reply Button -->
-                                <button onclick="quotePostReply('{{ $post->user->name }}', '{{ $post->id }}')" class="flex items-center gap-1 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 text-xs font-bold text-slate-500 hover:text-blue-600 dark:text-slate-450 transition-all cursor-pointer shadow-sm border border-slate-200 dark:border-slate-800">
-                                    <span class="material-symbols-outlined text-sm">chat</span>
-                                    <span>Reply</span>
-                                </button>
-                            @else
-                                <a href="{{ route('login') }}" class="flex items-center justify-center w-full sm:w-auto gap-1 px-3 py-2 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs text-slate-500 font-bold border border-slate-200 dark:border-slate-800 transition-all shadow-sm">
-                                    <span class="material-symbols-outlined text-sm">thumb_up</span>
-                                    <span>React</span>
-                                </a>
-                            @endauth
-                        </div>
-
-                        <!-- Right: Real-time reactions count and aggregate totals -->
-                        <div id="reactions-count-{{ $post->id }}" class="flex items-center gap-1 text-[9.5px] font-bold text-slate-450 dark:text-slate-400">
-                            @php
-                                $reactStats = $post->reacts()
-                                    ->select('type', \DB::raw('count(*) as total'))
-                                    ->groupBy('type')
-                                    ->pluck('total', 'type')
-                                    ->toArray();
-                                $totalReactsCount = array_sum($reactStats);
-                            @endphp
-                            
-                            @if($totalReactsCount > 0)
-                                <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded-full border border-slate-200 dark:border-slate-800 shadow-sm leading-none">
-                                    <div class="flex items-center gap-0.5 text-base">
-                                        @if(isset($reactStats['like'])) 👍 @endif
-                                        @if(isset($reactStats['love'])) ❤️ @endif
-                                        @if(isset($reactStats['haha'])) 😆 @endif
-                                        @if(isset($reactStats['wow'])) 😮 @endif
-                                        @if(isset($reactStats['sad'])) 😢 @endif
-                                        @if(isset($reactStats['angry'])) 😡 @endif
-                                    </div>
-                                    <span class="text-xs font-extrabold text-slate-600 dark:text-slate-300 ml-1">{{ $totalReactsCount }}</span>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- User signature display -->
-                    @if($post->user->signature)
-                        <div class="mt-4 pt-3 border-t border-slate-355 dark:border-slate-900 border-dashed text-[10px] text-slate-500 dark:text-slate-400 font-medium italic">
-                            {{ $post->user->signature }}
-                        </div>
-                    @endif
-                </div>
-            </div>
-        @endforeach
-    </div>
-
-    <!-- Pagination links -->
-    <div class="mt-4">
-        {{ $posts->links() }}
-    </div>
+    @endif
 
     <!-- Quick Reply Form -->
     @auth
@@ -1053,46 +828,48 @@ article
             
             // 1. Re-render button visual states dynamically
             let iconText = 'thumb_up';
-            let labelText = 'React';
-            let activeColorClass = 'text-slate-500 hover:text-blue-600 dark:text-slate-400';
+            let labelText = 'Like';
+            let activeColorClass = 'text-slate-550 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200';
 
-            if (data.active_type === 'like') { labelText = 'Like'; activeColorClass = 'text-blue-600 font-bold'; }
-            else if (data.active_type === 'love') { labelText = 'Love'; activeColorClass = 'text-pink-600 font-bold'; iconText = 'favorite'; }
-            else if (data.active_type === 'haha') { labelText = 'Haha'; activeColorClass = 'text-amber-500 font-bold'; iconText = 'sentiment_very_satisfied'; }
-            else if (data.active_type === 'wow') { labelText = 'Wow'; activeColorClass = 'text-indigo-500 font-bold'; iconText = 'sentiment_satisfied'; }
-            else if (data.active_type === 'sad') { labelText = 'Sad'; activeColorClass = 'text-sky-500 font-bold'; iconText = 'sentiment_dissatisfied'; }
-            else if (data.active_type === 'angry') { labelText = 'Angry'; activeColorClass = 'text-rose-600 font-bold'; iconText = 'sentiment_extremely_dissatisfied'; }
+            if (data.active_type === 'like') { labelText = 'Like'; activeColorClass = 'text-blue-600 dark:text-blue-400 font-extrabold'; }
+            else if (data.active_type === 'love') { labelText = 'Love'; activeColorClass = 'text-pink-600 dark:text-pink-500 font-extrabold'; iconText = 'favorite'; }
+            else if (data.active_type === 'haha') { labelText = 'Haha'; activeColorClass = 'text-amber-500 font-extrabold'; iconText = 'sentiment_very_satisfied'; }
+            else if (data.active_type === 'wow') { labelText = 'Wow'; activeColorClass = 'text-indigo-500 dark:text-indigo-400 font-extrabold'; iconText = 'sentiment_satisfied'; }
+            else if (data.active_type === 'sad') { labelText = 'Sad'; activeColorClass = 'text-sky-500 font-extrabold'; iconText = 'sentiment_dissatisfied'; }
+            else if (data.active_type === 'angry') { labelText = 'Angry'; activeColorClass = 'text-rose-600 font-extrabold'; iconText = 'sentiment_extremely_dissatisfied'; }
 
-            btn.className = `flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 text-[10px] font-bold transition-all cursor-pointer shadow-sm border border-slate-200 dark:border-slate-800 ${activeColorClass}`;
+            btn.className = `flex items-center gap-0.5 text-[11px] font-bold transition-all cursor-pointer bg-transparent border-0 select-none ${activeColorClass}`;
             btn.innerHTML = `
-                <span class="material-symbols-outlined text-xs">${iconText}</span>
-                <span class="font-bold">${labelText}</span>
+                <span class="material-symbols-outlined text-sm">${iconText}</span>
+                <span>${labelText}</span>
             `;
 
-            // 2. Re-render Aggregate reaction status counts dynamically
-            if (countBox) {
+            // 2. Re-render Reactions Summary Bar
+            const summaryBox = document.getElementById(`reactions-summary-${postId}`);
+            if (summaryBox) {
                 const total = data.total_count || 0;
                 if (total === 0) {
-                    countBox.innerHTML = '';
-                    return;
+                    summaryBox.classList.add('hidden');
+                } else {
+                    summaryBox.classList.remove('hidden');
+                    
+                    let iconsHtml = '';
+                    if (data.stats.like) iconsHtml += '<span>👍</span>';
+                    if (data.stats.love) iconsHtml += '<span>❤️</span>';
+                    if (data.stats.haha) iconsHtml += '<span>😆</span>';
+                    if (data.stats.wow) iconsHtml += '<span>😮</span>';
+                    if (data.stats.sad) iconsHtml += '<span>😢</span>';
+                    if (data.stats.angry) iconsHtml += '<span>😡</span>';
+                    
+                    const iconsContainer = summaryBox.querySelector('.flex.items-center.-space-x-1\\.5');
+                    if (iconsContainer) {
+                        iconsContainer.innerHTML = iconsHtml;
+                    }
+                    const textSpan = document.getElementById(`reactions-text-${postId}`);
+                    if (textSpan) {
+                        textSpan.innerText = data.reacts_sentence || '';
+                    }
                 }
-
-                let iconsHtml = '';
-                if (data.stats.like) iconsHtml += '👍';
-                if (data.stats.love) iconsHtml += '❤️';
-                if (data.stats.haha) iconsHtml += '😆';
-                if (data.stats.wow) iconsHtml += '😮';
-                if (data.stats.sad) iconsHtml += '😢';
-                if (data.stats.angry) iconsHtml += '😡';
-
-                countBox.innerHTML = `
-                    <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-900 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-800 shadow-sm leading-none">
-                        <div class="flex items-center gap-0.5">
-                            ${iconsHtml}
-                        </div>
-                        <span class="text-[9px] font-extrabold text-slate-600 dark:text-slate-300">${total} reactions</span>
-                    </div>
-                `;
             }
         })
         .catch(err => {
@@ -1461,6 +1238,275 @@ article
             submitBtn.innerText = 'Apply Customize';
         }
     }
+
+    // Dynamic Expansion, Reactors, and Quotes Controller Functions
+    let nextPageUrl = '{{ $posts->nextPageUrl() }}';
+    let loadingReplies = false;
+
+    function loadMoreReplies() {
+        if (loadingReplies || !nextPageUrl) return;
+        loadingReplies = true;
+        
+        const loadBtn = document.getElementById('load-more-btn');
+        if (loadBtn) {
+            loadBtn.disabled = true;
+            loadBtn.innerHTML = '<span class="animate-spin inline-block mr-2">⏳</span> Loading more replies...';
+        }
+
+        fetch(nextPageUrl, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById('posts-list-container');
+            if (container) {
+                container.insertAdjacentHTML('beforeend', data.html);
+            }
+
+            if (window.setupHoverCardListeners) {
+                window.setupHoverCardListeners();
+            }
+            setupCollapsibleQuotes();
+
+            if (data.has_more) {
+                nextPageUrl = nextPageUrl.split('?')[0] + '?page=' + data.next_page;
+                if (loadBtn) {
+                    loadBtn.disabled = false;
+                    loadBtn.innerHTML = 'Show Older/More Replies...';
+                }
+            } else {
+                nextPageUrl = null;
+                const loadContainer = document.getElementById('load-more-container');
+                if (loadContainer) {
+                    loadContainer.remove();
+                }
+            }
+            loadingReplies = false;
+        })
+        .catch(err => {
+            console.error('Error loading more replies:', err);
+            if (loadBtn) {
+                loadBtn.disabled = false;
+                loadBtn.innerHTML = 'Error loading. Click to retry...';
+            }
+            loadingReplies = false;
+        });
+    }
+
+    let allReactorsData = [];
+    let activeReactorsTab = 'all';
+
+    function openReactorsModal(postId) {
+        const modal = document.getElementById('reactors-modal');
+        if (!modal) return;
+
+        const listContainer = document.getElementById('reactors-modal-list');
+        const tabsContainer = document.getElementById('reactors-modal-tabs');
+        const titleHeader = document.getElementById('reactors-modal-title');
+        
+        titleHeader.innerText = `Members who reacted`;
+        tabsContainer.innerHTML = '';
+        listContainer.innerHTML = `
+            <div class="flex items-center justify-center py-12 text-slate-400">
+                <span class="animate-spin mr-2">⏳</span> Loading reactors...
+            </div>
+        `;
+
+        modal.classList.remove('pointer-events-none');
+        modal.classList.add('opacity-100');
+        modal.firstElementChild.nextElementSibling.classList.remove('scale-95');
+        modal.firstElementChild.nextElementSibling.classList.add('scale-100');
+
+        fetch(`/posts/${postId}/reacts`)
+            .then(res => res.json())
+            .then(data => {
+                allReactorsData = data;
+                activeReactorsTab = 'all';
+                renderReactorsTabs();
+                renderReactorsList();
+            })
+            .catch(err => {
+                listContainer.innerHTML = `
+                    <div class="flex items-center justify-center py-12 text-rose-500 text-xs font-bold">
+                        Failed to load reactors. Please try again.
+                    </div>
+                `;
+                console.error(err);
+            });
+    }
+
+    function closeReactorsModal() {
+        const modal = document.getElementById('reactors-modal');
+        if (!modal) return;
+
+        modal.classList.add('pointer-events-none');
+        modal.classList.remove('opacity-100');
+        modal.firstElementChild.nextElementSibling.classList.add('scale-95');
+        modal.firstElementChild.nextElementSibling.classList.remove('scale-100');
+    }
+
+    function renderReactorsTabs() {
+        const tabsContainer = document.getElementById('reactors-modal-tabs');
+        if (!tabsContainer) return;
+
+        const counts = { all: allReactorsData.length };
+        allReactorsData.forEach(r => {
+            counts[r.type] = (counts[r.type] || 0) + 1;
+        });
+
+        const emojiMap = {
+            like: '👍 Like',
+            love: '❤️ Love',
+            haha: '😆 Haha',
+            wow: '😮 Wow',
+            sad: '😢 Sad',
+            angry: '😡 Angry'
+        };
+
+        let html = `
+            <button onclick="switchReactorsTab('all')" class="pb-1 border-b-2 transition-all bg-transparent border-0 cursor-pointer ${activeReactorsTab === 'all' ? 'border-blue-500 text-blue-600 dark:text-blue-400 font-extrabold' : 'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}">
+                All (${counts.all})
+            </button>
+        `;
+
+        Object.keys(emojiMap).forEach(type => {
+            if (counts[type]) {
+                html += `
+                    <button onclick="switchReactorsTab('${type}')" class="pb-1 border-b-2 transition-all bg-transparent border-0 cursor-pointer flex items-center gap-1 ${activeReactorsTab === type ? 'border-blue-500 text-blue-600 dark:text-blue-400 font-extrabold' : 'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}">
+                        ${emojiMap[type]} (${counts[type]})
+                    </button>
+                `;
+            }
+        });
+
+        tabsContainer.innerHTML = html;
+    }
+
+    function switchReactorsTab(tab) {
+        activeReactorsTab = tab;
+        renderReactorsTabs();
+        renderReactorsList();
+    }
+
+    function renderReactorsList() {
+        const listContainer = document.getElementById('reactors-modal-list');
+        if (!listContainer) return;
+
+        const filtered = activeReactorsTab === 'all'
+            ? allReactorsData
+            : allReactorsData.filter(r => r.type === activeReactorsTab);
+
+        if (filtered.length === 0) {
+            listContainer.innerHTML = `
+                <div class="flex items-center justify-center py-12 text-slate-400 text-xs">
+                    No reactions to show.
+                </div>
+            `;
+            return;
+        }
+
+        const emojiCharMap = {
+            like: '👍',
+            love: '❤️',
+            haha: '😆',
+            wow: '😮',
+            sad: '😢',
+            angry: '😡'
+        };
+
+        let html = '';
+        filtered.forEach(r => {
+            const avatar = r.avatar_url;
+            const emoji = emojiCharMap[r.type] || '👍';
+            
+            html += `
+                <div class="flex items-center justify-between py-3">
+                    <div class="flex items-center gap-3">
+                        <a href="/profile/${encodeURIComponent(r.name)}" class="w-10 h-10 border border-slate-200/50 dark:border-slate-800/50 overflow-hidden flex items-center justify-center select-none bg-slate-100 dark:bg-slate-900 rounded-none shrink-0">
+                            <img src="${avatar}" alt="${r.name}" class="w-full h-full object-cover">
+                        </a>
+                        <div class="flex flex-col text-left">
+                            <a href="/profile/${encodeURIComponent(r.name)}" class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline">
+                                ${r.name}
+                            </a>
+                            <span class="text-[10px] text-slate-450 dark:text-slate-500 font-bold mt-0.5">
+                                ${r.title_badge}
+                            </span>
+                            <div class="text-[9px] text-slate-400 dark:text-slate-500 font-medium mt-0.5 flex items-center gap-1">
+                                <span>Posts: ${r.posts_count}</span>
+                                <span>·</span>
+                                <span>Reactions: ${r.reactions_count}</span>
+                                <span>·</span>
+                                <span>Points: ${r.activity_points}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end gap-1 shrink-0">
+                        <span class="text-base">${emoji}</span>
+                        <span class="text-[9px] text-slate-400 dark:text-slate-500 font-semibold">${r.reacted_at}</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        listContainer.innerHTML = html;
+    }
+
+    function setupCollapsibleQuotes() {
+        document.querySelectorAll('.ql-editor blockquote').forEach(bq => {
+            if (bq.dataset.quoteInitialized) return;
+            bq.dataset.quoteInitialized = "true";
+
+            // If blockquote is long, collapse it and add expand button
+            if (bq.scrollHeight > 110) {
+                bq.classList.add('quote-collapsed');
+                
+                const btn = document.createElement('button');
+                btn.className = 'quote-expand-btn';
+                btn.type = 'button';
+                btn.innerText = 'Click to expand...';
+                
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    bq.classList.remove('quote-collapsed');
+                    btn.remove();
+                });
+                
+                bq.appendChild(btn);
+            }
+        });
+    }
+
+    function addMultiQuote(username, postId) {
+        if (!replyQuill) return;
+        const postElement = document.querySelector(`#post-${postId} .ql-editor`);
+        const originalContent = postElement ? postElement.innerHTML.trim() : '';
+        
+        const quoteHtml = `<blockquote class="border-l-4 border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 pl-3 py-1 my-2 text-slate-550 text-xs italic font-sans" data-quoted-post="${postId}"><strong>Post by @${username}:</strong><br>${originalContent}</blockquote><p><br></p>`;
+        
+        const range = replyQuill.getSelection(true);
+        replyQuill.clipboard.dangerouslyPasteHTML(range.index, quoteHtml);
+        replyQuill.setSelection(replyQuill.getLength());
+        
+        if (typeof Swal !== 'undefined') {
+            const toast = Swal.mixin({
+                toast: true,
+                position: 'bottom-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+            toast.fire({
+                icon: 'success',
+                title: `Quote from @${username} added to reply.`
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', setupCollapsibleQuotes);
 </script>
 
 @auth
@@ -1629,5 +1675,91 @@ article
         data-auto-insert="bbcode-embed-medium" 
         data-sibling-selector="#edit-post-imgbb-upload-container" 
         data-sibling-position="after">
-</script>
+<!-- High-End Real-Time Reaction Details Modal -->
+<div id="reactors-modal" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none opacity-0 transition-all duration-300">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-slate-950/40 backdrop-blur-[3px]" onclick="closeReactorsModal()"></div>
+    
+    <!-- Modal content -->
+    <div class="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-none shadow-2xl max-w-lg w-full mx-4 overflow-hidden transform transition-all duration-300 scale-95 z-55 flex flex-col max-h-[85vh]">
+        <!-- Header -->
+        <div class="bg-slate-50 dark:bg-slate-950/60 px-5 py-4 border-b border-slate-200 dark:border-slate-850 flex items-center justify-between shrink-0">
+            <h3 id="reactors-modal-title" class="font-extrabold text-slate-800 dark:text-white text-xs">
+                Members who reacted
+            </h3>
+            <button type="button" onclick="closeReactorsModal()" class="text-slate-400 hover:text-slate-650 dark:hover:text-white cursor-pointer transition-colors bg-transparent border-0 p-0 flex items-center">
+                <span class="material-symbols-outlined text-sm">close</span>
+            </button>
+        </div>
+        
+        <!-- Tab Bar -->
+        <div id="reactors-modal-tabs" class="flex gap-4 px-5 py-3 border-b border-slate-200/60 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/50 text-[11px] font-bold overflow-x-auto whitespace-nowrap shrink-0">
+            <!-- Dynamically populated -->
+        </div>
+
+        <!-- Reactor List (Scrollable) -->
+        <div id="reactors-modal-list" class="p-5 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800/50 max-h-[50vh] scrollbar-thin">
+            <!-- Dynamically populated -->
+        </div>
+    </div>
+</div>
+
+<style>
+/* Custom blockquote collapse & expand */
+.ql-editor blockquote {
+    background: rgba(241, 245, 249, 0.4) !important;
+    border-left: 3px solid #cbd5e1 !important;
+    padding: 10px 14px !important;
+    margin: 8px 0 !important;
+    font-size: 11px !important;
+    color: #475569 !important;
+    position: relative;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+.dark .ql-editor blockquote {
+    background: rgba(15, 23, 42, 0.35) !important;
+    border-left: 3px solid #334155 !important;
+    color: #94a3b8 !important;
+}
+.quote-collapsed {
+    max-height: 95px !important;
+    padding-bottom: 24px !important;
+}
+.quote-expand-btn {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 24px;
+    background: linear-gradient(to top, rgba(241, 245, 249, 0.98), rgba(241, 245, 249, 0));
+    color: #3b82f6;
+    font-size: 10px;
+    font-weight: 800;
+    text-align: center;
+    line-height: 24px;
+    cursor: pointer;
+    border: 0;
+    width: 100%;
+}
+.dark .quote-expand-btn {
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0));
+    color: #60a5fa;
+}
+
+/* Custom Scrollbar for Modal list */
+.scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+}
+.dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #334155;
+}
+</style>
 @endsection

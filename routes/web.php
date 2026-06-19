@@ -39,6 +39,7 @@ Route::get('/threads/{thread:slug}', [ForumController::class, 'thread'])->name('
 
 // Dynamic Live Hover Card Details
 Route::get('/dms/user-card/{username}', [\App\Http\Controllers\ChatController::class, 'userCardDetails']);
+Route::get('/posts/{post}/reacts', [\App\Http\Controllers\ReactController::class, 'reactors']);
 
 
 // Authenticated Routes

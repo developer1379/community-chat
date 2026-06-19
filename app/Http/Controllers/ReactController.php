@@ -78,12 +78,55 @@ class ReactController extends Controller
         // Check user's current active reaction
         $userReact = $post->reacts()->where('user_id', $userId)->first();
 
+        // Clear cache so changes reflect on next page load / fetch
+        Post::clearThreadPostsCache($post->thread_id);
+
         return response()->json([
             'success' => true,
             'reacted' => $reacted,
             'active_type' => $userReact ? $userReact->type : null,
             'stats' => $stats,
             'total_count' => $post->reacts()->count(),
+            'reacts_sentence' => $post->reacts_sentence,
         ]);
+    }
+
+    /**
+     * Get list of users who reacted to a specific post.
+     */
+    public function reactors(Post $post): JsonResponse
+    {
+        $reacts = $post->reacts()
+            ->with(['user' => function($query) {
+                $query->withCount(['posts', 'threads'])
+                    ->withCount(['posts as reactions_count' => function($q) {
+                        $q->join('reacts', 'posts.id', '=', 'reacts.post_id');
+                    }])
+                    ->with('admin');
+            }])
+            ->get();
+
+        $formatted = $reacts->map(function (React $react) {
+            $u = $react->user;
+            if (!$u) return null;
+            
+            $isAdmin = $u->admin !== null;
+            $reactionsCount = (int) $u->reactions_count;
+            $activityPoints = $isAdmin ? 1200 : (($u->threads_count * 10) + ($u->posts_count * 5) + ($reactionsCount * 2));
+            
+            return [
+                'user_id' => $u->id,
+                'name' => $u->name,
+                'avatar_url' => $u->avatar_url,
+                'title_badge' => $u->title_badge ?? 'Member',
+                'posts_count' => $u->posts_count,
+                'reactions_count' => $reactionsCount,
+                'activity_points' => $activityPoints,
+                'type' => $react->type,
+                'reacted_at' => $react->created_at->diffForHumans(),
+            ];
+        })->filter()->values();
+
+        return response()->json($formatted);
     }
 }

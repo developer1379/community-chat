@@ -268,11 +268,19 @@ class ForumController extends Controller
         return view('forum.category', compact('category', 'threads'));
     }
 
-    public function thread(string $slug)
+    public function thread(Request $request, string $slug)
     {
         $thread = $this->threadRepo->findBySlug($slug);
         $this->threadRepo->incrementViews($thread);
         $posts = $this->postRepo->getThreadPostsPaginated($thread, 10);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('forum.partials.post_list', compact('thread', 'posts'))->render(),
+                'has_more' => $posts->hasMorePages(),
+                'next_page' => $posts->currentPage() + 1
+            ]);
+        }
 
         return view('forum.thread', compact('thread', 'posts'));
     }
@@ -376,10 +384,7 @@ class ForumController extends Controller
         ]);
 
         // Invalidate corresponding thread posts cache so edits are visible immediately
-        \Illuminate\Support\Facades\Cache::forget("forum.thread.{$post->thread_id}.posts.page.1");
-        \Illuminate\Support\Facades\Cache::forget("forum.thread.{$post->thread_id}.posts.page.2");
-        \Illuminate\Support\Facades\Cache::forget("forum.thread.{$post->thread_id}.posts.page.3");
-        \Illuminate\Support\Facades\Cache::forget("forum.thread.{$post->thread_id}.posts.page.4");
+        Post::clearThreadPostsCache($post->thread_id);
 
         return back()->with('success', 'Your post has been successfully edited!');
     }
