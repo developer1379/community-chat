@@ -36,6 +36,14 @@ class RedirectGuestToHomeWithLoginModal
             'sitemap',
             'verify.otp',
             'resend.otp',
+            'rules',
+            'search',
+            'categories.show',
+            'threads.show',
+            'members.index',
+            'rankings.index',
+            'search.history.clear',
+            'search.history.delete',
         ];
 
         if ($currentRouteName && in_array($currentRouteName, $allowedRoutes)) {
@@ -53,6 +61,13 @@ class RedirectGuestToHomeWithLoginModal
             'auth/google/*',
             'media/proxy/*',
             'sitemap',
+            'rules',
+            'search',
+            'search/history/*',
+            'categories/*',
+            'threads/*',
+            'members',
+            'rankings',
         ];
 
         foreach ($allowedPaths as $path) {

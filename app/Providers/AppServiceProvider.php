@@ -37,7 +37,9 @@ class AppServiceProvider extends ServiceProvider
     {
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
-                $settings = \Illuminate\Support\Facades\DB::table('settings')->pluck('value', 'key');
+                $settings = \Illuminate\Support\Facades\Cache::rememberForever('global_settings', function () {
+                    return \Illuminate\Support\Facades\DB::table('settings')->pluck('value', 'key')->all();
+                });
                 foreach ($settings as $key => $value) {
                     if (str_starts_with($key, 'firebase_')) {
                         $configKey = 'firebase.' . substr($key, 9);

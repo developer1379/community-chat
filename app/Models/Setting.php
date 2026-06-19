@@ -17,6 +17,20 @@ class Setting extends Model
     ];
 
     /**
+     * The "booted" method of the model.
+     */
+    protected static function booted()
+    {
+        static::saved(function ($setting) {
+            \Illuminate\Support\Facades\Cache::forget('global_settings');
+        });
+
+        static::deleted(function ($setting) {
+            \Illuminate\Support\Facades\Cache::forget('global_settings');
+        });
+    }
+
+    /**
      * Get a setting value by key.
      */
     public static function get(string $key, $default = null): ?string

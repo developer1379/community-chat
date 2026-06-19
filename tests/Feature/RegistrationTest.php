@@ -32,12 +32,12 @@ it('registers a user successfully through the post route', function () {
         'password_confirmation' => 'Password123!',
     ]);
 
-    $response->assertRedirect(route('home'));
+    $response->assertRedirect(route('verify.otp'));
     $this->assertDatabaseHas('users', [
         'name' => 'NewUser',
         'email' => 'newuser@example.com',
     ]);
-    $this->assertTrue(auth()->check());
+    $this->assertFalse(auth()->check());
 });
 
 it('redirects non-onboarded users to setup-profile page', function () {

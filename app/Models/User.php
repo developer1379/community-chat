@@ -41,6 +41,7 @@ class User extends Authenticatable
         'is_blocked',
         'is_onboarded',
         'chat_public_key',
+        'dob',
     ];
 
     protected static function booted()
@@ -77,6 +78,7 @@ class User extends Authenticatable
             'is_private' => 'boolean',
             'is_blocked' => 'boolean',
             'is_onboarded' => 'boolean',
+            'dob' => 'date',
         ];
     }
 

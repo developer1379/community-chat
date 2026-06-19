@@ -266,12 +266,14 @@ class AuthController extends Controller
             'username_animation' => ['nullable', 'string', 'in:none,glow,pulse,crackle,shimmer'],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:4096'],
             'banner' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:8192'],
+            'dob' => ['nullable', 'date', 'before:today'],
         ]);
 
         $data = [
             'signature' => $request->signature,
             'status' => $request->status,
             'is_private' => $request->has('is_private'),
+            'dob' => $request->dob,
         ];
 
         $tier = $user->computed_anime_tier;

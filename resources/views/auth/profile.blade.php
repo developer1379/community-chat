@@ -182,6 +182,13 @@ profile
                         <span class="text-[8px] px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 rounded text-slate-500 dark:text-slate-400 uppercase font-black tracking-wide">{{ $tier['badge'] }}</span>
                         <span class="text-slate-300 dark:text-slate-700">•</span>
                         <span>Joined {{ $user->created_at->format('M d, Y') }}</span>
+                        @if($user->dob)
+                            <span class="text-slate-300 dark:text-slate-700">•</span>
+                            <span class="inline-flex items-center gap-0.5 text-slate-500 dark:text-slate-400" title="Birthday: {{ $user->dob->format('M d, Y') }}">
+                                <span class="material-symbols-outlined text-[12px] text-pink-500 font-bold">cake</span>
+                                <span class="text-[11px] font-semibold">{{ $user->dob->format('M d') }}</span>
+                            </span>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -623,6 +630,12 @@ profile
                                         <div class="relative border border-slate-200 dark:border-slate-800 focus-within:border-blue-500 rounded-xl p-3 bg-white dark:bg-slate-900 transition-all text-left">
                                             <label for="status" class="text-[8px] font-black text-slate-400 dark:text-slate-550 uppercase tracking-widest absolute top-1.5 left-3">Status Message</label>
                                             <input type="text" id="status" name="status" value="{{ old('status', $user->status) }}" class="w-full mt-2 bg-transparent border-0 p-0 text-slate-800 dark:text-white text-xs font-semibold focus:outline-none focus:ring-0 placeholder:text-slate-400" placeholder="What are you doing today?">
+                                        </div>
+
+                                        <!-- Date of Birth -->
+                                        <div class="relative border border-slate-200 dark:border-slate-800 focus-within:border-blue-500 rounded-xl p-3 bg-white dark:bg-slate-900 transition-all text-left">
+                                            <label for="dob" class="text-[8px] font-black text-slate-400 dark:text-slate-550 uppercase tracking-widest absolute top-1.5 left-3">Date of Birth</label>
+                                            <input type="date" id="dob" name="dob" value="{{ old('dob', $user->dob ? $user->dob->format('Y-m-d') : '') }}" class="w-full mt-2 bg-transparent border-0 p-0 text-slate-800 dark:text-white text-xs font-semibold focus:outline-none focus:ring-0 cursor-pointer">
                                         </div>
 
                                         <!-- Custom Status Image -->
