@@ -1459,19 +1459,13 @@ article
             if (bq.dataset.quoteObserved) return;
             bq.dataset.quoteObserved = "true";
 
-            // Use ResizeObserver to watch for dimension updates (e.g. late layout calculations, fonts, ads, or images)
-            const observer = new ResizeObserver(() => {
-                // If user already clicked expand, do not collapse again
-                if (bq.dataset.quoteUserExpanded === "true") {
-                    observer.disconnect();
-                    return;
-                }
+            // Helper function to handle collapse logic
+            function tryCollapse() {
+                if (bq.dataset.quoteUserExpanded === "true") return;
 
-                // If content exceeds 110px, trigger collapse
                 if (bq.scrollHeight > 110 && !bq.classList.contains('quote-collapsed')) {
                     bq.classList.add('quote-collapsed');
-                    bq.style.maxHeight = '95px';
-
+                    
                     if (!bq.querySelector('.quote-expand-btn')) {
                         const btn = document.createElement('button');
                         btn.className = 'quote-expand-btn';
@@ -1483,15 +1477,25 @@ article
                             e.stopPropagation();
 
                             bq.dataset.quoteUserExpanded = "true";
-                            observer.disconnect(); // Disconnect observer
+                            if (observer) observer.disconnect();
 
-                            // Smooth height slide expansion
+                            // Get full scroll height
+                            const targetHeight = bq.scrollHeight;
+
+                            // Remove collapsed class first so inline styles take precedence over CSS !important rules
+                            bq.classList.remove('quote-collapsed');
+
+                            // Set initial height and apply transition
+                            bq.style.maxHeight = '95px';
+                            
+                            // Trigger layout reflow to ensure the initial height is registered by browser
+                            bq.offsetHeight;
+
                             bq.style.transition = 'max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-                            bq.style.maxHeight = bq.scrollHeight + 'px';
+                            bq.style.maxHeight = targetHeight + 'px';
                             btn.innerHTML = '<span class="animate-spin inline-block mr-1 text-[9px]">⏳</span> Expanding...';
 
                             setTimeout(() => {
-                                bq.classList.remove('quote-collapsed');
                                 bq.style.maxHeight = '';
                                 bq.style.transition = '';
                                 btn.remove();
@@ -1501,9 +1505,19 @@ article
                         bq.appendChild(btn);
                     }
                 }
-            });
+            }
 
-            observer.observe(bq);
+            // Collapse immediately if already large
+            tryCollapse();
+
+            // Observe for future size changes (like image loads, font rendering, ad insertions)
+            let observer;
+            if (window.ResizeObserver) {
+                observer = new ResizeObserver(() => {
+                    tryCollapse();
+                });
+                observer.observe(bq);
+            }
         });
     }
 
@@ -1744,9 +1758,8 @@ article
     margin: 8px 0 !important;
     font-size: 11px !important;
     color: #475569 !important;
-    position: relative;
-    overflow: hidden;
-    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative !important;
+    overflow: hidden !important;
 }
 .dark .ql-editor blockquote {
     background: rgba(15, 23, 42, 0.35) !important;
