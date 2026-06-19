@@ -1456,51 +1456,54 @@ article
 
     function setupCollapsibleQuotes() {
         document.querySelectorAll('.ql-editor blockquote').forEach(bq => {
-            // Keep checking scrollHeight if it hasn't been collapsed yet
-            if (bq.dataset.quoteInitialized && bq.classList.contains('quote-collapsed')) return;
-            
-            // Check if blockquote is long, collapse it and add expand button
-            if (bq.scrollHeight > 110) {
-                bq.dataset.quoteInitialized = "true";
-                bq.classList.add('quote-collapsed');
-                bq.style.maxHeight = '95px';
-                
-                // Prevent duplicate buttons
-                if (bq.querySelector('.quote-expand-btn')) return;
-                
-                const btn = document.createElement('button');
-                btn.className = 'quote-expand-btn';
-                btn.type = 'button';
-                btn.innerHTML = '<span class="material-symbols-outlined text-[10px] align-middle mr-1">unfold_more</span> Expand Quote';
-                
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // Smooth transition to full height
-                    bq.style.transition = 'max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
-                    bq.style.maxHeight = bq.scrollHeight + 'px';
-                    btn.innerHTML = '<span class="animate-spin inline-block mr-1 text-[9px]">⏳</span> Expanding...';
-                    
-                    setTimeout(() => {
-                        bq.classList.remove('quote-collapsed');
-                        bq.style.maxHeight = '';
-                        bq.style.transition = '';
-                        btn.remove();
-                    }, 400);
-                });
-                
-                bq.appendChild(btn);
-            }
-        });
+            if (bq.dataset.quoteObserved) return;
+            bq.dataset.quoteObserved = "true";
 
-        // Ensure quotes with images collapse properly once images load
-        document.querySelectorAll('.ql-editor blockquote img').forEach(img => {
-            if (img.dataset.quoteLoadAttached) return;
-            img.dataset.quoteLoadAttached = "true";
-            img.addEventListener('load', function() {
-                setupCollapsibleQuotes();
+            // Use ResizeObserver to watch for dimension updates (e.g. late layout calculations, fonts, ads, or images)
+            const observer = new ResizeObserver(() => {
+                // If user already clicked expand, do not collapse again
+                if (bq.dataset.quoteUserExpanded === "true") {
+                    observer.disconnect();
+                    return;
+                }
+
+                // If content exceeds 110px, trigger collapse
+                if (bq.scrollHeight > 110 && !bq.classList.contains('quote-collapsed')) {
+                    bq.classList.add('quote-collapsed');
+                    bq.style.maxHeight = '95px';
+
+                    if (!bq.querySelector('.quote-expand-btn')) {
+                        const btn = document.createElement('button');
+                        btn.className = 'quote-expand-btn';
+                        btn.type = 'button';
+                        btn.innerHTML = '<span class="material-symbols-outlined text-[10px] align-middle mr-1">unfold_more</span> Expand Quote';
+
+                        btn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            bq.dataset.quoteUserExpanded = "true";
+                            observer.disconnect(); // Disconnect observer
+
+                            // Smooth height slide expansion
+                            bq.style.transition = 'max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                            bq.style.maxHeight = bq.scrollHeight + 'px';
+                            btn.innerHTML = '<span class="animate-spin inline-block mr-1 text-[9px]">⏳</span> Expanding...';
+
+                            setTimeout(() => {
+                                bq.classList.remove('quote-collapsed');
+                                bq.style.maxHeight = '';
+                                bq.style.transition = '';
+                                btn.remove();
+                            }, 400);
+                        });
+
+                        bq.appendChild(btn);
+                    }
+                }
             });
+
+            observer.observe(bq);
         });
     }
 
@@ -1702,7 +1705,7 @@ article
 <script async src="https://imgbb.com/upload.js" 
         data-auto-insert="bbcode-embed-medium" 
         data-sibling-selector="#edit-post-imgbb-upload-container" 
-        data-sibling-position="after">
+</script>
 <!-- High-End Real-Time Reaction Details Modal -->
 <div id="reactors-modal" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none opacity-0 transition-all duration-300">
     <!-- Backdrop -->
