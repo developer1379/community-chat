@@ -1057,7 +1057,7 @@
                                             ` : ''}
                                         </div>
                                     ` : ''}
-                                    <div class="px-3.5 py-2 text-xs font-medium shadow-sm leading-normal break-words ${bubbleClass}">
+                                    <div class="px-3.5 py-2 text-xs font-medium shadow-sm leading-normal break-words whitespace-pre-wrap ${bubbleClass}">
                                         ${bubbleContent}
                                     </div>
                                 </div>
