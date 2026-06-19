@@ -156,16 +156,48 @@
                 </div>
 
                 <!-- Input reply container -->
-                <div class="p-3 border-t border-slate-200/80 bg-white dark:border-slate-850 dark:bg-slate-900 flex-shrink-0">
-                    <form id="chat-send-form" onsubmit="handleSendSubmit(event)" class="flex items-center gap-2">
+                <div class="p-3 border-t border-slate-200/80 bg-white dark:border-slate-850 dark:bg-slate-900 flex-shrink-0 relative overflow-visible">
+                    <!-- Emoji Picker Dropdown -->
+                    <div id="chat-emoji-picker" class="hidden absolute bottom-full left-4 mb-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 flex flex-col overflow-hidden dark:bg-slate-900 dark:border-slate-800">
+                        <!-- Categories/Header -->
+                        <div class="flex border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 p-1.5 flex-shrink-0 gap-1">
+                            <button type="button" onclick="switchEmojiTab('smileys')" class="emoji-tab-btn flex-grow py-1 text-center rounded-lg text-slate-500 hover:bg-slate-200/50 dark:hover:bg-slate-800 text-xs font-semibold active:scale-95 transition-all dark:text-slate-400 bg-slate-200/80 dark:bg-slate-800" data-tab="smileys">😀</button>
+                            <button type="button" onclick="switchEmojiTab('gestures')" class="emoji-tab-btn flex-grow py-1 text-center rounded-lg text-slate-500 hover:bg-slate-200/50 dark:hover:bg-slate-800 text-xs font-semibold active:scale-95 transition-all dark:text-slate-400" data-tab="gestures">👍</button>
+                            <button type="button" onclick="switchEmojiTab('hearts')" class="emoji-tab-btn flex-grow py-1 text-center rounded-lg text-slate-500 hover:bg-slate-200/50 dark:hover:bg-slate-800 text-xs font-semibold active:scale-95 transition-all dark:text-slate-400" data-tab="hearts">❤️</button>
+                        </div>
+                        <!-- Emojis Grid -->
+                        <div id="emoji-grid-smileys" class="emoji-grid grid grid-cols-6 gap-1 p-2 max-h-48 overflow-y-auto custom-scrollbar text-center text-lg select-none">
+                            <!-- Populated in Javascript -->
+                        </div>
+                        <div id="emoji-grid-gestures" class="emoji-grid grid grid-cols-6 gap-1 p-2 max-h-48 overflow-y-auto custom-scrollbar text-center text-lg select-none hidden">
+                            <!-- Populated in Javascript -->
+                        </div>
+                        <div id="emoji-grid-hearts" class="emoji-grid grid grid-cols-6 gap-1 p-2 max-h-48 overflow-y-auto custom-scrollbar text-center text-lg select-none hidden">
+                            <!-- Populated in Javascript -->
+                        </div>
+                    </div>
+
+                    <form id="chat-send-form" onsubmit="handleSendSubmit(event)" class="flex items-end gap-2">
                         <!-- Hidden file input for images/GIFs -->
                         <input type="file" id="chat-file-input" class="hidden" accept="image/*" onchange="handleChatFileSelect(this)">
-                        <button type="button" onclick="document.getElementById('chat-file-input').click()" class="w-8.5 h-8.5 rounded-xl bg-slate-50 border border-slate-200/60 hover:bg-slate-100 hover:border-slate-350 text-slate-500 flex items-center justify-center cursor-pointer transition-all active:scale-95 flex-shrink-0 dark:bg-slate-950 dark:border-slate-800 dark:hover:bg-slate-850 dark:text-slate-400" title="Attach Image or GIF">
-                            <span class="material-symbols-outlined text-base">image</span>
-                        </button>
+                        
+                        <div class="flex-grow flex items-end gap-1.5 bg-slate-50 border border-slate-200/80 rounded-2xl px-2 py-1 dark:bg-slate-950 dark:border-slate-800">
+                            <!-- Emoji Trigger -->
+                            <button type="button" id="chat-emoji-btn" onclick="toggleEmojiPicker(event)" class="w-8 h-8 rounded-full hover:bg-slate-200/60 dark:hover:bg-slate-800 text-slate-500 flex items-center justify-center cursor-pointer transition-all flex-shrink-0 dark:text-slate-450" title="Add Emoji">
+                                <span class="material-symbols-outlined text-lg">sentiment_satisfied</span>
+                            </button>
 
-                        <input type="text" id="chat-message-input" class="flex-grow bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all placeholder:text-slate-400 font-medium dark:bg-slate-950 dark:border-slate-800 dark:text-slate-100" placeholder="Type a message..." autocomplete="off">
-                        <button type="submit" class="w-8.5 h-8.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center cursor-pointer shadow-md shadow-blue-500/10 transition-transform active:scale-95 flex-shrink-0">
+                            <!-- Expanding Textarea -->
+                            <textarea id="chat-message-input" rows="1" oninput="autoGrowChatInput(this)" onkeydown="handleChatInputKeydown(event)" class="flex-grow bg-transparent border-0 resize-none max-h-[120px] min-h-[32px] py-1.5 px-0.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-0 dark:text-slate-100 font-medium custom-scrollbar" placeholder="Type a message..." autocomplete="off"></textarea>
+
+                            <!-- Attachment Button -->
+                            <button type="button" onclick="document.getElementById('chat-file-input').click()" class="w-8 h-8 rounded-full hover:bg-slate-200/60 dark:hover:bg-slate-800 text-slate-500 flex items-center justify-center cursor-pointer transition-all flex-shrink-0 dark:text-slate-450" title="Attach Image">
+                                <span class="material-symbols-outlined text-lg font-bold rotate-45">link</span>
+                            </button>
+                        </div>
+
+                        <!-- Send Button -->
+                        <button type="submit" class="w-9 h-9 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center cursor-pointer shadow-md shadow-blue-500/10 transition-transform active:scale-95 flex-shrink-0 mb-[1px]">
                             <span class="material-symbols-outlined text-sm">send</span>
                         </button>
                     </form>
@@ -178,6 +210,7 @@
     <!-- Chat Engine Controller Script -->
     <script>
         const currentUserId = '{{ Auth::id() }}';
+        const serverPublicKey = @json(Auth::user()->chat_public_key);
         let chatOpen = false;
         let activeConversationId = null;
         let activeConversationPartner = null;
@@ -227,6 +260,19 @@
                         true,
                         ["decrypt"]
                     );
+
+                    // Sync local key with the server in case of database reset, seeding, or other mismatches.
+                    if (!serverPublicKey || serverPublicKey !== pubKeyStr) {
+                        console.log("[E2EE] Syncing client public key to the server...");
+                        await fetch('/dms/public-key', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({ public_key: pubKeyStr })
+                        });
+                    }
                 } else {
                     // Generate new keypair
                     const keyPair = await window.crypto.subtle.generateKey(
@@ -919,13 +965,13 @@
                     const mainTitleElement = document.getElementById('chat-main-title');
                     
                     const isE2EE = activePartnerPublicKey && myPrivateKeyObj;
-                    const lockIcon = isE2EE ? ' <span class="material-symbols-outlined text-[12px] text-green-500 font-extrabold align-middle" title="End-to-End Encrypted">lock</span>' : '';
+                    const lockIcon = '';
                     
                     if (titleElement && activeConversationPartner) {
-                        titleElement.innerHTML = activeConversationPartner + lockIcon;
+                        titleElement.innerHTML = activeConversationPartner;
                     }
                     if (mainTitleElement && activeConversationPartner) {
-                        mainTitleElement.innerHTML = activeConversationPartner + lockIcon;
+                        mainTitleElement.innerHTML = activeConversationPartner;
                     }
 
                     const messages = data.messages || [];
@@ -992,9 +1038,7 @@
                             bubbleContent = escapeHtml(decryptedBody);
                         }
 
-                        const lockBadge = isMessageEncrypted 
-                            ? `<span class="material-symbols-outlined text-[10px] text-green-500 font-bold" title="End-to-End Encrypted">${decryptionError ? 'lock_open' : 'lock'}</span>` 
-                            : '';
+                        const lockBadge = '';
 
                         return `
                             <div class="${alignmentClass} max-w-[85%] ${msg.is_own ? 'ml-auto' : 'mr-auto'} leading-snug animate-fade-in group" id="msg-${msg.id}" data-body="${escapeHtml(decryptedBody)}">
@@ -1054,6 +1098,7 @@
 
             // Clear input instantly for UI responsiveness
             input.value = '';
+            autoGrowChatInput(input);
 
             let payload = { body: body };
 
@@ -1553,6 +1598,142 @@
                 }
             });
         }
+
+        // Emoji Lists
+        const smileysList = [
+            '😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇',
+            '🙂','🙃','😉','😌','😍','🥰','😘','😗','😙','😚',
+            '😋','😛','😝','😜','🤪','🤨','🧐','🤓','😎','🥸',
+            '🤩','🥳','😏','😒','😞','😔','😟','😕','🙁','☹️',
+            '😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡',
+            '🤬','🤯','😳','🥵','🥶','😱','😨','😰','😥','😓',
+            '🤗','🤔','🫣','🤭','🫢','🤫','🤥','😶','😐','😑',
+            '😬','🫨','🫠','🙄','😯','😦','😧','😮','😲','🥱',
+            '😴','🤤','😪','😵','😵‍💫','🫥','🤐','🥴','🤢','🤮',
+            '🤧','😷','🤒','🤕','🤑','🤠'
+        ];
+
+        const gesturesList = [
+            '👍','👎','👊','✊','🤛','🤜','🫷','🫸','🤞','✌️',
+            '🫰','🤘','👌','🤌','🤏','🫳','🫴','👉','👈','👆',
+            '👇','☝️','✋','🤚','🖐️','🖖','👋','🤙','💪','🦾',
+            '🖕','✍️','🙏','🫵','🤝','💅','👂','🦻','👃'
+        ];
+
+        const heartsList = [
+            '❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔',
+            '❤️‍🔥','❤️‍🩹','❣️','💕','💞','💓','💗','💖','💘','💝',
+            '💟','🗣️','👤','👥','🫂','👁️','👀','🧠','🫀','🫁',
+            '🦷','🦴','👅','👄','💋','🩸'
+        ];
+
+        // Toggle Emoji Picker Dropdown
+        function toggleEmojiPicker(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            const picker = document.getElementById('chat-emoji-picker');
+            if (!picker) return;
+            
+            picker.classList.toggle('hidden');
+            
+            const smileysGrid = document.getElementById('emoji-grid-smileys');
+            if (smileysGrid && smileysGrid.children.length === 0) {
+                renderEmojis();
+            }
+        }
+
+        // Render Emojis Grid elements
+        function renderEmojis() {
+            const smileysGrid = document.getElementById('emoji-grid-smileys');
+            const gesturesGrid = document.getElementById('emoji-grid-gestures');
+            const heartsGrid = document.getElementById('emoji-grid-hearts');
+            
+            if (smileysGrid) {
+                smileysGrid.innerHTML = smileysList.map(e => `
+                    <button type="button" onclick="insertEmoji('${e}')" class="hover:bg-slate-100 dark:hover:bg-slate-800 p-1 rounded-lg transition-colors cursor-pointer">${e}</button>
+                `).join('');
+            }
+            
+            if (gesturesGrid) {
+                gesturesGrid.innerHTML = gesturesList.map(e => `
+                    <button type="button" onclick="insertEmoji('${e}')" class="hover:bg-slate-100 dark:hover:bg-slate-800 p-1 rounded-lg transition-colors cursor-pointer">${e}</button>
+                `).join('');
+            }
+            
+            if (heartsGrid) {
+                heartsGrid.innerHTML = heartsList.map(e => `
+                    <button type="button" onclick="insertEmoji('${e}')" class="hover:bg-slate-100 dark:hover:bg-slate-800 p-1 rounded-lg transition-colors cursor-pointer">${e}</button>
+                `).join('');
+            }
+        }
+
+        // Switch Emoji picker category tabs
+        function switchEmojiTab(tabName) {
+            const grids = document.querySelectorAll('.emoji-grid');
+            grids.forEach(g => g.classList.add('hidden'));
+            
+            const targetGrid = document.getElementById(`emoji-grid-${tabName}`);
+            if (targetGrid) targetGrid.classList.remove('hidden');
+            
+            const tabs = document.querySelectorAll('.emoji-tab-btn');
+            tabs.forEach(t => {
+                if (t.getAttribute('data-tab') === tabName) {
+                    t.classList.add('bg-slate-200/80', 'dark:bg-slate-800');
+                } else {
+                    t.classList.remove('bg-slate-200/80', 'dark:bg-slate-800');
+                }
+            });
+        }
+
+        // Insert Emoji at Cursor Position inside Textarea
+        function insertEmoji(emoji) {
+            const textarea = document.getElementById('chat-message-input');
+            if (!textarea) return;
+
+            const startPos = textarea.selectionStart;
+            const endPos = textarea.selectionEnd;
+            const text = textarea.value;
+
+            textarea.value = text.substring(0, startPos) + emoji + text.substring(endPos);
+            
+            const newCursorPos = startPos + emoji.length;
+            textarea.selectionStart = newCursorPos;
+            textarea.selectionEnd = newCursorPos;
+            
+            autoGrowChatInput(textarea);
+            textarea.focus();
+        }
+
+        // Auto growing textarea helper
+        function autoGrowChatInput(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        // Handle enter key to submit form and shift+enter to newline
+        function handleChatInputKeydown(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const form = document.getElementById('chat-send-form');
+                if (form) {
+                    // Trigger submit via standard requestSubmit
+                    form.requestSubmit();
+                }
+            }
+        }
+
+        // Close emoji picker when clicking outside
+        window.addEventListener('click', function(e) {
+            const picker = document.getElementById('chat-emoji-picker');
+            const emojiBtn = document.getElementById('chat-emoji-btn');
+            if (picker && !picker.classList.contains('hidden')) {
+                if (!picker.contains(e.target) && !emojiBtn.contains(e.target)) {
+                    picker.classList.add('hidden');
+                }
+            }
+        });
 
         // Simple HTML Escaper
         function escapeHtml(text) {
