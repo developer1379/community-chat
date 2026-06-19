@@ -1704,7 +1704,7 @@ article
 </script>
 <script async src="https://imgbb.com/upload.js" 
         data-auto-insert="bbcode-embed-medium" 
-        data-sibling-selector="#edit-post-imgbb-upload-container" 
+        data-sibling-selector="#edit-post-imgbb-upload-container">
 </script>
 <!-- High-End Real-Time Reaction Details Modal -->
 <div id="reactors-modal" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none opacity-0 transition-all duration-300">
