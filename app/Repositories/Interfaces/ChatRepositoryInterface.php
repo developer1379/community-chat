@@ -15,7 +15,7 @@ interface ChatRepositoryInterface
     public function startConversation(string $userOneId, string $userTwoId): Conversation;
     public function getOrCreateConversation(string $userOneId, string $userTwoId): Conversation;
     public function getConversation(string $conversationId): ?Conversation;
-    public function markAsRead(string $conversationId, string $userId): void;
+    public function markAsRead(string $conversationId, string $userId): int;
     public function getUnreadCount(string $userId): int;
     public function getMessage(string $messageId): ?Message;
     public function updateMessage(string $messageId, string $body): Message;

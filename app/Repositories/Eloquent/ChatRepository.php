@@ -72,9 +72,9 @@ class ChatRepository implements ChatRepositoryInterface
         return Conversation::with(['userOne', 'userTwo'])->find($conversationId);
     }
 
-    public function markAsRead(string $conversationId, string $userId): void
+    public function markAsRead(string $conversationId, string $userId): int
     {
-        Message::where('conversation_id', $conversationId)
+        return Message::where('conversation_id', $conversationId)
             ->where('sender_id', '!=', $userId)
             ->where('is_read', false)
             ->update(['is_read' => true]);

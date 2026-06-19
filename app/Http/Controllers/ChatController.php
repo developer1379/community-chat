@@ -79,11 +79,13 @@ class ChatController extends Controller
         }
 
         // Mark messages as read
-        $this->chatRepository->markAsRead($conversation->id, $userId);
+        $updatedRows = $this->chatRepository->markAsRead($conversation->id, $userId);
 
-        // Notify partner that messages have been read
-        $recipientId = $conversation->otherUser($userId)->id;
-        $this->firebaseService->triggerChatPing($recipientId, $conversation->id);
+        // Notify partner that messages have been read (only if any messages were actually marked as read)
+        if ($updatedRows > 0) {
+            $recipientId = $conversation->otherUser($userId)->id;
+            $this->firebaseService->triggerChatPing($recipientId, $conversation->id);
+        }
 
         $messages = $this->chatRepository->getConversationMessages($conversation->id);
 
