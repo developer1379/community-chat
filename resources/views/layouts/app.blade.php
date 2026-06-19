@@ -34,11 +34,28 @@
     <!-- Professional Google Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+    </noscript>
+
+    <!-- Local Storage Tailwind CSS Caching Layer (Eliminates FOUC & layout shifts when tailwind is deferred) -->
+    <script>
+        (function() {
+            var cached = localStorage.getItem('tailwind_cache');
+            if (cached) {
+                var style = document.createElement('style');
+                style.id = 'tailwind-cache';
+                style.textContent = cached;
+                document.head.appendChild(style);
+            }
+        })();
+    </script>
     
     <!-- Tailwind CSS for utility grids (Served locally for 0ms external connection/handshake latency) -->
-    <script src="{{ asset('js/tailwind-browser.js') }}?v={{ file_exists(public_path('js/tailwind-browser.js')) ? filemtime(public_path('js/tailwind-browser.js')) : '4.0' }}"></script>
+    <script src="{{ asset('js/tailwind-browser.js') }}?v={{ file_exists(public_path('js/tailwind-browser.js')) ? filemtime(public_path('js/tailwind-browser.js')) : '4.0' }}" defer></script>
     <style type="text/tailwindcss">
         @custom-variant dark (&:where(.dark, .dark *));
         @theme {
@@ -55,9 +72,6 @@
             --color-slate-950: #12141a;
         }
     </style>
-    
-    <!-- Quill Rich Text Editor CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
     
     <!-- Global Mobile Responsive Overrides -->
     <style>
@@ -237,8 +251,7 @@
     </style>
 
 
-    <!-- Modularized Custom Corporate stylesheet -->
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ file_exists(public_path('css/app.css')) ? filemtime(public_path('css/app.css')) : '1.0' }}">
+    @stack('styles')
 </head>
 <body class="min-h-screen flex flex-col antialiased pb-12 text-sm bg-slate-50/50 dark:bg-slate-950 dark:text-slate-100">
 
@@ -273,7 +286,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+    @stack('scripts')
 
     <!-- Reusable Javascript Controllers & Dynamic Engines -->
     <script>
@@ -963,6 +976,21 @@
             
             return videoUrl;
         }
+    </script>
+    <script>
+        // Cache compiled Tailwind JIT CSS for instant loading on subsequent page visits
+        try {
+            setTimeout(function() {
+                var styles = document.querySelectorAll('style');
+                for (var i = 0; i < styles.length; i++) {
+                    var txt = styles[i].textContent || '';
+                    if (txt.indexOf('tailwindcss') > -1) {
+                        localStorage.setItem('tailwind_cache', txt);
+                        break;
+                    }
+                }
+            }, 1500);
+        } catch (e) {}
     </script>
 </body>
 </html>

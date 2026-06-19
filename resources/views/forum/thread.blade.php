@@ -1,5 +1,13 @@
 @extends('layouts.app')
 
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+@endpush
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+@endpush
+
 @section('title')
 {{ $thread->title }} | XenForo Professional
 @endsection

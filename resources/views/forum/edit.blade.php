@@ -1,5 +1,13 @@
 @extends('layouts.app')
 
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+@endpush
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+@endpush
+
 @section('content')
 <div class="max-w-4xl mx-auto space-y-6 px-3 sm:px-6">
     <!-- Header path info -->
