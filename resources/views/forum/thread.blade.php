@@ -4,13 +4,16 @@
 {{ $thread->title }} | XenForo Professional
 @endsection
 @section('meta_description')
-{{ \Illuminate\Support\Str::limit(strip_tags($posts->first()->content ?? 'Read discussions and replies in this thread.'), 155) }}
+{{ \Illuminate\Support\Str::limit(strip_tags($thread->firstPost->content ?? ($posts->first()->content ?? 'Read discussions and replies in this thread.')), 155) }}
 @endsection
 @section('meta_keywords')
 {{ $thread->tags ? $thread->tags : 'forum, discussion, thread, community' }}
 @endsection
 @section('og_type')
 article
+@endsection
+@section('og_image')
+{{ $thread->attachments->first()?->url ?? ($thread->firstPost?->attachments->first()?->url ?? ($thread->user->avatar_url ?? '')) }}
 @endsection
 
 @section('content')
@@ -38,7 +41,22 @@ article
       "interactionType": "https://schema.org/CommentAction",
       "userInteractionCount": {{ max(0, $posts->total() - 1) }}
     }
+  ]@if($posts->total() > 1 && (($posts->currentPage() === 1 && $posts->count() > 1) || $posts->currentPage() > 1)),
+  "comment": [
+    @foreach(($posts->currentPage() === 1 ? $posts->slice(1) : $posts) as $reply)
+    {
+      "@@type": "Comment",
+      "text": {!! json_encode(strip_tags($reply->content)) !!},
+      "dateCreated": "{{ $reply->created_at->toIso8601String() }}",
+      "author": {
+        "@@type": "Person",
+        "name": "{{ e($reply->user->name) }}",
+        "url": "{{ route('profile.show', $reply->user->name) }}"
+      }
+    }{{ !$loop->last ? ',' : '' }}
+    @endforeach
   ]
+  @endif
 }
 </script>
 <div class="space-y-6">

@@ -1,5 +1,21 @@
 @extends('layouts.app')
 
+@section('title')
+{{ $category->name }} Discussions | XenForo Professional
+@endsection
+@section('meta_description')
+{{ \Illuminate\Support\Str::limit(strip_tags($category->description ?? 'Browse active discussions, threads, replies, and community files in ' . $category->name . ' category.'), 155) }}
+@endsection
+@section('meta_keywords')
+{{ $category->name }}, discussions, forum, community, threads
+@endsection
+@section('og_type')
+website
+@endsection
+@section('og_image')
+{{ \Illuminate\Support\Str::startsWith($category->icon, ['http://', 'https://']) ? $category->icon : '' }}
+@endsection
+
 @section('content')
 <div class="space-y-6 max-w-7xl mx-auto px-0 sm:px-6">
     <!-- Board Navigation Path & Header -->

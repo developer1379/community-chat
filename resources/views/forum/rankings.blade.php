@@ -1,5 +1,15 @@
 @extends('layouts.app')
 
+@section('title')
+XenProfessional Member Rankings | XenForo Professional
+@endsection
+@section('meta_description')
+Explore the community leaderboard. Level up by creating threads, posting replies, earning coins, and unlocking reputation milestones.
+@endsection
+@section('meta_keywords')
+member rankings, leaderboard, top users, activity points, reputation levels, coins
+@endsection
+
 @section('content')
 <div class="space-y-6 w-full mx-auto">
     <!-- Premium Material Welcome Banner with Glowing vector illustration -->

@@ -1,5 +1,15 @@
 @extends('layouts.app')
 
+@section('title')
+Community Media Showroom | XenForo Professional
+@endsection
+@section('meta_description')
+Browse, search, and discover photos, illustrations, and GIFs uploaded across our community discussions.
+@endsection
+@section('meta_keywords')
+media showroom, image gallery, photos, gifs, community uploads
+@endsection
+
 @section('content')
 <div class="space-y-6 w-full">
     <!-- Premium Header and Banner -->

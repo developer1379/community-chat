@@ -1,5 +1,12 @@
 @extends('layouts.app')
 
+@section('title')
+Community Rules & Almanac Guide | XenForo Professional
+@endsection
+@section('meta_description')
+Read the XenForo Professional guidelines, explore points calculation mechanics, and check the reputation milestones.
+@endsection
+
 @section('content')
 <div class="space-y-8 max-w-6xl mx-auto">
     <!-- Premium Rules & Guide Header Banner -->

@@ -1,5 +1,15 @@
 @extends('layouts.app')
 
+@section('title')
+Registered Members Directory | XenForo Professional
+@endsection
+@section('meta_description')
+Browse the community directory of registered members. Discover active specialists, custom badges, follow users, and check recent activity.
+@endsection
+@section('meta_keywords')
+members directory, register users, community specialists, follow users, developers
+@endsection
+
 @section('content')
 @php
     $followingIds = Auth::check() ? Auth::user()->following()->pluck('users.id')->toArray() : [];

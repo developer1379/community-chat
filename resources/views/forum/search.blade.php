@@ -1,5 +1,12 @@
 @extends('layouts.app')
 
+@section('title')
+Search Forums | XenForo Professional
+@endsection
+@section('meta_description')
+Search for discussions, questions, answers, and shared media files in the XenForo Professional community.
+@endsection
+
 @section('content')
 <div class="space-y-6 max-w-7xl mx-auto px-0 sm:px-6">
     <!-- Header -->

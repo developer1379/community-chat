@@ -1,5 +1,15 @@
 @extends('layouts.app')
 
+@section('title')
+Community Discussion Forums | XenForo Professional
+@endsection
+@section('meta_description')
+Join the XenForo Professional community. Discover active discussions, trending topics, member rankings, and browse shared photos and GIFs.
+@endsection
+@section('meta_keywords')
+xenforo, community, forums, discussion boards, image sharing, leaderboard
+@endsection
+
 @section('content')
 <div class="space-y-6 w-full">
 
