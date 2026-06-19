@@ -1057,9 +1057,7 @@
                                             ` : ''}
                                         </div>
                                     ` : ''}
-                                    <div class="px-3.5 py-2 text-xs font-medium shadow-sm leading-normal break-words whitespace-pre-wrap ${bubbleClass}">
-                                        ${bubbleContent}
-                                    </div>
+                                    <div class="px-3.5 py-2 text-xs font-medium shadow-sm leading-normal break-words whitespace-pre-wrap ${bubbleClass}">${bubbleContent}</div>
                                 </div>
                                 <span class="text-[8px] text-slate-400 font-bold mt-1 px-1 flex items-center gap-1 select-none">
                                     ${lockBadge}
