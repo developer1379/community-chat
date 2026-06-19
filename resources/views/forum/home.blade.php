@@ -101,7 +101,7 @@ xenforo, community, forums, discussion boards, image sharing, leaderboard
                                 <!-- Category Icon -->
                                 <div class="w-8.5 h-8.5 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border shadow-sm flex-shrink-0 overflow-hidden mt-0.5 {{ $iconBg }}">
                                     @if(\Illuminate\Support\Str::startsWith($category->icon, ['http://', 'https://']) || \Illuminate\Support\Str::contains($category->icon, '/'))
-                                        <img src="{{ $category->icon }}" alt="{{ $category->name }}" class="w-full h-full object-cover">
+                                        <img src="{{ $category->icon }}" alt="{{ $category->name }}" class="w-full h-full object-cover" loading="lazy">
                                     @elseif($category->icon == 'chat-bubble-left-right')
                                         <span class="material-symbols-outlined text-xl">forum</span>
                                     @elseif($category->icon == 'photo')
@@ -167,7 +167,7 @@ xenforo, community, forums, discussion boards, image sharing, leaderboard
                                            data-user-banner="{{ $lastPostUser->banner_color }}"
                                            data-user-banner-path="{{ $lastPostUser->banner_path }}"
                                            class="w-7 h-7 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 shadow-sm block hover:scale-105 transition-transform">
-                                             <img src="{{ $lastPostUser->avatar_url }}" class="w-full h-full object-cover">
+                                             <img src="{{ $lastPostUser->avatar_url }}" class="w-full h-full object-cover" loading="lazy">
                                         </a>
                                         <div class="min-w-0 leading-tight">
                                             <!-- Latest thread title link -->
@@ -232,7 +232,7 @@ xenforo, community, forums, discussion boards, image sharing, leaderboard
                                data-user-banner="{{ $thread->user->banner_color }}"
                                data-user-banner-path="{{ $thread->user->banner_path }}"
                                class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 shadow-sm block hover:scale-105 transition-transform">
-                                <img src="{{ $thread->user->avatar_url }}" class="w-full h-full object-cover">
+                                <img src="{{ $thread->user->avatar_url }}" class="w-full h-full object-cover" loading="lazy">
                             </a>
 
                             <!-- Main Thread Info Column -->
@@ -311,7 +311,7 @@ xenforo, community, forums, discussion boards, image sharing, leaderboard
                             <!-- Image Attachment Thumbnail if exists -->
                             @if($firstAttachment)
                                 <a href="#" onclick="openLightbox('{{ $firstAttachment->file_path }}', '{{ $thread->title }}'); return false;" class="hidden sm:block w-14 h-14 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 bg-slate-50 hover:scale-105 hover:shadow-md transition-all duration-300">
-                                    <img src="{{ $firstAttachment->file_path }}" class="w-full h-full object-cover">
+                                    <img src="{{ $firstAttachment->file_path }}" class="w-full h-full object-cover" loading="lazy">
                                 </a>
                             @endif
 
@@ -341,7 +341,7 @@ xenforo, community, forums, discussion boards, image sharing, leaderboard
                                    data-user-banner="{{ $lastPostUser->banner_color }}"
                                    data-user-banner-path="{{ $lastPostUser->banner_path }}"
                                    class="w-7 h-7 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 shadow-sm block hover:scale-105 transition-transform">
-                                    <img src="{{ $lastPostUser->avatar_url }}" class="w-full h-full object-cover">
+                                    <img src="{{ $lastPostUser->avatar_url }}" class="w-full h-full object-cover" loading="lazy">
                                 </a>
                                 <div class="min-w-0 leading-tight">
                                     <a href="{{ route('profile.show', $lastPostUser->name) }}"
@@ -410,7 +410,7 @@ xenforo, community, forums, discussion boards, image sharing, leaderboard
                                 @endphp
                                 <a href="{{ $targetUrl }}" 
                                    class="group relative aspect-square rounded-xl overflow-hidden border border-slate-200 dark:border-slate-850 bg-slate-50 dark:bg-slate-950 flex-shrink-0 block hover:scale-102 hover:shadow-md transition-all duration-300">
-                                    <img src="{{ $img->file_path }}" alt="Trending" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                    <img src="{{ $img->file_path }}" alt="Trending" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy">
                                     <!-- Hover Overlay -->
                                     <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-1.5">
                                         <span class="text-[8px] font-bold text-white truncate w-full leading-none">
@@ -443,7 +443,7 @@ xenforo, community, forums, discussion boards, image sharing, leaderboard
                                 @endphp
                                 <a href="{{ $targetUrl }}" 
                                    class="group relative aspect-square rounded-xl overflow-hidden border border-slate-200 dark:border-slate-850 bg-slate-50 dark:bg-slate-950 flex-shrink-0 block hover:scale-102 hover:shadow-md transition-all duration-300">
-                                    <img src="{{ $img->file_path }}" alt="Latest" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                    <img src="{{ $img->file_path }}" alt="Latest" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy">
                                     <!-- Hover Overlay -->
                                     <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-1.5">
                                         <span class="text-[8px] font-bold text-white truncate w-full leading-none">
@@ -530,7 +530,7 @@ xenforo, community, forums, discussion boards, image sharing, leaderboard
                                    data-user-banner="{{ $post->user->banner_color }}"
                                    data-user-banner-path="{{ $post->user->banner_path }}"
                                    class="w-7 h-7 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 block shadow-sm">
-                                    <img src="{{ $post->user->avatar_url }}" class="w-full h-full object-cover">
+                                    <img src="{{ $post->user->avatar_url }}" class="w-full h-full object-cover" loading="lazy">
                                 </a>
                                 
                                 <!-- Text Content and Title Info -->
@@ -559,7 +559,7 @@ xenforo, community, forums, discussion boards, image sharing, leaderboard
                                 <!-- Compact Attachment Thumbnail -->
                                 @if($firstAttach)
                                     <a href="#" onclick="openLightbox('{{ $firstAttach->file_path }}', '{{ $post->thread ? $post->thread->title : 'Attachment' }}'); return false;" class="w-10 h-10 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-50 flex-shrink-0 block hover:scale-105 transition-transform shadow-sm">
-                                        <img src="{{ $firstAttach->file_path }}" class="w-full h-full object-cover">
+                                        <img src="{{ $firstAttach->file_path }}" class="w-full h-full object-cover" loading="lazy">
                                     </a>
                                 @endif
                             </div>
@@ -594,7 +594,7 @@ xenforo, community, forums, discussion boards, image sharing, leaderboard
                                data-user-banner="{{ $activeThread->user->banner_color }}"
                                data-user-banner-path="{{ $activeThread->user->banner_path }}"
                                class="w-7 h-7 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 flex-shrink-0 block shadow-sm mt-0.5">
-                                <img src="{{ $activeThread->user->avatar_url }}" class="w-full h-full object-cover">
+                                <img src="{{ $activeThread->user->avatar_url }}" class="w-full h-full object-cover" loading="lazy">
                             </a>
 
                             <!-- Thread Info -->

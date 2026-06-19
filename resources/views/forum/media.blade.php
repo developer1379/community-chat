@@ -51,7 +51,7 @@ media showroom, image gallery, photos, gifs, community uploads
                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300 z-10 pointer-events-none"></div>
 
                             <!-- Image -->
-                            <img src="{{ $attach->url }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="{{ $attach->file_name }}">
+                            <img src="{{ $attach->url }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="{{ $attach->file_name }}" loading="lazy">
 
                             <!-- Quick Stats overlay (e.g. category pill and format tag) -->
                             <div class="absolute top-3 left-3 right-3 flex items-center justify-between z-20">
@@ -178,7 +178,7 @@ media showroom, image gallery, photos, gifs, community uploads
                                 <!-- Uploader info -->
                                 <div class="flex items-center gap-2 min-w-0">
                                     <div class="w-6 h-6 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700 flex-shrink-0 bg-slate-50 shadow-sm">
-                                        <img src="{{ $attach->user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
+                                        <img src="{{ $attach->user->avatar_url }}" class="w-full h-full object-cover" alt="avatar" loading="lazy">
                                     </div>
                                     <div class="flex flex-col min-w-0">
                                         <a href="{{ route('profile.show', $attach->user->name) }}" class="text-[10px] font-black text-slate-700 dark:text-slate-350 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors truncate" style="{{ $attach->user->username_style_css }}">{{ $attach->user->name }}</a>

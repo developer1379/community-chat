@@ -16,7 +16,7 @@
                data-user-banner-path="{{ $post->user->banner_path }}"
                class="relative group block flex-shrink-0 md:mb-2">
                 <div class="w-10 h-10 md:w-16 md:h-16 rounded-none overflow-hidden border border-slate-300 dark:border-slate-700 group-hover:border-indigo-500 transition-all duration-300 shadow-sm">
-                    <img src="{{ $post->user->avatar_url }}" class="w-full h-full object-cover" alt="avatar">
+                    <img src="{{ $post->user->avatar_url }}" class="w-full h-full object-cover" alt="avatar" loading="lazy">
                 </div>
                 <span class="absolute bottom-0 md:bottom-0.5 right-0 md:right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-950"></span>
             </a>
@@ -96,7 +96,7 @@
                                 <div class="relative group rounded-none overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-300/40 dark:border-slate-800/60 shadow-sm">
                                     @if(str_starts_with($attach->file_type, 'image/') || preg_match('/\.(jpe?g|png|gif|webp|bmp)/i', $attach->file_path) || str_contains($attach->file_path, 'ibb.co') || str_contains($attach->file_path, 'imgbb'))
                                          <button onclick="openLightbox('{{ $attach->url }}', '{{ $attach->file_name }}')" class="block w-full h-24 sm:h-28 overflow-hidden cursor-zoom-in text-left p-0 border-0 outline-none w-full">
-                                             <img src="{{ $attach->url }}" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-200" alt="attached image">
+                                             <img src="{{ $attach->url }}" class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-200" alt="attached image" loading="lazy">
                                          </button>
                                         <!-- Media Tag Badge (e.g. GIF) -->
                                         @if(str_contains($attach->file_name, '.gif') || str_contains($attach->file_type, 'gif'))
