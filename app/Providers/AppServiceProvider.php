@@ -35,6 +35,12 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        if (str_contains(request()->getHost(), 'fakepicker.com') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+            $_SERVER['HTTPS'] = 'on';
+            request()->server->set('HTTPS', 'on');
+        }
+
         try {
             if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
                 $settings = \Illuminate\Support\Facades\Cache::rememberForever('global_settings', function () {
